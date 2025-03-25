@@ -1,0 +1,184 @@
+<!-- Navigation -->
+
+<style>
+  body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f7fa;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Navbar Styles */
+  .navbar {
+    background-color: #343a40;
+  }
+
+  .navbar-brand {
+    color: #fff;
+    font-weight: bold;
+    font-size: 1.5rem;
+  }
+
+  .navbar-nav .nav-link {
+    color: #fff;
+    font-size: 1.1rem;
+  }
+
+  .navbar-nav .nav-link:hover {
+    color: #28a745;
+  }
+
+  /* Jumbotron Styles */
+  .jumbotron {
+    background-color: #f8f9fa;
+    padding: 3rem;
+    text-align: center;
+    border-radius: 10px;
+    margin-bottom: 2rem;
+  }
+
+  .jumbotron h1 {
+    font-size: 3rem;
+    font-weight: bold;
+    color: #343a40;
+  }
+
+  .jumbotron p {
+    font-size: 1.25rem;
+    color: #6c757d;
+  }
+
+  /* Album Card Styles */
+  .album-card {
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background-color: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease;
+  }
+
+  .album-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  }
+
+  .album-card h2 {
+    font-size: 1.8rem;
+    color: #343a40;
+    font-weight: bold;
+    margin-bottom: 1rem;
+  }
+
+  .album-card a {
+    text-decoration: none;
+    color: #28a745;
+    font-weight: bold;
+    font-size: 1.1rem;
+    display: inline-block;
+    margin-top: 1rem;
+  }
+
+  .album-card a:hover {
+    color: #218838;
+  }
+
+  .album-card p {
+    font-size: 1rem;
+    color: #6c757d;
+    margin-bottom: 1rem;
+  }
+
+  /* Footer Styles */
+  .footer {
+    background-color: #343a40;
+    color: #fff;
+    padding: 2rem;
+    text-align: center;
+    font-size: 1rem;
+  }
+
+  .footer a {
+    color: #28a745;
+    text-decoration: none;
+  }
+
+  .footer a:hover {
+    color: #218838;
+  }
+
+</style>
+
+<div th:fragment="header">
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <div class="container">
+      <a class="navbar-brand" th:href="@{/}">GalleryOnline</a>
+
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> ADMIN </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+              <a class="dropdown-item" th:href="@{/fotos}">Administrar foto</a>
+              <a class="dropdown-item" th:href="@{/albumes}">Administrar álbum</a>
+              <a class="dropdown-item" th:href="@{/usuario/login}">Login</a>
+              <a class="dropdown-item" th:href="@{/cerrar}">Salir</a>
+            </div>
+          </li>
+          <li class="nav-item">
+            <a class="btn btn-outline-success my-2 my-sm-0" th:href="@{/cerrar}">Cerrar sesión</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+</div>
+<div th:fragment="header-user">
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <div class="container">
+      <a class="navbar-brand" th:href="@{/}">GalleryOnline</a>
+
+      <form class="form-inline my-2 my-lg-0" method="post" action="#">
+        <input class="form-control mr-sm-2" type="search"
+               placeholder="Buscar" aria-label="Search" name="nombre"
+               autocomplete="off">
+        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Buscar</button>
+      </form>
+
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsiveUser"
+              aria-controls="navbarResponsiveUser" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarResponsiveUser">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLinkUser" role="button"
+               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> USER </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLinkUser">
+              <a class="dropdown-item" th:href="@{/fotos}">Agregar foto USER</a>
+              <a class="dropdown-item" th:href="@{/albumes/create}">Agregar álbum USER</a>
+              <a class="dropdown-item" th:href="@{/cerrar}">Salir</a>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+</div>
+
+
+
+<!-- Footer -->
+<div th:fragment="footer">
+  <footer class="py-5 bg-dark">
+    <div class="container">
+      <p class="m-0 text-center text-white">Copyright &copy; Galeria de fotos 2025</p>
+    </div>
+    <!-- /.container -->
+  </footer>
+</div>

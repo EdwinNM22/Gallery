@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="Galería en línea de fotos">
+    <meta name="author" content="GalleryOnline">
+
+    <title th:text="${album.nombre}">Álbum</title>
+
+    <!-- Bootstrap core CSS -->
+    <link th:href="@{/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
+    <!-- Custom styles -->
+    <style>
+        .card-img-top {
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        .card-footer {
+            text-align: center;
+        }
+
+        .jumbotron {
+            background-color: #f8f9fa;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .jumbotron h1 {
+            font-size: 2.5rem;
+            font-weight: bold;
+        }
+
+        .btn-success {
+            background-color: #28a745;
+            border-color: #28a745;
+        }
+
+        .btn-success:hover {
+            background-color: #218838;
+            border-color: #1e7e34;
+        }
+
+        .btn-modern {
+            background-color: #007bff;
+            border-color: #007bff;
+            color: white;
+            font-weight: bold;
+            border-radius: 50px;
+            padding: 10px 20px;
+            font-size: 1.2rem;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        .btn-modern:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+
+        /* Estilo para la imagen expandida */
+        .modal-content img {
+            width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navigation -->
+<div th:include="adm/template_admin.html::header"></div>
+
+<!-- Page Content -->
+<div class="container">
+
+    <!-- Jumbotron Header -->
+    <header class="jumbotron my-4">
+        <h1 class="display-3" th:text="${album.nombre}">Nombre del Álbum</h1>
+        <p class="lead">Disfruta de todas las fotos de este álbum.</p>
+        <!-- Agregar botón "Agregar foto" -->
+        <div class="text-center">
+            <a th:href="@{/fotos/create}" class="btn btn-modern">Agregar foto</a>
+        </div>
+    </header>
+
+    <!-- Album Photos -->
+    <div class="row text-center">
+        <!-- Aquí se recorre la lista de fotos dentro del álbum -->
+        <div th:each="foto : ${album.fotos}" class="col-lg-3 col-md-4 col-sm-6 mb-4">
+            <div class="card h-100">
+                <!-- Mostrar la imagen de la foto -->
+                <img class="card-img-top" th:src="@{/images/{img}(img=${foto.imagen})}" alt="Foto" data-bs-toggle="modal" data-bs-target="#imageModal" data-bs-whatever="@{${foto.imagen}}">
+                <div class="card-body">
+                    <!-- Descripción de la foto -->
+                    <p class="card-text" th:text="${foto.descripcion}">Descripción de la Foto</p>
+                </div>
+                <div class="card-footer">
+                    <!-- Botón para ver la foto -->
+                    <a href="fotos.html" class="btn btn-success">Ver foto</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para ver la foto ampliada -->
+    <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="imageModalLabel">Ver foto</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <img src="" id="expandedImage" alt="Imagen ampliada">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Back to home -->
+    <div class="text-center mt-4">
+        <a href="/" class="btn btn-primary">Volver a la página de inicio</a>
+    </div>
+
+</div>
+<!-- /.container -->
+
+<!-- Footer -->
+<div th:include="adm/template_admin.html::footer"></div>
+
+<!-- Bootstrap core JavaScript -->
+<script th:src="@{/vendor/jquery/jquery.min.js}"></script>
+<script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+
+<!-- Script para expandir imagen en el modal -->
+<script>
+    var modal = document.getElementById('imageModal');
+    modal.addEventListener('show.bs.modal', function (event) {
+        var button = event.relatedTarget; // Botón que activó el modal
+        var imageSrc = button.getAttribute('data-bs-whatever'); // Imagen a mostrar
+        var modalImage = modal.querySelector('#expandedImage');
+        modalImage.src = imageSrc;
+    });
+</script>
+
+</body>
+</html>
