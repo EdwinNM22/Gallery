@@ -15,7 +15,7 @@ public class album {
     private String nombre;
     private String descripcion;
 
-    @ManyToMany(cascade = CascadeType.ALL)  // Agregado CascadeType.ALL
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name = "album_foto",
             joinColumns = @JoinColumn(name = "album_id"),
@@ -23,7 +23,7 @@ public class album {
     )
     private List<foto> fotos;
 
-    @ManyToOne(cascade = CascadeType.ALL)  // Agregado CascadeType.ALL
+    @ManyToOne(cascade = CascadeType.ALL)
     private usuario usuario;
 
     // Getters y setters

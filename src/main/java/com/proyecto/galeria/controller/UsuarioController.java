@@ -46,22 +46,29 @@ public class UsuarioController {
         return "usuario/login";
     }
 
-    @PostMapping("/acceder")
+    @GetMapping("/acceder")
     public String acceder(usuario usuario, HttpSession session) {
-        Optional<usuario> user = usuarioService.findByEmail(usuario.getEmail());
+        logger.info("Accesos : {}", usuario);
 
-        if (user.isPresent() && user.get().getPassword().equals(usuario.getPassword())) { // Asegúrate de que la contraseña se verifique
+        Optional<usuario> user=usuarioService.findById(Integer.parseInt(session.getAttribute("idUsuario").toString()));
+
+
+        if (user.isPresent()) {
             session.setAttribute("idusuario", user.get().getId());
 
             if (user.get().getTipo_usuario().equals("ADMIN")) {
-                return "redirect:/adm";
-            } else {
+                return "redirect:/administrador";
+            }else {
                 return "redirect:/";
             }
-        } else {
-            // Manejo de error: redirigir a la página de acceso con un mensaje de error
-            return "redirect:/"; // Asegúrate de tener una página de login que maneje este parámetro
+        }else {
+            logger.info("Usuario no existe");
         }
+
+        return "redirect:/";
     }
+
 }
+
+
 

@@ -27,7 +27,7 @@ public class HomeController {
         //SESSION
         model.addAttribute("sesion", session.getAttribute("idusuario"));
 
-        return "usuario/home"; // Asegúrate de que esta vista esté configurada para mostrar álbumes
+        return "usuario/home";
 
     }
 

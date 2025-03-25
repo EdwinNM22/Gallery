@@ -3,7 +3,10 @@ package com.proyecto.galeria.controller;
 import com.proyecto.galeria.model.album;
 
 
+import com.proyecto.galeria.service.IUsuarioService;
 import com.proyecto.galeria.service.albumService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,12 +23,25 @@ public class AdmController {
     @Autowired
     private albumService albumService;
 
+    @Autowired
+    private IUsuarioService usuarioService;
+
+    private Logger logg= LoggerFactory.getLogger(AdmController.class);
+
     @GetMapping("")
     public String home(Model model) {
-        List<album> albumes = albumService.findAll(); // Obtener todos los álbumes
-        model.addAttribute("albumes", albumes); // Pasar los álbumes al modelo
-        return "adm/home"; // Asegúrate de que esta vista esté configurada para mostrar álbumes
+
+        List<album> albumes = albumService.findAll();
+        model.addAttribute("albumes", albumes);
+
+        return "adm/home";
     }
+    @GetMapping("/usuarios")
+    public String usuarios(Model model) {
+        model.addAttribute("usuarios", usuarioService.findAll());
+        return "adm/usuarios";
+    }
+
 }
 
 

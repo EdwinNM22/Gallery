@@ -23,23 +23,22 @@ public class SpringBootSecurity extends WebSecurityConfigurerAdapter {
         auth.userDetailsService(userDetailService).passwordEncoder(getEnecoder());
     }
 
+
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable().authorizeRequests()
-                .antMatchers("/adm/**").hasRole("ADMIN")
-                .antMatchers("/fotos/**").hasRole("ADMIN")
+                .antMatchers("/administrador/**").hasRole("ADMIN")
+                .antMatchers("/productos/**").hasRole("ADMIN")
                 .and().formLogin().loginPage("/usuario/login")
                 .permitAll().defaultSuccessUrl("/usuario/acceder");
     }
+
+
 
     @Bean
     public BCryptPasswordEncoder getEnecoder() {
         return new BCryptPasswordEncoder();
     }
-
-
-
-
-
 
 }

@@ -38,7 +38,7 @@ public class AlbumController {
     public String home(Model model) {
         List<album> albumes = albumService.findAll(); // Obtener todos los álbumes
         model.addAttribute("albumes", albumes); // Pasar los álbumes al modelo
-        return "albumes/show"; // Asegúrate de que esta vista esté configurada para mostrar álbumes
+        return "albumes/show";
     }
 
     @GetMapping("/create")
@@ -53,7 +53,7 @@ public class AlbumController {
         Object idUsuarioObj = session.getAttribute("idusuario");
         if (idUsuarioObj == null) {
             // Manejar el error o redirigir al usuario a una página de login
-            return "redirect:/login"; // O alguna otra página de error
+            return "redirect:/login";
         }
 
         usuario u = usuarioService.findById(Integer.parseInt(idUsuarioObj.toString())).get();

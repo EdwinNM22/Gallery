@@ -83,7 +83,7 @@ public class FotoController {
         }
 
         // Guardar el álbum (esto debería guardar también la relación en album_foto)
-        albumService.save(album); // Asegúrate de que el servicio de álbum tenga un método para guardar
+        albumService.save(album);
         return "redirect:/fotos";
     }
 
@@ -137,7 +137,7 @@ public class FotoController {
                 upload.deleteImage(p.getImagen());
             }
 
-            // Ahora puedes eliminar la foto
+
             fotoService.delete(id);
         } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Foto no encontrada");

@@ -81,7 +81,7 @@
     <header class="jumbotron my-4">
         <h1 class="display-3" th:text="${album.nombre}">Nombre del Álbum</h1>
         <p class="lead">Disfruta de todas las fotos de este álbum.</p>
-        <!-- Agregar botón "Agregar foto" -->
+
         <div class="text-center">
             <a th:href="@{/fotos/create}" class="btn btn-modern">Agregar foto</a>
         </div>
@@ -136,7 +136,7 @@
 <script th:src="@{/vendor/jquery/jquery.min.js}"></script>
 <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
 
-<!-- Script para expandir imagen en el modal -->
+<!-- Script para expandir imagen en el modal  Estoy lo voy a eliminar-->
 <script>
     var modal = document.getElementById('imageModal');
     modal.addEventListener('show.bs.modal', function (event) {
