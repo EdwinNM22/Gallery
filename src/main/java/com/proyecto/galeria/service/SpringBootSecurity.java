@@ -9,6 +9,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 
 @Configuration
 @EnableWebSecurity
@@ -27,11 +28,22 @@ public class SpringBootSecurity extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable().authorizeRequests()
-                .antMatchers("/administrador/**").hasRole("ADMIN")
-                .antMatchers("/productos/**").hasRole("ADMIN")
-                .and().formLogin().loginPage("/usuario/login")
-                .permitAll().defaultSuccessUrl("/usuario/acceder");
+        http.csrf().disable()
+                .authorizeRequests()
+                .antMatchers("/usuario/login", "/css/**", "/js/**").permitAll() // Permitir login y archivos estáticos
+                .antMatchers("/adm/**", "/fotos/**").hasRole("USER") // Solo admin
+                .anyRequest().authenticated() // Bloquear acceso a no autenticados
+                .and()
+                .formLogin()
+                .loginPage("/usuario/login") // Página de login
+                .permitAll()
+                .defaultSuccessUrl("/usuario/acceder", true) // Redirigir tras login
+                .and()
+                .logout()
+                .logoutUrl("/cerrar") // URL para cerrar sesión
+                .logoutSuccessUrl("/usuario/login") // Redirigir tras logout
+                .and()
+                .exceptionHandling().accessDeniedPage("/usuario/login"); // Redirigir si no tiene permisos
     }
 
 
