@@ -28,23 +28,28 @@ public class SpringBootSecurity extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        String[] publicUrls = {"/usuario/**", "/css/**", "/js/**"};
+        String[] userUrls = {"/adm/**", "/fotos/**"};
+
         http.csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/usuario/login", "/css/**", "/js/**").permitAll() // Permitir login y archivos estáticos
-                .antMatchers("/adm/**", "/fotos/**").hasRole("USER") // Solo admin
+                .antMatchers(publicUrls).permitAll() // Permitir login y archivos estáticos
+                .antMatchers(userUrls).hasRole("USER") // Solo acceso a usuario con rol USER
                 .anyRequest().authenticated() // Bloquear acceso a no autenticados
                 .and()
                 .formLogin()
                 .loginPage("/usuario/login") // Página de login
                 .permitAll()
-                .defaultSuccessUrl("/usuario/acceder", true) // Redirigir tras login
+                .defaultSuccessUrl("/usuario/acceder", true) // Redirigir tras login exitoso
                 .and()
                 .logout()
                 .logoutUrl("/cerrar") // URL para cerrar sesión
                 .logoutSuccessUrl("/usuario/login") // Redirigir tras logout
                 .and()
-                .exceptionHandling().accessDeniedPage("/usuario/login"); // Redirigir si no tiene permisos
+                .exceptionHandling()
+                .accessDeniedPage("/usuario/login"); // Redirigir si no tiene permisos
     }
+
 
 
 
