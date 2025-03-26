@@ -10,6 +10,11 @@
 
     <!-- Bootstrap core CSS -->
     <link th:href="@{/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
+
+    <!-- Estilo del botón -->
+    <link th:href="@{/css/boton1.css}" rel="stylesheet">   <!-- Estilo del botón -->
+    <link th:href="@{/css/cardUI.css}" rel="stylesheet">
+
     <!-- Custom styles -->
     <style>
         .card-img-top {
@@ -83,15 +88,16 @@
         <p class="lead">Disfruta de todas las fotos de este álbum.</p>
 
         <div class="text-center">
-            <a th:href="@{/fotos/create}" class="btn btn-modern">Agregar foto</a>
+            <a th:href="@{/fotos/create}" class="btn btn-modernn">Agregar foto</a>
         </div>
     </header>
 
     <!-- Album Photos -->
+    <!-- Album Photos -->
     <div class="row text-center">
         <!-- Aquí se recorre la lista de fotos dentro del álbum -->
         <div th:each="foto : ${album.fotos}" class="col-lg-3 col-md-4 col-sm-6 mb-4">
-            <div class="card h-100">
+            <div class="card-modern h-100">
                 <!-- Mostrar la imagen de la foto -->
                 <img class="card-img-top" th:src="@{/images/{img}(img=${foto.imagen})}" alt="Foto" data-bs-toggle="modal" data-bs-target="#imageModal" data-bs-whatever="@{${foto.imagen}}">
                 <div class="card-body">
@@ -105,6 +111,7 @@
             </div>
         </div>
     </div>
+
 
     <!-- Modal para ver la foto ampliada -->
     <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">

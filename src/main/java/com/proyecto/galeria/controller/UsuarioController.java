@@ -54,24 +54,27 @@ public class UsuarioController {
 
         Object idUsuarioObj = session.getAttribute("idUsuario");
         if (idUsuarioObj == null) {
-            return "redirect:/"; // Devuelve un String en lugar de ResponseEntity
+            logger.info("No hay sesión activa, redirigiendo a /");
+            return "redirect:/";
         }
 
         Optional<usuario> user = usuarioService.findById(Integer.parseInt(idUsuarioObj.toString()));
 
         if (user.isPresent()) {
             session.setAttribute("idusuario", user.get().getId());
+            logger.info("Tipo de usuario: {}", user.get().getTipo_usuario());
+            logger.info("ID de usuario desde la sesión: {}", idUsuarioObj);
 
             if (user.get().getTipo_usuario().equals("ADMIN")) {
-                return "redirect:/administrador";
-            }else {
-                return "redirect:/";
+                return "redirect:/adm";  // Redirige a /adm si es admin
+            } else {
+                return "redirect:/";  // Redirige a / si no es admin
             }
-        }else {
+        } else {
             logger.info("Usuario no existe");
         }
 
-        return "redirect:/";
+        return "redirect:/";  // En caso de cualquier error, redirige a /
     }
 
 }

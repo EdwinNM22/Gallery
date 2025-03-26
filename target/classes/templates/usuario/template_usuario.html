@@ -115,14 +115,17 @@
     <div class="container">
       <a class="navbar-brand" th:href="@{/}">GalleryOnline</a>
 
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+      <button class="navbar-toggler" type="button" data-toggle="collapse"
+              data-target="#navbarResponsive" aria-controls="navbarResponsive"
+              aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
 
       <div class="collapse navbar-collapse" id="navbarResponsive">
         <ul class="navbar-nav ml-auto">
           <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> ADMIN </a>
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"
+               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> USER </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
               <a class="dropdown-item" th:href="@{/fotos}">Administrar foto</a>
               <a class="dropdown-item" th:href="@{/albumes}">Administrar álbum</a>
@@ -138,47 +141,16 @@
     </div>
   </nav>
 </div>
-<div th:fragment="header-user">
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
-    <div class="container">
-      <a class="navbar-brand" th:href="@{/}">GalleryOnline</a>
 
-      <form class="form-inline my-2 my-lg-0" method="post" action="#">
-        <input class="form-control mr-sm-2" type="search"
-               placeholder="Buscar" aria-label="Search" name="nombre"
-               autocomplete="off">
-        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Buscar</button>
-      </form>
-
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsiveUser"
-              aria-controls="navbarResponsiveUser" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarResponsiveUser">
-        <ul class="navbar-nav ml-auto">
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLinkUser" role="button"
-               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> USER </a>
-            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLinkUser">
-              <a class="dropdown-item" th:href="@{/fotos}">Agregar foto USER</a>
-              <a class="dropdown-item" th:href="@{/albumes/create}">Agregar álbum USER</a>
-              <a class="dropdown-item" th:href="@{/cerrar}">Salir</a>
-            </div>
-          </li>
-        </ul>
+<div th:fragment="footer">
+  <footer class="py-4 bg-dark text-white">
+    <div class="container text-center">
+      <p class="m-0">&copy; 2fotoer de user.</p>
+      <div class="mt-2">
+        <a href="#" class="text-white mx-2">Términos</a> |
+        <a href="#" class="text-white mx-2">Privacidad</a> |
+        <a href="#" class="text-white mx-2">Contacto</a>
       </div>
     </div>
-  </nav>
-</div>
-
-
-
-<!-- Footer -->
-<div th:fragment="footer">
-  <footer class="py-5 bg-dark">
-    <div class="container">
-      <p class="m-0 text-center text-white">Copyright &copy; Galeria de fotos 2025</p>
-    </div>
-    <!-- /.container -->
   </footer>
 </div>

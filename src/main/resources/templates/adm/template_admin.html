@@ -115,14 +115,17 @@
       <div class="container">
         <a class="navbar-brand" th:href="@{/}">GalleryOnline</a>
 
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-toggle="collapse"
+                data-target="#navbarResponsive" aria-controls="navbarResponsive"
+                aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
 
         <div class="collapse navbar-collapse" id="navbarResponsive">
           <ul class="navbar-nav ml-auto">
             <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> ADMIN </a>
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> ADMIN </a>
               <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                 <a class="dropdown-item" th:href="@{/fotos}">Administrar foto</a>
                 <a class="dropdown-item" th:href="@{/albumes}">Administrar álbum</a>
@@ -140,12 +143,15 @@
   </div>
 
 
-  <!-- Footer -->
-      <div th:fragment="footer">
-        <footer class="py-5 bg-dark">
-          <div class="container">
-            <p class="m-0 text-center text-white">Copyright &copy; Galeria de fotos 2025</p>
-          </div>
-          <!-- /.container -->
-        </footer>
+  <div th:fragment="footer">
+    <footer class="py-4 bg-dark text-white">
+      <div class="container text-center">
+        <p class="m-0">&copy; 2025 Gaadddddddmiiiinnnns.</p>
+        <div class="mt-2">
+          <a href="#" class="text-white mx-2">Términos</a> |
+          <a href="#" class="text-white mx-2">Privacidad</a> |
+          <a href="#" class="text-white mx-2">Contacto</a>
+        </div>
       </div>
+    </footer>
+  </div>

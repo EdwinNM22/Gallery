@@ -143,7 +143,8 @@
 <body>
 
 <!-- Navigation  th:if="${sesion==null} -->
-<div th:include="adm/template_admin.html::header"></div>
+<div th:include="usuario/template_usuario.html::header"></div>
+
 
 <!-- Page Content -->
 <div class="container">
@@ -164,7 +165,9 @@
     <div th:each="album : ${albumes}" class="col-md-4">
       <div class="album-card">
         <h2 th:text="${album.nombre}">Nombre del Álbum</h2>
-        <p>Este es un breve resumen del álbum.</p>
+        <p>
+        <h6 th:text="${album.descripcion}">Descripcion de album</h6>
+        </p>
         <a th:href="@{/albumes/{id}(id=${album.id})}">Ver Álbum</a>
       </div>
     </div>
@@ -175,7 +178,7 @@
 <!-- /.container -->
 
 <!-- Footer -->
-<div th:include="adm/template_admin.html::footer"></div>
+<div th:include="usuario/template_usuario.html::footer"></div>
 
 <!-- Bootstrap core JavaScript -->
 <script th:src="@{vendor/jquery/jquery.min.js}"></script>

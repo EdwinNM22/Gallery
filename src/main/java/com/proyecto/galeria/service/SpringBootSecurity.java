@@ -29,12 +29,14 @@ public class SpringBootSecurity extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         String[] publicUrls = {"/usuario/**", "/css/**", "/js/**"};
-        String[] userUrls = {"/adm/**", "/fotos/**"};
+        String[] userUrls = {"/album/**", "/fotos/**"};
+        String[] admUrls =  {"/adm/**"};
 
         http.csrf().disable()
                 .authorizeRequests()
                 .antMatchers(publicUrls).permitAll() // Permitir login y archivos estáticos
                 .antMatchers(userUrls).hasRole("USER") // Solo acceso a usuario con rol USER
+                .antMatchers(admUrls).hasRole("ADMIN")
                 .anyRequest().authenticated() // Bloquear acceso a no autenticados
                 .and()
                 .formLogin()
