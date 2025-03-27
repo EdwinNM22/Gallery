@@ -1,7 +1,5 @@
 package com.proyecto.galeria.service;
-
 import com.proyecto.galeria.model.album;
-
 import java.util.List;
 import java.util.Optional;
 

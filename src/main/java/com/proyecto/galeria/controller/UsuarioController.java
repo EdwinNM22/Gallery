@@ -52,7 +52,7 @@ public class UsuarioController {
     public String acceder(usuario usuario, HttpSession session) {
         logger.info("Accesos : {}", usuario);
 
-        Object idUsuarioObj = session.getAttribute("idUsuario");
+        Object idUsuarioObj = session.getAttribute("idusuario");
         if (idUsuarioObj == null) {
             logger.info("No hay sesión activa, redirigiendo a /");
             return "redirect:/";

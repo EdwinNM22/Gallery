@@ -17,17 +17,89 @@
 
     <!-- Custom styles -->
     <style>
-        .card-img-top {
-            height: 200px;
-            object-fit: cover;
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f7fa;
+            margin: 0;
+            padding: 0;
         }
 
-        .card-body {
-            padding: 1.5rem;
-        }
-
-        .card-footer {
+        /* Jumbotron Styles */
+        .jumbotron {
+            background-color: #f8f9fa;
+            padding: 3rem;
             text-align: center;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+        }
+
+        .jumbotron h1 {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #343a40;
+        }
+
+        .jumbotron p {
+            font-size: 1.25rem;
+            color: #6c757d;
+        }
+
+        /* Album Card Styles */
+        .album-card {
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease;
+        }
+
+        .album-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .album-card h2 {
+            font-size: 1.8rem;
+            color: #343a40;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .album-card a {
+            text-decoration: none;
+            color: #28a745;
+            font-weight: bold;
+            font-size: 1.1rem;
+            display: inline-block;
+            margin-top: 1rem;
+        }
+
+        .album-card a:hover {
+            color: #218838;
+        }
+
+        .album-card p {
+            font-size: 1rem;
+            color: #6c757d;
+            margin-bottom: 1rem;
+        }
+
+        /* Modern Button Style */
+        .btn-modern {
+            background-color: #28a745;
+            color: white;
+            padding: 10px 20px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 5px;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .btn-modern:hover {
+            background-color: #218838;
+            transform: scale(1.05);
         }
 
         .jumbotron {
@@ -67,11 +139,6 @@
             transform: scale(1.05);
         }
 
-        /* Estilo para la imagen expandida */
-        .modal-content img {
-            width: 100%;
-            height: auto;
-        }
     </style>
 </head>
 <body>
@@ -94,44 +161,58 @@
 
     <!-- Album Photos -->
     <!-- Album Photos -->
+
+<!--    <div class="row text-center">-->
+<!--        &lt;!&ndash; Aquí se recorre la lista de fotos dentro del álbum &ndash;&gt;-->
+<!--        <div th:each="foto : ${album.fotos}" class="col-lg-3 col-md-4 col-sm-6 mb-4">-->
+<!--            <div class="card-modern h-100">-->
+<!--                &lt;!&ndash; Mostrar la imagen de la foto &ndash;&gt;-->
+<!--                <img class="card-img-top" th:src="@{/images/{img}(img=${foto.imagen})}" alt="Foto" data-bs-toggle="modal" data-bs-target="#imageModal" data-bs-whatever="@{${foto.imagen}}">-->
+<!--                <div class="card-body">-->
+<!--                    &lt;!&ndash; Descripción de la foto &ndash;&gt;-->
+<!--                    <p class="card-text" th:text="${foto.descripcion}">Descripción de la Foto</p>-->
+<!--                </div>-->
+<!--                <div class="card-footer">-->
+<!--                    &lt;!&ndash; Botón para ver la foto &ndash;&gt;-->
+<!--                    <a href="fotos.html" class="btn btn-success">Ver foto</a>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+
+
+    <!-- aqui se crearan y mostraran los nuevo albumes -->
+    <!-- Agregar Subálbum Button -->
+    <div class="text-center mb-4">
+        <a class="btn-modern" th:href="@{/subalbumes/create}">Agregar subálbum</a>
+    </div>
+
+    <!-- Bloque para Subálbumes Antes -->
     <div class="row text-center">
-        <!-- Aquí se recorre la lista de fotos dentro del álbum -->
-        <div th:each="foto : ${album.fotos}" class="col-lg-3 col-md-4 col-sm-6 mb-4">
-            <div class="card-modern h-100">
-                <!-- Mostrar la imagen de la foto -->
-                <img class="card-img-top" th:src="@{/images/{img}(img=${foto.imagen})}" alt="Foto" data-bs-toggle="modal" data-bs-target="#imageModal" data-bs-whatever="@{${foto.imagen}}">
-                <div class="card-body">
-                    <!-- Descripción de la foto -->
-                    <p class="card-text" th:text="${foto.descripcion}">Descripción de la Foto</p>
-                </div>
-                <div class="card-footer">
-                    <!-- Botón para ver la foto -->
-                    <a href="fotos.html" class="btn btn-success">Ver foto</a>
-                </div>
+        <div th:each="subAlbum : ${subAlbumAntes}" class="col-md-4">
+            <div class="album-card">
+                <h2 th:text="${subAlbum.nombre}">Nombre del Subálbum</h2>
+                <h6 th:text="${subAlbum.descripcion}">Descripción del subálbum</h6>
+
+                <!-- Enlace para "Antes" -->
+                <a th:href="@{/subAlbumes/antes/{id}(id=${subAlbum.id})}">Ver Subálbum Antes</a>
             </div>
         </div>
     </div>
 
+    <!-- Bloque para Subálbumes Después -->
+    <div class="row text-center">
+        <div th:each="subAlbum : ${subAlbumDespues}" class="col-md-4">
+            <div class="album-card">
+                <h2 th:text="${subAlbum.nombre}">Nombre del Subálbum</h2>
+                <h6 th:text="${subAlbum.descripcion}">Descripción del subálbum</h6>
 
-    <!-- Modal para ver la foto ampliada -->
-    <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="imageModalLabel">Ver foto</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-                </div>
-                <div class="modal-body">
-                    <img src="" id="expandedImage" alt="Imagen ampliada">
-                </div>
+                <!-- Enlace para "Después" -->
+                <a th:href="@{/subAlbumes/despues/{id}(id=${subAlbum.id})}">Ver Subálbum Después</a>
             </div>
         </div>
     </div>
 
-    <!-- Back to home -->
-    <div class="text-center mt-4">
-        <a href="/" class="btn btn-primary">Volver a la página de inicio</a>
-    </div>
 
 </div>
 <!-- /.container -->
@@ -142,17 +223,6 @@
 <!-- Bootstrap core JavaScript -->
 <script th:src="@{/vendor/jquery/jquery.min.js}"></script>
 <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
-
-<!-- Script para expandir imagen en el modal  Estoy lo voy a eliminar-->
-<script>
-    var modal = document.getElementById('imageModal');
-    modal.addEventListener('show.bs.modal', function (event) {
-        var button = event.relatedTarget; // Botón que activó el modal
-        var imageSrc = button.getAttribute('data-bs-whatever'); // Imagen a mostrar
-        var modalImage = modal.querySelector('#expandedImage');
-        modalImage.src = imageSrc;
-    });
-</script>
 
 </body>
 </html>

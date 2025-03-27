@@ -15,18 +15,32 @@ public class album {
     private String nombre;
     private String descripcion;
 
+    @OneToMany(mappedBy = "album", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<SubAlbum> subAlbumes;
+
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
-            name = "album_foto",
+            name = "album_subalbum",
             joinColumns = @JoinColumn(name = "album_id"),
-            inverseJoinColumns = @JoinColumn(name = "foto_id")
+            inverseJoinColumns = @JoinColumn(name = "subalbum_id")
     )
+
     private List<foto> fotos;
 
     @ManyToOne(cascade = CascadeType.ALL)
     private usuario usuario;
 
     // Getters y setters
+
+
+    public List<SubAlbum> getSubAlbumes() {
+        return subAlbumes;
+    }
+
+    public void setSubAlbumes(List<SubAlbum> subAlbumes) {
+        this.subAlbumes = subAlbumes;
+    }
+
     public Integer getId() {
         return id;
     }

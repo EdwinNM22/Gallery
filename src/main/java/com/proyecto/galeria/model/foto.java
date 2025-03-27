@@ -21,6 +21,11 @@ public class foto {
     @ManyToMany(mappedBy = "fotos")
     private List<album> albumes;
 
+    @ManyToOne
+    @JoinColumn(name = "sub_album_id")
+    private SubAlbum subAlbum;
+
+
     // Constructor, getters, setters y toString
     public foto() {}
 
@@ -30,6 +35,14 @@ public class foto {
         this.descripcion = descripcion;
         this.imagen = imagen;
         this.usuario = usuario;
+    }
+
+    public SubAlbum getSubAlbum() {
+        return subAlbum;
+    }
+
+    public void setSubAlbum(SubAlbum subAlbum) {
+        this.subAlbum = subAlbum;
     }
 
     public Integer getId() {
