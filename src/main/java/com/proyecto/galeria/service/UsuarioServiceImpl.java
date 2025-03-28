@@ -30,6 +30,11 @@ public class UsuarioServiceImpl implements IUsuarioService {
     }
 
     @Override
+    public Optional<usuario> get(Integer id) {
+        return usuarioRepository.findById(id);
+    }
+
+    @Override
     public List<usuario> findAll() {
         return usuarioRepository.findAll();
     }

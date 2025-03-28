@@ -1,12 +1,10 @@
 package com.proyecto.galeria.controller;
 
 import com.proyecto.galeria.model.SubAlbum;
+import com.proyecto.galeria.model.album;
 import com.proyecto.galeria.model.foto;
 import com.proyecto.galeria.model.usuario;
-import com.proyecto.galeria.service.fotoService;
-import com.proyecto.galeria.service.subAlbumService;
-import com.proyecto.galeria.service.albumService;
-import com.proyecto.galeria.service.UsuarioServiceImpl;
+import com.proyecto.galeria.service.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,32 +29,73 @@ public class SubAlbumController {
     private final Logger LOGGER = LoggerFactory.getLogger(SubAlbumController.class);
     private final subAlbumService subAlbumService;
 
+    @Autowired
+    private  fotoService fotoService;
+
+    @Autowired
+    private albumService albumService;
+
+
+    @Autowired
+    private IUsuarioService iUsuarioService;
+
+
+
+
+
     // Constructor para inyectar el servicio
     public SubAlbumController(subAlbumService subAlbumService) {
         this.subAlbumService = subAlbumService;
     }
+//    @GetMapping("")
+//    public String home(Model model) {
+//        List<SubAlbum> subAlbumes = subAlbumService.findAll();    //EN CASO SE NECESITEETEEEEEEE
+//        model.addAttribute("SubAlbum", subAlbumes);
+//
+//        return "subAlbumes";
+//    }
+
 
     @GetMapping("/antes/{id}")
     public String showAntes(@PathVariable("id") Integer id, Model model) {
-        Optional<SubAlbum> subAlbum = subAlbumService.get(id);
-        if (subAlbum.isPresent()) {
-            model.addAttribute("subAlbum", subAlbum.get());
-            return "subAlbumes/subalbumAntes";  // Vista para el subálbum 'Antes'
-        } else {
-            return "redirect:/subAlbumes";  // Redirigir si no se encuentra el subálbum
-        }
+        return showSubAlbum(id, model, "subAlbumes/subalbumAntes");
+
+
     }
 
     @GetMapping("/despues/{id}")
     public String showDespues(@PathVariable("id") Integer id, Model model) {
+
+        //Obtener la foto
+        foto foto  = new foto();
+        Optional<foto> fotoOptional = fotoService.get(id);
+        foto = fotoOptional.get();
+        model.addAttribute("foto", foto);
+
+        //Obtener el usuario
+
+        return showSubAlbum(id, model, "subAlbumes/subalbumDespues");
+    }
+
+    private String showSubAlbum(Integer id, Model model, String viewName) {
         Optional<SubAlbum> subAlbum = subAlbumService.get(id);
         if (subAlbum.isPresent()) {
             model.addAttribute("subAlbum", subAlbum.get());
-            return "subAlbumes/subalbumDespues";  // Vista para el subálbum 'Después'
+
+            // Obtener las fotos relacionadas con el SubAlbum
+            List<foto> fotos = subAlbum.get().getFotos();  // Usando la relación de ManyToMany
+
+            // Agregar las fotos al modelo
+            model.addAttribute("fotos", fotos);
+
+            return viewName;
         } else {
-            return "redirect:/subAlbumes";  // Redirigir si no se encuentra el subálbum
+            return "redirect:/subAlbumes";
         }
     }
+
+
+
 }
 
 

@@ -162,23 +162,23 @@
     <!-- Album Photos -->
     <!-- Album Photos -->
 
-<!--    <div class="row text-center">-->
-<!--        &lt;!&ndash; Aquí se recorre la lista de fotos dentro del álbum &ndash;&gt;-->
-<!--        <div th:each="foto : ${album.fotos}" class="col-lg-3 col-md-4 col-sm-6 mb-4">-->
-<!--            <div class="card-modern h-100">-->
-<!--                &lt;!&ndash; Mostrar la imagen de la foto &ndash;&gt;-->
-<!--                <img class="card-img-top" th:src="@{/images/{img}(img=${foto.imagen})}" alt="Foto" data-bs-toggle="modal" data-bs-target="#imageModal" data-bs-whatever="@{${foto.imagen}}">-->
-<!--                <div class="card-body">-->
-<!--                    &lt;!&ndash; Descripción de la foto &ndash;&gt;-->
-<!--                    <p class="card-text" th:text="${foto.descripcion}">Descripción de la Foto</p>-->
-<!--                </div>-->
-<!--                <div class="card-footer">-->
-<!--                    &lt;!&ndash; Botón para ver la foto &ndash;&gt;-->
-<!--                    <a href="fotos.html" class="btn btn-success">Ver foto</a>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--        </div>-->
-<!--    </div>-->
+    <div class="row text-center">
+        <!-- Aquí se recorre la lista de fotos dentro del álbum -->
+        <div th:each="foto : ${album.fotos}" class="col-lg-3 col-md-4 col-sm-6 mb-4">
+            <div class="card-modern h-100">
+                <!-- Mostrar la imagen de la foto -->
+                <img class="card-img-top" th:src="@{/images/{img}(img=${foto.imagen})}" alt="Foto" data-bs-toggle="modal" data-bs-target="#imageModal" data-bs-whatever="@{${foto.imagen}}">
+                <div class="card-body">
+                    <!-- Descripción de la foto -->
+                    <p class="card-text" th:text="${foto.descripcion}">Descripción de la Foto</p>
+                </div>
+                <div class="card-footer">
+                    <!-- Botón para ver la foto -->
+                    <a href="fotos.html" class="btn btn-success">Ver foto</a>
+                </div>
+            </div>
+        </div>
+    </div>
 
 
     <!-- aqui se crearan y mostraran los nuevo albumes -->
@@ -188,8 +188,8 @@
     </div>
 
     <!-- Bloque para Subálbumes Antes -->
-    <div class="row text-center">
-        <div th:each="subAlbum : ${subAlbumAntes}" class="col-md-4">
+    <div class="row text-center flex-nowrap">
+        <div th:each="subAlbum : ${subAlbumAntes}" class="col-md-4 d-inline-block">
             <div class="album-card">
                 <h2 th:text="${subAlbum.nombre}">Nombre del Subálbum</h2>
                 <h6 th:text="${subAlbum.descripcion}">Descripción del subálbum</h6>
@@ -199,6 +199,7 @@
             </div>
         </div>
     </div>
+
 
     <!-- Bloque para Subálbumes Después -->
     <div class="row text-center">

@@ -1,13 +1,12 @@
 package com.proyecto.galeria.model;
 
-
-
 import javax.persistence.*;
 import java.util.List;
 
 @Entity
 @Table(name = "fotos")
 public class foto {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -21,10 +20,10 @@ public class foto {
     @ManyToMany(mappedBy = "fotos")
     private List<album> albumes;
 
+    // Relación ManyToOne con SubAlbum
     @ManyToOne
-    @JoinColumn(name = "sub_album_id")
+    @JoinColumn(name = "sub_album_id") // Columna que referencia al subálbum
     private SubAlbum subAlbum;
-
 
     // Constructor, getters, setters y toString
     public foto() {}
@@ -37,6 +36,7 @@ public class foto {
         this.usuario = usuario;
     }
 
+    // Getter y Setter para subAlbum
     public SubAlbum getSubAlbum() {
         return subAlbum;
     }
@@ -92,6 +92,4 @@ public class foto {
     public void setAlbumes(List<album> albumes) {
         this.albumes = albumes;
     }
-
-
 }

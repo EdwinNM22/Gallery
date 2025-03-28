@@ -38,11 +38,12 @@ public class AlbumController {
 
     @GetMapping("")
     public String home(Model model) {
-        List<album> albumes = albumService.findAll(); // Obtener todos los álbumes
-        model.addAttribute("albumes", albumes); // Pasar los álbumes al modelo
+
+        List<album> albumes = albumService.findAll();
+        model.addAttribute("albums", albumes);
+
 
 //        return "albumes/show"; aqui va el show de albumes
-
         List<SubAlbum> subAlbumes = subAlbumService.findAll();
         model.addAttribute("subAlbumes", subAlbumes);
 

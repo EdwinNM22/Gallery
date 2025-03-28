@@ -38,12 +38,11 @@
       </ol>
 
       <!-- Blog Post -->
-      <div class="card mb-4">
+      <div class="card mb-4" th:each="fotos: ${fotos}">
         <div class="card-body">
           <div class="row">
             <div class="col-lg-6">
-              <a href="#"> <img class="img-fluid rounded"
-                src="http://placehold.it/500x325"  alt="">
+              <a href="#"> <img class="img-fluid rounded" th:src="@{/images/{img}(img=${foto.imagen})}"  alt="">
               </a>
             </div>
             <div class="col-lg-6">

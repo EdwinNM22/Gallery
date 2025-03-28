@@ -32,7 +32,7 @@ public class AdmController {
     public String home(Model model) {
 
         List<album> albumes = albumService.findAll();
-        model.addAttribute("albumes", albumes);
+        model.addAttribute("albumews", albumes); //aqui le cambie
 
         return "adm/home";
     }

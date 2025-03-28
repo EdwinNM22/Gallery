@@ -1,12 +1,10 @@
 package com.proyecto.galeria.controller;
 
+import com.proyecto.galeria.model.SubAlbum;
 import com.proyecto.galeria.model.album;
 import com.proyecto.galeria.model.foto;
 import com.proyecto.galeria.model.usuario;
-import com.proyecto.galeria.service.Uploadfoto;
-import com.proyecto.galeria.service.UsuarioServiceImpl;
-import com.proyecto.galeria.service.albumService;
-import com.proyecto.galeria.service.fotoService;
+import com.proyecto.galeria.service.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,6 +38,9 @@ public class FotoController {
     private Uploadfoto upload;
 
     @Autowired
+    private subAlbumService subAlbumService;
+
+    @Autowired
     private albumService albumService;  // Añadir esta línea
 
     @GetMapping("")
@@ -51,28 +52,29 @@ public class FotoController {
     @GetMapping("/create")
     public String create(Model model) {
         model.addAttribute("albumes", albumService.findAll());  // Ahora puedes usar albumService
+
+        List<SubAlbum> subAlbumes = subAlbumService.findAll();   // En teoria muestra todos los subAlbumes
+        model.addAttribute("SubAlbum", subAlbumes);
         return "fotos/create";
     }
 
     @PostMapping("/save")
-    public String save(foto foto, @RequestParam("img") MultipartFile file, HttpSession session, @RequestParam("album") Integer albumId) throws IOException {
+    public String save(foto foto,
+                       @RequestParam("img") MultipartFile file,
+                       HttpSession session,
+                       @RequestParam("SubAlbum") Integer subAlbumId) throws IOException {
         LOGGER.info("Saving foto: {}", foto);
 
+        // Obtener el usuario de la sesión
         usuario u = usuarioService.findById(Integer.parseInt(session.getAttribute("idusuario").toString())).get();
         foto.setUsuario(u);
 
-        // Obtener el álbum desde la base de datos
-        album album = albumService.get(albumId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Album not found"));
+        // Obtener el subálbum desde la base de datos
+        SubAlbum subAlbum = subAlbumService.get(subAlbumId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "SubAlbum not found"));
 
-        // Asociar la foto al álbum
-        List<foto> fotos = album.getFotos();
-        if (fotos != null) {
-            fotos.add(foto);
-        } else {
-            fotos = new ArrayList<>();
-            fotos.add(foto);
-            album.setFotos(fotos);
-        }
+        // Asociar la foto al subálbum
+        foto.setSubAlbum(subAlbum);
 
         // Imagen
         if (foto.getId() == null) {
@@ -82,9 +84,10 @@ public class FotoController {
             // Código para editar imagen si es necesario
         }
 
-        // Guardar el álbum (esto debería guardar también la relación en album_foto)
-        albumService.save(album);
-        return "redirect:/fotos";
+        // Guardar la foto (esto guardará la relación foto-subálbum)
+        fotoService.save(foto);
+
+        return "redirect:/fotos"; // Redirigir a la página de fotos
     }
 
 
