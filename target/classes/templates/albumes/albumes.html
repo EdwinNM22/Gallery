@@ -12,8 +12,11 @@
     <link th:href="@{/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
 
     <!-- Estilo del botón -->
-    <link th:href="@{/css/boton1.css}" rel="stylesheet">   <!-- Estilo del botón -->
+    <link th:href="@{/css/boton1.css}" rel="stylesheet">
     <link th:href="@{/css/cardUI.css}" rel="stylesheet">
+
+    <!-- Font Awesome para íconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
     <!-- Custom styles -->
     <style>
@@ -102,28 +105,7 @@
             transform: scale(1.05);
         }
 
-        .jumbotron {
-            background-color: #f8f9fa;
-            padding: 2rem;
-            text-align: center;
-        }
-
-        .jumbotron h1 {
-            font-size: 2.5rem;
-            font-weight: bold;
-        }
-
-        .btn-success {
-            background-color: #28a745;
-            border-color: #28a745;
-        }
-
-        .btn-success:hover {
-            background-color: #218838;
-            border-color: #1e7e34;
-        }
-
-        .btn-modern {
+        .btn-modernn {
             background-color: #007bff;
             border-color: #007bff;
             color: white;
@@ -134,11 +116,25 @@
             transition: background-color 0.3s, transform 0.3s;
         }
 
-        .btn-modern:hover {
+        .btn-modernn:hover {
             background-color: #0056b3;
             transform: scale(1.05);
         }
 
+        /* Estilos para el modal */
+        .modal-header {
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .modal-title {
+            color: #343a40;
+            font-weight: bold;
+        }
+
+        .form-group.row {
+            margin-bottom: 1.5rem;
+        }
     </style>
 </head>
 <body>
@@ -154,34 +150,96 @@
         <h1 class="display-3" th:text="${album.nombre}">Nombre del Álbum</h1>
         <p class="lead">Disfruta de todas las fotos de este álbum.</p>
 
-        <div class="text-center">
-            <a th:href="@{/fotos/create}" class="btn btn-modernn">Agregar foto</a>
-        </div>
+        <!-- Botón para abrir el modal (reemplaza el antiguo) -->
+        <button type="button" class="btn btn-modernn" data-toggle="modal" data-target="#agregarFotoModal">
+            <i class="fas fa-plus-circle"></i> Agregar foto
+        </button>
     </header>
 
     <!-- Album Photos -->
-    <!-- Album Photos -->
-
     <div class="row text-center">
-        <!-- Aquí se recorre la lista de fotos dentro del álbum -->
         <div th:each="foto : ${album.fotos}" class="col-lg-3 col-md-4 col-sm-6 mb-4">
             <div class="card-modern h-100">
-                <!-- Mostrar la imagen de la foto -->
-                <img class="card-img-top" th:src="@{/images/{img}(img=${foto.imagen})}" alt="Foto" data-bs-toggle="modal" data-bs-target="#imageModal" data-bs-whatever="@{${foto.imagen}}">
+                <img class="card-img-top" th:src="@{/images/{img}(img=${foto.imagen})}"
+                     alt="Foto" data-bs-toggle="modal" data-bs-target="#imageModal" data-bs-whatever="@{${foto.imagen}}">
                 <div class="card-body">
-                    <!-- Descripción de la foto -->
                     <p class="card-text" th:text="${foto.descripcion}">Descripción de la Foto</p>
                 </div>
                 <div class="card-footer">
-                    <!-- Botón para ver la foto -->
                     <a href="fotos.html" class="btn btn-success">Ver foto</a>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Modal para agregar foto -->
+    <div class="modal fade" id="agregarFotoModal" tabindex="-1" role="dialog" aria-labelledby="agregarFotoModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="agregarFotoModalLabel"><i class="fas fa-camera me-2"></i>Subir nueva foto</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal" th:action="@{/fotos/save}" method="post" enctype="multipart/form-data" id="fotoForm">
+                        <div class="form-group row">
+                            <label class="control-label col-sm-3" for="nombre">Nombre:</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="nombre" name="nombre"
+                                       placeholder="Nombre para la foto" autocomplete="off" required>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="control-label col-sm-3" for="descripcion">Descripción:</label>
+                            <div class="col-sm-9">
+                                <textarea class="form-control" id="descripcion" name="descripcion"
+                                          placeholder="Descripción de la foto" required
+                                          autocomplete="off" rows="3"></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="control-label col-sm-3" for="album">Álbum:</label>
+                            <div class="col-sm-9">
+                                <select class="form-control" id="album" name="album" required>
+                                    <option value="">Selecciona un álbum</option>
+                                    <option th:each="album : ${album}" th:value="${album.id}" th:text="${album.nombre}"></option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="control-label col-sm-3" for="SubAlbum">Sub Álbum:</label>
+                            <div class="col-sm-9">
+                                <select class="form-control" id="SubAlbum" name="subalbum" required>
+                                    <option value="">Selecciona un sub álbum</option>
+                                    <option th:each="subAlbum : ${subAlbumAntes}" th:value="${subAlbumAntes.id}" th:text="${subAlbumAntes.nombre}"></option>
+                                    <option th:each="album : ${subAlbumDespues}" th:value="${subAlbumDespues.id}" th:text="${subAlbumDespues.nombre}"></option>
+                                </select>
+                            </div>
+                        </div>
 
-    <!-- aqui se crearan y mostraran los nuevo albumes -->
+                        <div class="form-group row">
+                            <label class="control-label col-sm-3" for="img">Imagen:</label>
+                            <div class="col-sm-9">
+                                <div class="custom-file">
+                                    <input type="file" class="custom-file-input" id="img" name="img" required>
+                                    <label class="custom-file-label" for="img">Seleccionar archivo</label>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fas fa-times"></i> Cancelar</button>
+                    <button type="submit" class="btn btn-success" form="fotoForm">
+                        <i class="fas fa-save"></i> Guardar foto
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Agregar Subálbum Button -->
     <div class="text-center mb-4">
         <a class="btn-modern" th:href="@{/subalbumes/create}">Agregar subálbum</a>
@@ -193,13 +251,10 @@
             <div class="album-card">
                 <h2 th:text="${subAlbum.nombre}">Nombre del Subálbum</h2>
                 <h6 th:text="${subAlbum.descripcion}">Descripción del subálbum</h6>
-
-                <!-- Enlace para "Antes" -->
                 <a th:href="@{/subAlbumes/antes/{id}(id=${subAlbum.id})}">Ver Subálbum Antes</a>
             </div>
         </div>
     </div>
-
 
     <!-- Bloque para Subálbumes Después -->
     <div class="row text-center">
@@ -207,13 +262,10 @@
             <div class="album-card">
                 <h2 th:text="${subAlbum.nombre}">Nombre del Subálbum</h2>
                 <h6 th:text="${subAlbum.descripcion}">Descripción del subálbum</h6>
-
-                <!-- Enlace para "Después" -->
                 <a th:href="@{/subAlbumes/despues/{id}(id=${subAlbum.id})}">Ver Subálbum Después</a>
             </div>
         </div>
     </div>
-
 
 </div>
 <!-- /.container -->
@@ -224,6 +276,22 @@
 <!-- Bootstrap core JavaScript -->
 <script th:src="@{/vendor/jquery/jquery.min.js}"></script>
 <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+
+<!-- Script para el input file -->
+<script>
+    // Muestra el nombre del archivo seleccionado
+    document.querySelector('.custom-file-input').addEventListener('change', function(e) {
+        var fileName = document.getElementById("img").files[0].name;
+        var nextSibling = e.target.nextElementSibling;
+        nextSibling.innerText = fileName;
+    });
+
+    // Opcional: Resetear el formulario al cerrar el modal
+    $('#agregarFotoModal').on('hidden.bs.modal', function () {
+        $('#fotoForm')[0].reset();
+        $('.custom-file-label').text('Seleccionar archivo');
+    });
+</script>
 
 </body>
 </html>

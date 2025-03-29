@@ -56,6 +56,12 @@ public class AlbumController {
 
     }
 
+    @GetMapping("/show")
+    public String show(Model model ){
+        model.addAttribute("albumes", albumService.findAll());
+        return "albumes/show";
+    }
+
     @GetMapping("/create")
     public String albumes(Model model) {
 //        model.addAttribute("albumes", albumService.findAll());  // Lista de albumes
