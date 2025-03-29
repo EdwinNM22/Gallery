@@ -10,4 +10,5 @@ import java.util.List;
 public interface SubAlbumRepository extends JpaRepository<SubAlbum, Integer> {
 
     List<SubAlbum> findByTipo(String tipo);
+
 }

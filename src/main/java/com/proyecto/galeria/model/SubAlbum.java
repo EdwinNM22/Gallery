@@ -23,13 +23,14 @@ public class SubAlbum {
     @JoinColumn(name = "usuario_id", nullable = false)
     private usuario usuario;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = CascadeType.REMOVE)
     @JoinTable(
-            name = "subalbum_foto",  // Nombre de la tabla intermedia
-            joinColumns = @JoinColumn(name = "subalbum_id"),  // Columna que hace referencia al subálbum
-            inverseJoinColumns = @JoinColumn(name = "foto_id")  // Columna que hace referencia a la foto
+            name = "subalbum_foto",
+            joinColumns = @JoinColumn(name = "subalbum_id"),
+            inverseJoinColumns = @JoinColumn(name = "foto_id")
     )
     private List<foto> fotos;
+
 
     public SubAlbum() {}
 

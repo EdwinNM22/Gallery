@@ -18,8 +18,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+
 import java.util.Optional;
 
 @Controller
@@ -53,8 +52,8 @@ public class FotoController {
     public String create(Model model) {
         model.addAttribute("albumes", albumService.findAll());  // Ahora puedes usar albumService
 
-        List<SubAlbum> subAlbumes = subAlbumService.findAll();   // En teoria muestra todos los subAlbumes
-        model.addAttribute("SubAlbum", subAlbumes);
+//        List<SubAlbum> subAlbumes = subAlbumService.findAll();   // En teoria muestra todos los subAlbumes
+        model.addAttribute("subalbum", subAlbumService.findAll());
         return "fotos/create";
     }
 
@@ -66,8 +65,13 @@ public class FotoController {
         LOGGER.info("Saving foto: {}", foto);
 
         // Obtener el usuario de la sesión
-        usuario u = usuarioService.findById(Integer.parseInt(session.getAttribute("idusuario").toString())).get();
-        foto.setUsuario(u);
+        Optional<usuario> optionalUsuario = usuarioService.findById(Integer.parseInt(session.getAttribute("idusuario").toString()));
+        if (optionalUsuario.isPresent()) {
+            usuario u = optionalUsuario.get();
+            foto.setUsuario(u);
+        } else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado");
+        }
 
         // Obtener el subálbum desde la base de datos
         SubAlbum subAlbum = subAlbumService.get(subAlbumId)
@@ -75,20 +79,21 @@ public class FotoController {
 
         // Asociar la foto al subálbum
         foto.setSubAlbum(subAlbum);
+        subAlbum.getFotos().add(foto); // Asegurarse de que la foto esté también en la lista de fotos del subálbum
 
         // Imagen
         if (foto.getId() == null) {
             String nombrefoto = upload.saveImage(file);
             foto.setImagen(nombrefoto);
-        } else {
-            // Código para editar imagen si es necesario
         }
 
         // Guardar la foto (esto guardará la relación foto-subálbum)
         fotoService.save(foto);
+        subAlbumService.save(subAlbum); // Guardar el subálbum para asegurar que la relación ManyToMany se actualice
 
         return "redirect:/fotos"; // Redirigir a la página de fotos
     }
+
 
 
     @GetMapping("/edit/{id}")
@@ -106,18 +111,26 @@ public class FotoController {
     public String update(foto foto, @RequestParam("img") MultipartFile file) throws IOException {
         fotoService.update(foto);
 
-        if (file.isEmpty()) {
-            foto p = fotoService.get(foto.getId()).get();
-            foto.setImagen(p.getImagen());
-        } else { // cuando se edita la imagen
-            foto p = fotoService.get(foto.getId()).get();
-            // eliminar cuando no sea la imagen por defecto
-            if (p.getImagen().equals("default.jpg")) {
-                upload.deleteImage(p.getImagen());
-            }
+        Optional<foto> optionalFoto = fotoService.get(foto.getId());
+        if (optionalFoto.isPresent()) {
+            foto p = optionalFoto.get();
 
-            String nombrefoto = upload.saveImage(file);
-            foto.setImagen(nombrefoto);
+            if (file.isEmpty()) {
+                // Si no se seleccionó nueva imagen, mantener la imagen actual
+                foto.setImagen(p.getImagen());
+            } else {
+                // cuando se edita la imagen
+                if (p.getImagen().equals("default.jpg")) {
+                    upload.deleteImage(p.getImagen());
+                }
+
+                String nombrefoto = upload.saveImage(file);
+                foto.setImagen(nombrefoto);
+            }
+        } else {
+            // Manejar el caso en que no se encuentre la foto
+            // Por ejemplo, lanzar una excepción o redirigir a otro lugar
+            throw new IllegalArgumentException("Foto no encontrada con el ID: " + foto.getId());
         }
 
         return "redirect:/fotos";

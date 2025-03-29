@@ -22,8 +22,9 @@ public class foto {
 
     // Relación ManyToOne con SubAlbum
     @ManyToOne
-    @JoinColumn(name = "sub_album_id") // Columna que referencia al subálbum
     private SubAlbum subAlbum;
+
+
 
     // Constructor, getters, setters y toString
     public foto() {}

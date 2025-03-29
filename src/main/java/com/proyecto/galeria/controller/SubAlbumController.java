@@ -40,41 +40,48 @@ public class SubAlbumController {
     private IUsuarioService iUsuarioService;
 
 
-
-
-
     // Constructor para inyectar el servicio
     public SubAlbumController(subAlbumService subAlbumService) {
         this.subAlbumService = subAlbumService;
     }
-//    @GetMapping("")
-//    public String home(Model model) {
-//        List<SubAlbum> subAlbumes = subAlbumService.findAll();    //EN CASO SE NECESITEETEEEEEEE
-//        model.addAttribute("SubAlbum", subAlbumes);
-//
-//        return "subAlbumes";
-//    }
 
 
     @GetMapping("/antes/{id}")
     public String showAntes(@PathVariable("id") Integer id, Model model) {
+        // Obtener solo los subálbumes de tipo "antes"
+        List<SubAlbum> subAlbumesAntes = subAlbumService.getSubAlbumesAntes();
+
+        // Buscar el subálbum específico por id
+        SubAlbum subAlbumAntes = subAlbumesAntes.stream()
+                .filter(subAlbum -> subAlbum.getId().equals(id))
+                .findFirst()
+                .orElse(null);
+
+        // Si se encuentra el subálbum, obtener sus fotos
+        if (subAlbumAntes != null) {
+            model.addAttribute("foto", subAlbumAntes.getFotos()); // Asumiendo que SubAlbum tiene el método getFotos()
+        }
+
         return showSubAlbum(id, model, "subAlbumes/subalbumAntes");
-
-
     }
 
     @GetMapping("/despues/{id}")
     public String showDespues(@PathVariable("id") Integer id, Model model) {
+        // Obtener solo los subálbumes de tipo "despues"
+        List<SubAlbum> subAlbumesDespues = subAlbumService.getSubAlbumesDespues();
 
-        //Obtener la foto
-        foto foto  = new foto();
-        Optional<foto> fotoOptional = fotoService.get(id);
-        foto = fotoOptional.get();
-        model.addAttribute("foto", foto);
+        // Buscar el subálbum específico por id
+        SubAlbum subAlbumDespues = subAlbumesDespues.stream()
+                .filter(subAlbum -> subAlbum.getId().equals(id))
+                .findFirst()
+                .orElse(null);
 
-        //Obtener el usuario
+        // Si se encuentra el subálbum, obtener sus fotos
+        if (subAlbumDespues != null) {
+            model.addAttribute("foto", subAlbumDespues.getFotos()); // Asumiendo que SubAlbum tiene el método getFotos()
+        }
 
-        return showSubAlbum(id, model, "subAlbumes/subalbumDespues");
+        return "subAlbumes/subalbumDespues";
     }
 
     private String showSubAlbum(Integer id, Model model, String viewName) {
@@ -86,7 +93,7 @@ public class SubAlbumController {
             List<foto> fotos = subAlbum.get().getFotos();  // Usando la relación de ManyToMany
 
             // Agregar las fotos al modelo
-            model.addAttribute("fotos", fotos);
+            model.addAttribute("foto", fotos);
 
             return viewName;
         } else {

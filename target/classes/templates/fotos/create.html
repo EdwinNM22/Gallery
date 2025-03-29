@@ -45,15 +45,15 @@
       <label class="control-label col-sm-2" for="nombre">Nombre:</label>
       <div class="col-sm-10">
         <input type="text" class="form-control" id="nombre" name="nombre"
-        placeholder="agrega un nombre a tu foto" autocomplete="off" required>
+               placeholder="agrega un nombre a tu foto" autocomplete="off" required>
       </div>
     </div>
     <div class="form-group">
       <label class="control-label col-sm-2" for="descripcion">Descripción:</label>
       <div class="col-sm-10">
         <textarea class="form-control" id="descripcion" name="descripcion"
-        placeholder="Agrega una descripcion de tu foto" required
-        autocomplete="off"> </textarea>
+                  placeholder="Agrega una descripcion de tu foto" required
+                  autocomplete="off"> </textarea>
       </div>
     </div>
 
@@ -76,7 +76,7 @@
         <select class="form-control" id="SubAlbum" name="SubAlbum" required>
           <option value="">Selecciona un álbum</option>
           <!-- Aquí se mostrarán los álbumes disponibles -->
-          <option th:each="SubAlbum : ${SubAlbum}" th:value="${SubAlbum.id}" th:text="${SubAlbum.nombre}"></option>
+          <option th:each="SubAlbumes : ${subalbum}" th:value="${SubAlbumes.id}" th:text="${SubAlbumes.nombre}"></option>
         </select>
       </div>
     </div>
