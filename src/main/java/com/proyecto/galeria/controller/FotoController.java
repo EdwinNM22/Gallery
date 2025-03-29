@@ -58,7 +58,7 @@ public class FotoController {
     }
 
     @PostMapping("/save")
-    public String save(foto foto,
+    public String save(Model model, foto foto,
                        @RequestParam("img") MultipartFile file,
                        HttpSession session,
                        @RequestParam("subalbum") Integer subAlbumId) throws IOException {
@@ -91,7 +91,11 @@ public class FotoController {
         fotoService.save(foto);
         subAlbumService.save(subAlbum); // Guardar el subálbum para asegurar que la relación ManyToMany se actualice
 
-        return "redirect:/fotos"; // Redirigir a la página de fotos
+        // Agregar el mensaje de éxito
+        model.addAttribute("message", "La foto se ha agregado con éxito");
+
+        // Redirigir a la misma vista para mantener el modal abierto
+        return "redirect:/albumes/" + subAlbum.getAlbum().getId(); // Asegúrate de que "album" sea el nombre de la vista donde está el modal
     }
 
 

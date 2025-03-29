@@ -139,6 +139,12 @@
 </head>
 <body>
 
+
+<!-- Mensaje de éxito -->
+<div th:if="${message}" class="alert alert-success">
+    <p th:text="${message}"></p>
+</div>
+
 <!-- Navigation -->
 <div th:include="adm/template_admin.html::header"></div>
 
@@ -155,23 +161,6 @@
             <i class="fas fa-plus-circle"></i> Agregar foto
         </button>
     </header>
-
-    <!-- Album Photos -->
-    <div class="row text-center">
-        <div th:each="foto : ${album.fotos}" class="col-lg-3 col-md-4 col-sm-6 mb-4">
-            <div class="card-modern h-100">
-                <img class="card-img-top" th:src="@{/images/{img}(img=${foto.imagen})}"
-                     alt="Foto" data-bs-toggle="modal" data-bs-target="#imageModal" data-bs-whatever="@{${foto.imagen}}">
-                <div class="card-body">
-                    <p class="card-text" th:text="${foto.descripcion}">Descripción de la Foto</p>
-                </div>
-                <div class="card-footer">
-                    <a href="fotos.html" class="btn btn-success">Ver foto</a>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- Modal para agregar foto -->
     <div class="modal fade" id="agregarFotoModal" tabindex="-1" role="dialog" aria-labelledby="agregarFotoModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
@@ -239,33 +228,25 @@
             </div>
         </div>
     </div>
-
-    <!-- Agregar Subálbum Button -->
-    <div class="text-center mb-4">
-        <a class="btn-modern" th:href="@{/subalbumes/create}">Agregar subálbum</a>
-    </div>
-
-    <!-- Bloque para Subálbumes Antes -->
-    <div class="row text-center flex-nowrap">
-        <div th:each="subAlbum : ${subAlbumAntes}" class="col-md-4 d-inline-block">
+    <!-- Bloque para Subálbumes Antes y Después -->
+    <div class="row text-center d-flex">
+        <div th:each="subAlbum : ${subAlbumAntes}" class="col-md-4">
             <div class="album-card">
-                <h2 th:text="${subAlbum.nombre}">Nombre del Subálbum</h2>
-                <h6 th:text="${subAlbum.descripcion}">Descripción del subálbum</h6>
+                <h2 th:text="${subAlbum.nombre}">Nombre del Subálbum Antes</h2>
+                <h6 th:text="${subAlbum.descripcion}">Descripción del subálbum antes</h6>
                 <a th:href="@{/subAlbumes/antes/{id}(id=${subAlbum.id})}">Ver Subálbum Antes</a>
             </div>
         </div>
-    </div>
 
-    <!-- Bloque para Subálbumes Después -->
-    <div class="row text-center">
         <div th:each="subAlbum : ${subAlbumDespues}" class="col-md-4">
             <div class="album-card">
-                <h2 th:text="${subAlbum.nombre}">Nombre del Subálbum</h2>
-                <h6 th:text="${subAlbum.descripcion}">Descripción del subálbum</h6>
+                <h2 th:text="${subAlbum.nombre}">Nombre del Subálbum Después</h2>
+                <h6 th:text="${subAlbum.descripcion}">Descripción del subálbum después</h6>
                 <a th:href="@{/subAlbumes/despues/{id}(id=${subAlbum.id})}">Ver Subálbum Después</a>
             </div>
         </div>
     </div>
+
 
 </div>
 <!-- /.container -->
@@ -291,6 +272,18 @@
         $('#fotoForm')[0].reset();
         $('.custom-file-label').text('Seleccionar archivo');
     });
+
+    // // Recargar la página después de enviar el formulario
+    // document.getElementById('fotoForm').addEventListener('submit', function() {
+    //     setTimeout(function() {
+    //         window.location.reload();
+    //     }, 100);
+    // });
+</script>
+
+
+
+
 </script>
 
 </body>
