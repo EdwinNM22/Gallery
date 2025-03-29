@@ -204,7 +204,7 @@
                             <div class="col-sm-9">
                                 <select class="form-control" id="album" name="album" required>
                                     <option value="">Selecciona un álbum</option>
-                                    <option th:each="album : ${albumes}" th:value="${album.id}" th:text="${album.nombre}"></option>
+                                    <option th:each="album : ${album}" th:value="${album.id}" th:text="${album.nombre}"></option>
                                 </select>
                             </div>
                         </div>
@@ -213,7 +213,8 @@
                             <div class="col-sm-9">
                                 <select class="form-control" id="SubAlbum" name="subalbum" required>
                                     <option value="">Selecciona un sub álbum</option>
-                                    <option th:each="subAlbum : ${subalbum}" th:value="${subAlbum.id}" th:text="${subAlbum.nombre}"></option>
+                                    <option th:each="subAlbum : ${subAlbumAntes}" th:value="${subAlbumAntes.id}" th:text="${subAlbumAntes.nombre}"></option>
+                                    <option th:each="album : ${subAlbumDespues}" th:value="${subAlbumDespues.id}" th:text="${subAlbumDespues.nombre}"></option>
                                 </select>
                             </div>
                         </div>

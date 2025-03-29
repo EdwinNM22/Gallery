@@ -58,8 +58,8 @@ public class AlbumController {
 
     @GetMapping("/create")
     public String albumes(Model model) {
-        model.addAttribute("albumes", albumService.findAll());  // Lista de albumes
-        model.addAttribute("subalbum", subAlbumService.findAll());  // Lista de subálbumes
+//        model.addAttribute("albumes", albumService.findAll());  // Lista de albumes
+//        model.addAttribute("subalbum", subAlbumService.findAll());  // Lista de subálbumes
         return "albumes/create";  // La vista donde se muestra el modal
     }
 
@@ -98,27 +98,27 @@ public class AlbumController {
         Optional<album> optionalAlbum = albumService.get(id);
         if (optionalAlbum.isPresent()) {
             album album = optionalAlbum.get();
-            List<SubAlbum> subAlbumes = album.getSubAlbumes();  // Obtener todos los subálbumes del álbum seleccionado
+            List<SubAlbum> subAlbumes = album.getSubAlbumes(); // Esto ya trae solo los subálbumes del álbum actual
+
+            // Buscar los subálbumes específicos
+            SubAlbum antes = subAlbumes.stream()
+                    .filter(s -> s.getNombre().equals("Antes"))
+                    .findFirst()
+                    .orElse(null);
+
+            SubAlbum despues = subAlbumes.stream()
+                    .filter(s -> s.getNombre().equals("Después"))
+                    .findFirst()
+                    .orElse(null);
+
+            // Agregar al modelo
             model.addAttribute("album", album);
+            model.addAttribute("subAlbumAntes", antes); // Objeto único (no lista)
+            model.addAttribute("subAlbumDespues", despues); // Objeto único (no lista)
 
-            // Filtrar subálbumes por nombre
-            List<SubAlbum> subAlbumAntes = subAlbumes.stream()
-                    .filter(sub -> sub.getNombre().equals("Antes"))
-                    .collect(Collectors.toList());
-            List<SubAlbum> subAlbumDespues = subAlbumes.stream()
-                    .filter(sub -> sub.getNombre().equals("Después"))
-                    .collect(Collectors.toList());
-
-            model.addAttribute("subAlbumAntes", subAlbumAntes);
-            model.addAttribute("subAlbumDespues", subAlbumDespues);  // Pasar los subálbumes específicos al modelo
-
-            // Agregar listas de álbumes y subálbumes al modelo
-            model.addAttribute("albumes", albumService.findAll());  // Lista de álbumes
-            model.addAttribute("subalbum", subAlbumService.findAll());  // Lista de subálbumes
-
-            return "albumes/albumes"; // Nombre de la vista para mostrar los subálbumes
+            return "albumes/albumes";
         } else {
-            return "redirect:/"; // Redirigir a la página de inicio si no se encuentra el álbum
+            return "redirect:/";
         }
     }
 
