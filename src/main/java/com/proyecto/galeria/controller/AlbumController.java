@@ -57,8 +57,10 @@ public class AlbumController {
     }
 
     @GetMapping("/create")
-    public String create() {
-        return "albumes/create";
+    public String albumes(Model model) {
+        model.addAttribute("albumes", albumService.findAll());  // Lista de albumes
+        model.addAttribute("subalbum", subAlbumService.findAll());  // Lista de subálbumes
+        return "albumes/create";  // La vista donde se muestra el modal
     }
 
     @PostMapping("/save")
@@ -110,11 +112,16 @@ public class AlbumController {
             model.addAttribute("subAlbumAntes", subAlbumAntes);
             model.addAttribute("subAlbumDespues", subAlbumDespues);  // Pasar los subálbumes específicos al modelo
 
+            // Agregar listas de álbumes y subálbumes al modelo
+            model.addAttribute("albumes", albumService.findAll());  // Lista de álbumes
+            model.addAttribute("subalbum", subAlbumService.findAll());  // Lista de subálbumes
+
             return "albumes/albumes"; // Nombre de la vista para mostrar los subálbumes
         } else {
             return "redirect:/"; // Redirigir a la página de inicio si no se encuentra el álbum
         }
     }
+
 
     @GetMapping("/edit/{id}")
     public String edit(@PathVariable Integer id, Model model) {

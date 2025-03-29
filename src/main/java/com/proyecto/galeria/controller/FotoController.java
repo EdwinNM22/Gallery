@@ -19,6 +19,7 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -51,8 +52,7 @@ public class FotoController {
     @GetMapping("/create")
     public String create(Model model) {
         model.addAttribute("albumes", albumService.findAll());  // Ahora puedes usar albumService
-
-//        List<SubAlbum> subAlbumes = subAlbumService.findAll();   // En teoria muestra todos los subAlbumes
+        List<SubAlbum> subAlbumes = subAlbumService.findAll();   // En teoria muestra todos los subAlbumes
         model.addAttribute("subalbum", subAlbumService.findAll());
         return "fotos/create";
     }
@@ -61,7 +61,7 @@ public class FotoController {
     public String save(foto foto,
                        @RequestParam("img") MultipartFile file,
                        HttpSession session,
-                       @RequestParam("SubAlbum") Integer subAlbumId) throws IOException {
+                       @RequestParam("subalbum") Integer subAlbumId) throws IOException {
         LOGGER.info("Saving foto: {}", foto);
 
         // Obtener el usuario de la sesión

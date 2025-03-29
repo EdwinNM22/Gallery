@@ -5,8 +5,7 @@ import com.proyecto.galeria.model.album;
 
 import com.proyecto.galeria.service.IUsuarioService;
 import com.proyecto.galeria.service.albumService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -26,7 +25,7 @@ public class AdmController {
     @Autowired
     private IUsuarioService usuarioService;
 
-    private Logger logg= LoggerFactory.getLogger(AdmController.class);
+
 
     @GetMapping("")
     public String home(Model model) {
@@ -39,7 +38,7 @@ public class AdmController {
     @GetMapping("/usuarios")
     public String usuarios(Model model) {
         model.addAttribute("usuarios", usuarioService.findAll());
-        return "adm/usuarios";
+        return "adm/home";
     }
 
 }
