@@ -74,7 +74,7 @@ public class AlbumController {
         LOGGER.info("Saving album: {}", album);
 
         // Obtener el id del usuario de la sesión
-        Object idUsuarioObj = session.getAttribute("idusuario");
+        Object idUsuarioObj = session.getAttribute("idsuaurio");
         if (idUsuarioObj == null) {
             return "redirect:/login";
         }

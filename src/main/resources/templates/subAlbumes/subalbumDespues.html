@@ -291,14 +291,18 @@
             <div class="photo-img-container">
                 <img class="photo-img" th:src="@{/images/{img}(img=${fotoDespues.imagen})}" alt="Foto del álbum">
                 <div class="photo-overlay">
-                    <h5 class="photo-title" th:text="${fotoDespues.nombre}">Nombre foto</h5>
-                    <!-- Aquí cambiamos descripcion por fecha -->
-                    <p class="photo-description" th:text="${#dates.format(fotoDespues.fecha, 'yyyy-MM-dd HH:mm:ss')}">Fecha de subida</p>
+                    <h5 class="photo-title" th:text="${fotoDespues.nombre}">Nombre foto</h5> <!-- Título de la foto -->
+                    <h8 class="photo-uploader" th:text="'Subido por: ' + ${fotoDespues.usuario.nombre}"></h8> <!-- Usuario -->
+                    <p class="photo-description"
+                       th:text="'Fecha: ' + ${#dates.format(fotoDespues.fecha, 'dd/MM/yyyy HH:mm')}">
+                        Fecha de subida
+                    </p>
                 </div>
             </div>
             <div class="photo-content">
                 <div class="photo-actions">
-                    <a href="javascript:void(0)" class="btn-view" data-bs-toggle="modal" th:attr="data-bs-target='#photoModal' + ${fotoDespues.id}">
+                    <a href="javascript:void(0)" class="btn-view" data-bs-toggle="modal"
+                       th:data-bs-target="'#photoModal' + ${fotoDespues.id}">
                         <i class="fas fa-expand mr-2"></i>Ampliar
                     </a>
                 </div>

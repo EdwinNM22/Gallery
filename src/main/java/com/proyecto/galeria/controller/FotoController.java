@@ -74,6 +74,7 @@ public class FotoController {
         if (optionalUsuario.isPresent()) {
             usuario u = optionalUsuario.get();
             foto.setUsuario(u);
+
         } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado");
         }
@@ -95,6 +96,8 @@ public class FotoController {
         // Asignar la fecha de subida a la foto (con el tipo Date)
         Date fechaHoraSubida = new Date();  // Obtiene la fecha y hora actual
         foto.setFecha(fechaHoraSubida);  // Usando el setter para asignar el valor
+
+
 
         // Guardar la foto
         fotoService.save(foto);
