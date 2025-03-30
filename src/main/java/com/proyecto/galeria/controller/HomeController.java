@@ -23,18 +23,24 @@ public class HomeController {
     @Autowired
     private albumService albumService;
 
-    @GetMapping("")
+
+    @GetMapping({"/", "/mainMenu"})
+    public String mainMenu(Model model) {
+        return "usuario/mainMenu";
+    }
+
+
+    @GetMapping("/home")
     public String home(Model model, HttpSession session) {
-        List<album> albumes = albumService.findAll(); // Obtener todos los álbumes
-        model.addAttribute("albumes", albumes); // Pasar los álbumes al modelo
+        List<album> albumes = albumService.findAll();
+        model.addAttribute("albumes", albumes);
 
         log.info("Sesion del usuario: {} ", session.getAttribute("idusuario"));
-        //SESSION
         model.addAttribute("sesion", session.getAttribute("idusuario"));
 
         return "usuario/home";
-
     }
+
 
     @GetMapping("/cerrar")
     public String cerrarSesion( HttpSession session) {

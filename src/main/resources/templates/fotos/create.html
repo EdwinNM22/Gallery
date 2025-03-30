@@ -1,114 +1,342 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
-
 <head>
-
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="">
-  <meta name="author" content="">
+  <meta name="description" content="Crear nuevo proyecto fotográfico">
+  <meta name="author" content="GalleryOnline">
 
-  <title>Sube tus fotos</title>
-
+  <title>Crear Nuevo Proyecto</title>
 
   <!-- Bootstrap core CSS -->
   <link th:href="@{/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
 
-  <!-- Custom styles for this template -->
-  <link th:href="@{/css/heroic-features.css}" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Custom styles -->
+  <style>
+    :root {
+      --primary-color: #4361ee;
+      --secondary-color: #3f37c9;
+      --accent-color: #4895ef;
+      --dark-color: #3a0ca3;
+      --light-color: #f8f9fa;
+      --text-dark: #2b2d42;
+      --text-light: #8d99ae;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #f8fafc;
+      color: var(--text-dark);
+    }
+
+    /* Modern Header */
+    .upload-header {
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      color: white;
+      padding: 4rem 0;
+      margin-bottom: 3rem;
+      border-radius: 0 0 20px 20px;
+      box-shadow: 0 10px 30px rgba(67, 97, 238, 0.2);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .upload-header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxkZWZzPjxwYXR0ZXJuIGlkPSJwYXR0ZXJuIiB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiIHBhdHRlcm5UcmFuc2Zvcm09InJvdGF0ZSg0NSkiPjxyZWN0IHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjA1KSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3QgZmlsbD0idXJsKCNwYXR0ZXJuKSIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIvPjwvc3ZnPg==');
+      opacity: 0.2;
+    }
+
+    .upload-title {
+      font-weight: 700;
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .upload-subtitle {
+      font-size: 1.2rem;
+      opacity: 0.9;
+    }
+
+    /* Breadcrumb */
+    .breadcrumb {
+      background-color: transparent;
+      padding: 0.75rem 0;
+      font-size: 0.9rem;
+    }
+
+    .breadcrumb-item a {
+      color: var(--primary-color);
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+
+    .breadcrumb-item a:hover {
+      color: var(--secondary-color);
+      text-decoration: underline;
+    }
+
+    /* Upload Form */
+    .upload-container {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+      padding: 2.5rem;
+      margin-bottom: 3rem;
+    }
+
+    .form-label {
+      font-weight: 600;
+      color: var(--text-dark);
+      margin-bottom: 0.5rem;
+    }
+
+    .form-control, .form-select {
+      border-radius: 8px;
+      padding: 0.8rem 1rem;
+      border: 1px solid #e2e8f0;
+      transition: all 0.3s ease;
+    }
+
+    .form-control:focus, .form-select:focus {
+      border-color: var(--accent-color);
+      box-shadow: 0 0 0 0.2rem rgba(72, 149, 239, 0.25);
+    }
+
+    textarea.form-control {
+      min-height: 120px;
+    }
+
+    /* File Upload */
+    .file-upload {
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 1.5rem;
+    }
+
+    .file-upload-input {
+      position: absolute;
+      top: 0;
+      right: 0;
+      margin: 0;
+      padding: 0;
+      font-size: 20px;
+      cursor: pointer;
+      opacity: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .file-upload-label {
+      display: block;
+      border: 2px dashed #e2e8f0;
+      border-radius: 8px;
+      padding: 2rem;
+      text-align: center;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .file-upload-label:hover {
+      border-color: var(--accent-color);
+      background-color: rgba(72, 149, 239, 0.05);
+    }
+
+    .file-upload-icon {
+      font-size: 2.5rem;
+      color: var(--accent-color);
+      margin-bottom: 1rem;
+    }
+
+    .file-upload-text {
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+    }
+
+    .file-upload-hint {
+      font-size: 0.9rem;
+      color: var(--text-light);
+    }
+
+    /* Preview Image */
+    .image-preview {
+      display: none;
+      max-width: 100%;
+      max-height: 300px;
+      border-radius: 8px;
+      margin-top: 1rem;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Submit Button */
+    .btn-submit {
+      background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+      color: white;
+      border: none;
+      padding: 0.8rem 2rem;
+      border-radius: 50px;
+      font-weight: 600;
+      font-size: 1.1rem;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .btn-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(67, 97, 238, 0.4);
+      color: white;
+    }
+
+    .btn-submit i {
+      margin-right: 10px;
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 768px) {
+      .upload-header {
+        padding: 3rem 0;
+      }
+
+      .upload-title {
+        font-size: 2rem;
+      }
+
+      .upload-subtitle {
+        font-size: 1rem;
+      }
+
+      .upload-container {
+        padding: 1.5rem;
+      }
+    }
+  </style>
 </head>
-
 <body>
 
 <!-- Navigation -->
 <div th:include="adm/template_admin.html::header"></div>
 
+<!-- Upload Header -->
+<div class="upload-header text-center">
+  <div class="container">
+    <h1 class="upload-title">Crear Nuevo Proyecto</h1>
+    <p class="upload-subtitle">Sube y organiza tus fotos en álbumes</p>
+  </div>
+</div>
 
-<!-- Page Content -->
+<!-- Breadcrumb -->
 <div class="container">
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a th:href="@{/}">Inicio</a></li>
+      <li class="breadcrumb-item active">Nuevo Proyecto</li>
+    </ol>
+  </nav>
+</div>
 
-
-  <!-- Page Heading/Breadcrumbs -->
-  <h1 class="mt-4 mb-3">
-    Sube tus fotos <small></small>
-  </h1>
-
-  <ol class="breadcrumb">
-    <li class="breadcrumb-item"><a th:href="@{/}">Home</a></li>
-    <li class="breadcrumb-item active">fotos</li>
-  </ol>
-
-  <h2></h2>
-  <form class="form-horizontal" th:action="@{/fotos/save}" method="post" enctype="multipart/form-data">
-    <div class="form-group">
-      <label class="control-label col-sm-2" for="nombre">Nombre:</label>
-      <div class="col-sm-10">
+<!-- Upload Form -->
+<div class="container">
+  <div class="upload-container">
+    <form class="form-horizontal" th:action="@{/fotos/save}" method="post" enctype="multipart/form-data" id="uploadForm">
+      <!-- Photo Name -->
+      <div class="mb-4">
+        <label for="nombre" class="form-label">Nombre de la foto</label>
         <input type="text" class="form-control" id="nombre" name="nombre"
-               placeholder="agrega un nombre a tu foto" autocomplete="off" required>
+               placeholder="Agrega un nombre descriptivo" autocomplete="off" required>
       </div>
-    </div>
-    <div class="form-group">
-      <label class="control-label col-sm-2" for="descripcion">Descripción:</label>
-      <div class="col-sm-10">
+
+      <!-- Description -->
+      <div class="mb-4">
+        <label for="descripcion" class="form-label">Descripción</label>
         <textarea class="form-control" id="descripcion" name="descripcion"
-                  placeholder="Agrega una descripcion de tu foto" required
-                  autocomplete="off"> </textarea>
+                  placeholder="Describe tu foto (qué es, cuándo fue tomada, etc.)"
+                  required autocomplete="off" rows="4"></textarea>
       </div>
-    </div>
 
-
-
-    <div class="form-group">
-      <label class="control-label col-sm-2" for="album">Álbum:</label>
-      <div class="col-sm-10">
-        <select class="form-control" id="album" name="album" required>
+      <!-- Album Selection -->
+      <div class="mb-4">
+        <label for="album" class="form-label">Álbum principal</label>
+        <select class="form-select" id="album" name="album" required>
           <option value="">Selecciona un álbum</option>
-          <!-- Aquí se mostrarán los álbumes disponibles -->
           <option th:each="album : ${albumes}" th:value="${album.id}" th:text="${album.nombre}"></option>
         </select>
-        </select>
       </div>
-    </div>
 
-    <div class="form-group">
-      <label class="control-label col-sm-2" for="SubAlbum">Álbum:</label>
-      <div class="col-sm-10">
-        <select class="form-control" id="SubAlbum" name="SubAlbum" required>
-          <option value="">Selecciona un álbum</option>
-          <!-- Aquí se mostrarán los álbumes disponibles -->
+      <!-- Subalbum Selection -->
+      <div class="mb-4">
+        <label for="SubAlbum" class="form-label">Subálbum</label>
+        <select class="form-select" id="SubAlbum" name="SubAlbum" required>
+          <option value="">Selecciona un subálbum</option>
           <option th:each="subAlbum : ${subalbum}" th:value="${subAlbum.id}" th:text="${subAlbum.nombre}"></option>
         </select>
       </div>
-    </div>
-    <div class="form-group">
-      <label class="control-label col-sm-2" for="img">Imagen:</label>
-      <div class="col-sm-10">
-        <input type="file" class="form-control-file" id="img" name="img">
-      </div>
-    </div>
 
-    <div class="row">
-      <div class="col-sm-2">
-        <button type="submit" class="btn btn-success">
-          <span class="glyphicon glyphicon-saved"></span> Guardar
+      <!-- File Upload -->
+      <div class="mb-4">
+        <label class="form-label">Imagen</label>
+        <div class="file-upload">
+          <input type="file" class="file-upload-input" id="img" name="img" accept="image/*" required>
+          <label for="img" class="file-upload-label">
+            <div class="file-upload-icon">
+              <i class="fas fa-cloud-upload-alt"></i>
+            </div>
+            <div class="file-upload-text">Arrastra tu foto aquí o haz clic para seleccionar</div>
+            <div class="file-upload-hint">Formatos soportados: JPG, PNG, GIF (Máx. 5MB)</div>
+          </label>
+        </div>
+        <img id="imagePreview" class="image-preview" alt="Vista previa de la imagen">
+      </div>
+
+      <!-- Submit Button -->
+      <div class="text-center mt-4">
+        <button type="submit" class="btn-submit">
+          <i class="fas fa-save"></i> Guardar Proyecto
         </button>
       </div>
-    </div>
-
-  </form>
-
+    </form>
+  </div>
 </div>
-<!-- /.container -->
 
+<!-- Footer -->
 <div th:include="adm/template_admin.html::footer"></div>
-<!-- /.container -->
-
 
 <!-- Bootstrap core JavaScript -->
 <script th:src="@{/vendor/jquery/jquery.min.js}"></script>
 <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
 
-</body>
+<!-- Image Preview Script -->
+<script>
+  document.getElementById('img').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        const preview = document.getElementById('imagePreview');
+        preview.src = event.target.result;
+        preview.style.display = 'block';
+      };
+      reader.readAsDataURL(file);
+    }
+  });
 
+  // Reset form when navigating away (to prevent resubmission)
+  window.addEventListener('beforeunload', function() {
+    document.getElementById('uploadForm').reset();
+  });
+</script>
+
+</body>
 </html>

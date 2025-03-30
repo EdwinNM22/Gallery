@@ -6,235 +6,406 @@
     <meta name="description" content="Galería en línea de fotos">
     <meta name="author" content="GalleryOnline">
 
-    <title th:text="${album.nombre}">Álbum</title>
+    <title th:text="${album.nombre} + ' - Galería Online'">Álbum</title>
 
     <!-- Bootstrap core CSS -->
     <link th:href="@{/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
 
-    <!-- Estilo del botón -->
-    <link th:href="@{/css/boton1.css}" rel="stylesheet">
-    <link th:href="@{/css/cardUI.css}" rel="stylesheet">
-
-    <!-- Font Awesome para íconos -->
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- Custom styles -->
     <style>
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3f37c9;
+            --accent-color: #4895ef;
+            --dark-color: #3a0ca3;
+            --light-color: #f8f9fa;
+            --text-dark: #2b2d42;
+            --text-light: #8d99ae;
+            --success-color: #4cc9f0;
+        }
+
         body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f4f7fa;
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8fafc;
+            color: var(--text-dark);
             margin: 0;
             padding: 0;
         }
 
-        /* Jumbotron Styles */
-        .jumbotron {
-            background-color: #f8f9fa;
-            padding: 3rem;
-            text-align: center;
-            border-radius: 10px;
-            margin-bottom: 2rem;
-        }
-
-        .jumbotron h1 {
-            font-size: 3rem;
-            font-weight: bold;
-            color: #343a40;
-        }
-
-        .jumbotron p {
-            font-size: 1.25rem;
-            color: #6c757d;
-        }
-
-        /* Album Card Styles */
-        .album-card {
-            border: 1px solid #ddd;
-            border-radius: 10px;
-            margin-bottom: 2rem;
-            padding: 1.5rem;
-            background-color: #fff;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease;
-        }
-
-        .album-card:hover {
-            transform: scale(1.05);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-        }
-
-        .album-card h2 {
-            font-size: 1.8rem;
-            color: #343a40;
-            font-weight: bold;
-            margin-bottom: 1rem;
-        }
-
-        .album-card a {
-            text-decoration: none;
-            color: #28a745;
-            font-weight: bold;
-            font-size: 1.1rem;
-            display: inline-block;
-            margin-top: 1rem;
-        }
-
-        .album-card a:hover {
-            color: #218838;
-        }
-
-        .album-card p {
-            font-size: 1rem;
-            color: #6c757d;
-            margin-bottom: 1rem;
-        }
-
-        /* Modern Button Style */
-        .btn-modern {
-            background-color: #28a745;
+        /* Project Header */
+        .project-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             color: white;
-            padding: 10px 20px;
+            padding: 3rem 0;
+            margin-bottom: 3rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .project-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxkZWZzPjxwYXR0ZXJuIGlkPSJwYXR0ZXJuIiB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiIHBhdHRlcm5UcmFuc2Zvcm09InJvdGF0ZSg0NSkiPjxyZWN0IHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjA1KSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3QgZmlsbD0idXJsKCNwYXR0ZXJuKSIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIvPjwvc3ZnPg==');
+            opacity: 0.3;
+        }
+
+        .project-header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .project-title {
+            font-weight: 700;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .project-description {
             font-size: 1.1rem;
-            font-weight: bold;
-            border-radius: 5px;
-            transition: background-color 0.3s ease, transform 0.2s ease;
+            opacity: 0.9;
+            max-width: 700px;
+            margin: 0 auto 1.5rem;
         }
 
-        .btn-modern:hover {
-            background-color: #218838;
-            transform: scale(1.05);
+        /* Action Button */
+        .btn-action {
+            background: white;
+            color: var(--primary-color);
+            border: none;
+            padding: 0.8rem 1.8rem;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
 
+        .btn-action:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            color: var(--primary-color);
+        }
 
-        /* Estilos para el modal */
+        .btn-action i {
+            margin-right: 8px;
+        }
+
+        /* Subalbums Section */
+        .subalbums-section {
+            padding: 0 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 2rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 50px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            border-radius: 2px;
+        }
+
+        .subalbums-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        /* Subalbum Card */
+        .subalbum-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .subalbum-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+        }
+
+        .subalbum-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+        }
+
+        .subalbum-card-content {
+            padding: 1.5rem;
+        }
+
+        .subalbum-card h3 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-dark);
+        }
+
+        .subalbum-card p {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .subalbum-card-footer {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .btn-view {
+            background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+            color: white;
+            border: none;
+            padding: 0.5rem 1.2rem;
+            border-radius: 50px;
+            font-weight: 500;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .btn-view:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(67, 97, 238, 0.3);
+            color: white;
+        }
+
+        .btn-view i {
+            margin-right: 6px;
+            font-size: 0.8rem;
+        }
+
+        /* Modal Styles */
+        .modal-content {
+            border: none;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
         .modal-header {
-            background-color: #f8f9fa;
-            border-bottom: 1px solid #dee2e6;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border-bottom: none;
         }
 
         .modal-title {
-            color: #343a40;
-            font-weight: bold;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
         }
 
-        .form-group.row {
-            margin-bottom: 1.5rem;
+        .modal-title i {
+            margin-right: 10px;
+        }
+
+        .modal-body {
+            padding: 2rem;
+        }
+
+        .form-label {
+            font-weight: 500;
+            color: var(--text-dark);
+        }
+
+        .form-control {
+            border-radius: 8px;
+            padding: 0.8rem 1rem;
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 0.2rem rgba(72, 149, 239, 0.25);
+        }
+
+        .custom-file-label {
+            border-radius: 8px;
+            padding: 0.8rem 1rem;
+            border: 1px solid #e2e8f0;
+            color: var(--text-light);
+        }
+
+        .custom-file-input:focus ~ .custom-file-label {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 0.2rem rgba(72, 149, 239, 0.25);
+        }
+
+        .btn-close {
+            filter: invert(1);
+            opacity: 0.8;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .project-header {
+                padding: 2rem 0;
+            }
+
+            .project-title {
+                font-size: 2rem;
+            }
+
+            .project-description {
+                font-size: 1rem;
+            }
+
+            .subalbums-section {
+                padding: 0 1rem;
+            }
+
+            .section-title {
+                font-size: 1.5rem;
+            }
+
+            .subalbums-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
 
-
-<!-- Mensaje de éxito -->
-<div th:if="${message}" class="alert alert-success">
-    <p th:text="${message}"></p>
-</div>
-
 <!-- Navigation -->
 <div th:include="adm/template_admin.html::header"></div>
 
-<!-- Page Content -->
-<div class="container">
-
-    <!-- Jumbotron Header -->
-    <header class="jumbotron my-4">
-        <h1 class="display-3" th:text="${album.nombre}">Nombre del Álbum</h1>
-        <p class="lead">Disfruta de todas las fotos de este álbum.</p>
-
-        <!-- Botón para abrir el modal (reemplaza el antiguo) -->
-        <button type="button" class="btn btn-modern" data-toggle="modal" data-target="#agregarFotoModal">
+<!-- Project Header -->
+<div class="project-header text-center">
+    <div class="container project-header-content">
+        <h1 class="project-title" th:text="${album.nombre}">Nombre del Álbum</h1>
+        <p class="project-description">Disfruta de todas las fotos de este álbum</p>
+        <button type="button" class="btn-action" data-toggle="modal" data-target="#agregarFotoModal">
             <i class="fas fa-plus-circle"></i> Agregar foto
         </button>
-    </header>
-    <!-- Modal para agregar foto -->
-    <div class="modal fade" id="agregarFotoModal" tabindex="-1" role="dialog" aria-labelledby="agregarFotoModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="agregarFotoModalLabel"><i class="fas fa-camera me-2"></i>Subir nueva foto</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form class="form-horizontal" th:action="@{/fotos/save}" method="post" enctype="multipart/form-data" id="fotoForm">
-                        <div class="form-group row">
-                            <label class="control-label col-sm-3" for="nombre">Nombre:</label>
-                            <div class="col-sm-9">
-                                <input type="text" class="form-control" id="nombre" name="nombre"
-                                       placeholder="Nombre para la foto" autocomplete="off" required>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="control-label col-sm-3" for="descripcion">Descripción:</label>
-                            <div class="col-sm-9">
-                                <textarea class="form-control" id="descripcion" name="descripcion"
-                                          placeholder="Descripción de la foto" required
-                                          autocomplete="off" rows="3"></textarea>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="control-label col-sm-3" for="album">Álbum:</label>
-                            <div class="col-sm-9">
-                                <select class="form-control" id="album" name="album" required>
-                                    <option value="">Selecciona un álbum</option>
-                                    <option th:each="album : ${album}" th:value="${album.id}" th:text="${album.nombre}"></option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="control-label col-sm-3" for="SubAlbum">Sub Álbum:</label>
-                            <div class="col-sm-9">
-                                <select class="form-control" id="SubAlbum" name="subalbum" required>
-                                    <option value="">Selecciona un sub álbum</option>
-                                    <option th:each="subAlbum : ${subAlbumAntes}" th:value="${subAlbumAntes.id}" th:text="${subAlbumAntes.nombre}"></option>
-                                    <option th:each="album : ${subAlbumDespues}" th:value="${subAlbumDespues.id}" th:text="${subAlbumDespues.nombre}"></option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="form-group row">
-                            <label class="control-label col-sm-3" for="img">Imagen:</label>
-                            <div class="col-sm-9">
-                                <div class="custom-file">
-                                    <input type="file" class="custom-file-input" id="img" name="img" required>
-                                    <label class="custom-file-label" for="img">Seleccionar archivo</label>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fas fa-times"></i> Cancelar</button>
-                    <button type="submit" class="btn btn-success" form="fotoForm">
-                        <i class="fas fa-save"></i> Guardar foto
-                    </button>
-                </div>
-            </div>
-        </div>
     </div>
-    <!-- Bloque para Subálbumes Antes y Después -->
-    <div class="row text-center d-flex">
-        <div th:each="subAlbum : ${subAlbumAntes}" class="col-md-4">
-            <div class="album-card">
-                <h2 th:text="${subAlbum.nombre}">Nombre del Subálbum Antes</h2>
-                <h6 th:text="${subAlbum.descripcion}">Descripción del subálbum antes</h6>
-                <a th:href="@{/subAlbumes/antes/{id}(id=${subAlbum.id})}">Ver Subálbum Antes</a>
-            </div>
-        </div>
-
-        <div th:each="subAlbum : ${subAlbumDespues}" class="col-md-4">
-            <div class="album-card">
-                <h2 th:text="${subAlbum.nombre}">Nombre del Subálbum Después</h2>
-                <h6 th:text="${subAlbum.descripcion}">Descripción del subálbum después</h6>
-                <a th:href="@{/subAlbumes/despues/{id}(id=${subAlbum.id})}">Ver Subálbum Después</a>
-            </div>
-        </div>
-    </div>
-
-
 </div>
-<!-- /.container -->
+
+<!-- Subalbums Section -->
+<div class="container">
+    <!-- Subálbumes Antes -->
+    <div th:if="${not #lists.isEmpty(subAlbumAntes)}" class="subalbums-section">
+        <h2 class="section-title">Antes</h2>
+        <div class="subalbums-grid">
+            <div th:each="subAlbum : ${subAlbumAntes}" class="subalbum-card">
+                <div class="subalbum-card-content">
+                    <h3 th:text="${subAlbum.nombre}">Nombre del Subálbum Antes</h3>
+                    <p th:text="${subAlbum.descripcion} ?: 'Sin descripción'">Descripción del subálbum antes</p>
+                    <div class="subalbum-card-footer">
+                        <a th:href="@{/subAlbumes/antes/{id}(id=${subAlbum.id})}" class="btn-view">
+                            <i class="fas fa-eye"></i> Ver
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Subálbumes Después -->
+    <div th:if="${not #lists.isEmpty(subAlbumDespues)}" class="subalbums-section">
+        <h2 class="section-title">Después</h2>
+        <div class="subalbums-grid">
+            <div th:each="subAlbum : ${subAlbumDespues}" class="subalbum-card">
+                <div class="subalbum-card-content">
+                    <h3 th:text="${subAlbum.nombre}">Nombre del Subálbum Después</h3>
+                    <p th:text="${subAlbum.descripcion} ?: 'Sin descripción'">Descripción del subálbum después</p>
+                    <div class="subalbum-card-footer">
+                        <a th:href="@{/subAlbumes/despues/{id}(id=${subAlbum.id})}" class="btn-view">
+                            <i class="fas fa-eye"></i> Ver
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Empty State -->
+    <div th:if="${#lists.isEmpty(subAlbumAntes) and #lists.isEmpty(subAlbumDespues)}" class="text-center py-5">
+        <i class="fas fa-folder-open fa-4x mb-4" style="color: var(--accent-color); opacity: 0.7;"></i>
+        <h3 class="mb-3">No hay subálbumes en este proyecto</h3>
+        <p class="text-muted mb-4">Comienza agregando fotos para organizar tu proyecto</p>
+    </div>
+</div>
+
+<!-- Modal para agregar foto -->
+<div class="modal fade" id="agregarFotoModal" tabindex="-1" role="dialog" aria-labelledby="agregarFotoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="agregarFotoModalLabel"><i class="fas fa-camera"></i> Subir nueva foto</h5>
+                <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" th:action="@{/fotos/save}" method="post" enctype="multipart/form-data" id="fotoForm">
+                    <div class="mb-3">
+                        <label for="nombre" class="form-label">Nombre</label>
+                        <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Nombre para la foto" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="album" class="form-label">Álbum</label>
+                        <select class="form-control" id="album" name="album" required style="padding: 1px;">
+                            <option value="">Selecciona un álbum</option>
+                            <option th:each="album : ${album}" th:value="${album.id}" th:text="${album.nombre}"></option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="SubAlbum" class="form-label">Sub Álbum</label>
+                        <select class="form-control" id="SubAlbum" name="subalbum" required style="padding: 1px;">
+                            <option value="">Selecciona un sub álbum</option>
+                            <option th:each="subAlbum : ${subAlbumAntes}" th:value="${subAlbum.id}" th:text="${subAlbum.nombre}"></option>
+                            <option th:each="subAlbum : ${subAlbumDespues}" th:value="${subAlbum.id}" th:text="${subAlbum.nombre}"></option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="img" class="form-label">Imagen</label>
+                        <div class="custom-file">
+                            <input type="file" class="custom-file-input" id="img" name="img" required>
+                            <label class="custom-file-label" for="img">Seleccionar archivo</label>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fas fa-times mr-2"></i>Cancelar</button>
+                <button type="submit" class="btn btn-primary" form="fotoForm">
+                    <i class="fas fa-save mr-2"></i>Guardar foto
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <!-- Footer -->
 <div th:include="adm/template_admin.html::footer"></div>
@@ -252,23 +423,11 @@
         nextSibling.innerText = fileName;
     });
 
-    // Opcional: Resetear el formulario al cerrar el modal
+    // Resetear el formulario al cerrar el modal
     $('#agregarFotoModal').on('hidden.bs.modal', function () {
         $('#fotoForm')[0].reset();
         $('.custom-file-label').text('Seleccionar archivo');
     });
-
-    // // Recargar la página después de enviar el formulario
-    // document.getElementById('fotoForm').addEventListener('submit', function() {
-    //     setTimeout(function() {
-    //         window.location.reload();
-    //     }, 100);
-    // });
-</script>
-
-
-
-
 </script>
 
 </body>

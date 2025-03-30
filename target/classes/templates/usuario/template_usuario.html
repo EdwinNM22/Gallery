@@ -1,119 +1,312 @@
-<!-- Navigation -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-<style>
-  body {
-    font-family: 'Arial', sans-serif;
-    background-color: #f4f7fa;
-    margin: 0;
-    padding: 0;
-  }
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
-  /* Navbar Styles */
-  .navbar {
-    background-color: #343a40;
-  }
+  <style>
+    :root {
+      --primary-color: #4361ee;
+      --secondary-color: #3f37c9;
+      --accent-color: #4895ef;
+      --dark-color: #3a0ca3;
+      --light-color: #f8f9fa;
+      --text-dark: #2b2d42;
+      --text-light: #8d99ae;
+    }
 
-  .navbar-brand {
-    color: #fff;
-    font-weight: bold;
-    font-size: 1.5rem;
-  }
+    /* Modern Navbar - Versión ajustada */
+    .modern-navbar {
+      background: rgba(255, 255, 255, 0.98);
+      box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+      padding: 0.8rem 0;
+      font-family: 'Poppins', sans-serif;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
 
-  .navbar-nav .nav-link {
-    color: #fff;
-    font-size: 1.1rem;
-  }
+    .modern-navbar.scrolled {
+      background: rgba(255, 255, 255, 0.98);
+      box-shadow: 0 5px 25px rgba(0, 0, 0, 0.1);
+      padding: 0.5rem 0;
+    }
 
-  .navbar-nav .nav-link:hover {
-    color: #28a745;
-  }
+    .navbar-brand {
+      font-weight: 700;
+      font-size: 1.5rem;
+      color: var(--primary-color) !important;
+      display: flex;
+      align-items: center;
+    }
 
-  /* Jumbotron Styles */
-  .jumbotron {
-    background-color: #f8f9fa;
-    padding: 3rem;
-    text-align: center;
-    border-radius: 10px;
-    margin-bottom: 2rem;
-  }
+    .navbar-brand i {
+      margin-right: 10px;
+      font-size: 1.3em;
+    }
 
-  .jumbotron h1 {
-    font-size: 3rem;
-    font-weight: bold;
-    color: #343a40;
-  }
+    .nav-link {
+      font-weight: 500;
+      color: var(--text-dark) !important;
+      padding: 0.5rem 1.2rem !important;
+      margin: 0 0.2rem;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
 
-  .jumbotron p {
-    font-size: 1.25rem;
-    color: #6c757d;
-  }
+    .nav-link:hover {
+      color: var(--primary-color) !important;
+      background: rgba(67, 97, 238, 0.1);
+    }
 
-  /* Album Card Styles */
-  .album-card {
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    margin-bottom: 2rem;
-    padding: 1.5rem;
-    background-color: #fff;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease;
-  }
+    .dropdown-menu {
+      border: none;
+      border-radius: 10px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      padding: 0.5rem 0;
+      margin-top: 0.5rem;
+    }
 
-  .album-card:hover {
-    transform: scale(1.05);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-  }
+    .dropdown-item {
+      padding: 0.6rem 1.5rem;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
 
-  .album-card h2 {
-    font-size: 1.8rem;
-    color: #343a40;
-    font-weight: bold;
-    margin-bottom: 1rem;
-  }
+    .dropdown-item:hover {
+      background: rgba(67, 97, 238, 0.1);
+      color: var(--primary-color);
+    }
 
-  .album-card a {
-    text-decoration: none;
-    color: #28a745;
-    font-weight: bold;
-    font-size: 1.1rem;
-    display: inline-block;
-    margin-top: 1rem;
-  }
+    .dropdown-divider {
+      border-color: rgba(0, 0, 0, 0.05);
+    }
 
-  .album-card a:hover {
-    color: #218838;
-  }
+    .btn-logout {
+      background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+      color: white !important;
+      border-radius: 8px;
+      padding: 0.5rem 1.5rem !important;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      border: none;
+      box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
+      margin-left: 0.5rem;
+    }
 
-  .album-card p {
-    font-size: 1rem;
-    color: #6c757d;
-    margin-bottom: 1rem;
-  }
+    .btn-logout:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(67, 97, 238, 0.4);
+      color: white !important;
+    }
 
-  /* Footer Styles */
-  .footer {
-    background-color: #343a40;
-    color: #fff;
-    padding: 2rem;
-    text-align: center;
-    font-size: 1rem;
-  }
+    .navbar-toggler {
+      border: none;
+      padding: 0.5rem;
+    }
 
-  .footer a {
-    color: #28a745;
-    text-decoration: none;
-  }
+    .navbar-toggler:focus {
+      outline: none;
+      box-shadow: none;
+    }
 
-  .footer a:hover {
-    color: #218838;
-  }
+    .navbar-toggler-icon {
+      background-image: none;
+      position: relative;
+      width: 24px;
+      height: 2px;
+      background: var(--primary-color);
+      transition: all 0.3s ease;
+    }
 
-</style>
+    .navbar-toggler-icon::before,
+    .navbar-toggler-icon::after {
+      content: '';
+      position: absolute;
+      width: 24px;
+      height: 2px;
+      background: var(--primary-color);
+      transition: all 0.3s ease;
+    }
 
+    .navbar-toggler-icon::before {
+      transform: translateY(-8px);
+    }
+
+    .navbar-toggler-icon::after {
+      transform: translateY(8px);
+    }
+
+    .navbar-toggler[aria-expanded="true"] .navbar-toggler-icon {
+      background: transparent;
+    }
+
+    .navbar-toggler[aria-expanded="true"] .navbar-toggler-icon::before {
+      transform: rotate(45deg);
+    }
+
+    .navbar-toggler[aria-expanded="true"] .navbar-toggler-icon::after {
+      transform: rotate(-45deg);
+    }
+
+    /* Modern Footer - Versión ajustada */
+    .modern-footer {
+      background: linear-gradient(135deg, var(--dark-color), var(--secondary-color));
+      color: white;
+      padding: 3rem 0 1.5rem;
+      font-family: 'Poppins', sans-serif;
+      position: relative;
+      overflow: hidden;
+      text-align: center; /* Asegura que todo el contenido esté centrado */
+    }
+
+    .modern-footer::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxkZWZzPjxwYXR0ZXJuIGlkPSJwYXR0ZXJuIiB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiIHBhdHRlcm5UcmFuc2Zvcm09InJvdGF0ZSg0NSkiPjxyZWN0IHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjA1KSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3QgZmlsbD0idXJsKCNwYXR0ZXJuKSIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIvPjwvc3ZnPg==');
+      opacity: 0.2;
+    }
+
+    .footer-content {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center; /* Centra todo el contenido horizontalmente */
+    }
+
+    .footer-logo {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      display: inline-block;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin: 1.5rem 0;
+      width: 100%; /* Asegura que ocupe todo el ancho disponible */
+    }
+
+    .footer-link {
+      color: rgba(255, 255, 255, 0.8);
+      margin: 0 1rem;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      font-weight: 500;
+    }
+
+    .footer-link:hover {
+      color: white;
+      text-decoration: none;
+    }
+
+    .footer-social {
+      display: flex;
+      justify-content: center;
+      margin: 1.5rem 0;
+      width: 100%; /* Asegura que ocupe todo el ancho disponible */
+    }
+
+    .social-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 0.5rem;
+      color: white;
+      transition: all 0.3s ease;
+    }
+
+    .social-icon:hover {
+      background: var(--accent-color);
+      transform: translateY(-3px);
+    }
+
+    .footer-bottom {
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding-top: 1.5rem;
+      margin-top: 1.5rem;
+      text-align: center;
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.7);
+      width: 100%; /* Asegura que ocupe todo el ancho disponible */
+    }
+
+    /* Botón flotante para nuevo proyecto */
+    .fab {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      box-shadow: 0 5px 20px rgba(67, 97, 238, 0.4);
+      transition: all 0.3s ease;
+      z-index: 100;
+      text-decoration: none;
+    }
+
+    .fab:hover {
+      transform: scale(1.1);
+      color: white;
+    }
+
+    @media (max-width: 768px) {
+      .navbar-brand {
+        font-size: 1.3rem;
+      }
+
+      .nav-link {
+        padding: 0.5rem 1rem !important;
+      }
+
+      .footer-links {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .footer-link {
+        margin: 0.5rem 0;
+      }
+
+      .fab {
+        width: 50px;
+        height: 50px;
+        font-size: 1.3rem;
+        bottom: 1.5rem;
+        right: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Modern Navbar Ajustado -->
 <div th:fragment="header">
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+  <nav class="navbar navbar-expand-lg modern-navbar fixed-top">
     <div class="container">
-      <a class="navbar-brand" th:href="@{/}">GalleryOnline</a>
+      <a class="navbar-brand" th:href="@{/}">
+        <i class="fas fa-camera-retro"></i> GalleryOnline
+      </a>
 
       <button class="navbar-toggler" type="button" data-toggle="collapse"
               data-target="#navbarResponsive" aria-controls="navbarResponsive"
@@ -122,20 +315,32 @@
       </button>
 
       <div class="collapse navbar-collapse" id="navbarResponsive">
-        <ul class="navbar-nav ml-auto">
+        <ul class="navbar-nav ml-auto align-items-lg-center">
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"
-               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> USER </a>
+               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <i class="fas fa-user-circle mr-1"></i> USER
+            </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-              <a class="dropdown-item" th:href="@{/fotos}">Administrar foto</a>
-              <a class="dropdown-item" th:href="@{/albumes/show}">Administrar álbum</a>
-<!--              <a class="dropdown-item" th:href="@{/usuario/login}">Login</a>-->
-              <a class="dropdown-item" th:href="@{/cerrar}">Salir</a>
-              <a class="dropdown-item" th:href="@{/subAlbumes}">crear subAlbumes</a>
+              <a class="dropdown-item" th:href="@{/fotos}">
+                <i class="fas fa-image mr-2"></i>Administrar fotos
+              </a>
+              <a class="dropdown-item" th:href="@{/albumes/show}">
+                <i class="fas fa-folder mr-2"></i>Administrar álbumes
+              </a>
+              <a class="dropdown-item" th:href="@{/subAlbumes}">
+                <i class="fas fa-folder-plus mr-2"></i>Crear subálbumes
+              </a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" th:href="@{/cerrar}">
+                <i class="fas fa-sign-out-alt mr-2"></i>Salir
+              </a>
             </div>
           </li>
           <li class="nav-item">
-            <a class="btn btn-outline-success my-2 my-sm-0" th:href="@{/cerrar}">Cerrar sesión</a>
+            <a class="nav-link btn-logout" th:href="@{/cerrar}">
+              <i class="fas fa-sign-out-alt mr-1"></i>Cerrar sesión
+            </a>
           </li>
         </ul>
       </div>
@@ -143,15 +348,35 @@
   </nav>
 </div>
 
+<!-- Modern Footer Ajustado -->
 <div th:fragment="footer">
-  <footer class="py-4 bg-dark text-white">
-    <div class="container text-center">
-      <p class="m-0">&copy; 2fotoer de user.</p>
-      <div class="mt-2">
-        <a href="#" class="text-white mx-2">Términos</a> |
-        <a href="#" class="text-white mx-2">Privacidad</a> |
-        <a href="#" class="text-white mx-2">Contacto</a>
-      </div>
+  <footer class="modern-footer">
+    <div class="container footer-content">
+      <a href="#" class="footer-logo text-white">
+        <i class="fas fa-camera-retro"></i> Gestion de proyectos
+      </a>
+
     </div>
   </footer>
 </div>
+
+<!-- Botón flotante para nuevo proyecto -->
+<!--<a th:href="@{/albumes/create}" class="fab">-->
+<!--  <i class="fas fa-plus"></i>-->
+<!--</a>-->
+
+<!-- Script para navbar con efecto scroll -->
+<script>
+  // Efecto de cambio en navbar al hacer scroll
+  window.addEventListener('scroll', function() {
+    const navbar = document.querySelector('.modern-navbar');
+    if (window.scrollY > 50) {
+      navbar.classList.add('scrolled');
+    } else {
+      navbar.classList.remove('scrolled');
+    }
+  });
+</script>
+
+</body>
+</html>

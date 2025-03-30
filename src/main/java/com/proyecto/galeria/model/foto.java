@@ -1,6 +1,7 @@
 package com.proyecto.galeria.model;
 
 import javax.persistence.*;
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -13,6 +14,7 @@ public class foto {
     private String nombre;
     private String descripcion;
     private String imagen;
+    private Date fecha;
 
     @ManyToOne
     private usuario usuario;
@@ -29,22 +31,17 @@ public class foto {
     // Constructor, getters, setters y toString
     public foto() {}
 
-    public foto(Integer id, String nombre, String descripcion, String imagen, usuario usuario) {
+    public foto(Integer id, String nombre, String descripcion, String imagen, Date fecha, usuario usuario) {
         this.id = id;
         this.nombre = nombre;
         this.descripcion = descripcion;
         this.imagen = imagen;
+        this.fecha = fecha;
         this.usuario = usuario;
     }
 
     // Getter y Setter para subAlbum
-    public SubAlbum getSubAlbum() {
-        return subAlbum;
-    }
 
-    public void setSubAlbum(SubAlbum subAlbum) {
-        this.subAlbum = subAlbum;
-    }
 
     public Integer getId() {
         return id;
@@ -78,6 +75,14 @@ public class foto {
         this.imagen = imagen;
     }
 
+    public Date getFecha() {
+        return fecha;
+    }
+
+    public void setFecha(Date fecha) {
+        this.fecha = fecha;
+    }
+
     public usuario getUsuario() {
         return usuario;
     }
@@ -92,5 +97,13 @@ public class foto {
 
     public void setAlbumes(List<album> albumes) {
         this.albumes = albumes;
+    }
+
+    public SubAlbum getSubAlbum() {
+        return subAlbum;
+    }
+
+    public void setSubAlbum(SubAlbum subAlbum) {
+        this.subAlbum = subAlbum;
     }
 }

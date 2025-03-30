@@ -5,6 +5,8 @@ import com.proyecto.galeria.model.album;
 import com.proyecto.galeria.model.foto;
 import com.proyecto.galeria.model.usuario;
 import com.proyecto.galeria.service.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +21,7 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -57,6 +60,7 @@ public class FotoController {
         return "fotos/create";
     }
 
+
     @PostMapping("/save")
     public String save(Model model, foto foto,
                        @RequestParam("img") MultipartFile file,
@@ -79,7 +83,7 @@ public class FotoController {
 
         // Asociar la foto al subálbum
         foto.setSubAlbum(subAlbum);
-        subAlbum.getFotos().add(foto); // Asegurarse de que la foto esté también en la lista de fotos del subálbum
+        subAlbum.getFotos().add(foto);
 
         // Imagen
         if (foto.getId() == null) {
@@ -87,16 +91,23 @@ public class FotoController {
             foto.setImagen(nombrefoto);
         }
 
-        // Guardar la foto (esto guardará la relación foto-subálbum)
-        fotoService.save(foto);
-        subAlbumService.save(subAlbum); // Guardar el subálbum para asegurar que la relación ManyToMany se actualice
+        // Asignar la fecha de subida a la foto (con el tipo Date)
+        Date fechaHoraSubida = new Date();  // Obtiene la fecha y hora actual
+        foto.setFecha(fechaHoraSubida);  // Usando el setter para asignar el valor
 
-        // Agregar el mensaje de éxito
+        // Guardar la foto
+        fotoService.save(foto);
+        subAlbumService.save(subAlbum);
+
+        // Agregar mensaje de éxito
         model.addAttribute("message", "La foto se ha agregado con éxito");
 
-        // Redirigir a la misma vista para mantener el modal abierto
-        return "redirect:/albumes/" + subAlbum.getAlbum().getId(); // Asegúrate de que "album" sea el nombre de la vista donde está el modal
+        // Redirigir
+        return "redirect:/albumes/" + subAlbum.getAlbum().getId();
     }
+
+
+
 
 
 

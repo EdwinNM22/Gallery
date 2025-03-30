@@ -12,6 +12,7 @@ public interface fotoService {
     public void delete(Integer id);
     public List<foto> findAll();
 
+
 }
 
 

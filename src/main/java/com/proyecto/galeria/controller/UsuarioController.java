@@ -6,7 +6,6 @@ import com.proyecto.galeria.service.IUsuarioService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,8 +22,7 @@ public class UsuarioController {
     @Autowired
     private IUsuarioService usuarioService;
 
-    private final Logger logger= LoggerFactory.getLogger(UsuarioController.class);
-
+    private final Logger logger = LoggerFactory.getLogger(UsuarioController.class);
 
     BCryptPasswordEncoder passEncode = new BCryptPasswordEncoder();
 
@@ -37,7 +35,7 @@ public class UsuarioController {
     public String save(usuario usuario) {
         logger.info("Usuario registro: {}", usuario);
         usuario.setTipo_usuario("USER");
-        usuario.setPassword( passEncode.encode(usuario.getPassword()));
+        usuario.setPassword(passEncode.encode(usuario.getPassword()));
         usuarioService.save(usuario);
         return "redirect:/";
     }
@@ -53,8 +51,8 @@ public class UsuarioController {
 
         Object idUsuarioObj = session.getAttribute("idusuario");
         if (idUsuarioObj == null) {
-            logger.info("No hay sesión activa, redirigiendo a /");
-            return "redirect:/";
+            logger.info("No hay sesión activa, redirigiendo a /mainMenu");
+            return "redirect:/mainMenu";
         }
 
         Optional<usuario> user = usuarioService.findById(Integer.parseInt(idUsuarioObj.toString()));
@@ -64,19 +62,11 @@ public class UsuarioController {
             logger.info("Tipo de usuario: {}", user.get().getTipo_usuario());
             logger.info("ID de usuario desde la sesión: {}", idUsuarioObj);
 
-            if (user.get().getTipo_usuario().equals("ADMIN")) {
-                return "redirect:/adm";  // Redirige a /adm si es admin
-            } else {
-                return "redirect:/";  // Redirige a / si no es admin
-            }
+            return "redirect:/mainMenu";
         } else {
             logger.info("Usuario no existe");
         }
 
-        return "redirect:/";  // En caso de cualquier error, redirige a /
+        return "redirect:/mainMenu";
     }
-
 }
-
-
-
