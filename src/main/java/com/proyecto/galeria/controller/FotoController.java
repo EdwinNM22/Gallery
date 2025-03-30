@@ -61,6 +61,7 @@ public class FotoController {
     }
 
 
+
     @PostMapping("/save")
     public String save(Model model, foto foto,
                        @RequestParam("img") MultipartFile file,
@@ -106,11 +107,6 @@ public class FotoController {
         return "redirect:/albumes/" + subAlbum.getAlbum().getId();
     }
 
-
-
-
-
-
     @GetMapping("/edit/{id}")
     public String edit(@PathVariable Integer id, Model model) {
         Optional<foto> optionalFoto = fotoService.get(id);
@@ -124,32 +120,41 @@ public class FotoController {
 
     @PostMapping("/update")
     public String update(foto foto, @RequestParam("img") MultipartFile file) throws IOException {
-        fotoService.update(foto);
-
         Optional<foto> optionalFoto = fotoService.get(foto.getId());
+
         if (optionalFoto.isPresent()) {
-            foto p = optionalFoto.get();
+            foto fotoExistente = optionalFoto.get();
+
+            // Mantener las relaciones existentes
+            foto.setUsuario(fotoExistente.getUsuario());
+            foto.setSubAlbum(fotoExistente.getSubAlbum());
+
+            // Mantener la fecha original (si no quieres que cambie)
+            foto.setFecha(fotoExistente.getFecha());
 
             if (file.isEmpty()) {
                 // Si no se seleccionó nueva imagen, mantener la imagen actual
-                foto.setImagen(p.getImagen());
+                foto.setImagen(fotoExistente.getImagen());
             } else {
                 // cuando se edita la imagen
-                if (p.getImagen().equals("default.jpg")) {
-                    upload.deleteImage(p.getImagen());
+                if (fotoExistente.getImagen() != null && !fotoExistente.getImagen().equals("default.jpg")) {
+                    upload.deleteImage(fotoExistente.getImagen());
                 }
 
                 String nombrefoto = upload.saveImage(file);
                 foto.setImagen(nombrefoto);
             }
+
+            // Actualizar después de todos los cambios
+            fotoService.update(foto);
         } else {
-            // Manejar el caso en que no se encuentre la foto
-            // Por ejemplo, lanzar una excepción o redirigir a otro lugar
             throw new IllegalArgumentException("Foto no encontrada con el ID: " + foto.getId());
         }
 
         return "redirect:/fotos";
     }
+
+
 
     @GetMapping("/delete/{id}")
     public String delete(@PathVariable Integer id) {

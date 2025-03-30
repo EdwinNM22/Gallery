@@ -286,19 +286,20 @@
 
 <!-- Photo Gallery -->
 <div class="container">
-  <div th:if="${not #lists.isEmpty(foto)}" class="photo-grid">
-    <div th:each="foto : ${foto}" class="photo-card">
+  <div th:if="${not #lists.isEmpty(fotoAntes)}" class="photo-grid">
+    <div th:each="fotoAntes : ${fotoAntes}" class="photo-card">
       <div class="photo-img-container">
-        <img class="photo-img" th:src="@{/images/{img}(img=${foto.imagen})}" alt="Foto del álbum">
+        <img class="photo-img" th:src="@{/images/{img}(img=${fotoAntes.imagen})}" alt="Foto del álbum">
         <div class="photo-overlay">
-          <h5 class="photo-title" th:text="${foto.nombre}">Nombre foto</h5>
+          <h5 class="photo-title" th:text="${fotoAntes.nombre}">Nombre foto</h5>
           <!-- Aquí cambiamos descripcion por fecha -->
-          <p class="photo-description" th:text="${#dates.format(foto.fecha, 'yyyy-MM-dd HH:mm:ss')}">Fecha de subida</p>
+          <p class="photo-description" th:text="${#dates.format(fotoAntes.fecha, 'yyyy-MM-dd HH:mm:ss')}">Fecha de subida</p>
         </div>
       </div>
       <div class="photo-content">
         <div class="photo-actions">
-          <a href="javascript:void(0)" class="btn-view" data-bs-toggle="modal" th:attr="data-bs-target='#photoModal' + ${foto.id}">
+          <a href="javascript:void(0)" class="btn-view" data-bs-toggle="modal"
+             th:data-bs-target="'#photoModal' + ${fotoAntes.id}">
             <i class="fas fa-expand mr-2"></i>Ampliar
           </a>
         </div>
@@ -309,7 +310,7 @@
 
 
   <!-- Empty State -->
-  <div th:if="${#lists.isEmpty(foto)}" class="empty-state">
+  <div th:if="${#lists.isEmpty(fotoAntes)}" class="empty-state">
     <i class="far fa-images"></i>
     <h3>No hay fotos en este álbum</h3>
     <p>Comienza agregando fotos para verlas aquí</p>
@@ -324,21 +325,21 @@
 </div>
 
 <!-- Photo Modals -->
-<div th:each="foto : ${foto}">
-  <div class="modal fade photo-modal" th:id="'photoModal' + ${foto.id}" tabindex="-1"
-       th:aria-labelledby="'photoModalLabel' + ${foto.id}"
+<div th:each="fotoAntes : ${fotoAntes}">
+  <div class="modal fade photo-modal" th:id="'photoModal' + ${fotoAntes.id}" tabindex="-1"
+       th:aria-labelledby="'photoModalLabel' + ${fotoAntes.id}"
        aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" th:id="'photoModalLabel' + ${foto.id}" th:text="${foto.nombre}">Foto Detalle</h5>
+          <h5 class="modal-title" th:id="'photoModalLabel' + ${fotoAntes.id}" th:text="${fotoAntes.nombre}">Foto Detalle</h5>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <img class="img-fluid" th:src="@{/images/{img}(img=${foto.imagen})}" alt="Foto detallada">
+          <img class="img-fluid" th:src="@{/images/{img}(img=${fotoAntes.imagen})}" alt="Foto detallada">
         </div>
         <div class="modal-footer">
-          <p class="mb-0" th:text="${foto.descripcion}">Descripción de la foto</p>
+          <p class="mb-0" th:text="${fotoAntes.descripcion}">Descripción de la foto</p>
         </div>
       </div>
     </div>
