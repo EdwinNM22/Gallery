@@ -8,6 +8,9 @@
 
   <!-- Bootstrap core CSS -->
   <link th:href="@{/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
+  <script th:src="@{/vendor/jquery/jquery.min.js}"></script> <!-- Si usas jQuery -->
+  <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+
 
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -301,10 +304,10 @@
       </div>
       <div class="photo-content">
         <div class="photo-actions">
-          <a href="javascript:void(0)" class="btn-view" data-bs-toggle="modal"
-             th:data-bs-target="'#photoModal' + ${fotoAntes.id}">
-            <i class="fas fa-expand mr-2"></i>Ampliar
+          <a href="javascript:void(0)" class="btn-view" data-toggle="modal" th:data-target="'#photoModal' + ${fotoAntes.id}">
+            <i class="fas fa-expand mr-2"></i> Ampliar
           </a>
+
         </div>
       </div>
     </div>
@@ -319,12 +322,12 @@
     <p>Comienza agregando fotos para verlas aquí</p>
   </div>
 
-  <!-- Back Button -->
-<!--  <div class="text-center">-->
-<!--    <a th:href="@{/}" class="btn-back">-->
-<!--      <i class="fas fa-arrow-left"></i> Volver al inicio-->
-<!--    </a>-->
-<!--  </div>-->
+<!--   Back Button-->
+  <div class="text-center">
+    <a th:href="@{/}" class="btn-back">
+      <i class="fas fa-arrow-left"></i> Volver al inicio
+    </a>
+  </div>
 </div>
 
 <!-- Photo Modals -->
@@ -342,7 +345,7 @@
           <img class="img-fluid" th:src="@{/images/{img}(img=${fotoAntes.imagen})}" alt="Foto detallada">
         </div>
         <div class="modal-footer">
-          <p class="mb-0" th:text="${fotoAntes.descripcion}">Descripción de la foto</p>
+          <p class="photo-uploader" th:text="'Subido por: ' + ${fotoAntes.usuario.nombre}"</p>
         </div>
       </div>
     </div>
@@ -353,8 +356,8 @@
 <div th:include="usuario/template_usuario.html::footer"></div>
 
 <!-- Bootstrap core JavaScript -->
-<script th:src="@{/vendor/jquery/jquery.min.js}"></script>
-<script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+<!--<script th:src="@{/vendor/jquery/jquery.min.js}"></script>-->
+<!--<script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>-->
 
 </body>
 </html>
