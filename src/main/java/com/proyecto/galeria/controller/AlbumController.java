@@ -64,8 +64,8 @@ public class AlbumController {
 
     @GetMapping("/create")
     public String albumes(Model model) {
-//        model.addAttribute("albumes", albumService.findAll());  // Lista de albumes
-//        model.addAttribute("subalbum", subAlbumService.findAll());  // Lista de subálbumes
+        model.addAttribute("albumes", albumService.findAll());  // Lista de albumes
+        model.addAttribute("subalbum", subAlbumService.findAll());  // Lista de subálbumes
         return "albumes/create";  // La vista donde se muestra el modal
     }
 
@@ -74,7 +74,7 @@ public class AlbumController {
         LOGGER.info("Saving album: {}", album);
 
         // Obtener el id del usuario de la sesión
-        Object idUsuarioObj = session.getAttribute("idsuaurio");
+        Object idUsuarioObj = session.getAttribute("idusuario");
         if (idUsuarioObj == null) {
             return "redirect:/login";
         }

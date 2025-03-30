@@ -28,15 +28,15 @@ public class SpringBootSecurity extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        String[] publicUrls = {"/usuario/**", "/css/**", "/js/**", "/subAlbumes/**"};
-        String[] userUrls = {"/album/**", "/fotos/**"};
-        String[] admUrls =  {"/adm/**"};
+        String[] publicUrls = {"/usuario/**", "/css/**", "/js/**"};
+        String[] userUrls = {"/album/**", "/fotos/**", "/subAlbumes/**"};
+        String[] admUrls = {"/adm/**"};
 
         http.csrf().disable()
                 .authorizeRequests()
                 .antMatchers(publicUrls).permitAll() // Permitir login y archivos estáticos
-                .antMatchers(userUrls).hasRole("USER") // Solo acceso a usuario con rol USER
-                .antMatchers(admUrls).hasRole("ADMIN")
+                .antMatchers(userUrls).hasAnyRole("USER", "ADMIN") // Acceso a usuarios y administradores
+                .antMatchers(admUrls).hasRole("ADMIN") // Solo administradores pueden acceder
                 .anyRequest().authenticated() // Bloquear acceso a no autenticados
                 .and()
                 .formLogin()
@@ -51,6 +51,7 @@ public class SpringBootSecurity extends WebSecurityConfigurerAdapter {
                 .exceptionHandling()
                 .accessDeniedPage("/usuario/login"); // Redirigir si no tiene permisos
     }
+
 
 
 

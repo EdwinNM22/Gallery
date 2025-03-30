@@ -31,7 +31,7 @@ public class AdmController {
     public String home(Model model) {
 
         List<album> albumes = albumService.findAll();
-        model.addAttribute("albumews", albumes); //aqui le cambie
+        model.addAttribute("albumes", albumes); //aqui le cambie
 
         return "adm/home";
     }

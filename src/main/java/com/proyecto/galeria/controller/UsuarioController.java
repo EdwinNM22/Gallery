@@ -46,27 +46,35 @@ public class UsuarioController {
     }
 
     @GetMapping("/acceder")
-    public String acceder(usuario usuario, HttpSession session) {
-        logger.info("Accesos : {}", usuario);
+    public String acceder(HttpSession session) {
+        try {
+            Object idUsuarioObj = session.getAttribute("idusuario");
+            logger.info("Intento de acceso - ID en sesión: {}", idUsuarioObj);
 
-        Object idUsuarioObj = session.getAttribute("idusuario");
-        if (idUsuarioObj == null) {
-            logger.info("No hay sesión activa, redirigiendo a /mainMenu");
-            return "redirect:/mainMenu";
+            if (idUsuarioObj == null) {
+                logger.warn("No hay sesión activa - Redirigiendo a login");
+                return "redirect:/usuario/login";
+            }
+
+            Optional<usuario> user = usuarioService.findById(Integer.parseInt(idUsuarioObj.toString()));
+
+            if (user.isPresent()) {
+                String tipoUsuario = user.get().getTipo_usuario();
+                logger.info("Usuario encontrado - Tipo: {}", tipoUsuario);
+
+                if ("ADMIN".equalsIgnoreCase(tipoUsuario)) {
+                    return "redirect:/adm";
+                } else {
+                    return "redirect:/mainMenu";
+                }
+            } else {
+                logger.error("Usuario no encontrado en BD pero existe en sesión");
+                session.invalidate();
+                return "redirect:/usuario/login";
+            }
+        } catch (Exception e) {
+            logger.error("Error en el acceso: {}", e.getMessage());
+            return "redirect:/usuario/login";
         }
-
-        Optional<usuario> user = usuarioService.findById(Integer.parseInt(idUsuarioObj.toString()));
-
-        if (user.isPresent()) {
-            session.setAttribute("idusuario", user.get().getId());
-            logger.info("Tipo de usuario: {}", user.get().getTipo_usuario());
-            logger.info("ID de usuario desde la sesión: {}", idUsuarioObj);
-
-            return "redirect:/mainMenu";
-        } else {
-            logger.info("Usuario no existe");
-        }
-
-        return "redirect:/mainMenu";
     }
 }
