@@ -102,54 +102,60 @@
             margin-right: 8px;
         }
 
-        /* Subalbums Section */
-        .subalbums-section {
-            padding: 0 2rem;
+        /* Contenedor principal de álbumes */
+        .all-albums-container {
+            padding: 2rem;
             margin-bottom: 4rem;
+            width: 100%;
         }
 
-        .section-title {
-            font-size: 1.8rem;
-            font-weight: 600;
-            color: var(--text-dark);
-            margin-bottom: 2rem;
-            position: relative;
-            display: inline-block;
-        }
-
-        .section-title::after {
-            content: '';
-            position: absolute;
-            bottom: -8px;
-            left: 0;
-            width: 50px;
-            height: 4px;
-            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
-            border-radius: 2px;
-        }
-
-        .subalbums-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        /* Contenedor horizontal para TODOS los álbumes */
+        .albums-horizontal-scroll {
+            display: flex;
+            flex-direction: row;
             gap: 2rem;
+            padding-bottom: 1rem;
+            overflow-x: auto;
+            scrollbar-width: thin;
+            scrollbar-color: var(--accent-color) #f1f1f1;
         }
 
-        /* Subalbum Card */
-        .subalbum-card {
+        /* Estilos para la barra de scroll */
+        .albums-horizontal-scroll::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        .albums-horizontal-scroll::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .albums-horizontal-scroll::-webkit-scrollbar-thumb {
+            background-color: var(--accent-color);
+            border-radius: 10px;
+        }
+
+        /* Subalbum Card - TAMAÑO AUMENTADO */
+        .album-card {
             background: white;
             border-radius: 12px;
             overflow: hidden;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
             transition: all 0.3s ease;
             position: relative;
+            min-width: 350px;
+            height: 250px;
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
         }
 
-        .subalbum-card:hover {
+        .album-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
         }
 
-        .subalbum-card::before {
+        .album-card::before {
             content: '';
             position: absolute;
             top: 0;
@@ -159,41 +165,64 @@
             background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
         }
 
-        .subalbum-card-content {
+        /* Estilo diferente para álbumes "Antes" */
+        .album-card.antes::before {
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+        }
+
+        /* Estilo diferente para álbumes "Después" */
+        .album-card.despues::before {
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+        }
+
+        .album-card-content {
             padding: 1.5rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
         }
 
-        .subalbum-card h3 {
-            font-size: 1.3rem;
+        .album-card h3 {
+            font-size: 1.5rem;
             font-weight: 600;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.8rem;
             color: var(--text-dark);
+            display: flex;
+            align-items: center;
         }
 
-        .subalbum-card p {
+        .album-card h3 .badge {
+            margin-left: 10px;
+            font-size: 0.7rem;
+            padding: 0.35rem 0.6rem;
+        }
+
+        .album-card p {
             color: var(--text-light);
-            font-size: 0.9rem;
+            font-size: 1rem;
             line-height: 1.6;
             margin-bottom: 1.5rem;
+            flex-grow: 1;
         }
 
-        .subalbum-card-footer {
+        .album-card-footer {
             display: flex;
             justify-content: flex-end;
+            margin-top: auto;
         }
 
         .btn-view {
             background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
             color: white;
             border: none;
-            padding: 0.5rem 1.2rem;
+            padding: 0.6rem 1.5rem;
             border-radius: 50px;
             font-weight: 500;
             text-decoration: none;
             display: inline-flex;
             align-items: center;
             transition: all 0.3s ease;
-            font-size: 0.9rem;
+            font-size: 1rem;
         }
 
         .btn-view:hover {
@@ -203,8 +232,8 @@
         }
 
         .btn-view i {
-            margin-right: 6px;
-            font-size: 0.8rem;
+            margin-right: 8px;
+            font-size: 1rem;
         }
 
         /* Modal Styles */
@@ -282,16 +311,13 @@
                 font-size: 1rem;
             }
 
-            .subalbums-section {
-                padding: 0 1rem;
+            .all-albums-container {
+                padding: 1rem;
             }
 
-            .section-title {
-                font-size: 1.5rem;
-            }
-
-            .subalbums-grid {
-                grid-template-columns: 1fr;
+            .album-card {
+                min-width: 280px;
+                height: 220px;
             }
         }
     </style>
@@ -299,48 +325,49 @@
 <body>
 
 <!-- Navigation -->
-<div th:include="adm/template_admin.html::header"></div>
+<div th:include="usuario/template_usuario.html::header"></div>
 
 <!-- Project Header -->
 <div class="project-header text-center">
     <div class="container project-header-content">
         <h1 class="project-title" th:text="${album.nombre}">Nombre del Álbum</h1>
-        <p class="project-description">Disfruta de todas las fotos de este álbum</p>
+        <p class="project-description">Agrega una nueva foto a las carpetas</p>
         <button type="button" class="btn-action" data-toggle="modal" data-target="#agregarFotoModal">
             <i class="fas fa-plus-circle"></i> Agregar foto
         </button>
     </div>
 </div>
 
-<!-- Subalbums Section -->
-<div class="container">
-    <!-- Subálbumes Antes -->
-    <div th:if="${not #lists.isEmpty(subAlbumAntes)}" class="subalbums-section">
-        <h2 class="section-title">Antes</h2>
-        <div class="subalbums-grid">
-            <div th:each="subAlbum : ${subAlbumAntes}" class="subalbum-card">
-                <div class="subalbum-card-content">
-                    <h3 th:text="${subAlbum.nombre}">Nombre del Subálbum Antes</h3>
-                    <p th:text="${subAlbum.descripcion} ?: 'Sin descripción'">Descripción del subálbum antes</p>
-                    <div class="subalbum-card-footer">
+<!-- Todos los álbumes en un solo contenedor horizontal -->
+<div class="all-albums-container">
+    <div class="container">
+        <h2 class="section-title">Mis Álbumes</h2>
+        <div class="albums-horizontal-scroll">
+            <!-- Álbumes Antes -->
+            <div th:each="subAlbum : ${subAlbumAntes}" class="album-card antes">
+                <div class="album-card-content">
+                    <h3>
+                        <span th:text="${subAlbum.nombre}">Nombre del Subálbum</span>
+                        <span class="badge bg-danger">Antes</span>
+                    </h3>
+                    <p th:text="${subAlbum.descripcion} ?: 'Sin descripción'">Descripción del subálbum</p>
+                    <div class="album-card-footer">
                         <a th:href="@{/subAlbumes/antes/{id}(id=${subAlbum.id})}" class="btn-view">
                             <i class="fas fa-eye"></i> Ver
                         </a>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
 
-    <!-- Subálbumes Después -->
-    <div th:if="${not #lists.isEmpty(subAlbumDespues)}" class="subalbums-section">
-        <h2 class="section-title">Después</h2>
-        <div class="subalbums-grid">
-            <div th:each="subAlbum : ${subAlbumDespues}" class="subalbum-card">
-                <div class="subalbum-card-content">
-                    <h3 th:text="${subAlbum.nombre}">Nombre del Subálbum Después</h3>
-                    <p th:text="${subAlbum.descripcion} ?: 'Sin descripción'">Descripción del subálbum después</p>
-                    <div class="subalbum-card-footer">
+            <!-- Álbumes Después -->
+            <div th:each="subAlbum : ${subAlbumDespues}" class="album-card despues">
+                <div class="album-card-content">
+                    <h3>
+                        <span th:text="${subAlbum.nombre}">Nombre del Subálbum</span>
+                        <span class="badge bg-success">Después</span>
+                    </h3>
+                    <p th:text="${subAlbum.descripcion} ?: 'Sin descripción'">Descripción del subálbum</p>
+                    <div class="album-card-footer">
                         <a th:href="@{/subAlbumes/despues/{id}(id=${subAlbum.id})}" class="btn-view">
                             <i class="fas fa-eye"></i> Ver
                         </a>
@@ -349,13 +376,13 @@
             </div>
         </div>
     </div>
+</div>
 
-    <!-- Empty State -->
-    <div th:if="${#lists.isEmpty(subAlbumAntes) and #lists.isEmpty(subAlbumDespues)}" class="text-center py-5">
-        <i class="fas fa-folder-open fa-4x mb-4" style="color: var(--accent-color); opacity: 0.7;"></i>
-        <h3 class="mb-3">No hay subálbumes en este proyecto</h3>
-        <p>Comienza agregando fotos para organizar tu proyecto</p>
-    </div>
+<!-- Empty State -->
+<div th:if="${#lists.isEmpty(subAlbumAntes) and #lists.isEmpty(subAlbumDespues)}" class="text-center py-5">
+    <i class="fas fa-folder-open fa-4x mb-4" style="color: var(--accent-color); opacity: 0.7;"></i>
+    <h3 class="mb-3">No hay subálbumes en este proyecto</h3>
+    <p>Comienza agregando fotos para organizar tu proyecto</p>
 </div>
 
 <!-- Modal para agregar foto -->

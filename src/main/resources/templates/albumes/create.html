@@ -3,10 +3,10 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="Crear nuevo álbum fotográfico">
-    <meta name="author" content="GalleryOnline">
+    <meta name="description" content="Crear nuevo Proyecto">
+    <meta name="author" content="Proyecto">
 
-    <title>Crear Nuevo Álbum</title>
+    <title>Crear Nuevo Proyecto</title>
 
     <!-- Bootstrap core CSS -->
     <link th:href="@{/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
@@ -232,8 +232,8 @@
 <!-- Album Header -->
 <div class="album-header text-center">
     <div class="container">
-        <h1 class="album-title">Crear Nuevo Álbum</h1>
-        <p class="album-subtitle">Organiza tus fotos en álbumes temáticos</p>
+        <h1 class="album-title">Crear Nuevo Proyecto</h1>
+        <p class="album-subtitle">Organiza tus proyectos en carpetas</p>
     </div>
 </div>
 
@@ -241,8 +241,8 @@
 <div class="container">
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a th:href="@{/}">Inicio</a></li>
-            <li class="breadcrumb-item active">Crear Álbum</li>
+            <li class="breadcrumb-item"><a>Inicio</a></li>
+            <li class="breadcrumb-item active">Crear Proyecto</li>
         </ol>
     </nav>
 </div>
@@ -255,21 +255,21 @@
             <div class="mb-4">
                 <label for="nombre" class="form-label">Nombre del Álbum</label>
                 <input type="text" class="form-control" id="nombre" name="nombre"
-                       placeholder="Ej: Vacaciones 2023, Bodas, Retratos" required>
+                       placeholder="Nombre de su proximo proyecto" required>
             </div>
 
             <!-- Description -->
             <div class="mb-4">
                 <label for="descripcion" class="form-label">Descripción</label>
                 <textarea class="form-control" id="descripcion" name="descripcion" rows="4"
-                          placeholder="Describe el contenido de este álbum (opcional)"></textarea>
+                          placeholder="Describe el contenido de este nuevo proyecto (opcional)"></textarea>
             </div>
 
 
             <!-- Submit Button -->
             <div class="text-center mt-4">
                 <button type="submit" class="btn-create">
-                    <i class="fas fa-plus-circle"></i> Crear Álbum
+                    <i class="fas fa-plus-circle"></i> Crear Proyecto
                 </button>
             </div>
         </form>
