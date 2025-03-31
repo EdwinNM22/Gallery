@@ -24,9 +24,14 @@ public class Uploadfoto {
     }
 
     public void deleteImage(String filename) {
-
         String ruta = "images//";
         File file = new File(ruta + filename);
-        file.delete();
+        if (file.delete()) {
+            System.out.println("File deleted successfully");
+        } else {
+            System.out.println("Error: File not deleted");
+        }
     }
+
+
 }

@@ -5,8 +5,7 @@ import com.proyecto.galeria.model.album;
 import com.proyecto.galeria.model.foto;
 import com.proyecto.galeria.model.usuario;
 import com.proyecto.galeria.service.*;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,12 +16,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
-
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-
 import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -55,7 +51,6 @@ public class FotoController {
     @GetMapping("/create")
     public String create(Model model) {
         model.addAttribute("albumes", albumService.findAll());  // Ahora puedes usar albumService
-        List<SubAlbum> subAlbumes = subAlbumService.findAll();   // En teoria muestra todos los subAlbumes
         model.addAttribute("subalbum", subAlbumService.findAll());
         return "fotos/create";
     }

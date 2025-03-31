@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 
 <head>
   <meta charset="utf-8">
@@ -11,11 +11,14 @@
 
   <!-- Bootstrap core CSS -->
   <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
 
   <!-- Custom styles for this template -->
   <style>
     body {
       background-color: #f0f2f5;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
 
     .card {
@@ -62,10 +65,80 @@
     .login-link a:hover {
       text-decoration: underline;
     }
+
+    /* Error notification - Versión mejorada */
+    .error-notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 9999;
+      width: 350px;
+      border-left: 4px solid #dc3545;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      animation: fadeIn 0.3s ease-out;
+      display: flex;
+      align-items: center;
+      padding: 1rem;
+    }
+
+    .error-notification-content {
+      display: flex;
+      align-items: center;
+      width: 100%;
+    }
+
+    .error-icon {
+      font-size: 1.5rem;
+      margin-right: 1rem;
+      color: #dc3545;
+    }
+
+    .error-message {
+      flex: 1;
+    }
+
+    .error-title {
+      font-weight: 600;
+      margin-bottom: 0.2rem;
+      color: #dc3545;
+    }
+
+    .error-detail {
+      font-size: 0.9rem;
+      color: #6c757d;
+    }
+
+    .error-close {
+      margin-left: 1rem;
+      color: #6c757d;
+      cursor: pointer;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeOut {
+      from { opacity: 1; transform: translateY(0); }
+      to { opacity: 0; transform: translateY(-20px); }
+    }
   </style>
 </head>
 
 <body>
+
+<!-- Error Notification - Versión mejorada -->
+<div th:if="${param.error}" class="alert alert-danger error-notification" role="alert">
+  <div class="error-notification-content">
+    <i class="fas fa-exclamation-circle error-icon"></i>
+    <div class="error-message">
+      <div class="error-title">Error de autenticación</div>
+      <div class="error-detail">Usuario o contraseña incorrectos</div>
+    </div>
+    <span class="error-close" onclick="this.parentElement.parentElement.remove()">&times;</span>
+  </div>
+</div>
 
 <!-- Page Content -->
 <div class="container d-flex justify-content-center align-items-center" style="height: 100vh;">
@@ -75,7 +148,7 @@
 
       <form th:action="@{/usuario/login}" method="post">
         <div class="form-group">
-          <label for="email">Email:</label>
+          <label for="username">Email:</label>
           <input type="email" class="form-control" id="username" name="username" required placeholder="Ingrese su email" autocomplete="off">
         </div>
 
@@ -86,18 +159,25 @@
 
         <button type="submit" class="btn btn-dark">Ingresar</button>
       </form>
-
-      <div class="login-link">
-      </div>
     </div>
   </div>
 </div>
 
 <!-- Bootstrap core JavaScript -->
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
-</body>
+<script>
+  // Cerrar automáticamente la notificación después de 5 segundos
+  $(document).ready(function() {
+    setTimeout(function() {
+      $('.error-notification').fadeOut('slow', function() {
+        $(this).remove();
+      });
+    }, 5000);
+  });
+</script>
 
+</body>
 </html>

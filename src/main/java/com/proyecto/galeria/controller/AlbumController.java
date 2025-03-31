@@ -6,6 +6,7 @@ import com.proyecto.galeria.model.usuario;
 import com.proyecto.galeria.service.UsuarioServiceImpl;
 import com.proyecto.galeria.service.albumService;
 
+import com.proyecto.galeria.service.fotoService;
 import com.proyecto.galeria.service.subAlbumService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +36,8 @@ public class AlbumController {
     UsuarioServiceImpl usuarioService;
     @Autowired
     private subAlbumService subAlbumService;
+    @Autowired
+    private fotoService fotoService;
 
     @GetMapping("")
     public String home(Model model) {
@@ -51,7 +54,7 @@ public class AlbumController {
             album ultimo = albumes.get(albumes.size() - 1);
             return "redirect:/albumes/" + ultimo.getId();
         } else {
-            return "redirect:/albumes/vacio";
+            return "redirect:/home";
         }
 
     }
@@ -80,7 +83,9 @@ public class AlbumController {
         }
 
         // Obtener el usuario desde la base de datos
-        usuario u = usuarioService.findById(Integer.parseInt(idUsuarioObj.toString())).get();
+        usuario u = usuarioService.findById(Integer.parseInt(idUsuarioObj.toString()))
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
 
         // Asocia el usuario al álbum
         album.setUsuario(u);
@@ -161,4 +166,6 @@ public class AlbumController {
 
         return "redirect:/albumes";
     }
+
+
 }

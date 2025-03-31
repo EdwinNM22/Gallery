@@ -233,17 +233,17 @@
 </header>
 
 <!-- Projects Grid -->
-<div class="container">
-  <div th:if="${not #lists.isEmpty(albumes)}" class="projects-grid">
-    <div th:each="album : ${albumes}" class="project-card">
-      <div class="project-card-content">
-        <h2 th:text="${album.nombre}">Nombre del Proyecto</h2>
-        <p th:text="${album.descripcion} ?: 'Sin descripción'">Descripción del proyecto</p>
-        <div class="project-card-footer">
+<div th:if="${not #lists.isEmpty(albumes)}" class="projects-grid">
+  <div th:each="album : ${albumes}" class="project-card">
+    <div class="project-card-content">
+      <h2 th:text="${album.nombre}">Nombre del Proyecto</h2>
+      <p th:text="${album.descripcion} ?: 'Sin descripción'">Descripción del proyecto</p>
+      <div class="project-card-footer">
           <span class="text-muted">
             <i class="far fa-images"></i>
             <span th:text="${album.fotos != null ? #lists.size(album.fotos) : 0}">0</span> fotos
           </span>
+        <div>
           <a th:href="@{/albumes/{id}(id=${album.id})}" class="btn-modern">
             <i class="fas fa-eye"></i> Ver
           </a>
@@ -251,6 +251,7 @@
       </div>
     </div>
   </div>
+</div>
 
   <!-- Empty State -->
   <div th:if="${#lists.isEmpty(albumes)}" class="empty-state">

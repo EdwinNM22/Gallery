@@ -204,6 +204,63 @@
             margin-right: 10px;
         }
 
+        /* Success notification - Estilo similar al login */
+        .success-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            width: 350px;
+            border-left: 4px solid #28a745;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 0.3s ease-out;
+            display: none;
+            padding: 1rem;
+        }
+
+        .success-notification-content {
+            display: flex;
+            align-items: center;
+            width: 100%;
+        }
+
+        .success-icon {
+            font-size: 1.5rem;
+            margin-right: 1rem;
+            color: #28a745;
+        }
+
+        .success-message {
+            flex: 1;
+        }
+
+        .success-title {
+            font-weight: 600;
+            margin-bottom: 0.2rem;
+            color: #28a745;
+        }
+
+        .success-detail {
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+
+        .success-close {
+            margin-left: 1rem;
+            color: #6c757d;
+            cursor: pointer;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeOut {
+            from { opacity: 1; transform: translateY(0); }
+            to { opacity: 0; transform: translateY(-20px); }
+        }
+
         /* Responsive Adjustments */
         @media (max-width: 768px) {
             .album-header {
@@ -221,10 +278,27 @@
             .album-form-container {
                 padding: 1.5rem;
             }
+
+            .success-notification {
+                width: 90%;
+                right: 5%;
+            }
         }
     </style>
 </head>
 <body>
+
+<!-- Success Notification -->
+<div id="successNotification" class="alert alert-success success-notification" role="alert">
+    <div class="success-notification-content">
+        <i class="fas fa-check-circle success-icon"></i>
+        <div class="success-message">
+            <div class="success-title">Proyecto creado</div>
+            <div class="success-detail">El álbum se ha creado correctamente</div>
+        </div>
+        <span class="success-close" onclick="hideSuccessNotification()">&times;</span>
+    </div>
+</div>
 
 <!-- Navigation -->
 <div th:include="adm/template_admin.html::header"></div>
@@ -232,7 +306,7 @@
 <!-- Album Header -->
 <div class="album-header text-center">
     <div class="container">
-        <h1 class="album-title">Crear Nuevo Proyecto</h1>
+        <h1 class="album-title">Crea tu nuevo proyecto</h1>
         <p class="album-subtitle">Organiza tus proyectos en carpetas</p>
     </div>
 </div>
@@ -265,7 +339,6 @@
                           placeholder="Describe el contenido de este nuevo proyecto (opcional)"></textarea>
             </div>
 
-
             <!-- Submit Button -->
             <div class="text-center mt-4">
                 <button type="submit" class="btn-create">
@@ -283,8 +356,59 @@
 <script th:src="@{/vendor/jquery/jquery.min.js}"></script>
 <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
 
-<!-- Cover Preview Script -->
+<!-- Scripts -->
 <script>
+    // Función para mostrar notificación de éxito
+    function showSuccessNotification() {
+        const notification = document.getElementById('successNotification');
+        notification.style.display = 'flex';
+        notification.style.animation = 'fadeIn 0.3s';
+
+        // Ocultar después de 5 segundos
+        setTimeout(() => {
+            hideSuccessNotification();
+        }, 5000);
+    }
+
+    // Función para ocultar notificación
+    function hideSuccessNotification() {
+        const notification = document.getElementById('successNotification');
+        notification.style.animation = 'fadeOut 0.3s';
+        setTimeout(() => {
+            notification.style.display = 'none';
+        }, 300);
+    }
+
+    // Manejar el envío del formulario
+    document.getElementById('albumForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        // Guardar referencia al formulario
+        const form = this;
+
+        // Crear FormData para enviar el formulario
+        const formData = new FormData(form);
+
+        // Enviar el formulario con fetch
+        fetch(form.action, {
+            method: form.method,
+            body: formData
+        })
+            .then(response => {
+                if (response.ok) {
+                    // Mostrar notificación de éxito
+                    showSuccessNotification();
+                    // Limpiar el formulario después de enviar
+                    form.reset();
+                } else {
+                    console.error('Error al guardar el proyecto');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    });
+
     document.getElementById('portada').addEventListener('change', function(e) {
         const file = e.target.files[0];
         if (file) {

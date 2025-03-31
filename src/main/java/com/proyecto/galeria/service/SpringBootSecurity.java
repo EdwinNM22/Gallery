@@ -9,7 +9,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
+
 
 @Configuration
 @EnableWebSecurity
@@ -51,11 +51,6 @@ public class SpringBootSecurity extends WebSecurityConfigurerAdapter {
                 .exceptionHandling()
                 .accessDeniedPage("/usuario/login"); // Redirigir si no tiene permisos
     }
-
-
-
-
-
     @Bean
     public BCryptPasswordEncoder getEnecoder() {
         return new BCryptPasswordEncoder();

@@ -27,7 +27,7 @@ public class album {
 
     private List<foto> fotos;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.PERSIST)  // O CascadeType.MERGE
     private usuario usuario;
 
     // Getters y setters

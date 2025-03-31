@@ -19,8 +19,9 @@ public class usuario {
     @OneToMany(mappedBy = "usuario")
     private List<foto> fotos;
 
-    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.PERSIST) // O CascadeType.MERGE según el comportamiento deseado
     private List<album> albumes;
+
 
     public usuario() {
 

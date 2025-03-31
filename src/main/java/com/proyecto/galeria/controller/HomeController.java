@@ -25,7 +25,7 @@ public class HomeController {
 
 
     @GetMapping({"/", "/mainMenu"})
-    public String mainMenu(Model model) {
+    public String mainMenu() {
         return "usuario/mainMenu";
     }
 

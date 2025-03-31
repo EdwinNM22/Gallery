@@ -324,18 +324,6 @@
 </head>
 <body>
 
-<!--<div id="fotoSuccessAlert" class="alert alert-success position-fixed top-0 start-50 translate-middle-x mt-3"-->
-<!--     style="display: none; animation: fadeIn 0.5s, fadeOut 0.5s 4.5s forwards; z-index: 9999; max-width: 90%;">-->
-<!--    <div class="d-flex align-items-center">-->
-<!--        <i class="fas fa-camera-retro fa-2x me-3"></i>-->
-<!--        <div>-->
-<!--            <h5 class="mb-0">¡Foto guardada con éxito!</h5>-->
-<!--            <p class="mb-0 small">La foto se ha añadido al álbum correctamente.</p>-->
-<!--        </div>-->
-<!--        <button type="button" class="btn-close ms-3" data-bs-dismiss="alert" aria-label="Close"></button>-->
-<!--    </div>-->
-<!--</div>-->
-
 <!-- Navigation -->
 <div th:include="usuario/template_usuario.html::header"></div>
 
@@ -455,49 +443,17 @@
 
 <!-- Script para el input file -->
 <script>
-    // // Notificación para guardar foto - VERSIÓN CORREGIDA
-    // document.getElementById('fotoForm').addEventListener('submit', function(e) {
-    //     e.preventDefault();
-    //
-    //     // Mostrar la notificación
-    //     const fotoSuccessAlert = document.getElementById('fotoSuccessAlert');
-    //     fotoSuccessAlert.style.display = 'flex';
-    //
-    //     // Reiniciar la animación
-    //     fotoSuccessAlert.style.animation = 'none';
-    //     void fotoSuccessAlert.offsetWidth; // Trigger reflow
-    //     fotoSuccessAlert.style.animation = 'fadeIn 0.5s, fadeOut 0.5s 4.5s forwards';
-    //
-    //     // Configurar el botón de cierre
-    //     const closeButton = fotoSuccessAlert.querySelector('.btn-close');
-    //     closeButton.addEventListener('click', () => {
-    //         fotoSuccessAlert.style.display = 'none';
-    //     });
-    //
-    //     // Enviar el formulario después de 500ms (corregí el tiempo de 1000ms a 500ms)
-    //     setTimeout(() => {
-    //         this.submit();
-    //         // Cerrar el modal después de enviar
-    //         $('#agregarFotoModal').modal('hide');
-    //     }, 500);
-    //
-    //     // Ocultar automáticamente después de 5 segundos (corregí 500000ms a 5000ms)
-    //     setTimeout(() => {
-    //         fotoSuccessAlert.style.display = 'none';
-    //     }, 10000);
-    // });
+    // Muestra el nombre del archivo seleccionado
+    document.querySelector('.custom-file-input').addEventListener('change', function(e) {
+        var fileName = document.getElementById("img").files[0].name;
+        var nextSibling = e.target.nextElementSibling;
+        nextSibling.innerText = fileName;
+    });
 
     // Resetear el formulario al cerrar el modal
     $('#agregarFotoModal').on('hidden.bs.modal', function () {
         $('#fotoForm')[0].reset();
         $('.custom-file-label').text('Seleccionar archivo');
-    });
-
-    // Mostrar nombre del archivo seleccionado
-    document.querySelector('.custom-file-input').addEventListener('change', function(e) {
-        var fileName = document.getElementById("img").files[0].name;
-        var nextSibling = e.target.nextElementSibling;
-        nextSibling.innerText = fileName;
     });
 </script>
 

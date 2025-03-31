@@ -2,9 +2,6 @@ package com.proyecto.galeria.controller;
 import com.proyecto.galeria.model.SubAlbum;
 import com.proyecto.galeria.model.foto;
 import com.proyecto.galeria.service.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,18 +15,8 @@ import java.util.Optional;
 @RequestMapping("/subAlbumes")
 public class SubAlbumController {
 
-    private final Logger LOGGER = LoggerFactory.getLogger(SubAlbumController.class);
+
     private final subAlbumService subAlbumService;
-
-    @Autowired
-    private  fotoService fotoService;
-
-    @Autowired
-    private albumService albumService;
-
-
-    @Autowired
-    private IUsuarioService iUsuarioService;
 
 
     // Constructor para inyectar el servicio
