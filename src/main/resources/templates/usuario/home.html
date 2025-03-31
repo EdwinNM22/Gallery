@@ -283,10 +283,7 @@
       <h2 th:text="${album.nombre}">Nombre del Proyecto</h2>
       <p th:text="${album.descripcion} ?: 'Sin descripción'">Descripción del proyecto</p>
       <div class="project-card-footer">
-          <span class="text-muted">
-            <i class="far fa-images"></i>
-            <span th:text="${album.fotos != null ? #lists.size(album.fotos) : 0}">0</span> fotos
-          </span>
+
         <div>
           <a th:href="@{/albumes/{id}(id=${album.id})}" class="btn-modern">
             <i class="fas fa-eye"></i> Ver
@@ -300,14 +297,15 @@
 <!-- Button Group -->
 <div class="container">
   <div class="button-group">
-    <a th:href="@{/menu-principal}" class="btn-back">
+    <button type="button" class="btn-back" onclick="window.history.back()">
       <i class="fas fa-arrow-left"></i> Volver al Menú
-    </a>
+    </button>
     <a th:href="@{/albumes/create}" class="btn-modern">
       <i class="fas fa-plus"></i> Crear Proyecto
     </a>
   </div>
 </div>
+
 
 <!-- Empty State -->
 <div th:if="${#lists.isEmpty(albumes)}" class="empty-state">

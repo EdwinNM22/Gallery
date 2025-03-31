@@ -189,81 +189,9 @@
       display: inline-block;
     }
 
-    .footer-links {
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      margin: 1.5rem 0;
-      width: 100%; /* Asegura que ocupe todo el ancho disponible */
-    }
-
-    .footer-link {
-      color: rgba(255, 255, 255, 0.8);
-      margin: 0 1rem;
-      text-decoration: none;
-      transition: all 0.3s ease;
-      font-weight: 500;
-    }
-
-    .footer-link:hover {
-      color: white;
-      text-decoration: none;
-    }
-
-    .footer-social {
-      display: flex;
-      justify-content: center;
-      margin: 1.5rem 0;
-      width: 100%; /* Asegura que ocupe todo el ancho disponible */
-    }
-
-    .social-icon {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.1);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 0.5rem;
-      color: white;
-      transition: all 0.3s ease;
-    }
-
-    .social-icon:hover {
-      background: #000000;
-      transform: translateY(-3px);
-    }
-
-    .footer-bottom {
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
-      padding-top: 1.5rem;
-      margin-top: 1.5rem;
-      text-align: center;
-      font-size: 0.9rem;
-      color: rgba(255, 255, 255, 0.7);
-      width: 100%; /* Asegura que ocupe todo el ancho disponible */
-    }
 
     /* Botón flotante para nuevo proyecto */
-    .fab {
-      position: fixed;
-      bottom: 2rem;
-      right: 2rem;
-      width: 60px;
-      height: 60px;
-      background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
-      color: white;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.5rem;
-      box-shadow: 0 5px 20px rgba(67, 97, 238, 0.4);
-      transition: all 0.3s ease;
-      z-index: 100;
-      text-decoration: none;
-    }
+
 
     .fab:hover {
       transform: scale(1.1);
@@ -279,22 +207,6 @@
         padding: 0.5rem 1rem !important;
       }
 
-      .footer-links {
-        flex-direction: column;
-        align-items: center;
-      }
-
-      .footer-link {
-        margin: 0.5rem 0;
-      }
-
-      .fab {
-        width: 50px;
-        height: 50px;
-        font-size: 1.3rem;
-        bottom: 1.5rem;
-        right: 1.5rem;
-      }
     }
   </style>
 </head>
@@ -304,9 +216,10 @@
 <div th:fragment="header">
   <nav class="navbar navbar-expand-lg modern-navbar fixed-top">
     <div class="container">
-      <a class="navbar-brand" th:href="@{/}">
-        <i class="fas fa-camera-retro"></i> GalleryOnline
+      <a class="navbar-brand" href="#" onclick="return false;">
+        <i class="fas fa-camera-retro"></i> Project Manager
       </a>
+
 
       <button class="navbar-toggler" type="button" data-toggle="collapse"
               data-target="#navbarResponsive" aria-controls="navbarResponsive"
