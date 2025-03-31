@@ -322,12 +322,12 @@
 </div>
 
 <!-- Back Button -->
-<!--<div class="text-center">-->
-<!--    <a th:href="@{/}" class="btn-back">-->
-<!--        <i class="fas fa-arrow-left"></i> Volver al inicio-->
-<!--    </a>-->
-<!--</div>-->
+<div class="text-center">
+    <button type="button" class="btn-back" onclick="window.history.back()">
+        <i class="fas fa-arrow-left"></i> Volver al inicio
+    </button>
 </div>
+
 
 <!-- Photo Modals -->
 <div th:each="fotoDespues : ${fotoDespues}">

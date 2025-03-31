@@ -204,6 +204,38 @@
             margin-right: 10px;
         }
 
+        /* Back to Menu Button */
+        .btn-back {
+            background: white;
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+            padding: 0.6rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            margin-right: 15px;
+        }
+
+        .btn-back:hover {
+            background: var(--light-color);
+            color: var(--secondary-color);
+            border-color: var(--secondary-color);
+        }
+
+        .btn-back i {
+            margin-right: 8px;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 2rem;
+        }
+
         /* Success notification - Estilo similar al login */
         .success-notification {
             position: fixed;
@@ -283,6 +315,16 @@
                 width: 90%;
                 right: 5%;
             }
+
+            .button-group {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .btn-back, .btn-create {
+                width: 100%;
+                justify-content: center;
+            }
         }
     </style>
 </head>
@@ -315,7 +357,7 @@
 <div class="container">
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a>Inicio</a></li>
+            <li class="breadcrumb-item"><a th:href="@{/menu-principal}">Inicio</a></li>
             <li class="breadcrumb-item active">Crear Proyecto</li>
         </ol>
     </nav>
@@ -339,12 +381,16 @@
                           placeholder="Describe el contenido de este nuevo proyecto (opcional)"></textarea>
             </div>
 
-            <!-- Submit Button -->
-            <div class="text-center mt-4">
+            <!-- Submit Button and Back Button -->
+            <div class="button-group">
+                <button type="button" class="btn btn-back" onclick="window.history.back()">
+                    <i class="fas fa-arrow-left"></i> Volver al Menú
+                </button>
                 <button type="submit" class="btn-create">
                     <i class="fas fa-plus-circle"></i> Crear Proyecto
                 </button>
             </div>
+
         </form>
     </div>
 </div>

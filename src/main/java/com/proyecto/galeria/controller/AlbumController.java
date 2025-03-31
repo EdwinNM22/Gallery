@@ -52,9 +52,9 @@ public class AlbumController {
 
         if (!albumes.isEmpty()) {
             album ultimo = albumes.get(albumes.size() - 1);
-            return "redirect:/albumes/" + ultimo.getId();
+            return "redirect:/albumes/show";
         } else {
-            return "redirect:/home";
+            return "redirect:/albumes/show";
         }
 
     }

@@ -102,6 +102,38 @@
             margin-right: 8px;
         }
 
+        /* Back Button */
+        .btn-back {
+            background: white;
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+            padding: 0.8rem 1.8rem;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            margin-right: 15px;
+        }
+
+        .btn-back:hover {
+            background: var(--light-color);
+            color: var(--secondary-color);
+            border-color: var(--secondary-color);
+        }
+
+        .btn-back i {
+            margin-right: 8px;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: center;
+            margin: 2rem 0;
+        }
+
         /* Contenedor principal de álbumes */
         .all-albums-container {
             padding: 2rem;
@@ -319,6 +351,18 @@
                 min-width: 280px;
                 height: 220px;
             }
+
+            .button-group {
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+            }
+
+            .btn-back, .btn-action {
+                width: 100%;
+                justify-content: center;
+                margin-right: 0;
+            }
         }
     </style>
 </head>
@@ -332,9 +376,14 @@
     <div class="container project-header-content">
         <h1 class="project-title" th:text="${album.nombre}">Nombre del Álbum</h1>
         <p class="project-description">Agrega una nueva foto a las carpetas</p>
-        <button type="button" class="btn-action" data-toggle="modal" data-target="#agregarFotoModal">
-            <i class="fas fa-plus-circle"></i> Agregar foto
-        </button>
+        <div class="button-group">
+            <a th:href="@{/menu-principal}" class="btn-back">
+                <i class="fas fa-arrow-left"></i> Volver al Menú
+            </a>
+            <button type="button" class="btn-action" data-toggle="modal" data-target="#agregarFotoModal">
+                <i class="fas fa-plus-circle"></i> Agregar foto
+            </button>
+        </div>
     </div>
 </div>
 
@@ -383,6 +432,14 @@
     <i class="fas fa-folder-open fa-4x mb-4" style="color: var(--accent-color); opacity: 0.7;"></i>
     <h3 class="mb-3">No hay subálbumes en este proyecto</h3>
     <p>Comienza agregando fotos para organizar tu proyecto</p>
+    <div class="button-group">
+        <a th:href="@{/menu-principal}" class="btn-back">
+            <i class="fas fa-arrow-left"></i> Volver al Meqweqnú
+        </a>
+        <button type="button" class="btn-action" data-toggle="modal" data-target="#agregarFotoModal">
+            <i class="fas fa-plus-circle"></i> Agregar foto
+        </button>
+    </div>
 </div>
 
 <!-- Modal para agregar foto -->

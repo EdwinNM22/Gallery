@@ -154,13 +154,14 @@
         </div>
 
         <div class="d-flex justify-content-between mt-4">
-          <a th:href="@{/adm/home}" class="btn btn-back">
+          <button type="button" class="btn btn-back" onclick="window.history.back()">
             <i class="fas fa-arrow-left mr-2"></i>Volver al menú
-          </a>
+          </button>
           <button type="submit" class="btn btn-register">
             <i class="fas fa-save mr-2" style="color: white;"></i>Registrar
           </button>
         </div>
+
 
         <!-- Credentials Box -->
         <div id="credentialsBox" class="credentials-box">
