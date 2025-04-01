@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -109,7 +110,8 @@ public class AlbumController {
         Optional<album> optionalAlbum = albumService.get(id);
         if (optionalAlbum.isPresent()) {
             album album = optionalAlbum.get();
-            List<SubAlbum> subAlbumes = album.getSubAlbumes(); // Esto ya trae solo los subálbumes del álbum actual
+            List<SubAlbum> subAlbumes = album.getSubAlbumes() != null ? album.getSubAlbumes() : new ArrayList<>();
+// Esto ya trae solo los subálbumes del álbum actual
 
             // Buscar los subálbumes específicos
             SubAlbum antes = subAlbumes.stream()
