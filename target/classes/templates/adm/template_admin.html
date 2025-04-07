@@ -9,29 +9,35 @@
 
   <style>
     :root {
-      --primary-color: #000000;
+      --primary-color: #2563eb;  /* Azul moderno */
       --secondary-color: #3f37c9;
-      --accent-color: #000000;
+      --accent-color: #1e40af;
       --dark-color: #3a0ca3;
       --light-color: #f8f9fa;
-      --text-dark: #2b2d42;
-      --text-light: #8d99ae;
+      --text-dark: #1f2937;
+      --text-light: #6b7280;
+      --navbar-bg: rgba(255, 255, 255, 0.98);
+      --navbar-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
     }
 
-    /* Modern Navbar - Versión ajustada */
+    /* Modern Navbar - Versión mejorada */
     .modern-navbar {
-      background: rgba(255, 255, 255, 0.98);
-      box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+      background: var(--navbar-bg);
+      box-shadow: var(--navbar-shadow);
       padding: 0.8rem 0;
       font-family: 'Poppins', sans-serif;
       transition: all 0.3s ease;
       backdrop-filter: blur(8px);
       border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+      position: fixed;
+      width: 100%;
+      top: 0;
+      z-index: 1030;
     }
 
     .modern-navbar.scrolled {
-      background: rgba(255, 255, 255, 0.98);
-      box-shadow: 0 5px 25px rgba(0, 0, 0, 0.1);
+      background: var(--navbar-bg);
+      box-shadow: var(--navbar-shadow);
       padding: 0.5rem 0;
     }
 
@@ -41,11 +47,13 @@
       color: var(--primary-color) !important;
       display: flex;
       align-items: center;
+      letter-spacing: -0.5px;
     }
 
     .navbar-brand i {
       margin-right: 10px;
       font-size: 1.3em;
+      color: var(--primary-color);
     }
 
     .nav-link {
@@ -55,6 +63,7 @@
       margin: 0 0.2rem;
       border-radius: 8px;
       transition: all 0.3s ease;
+      position: relative;
     }
 
     .nav-link:hover {
@@ -62,18 +71,38 @@
       background: rgba(67, 97, 238, 0.1);
     }
 
+    /* Efecto de subrayado animado */
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 2px;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: var(--primary-color);
+      transition: width 0.3s ease;
+    }
+
+    .nav-link:hover::after {
+      width: 60%;
+    }
+
+    /* Dropdown mejorado */
     .dropdown-menu {
       border: none;
-      border-radius: 10px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
       padding: 0.5rem 0;
       margin-top: 0.5rem;
+      border: 1px solid rgba(0, 0, 0, 0.05);
     }
 
     .dropdown-item {
       padding: 0.6rem 1.5rem;
       font-weight: 500;
       transition: all 0.2s ease;
+      color: var(--text-dark);
     }
 
     .dropdown-item:hover {
@@ -81,10 +110,18 @@
       color: var(--primary-color);
     }
 
+    .dropdown-item i {
+      width: 20px;
+      text-align: center;
+      margin-right: 10px;
+      color: var(--primary-color);
+    }
+
     .dropdown-divider {
       border-color: rgba(0, 0, 0, 0.05);
     }
 
+    /* Botón de logout mejorado */
     .btn-logout {
       background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
       color: white !important;
@@ -95,14 +132,22 @@
       border: none;
       box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
       margin-left: 0.5rem;
+      display: inline-flex;
+      align-items: center;
     }
 
     .btn-logout:hover {
       transform: translateY(-2px);
       box-shadow: 0 8px 25px rgba(67, 97, 238, 0.4);
       color: white !important;
+      background: linear-gradient(45deg, var(--accent-color), var(--primary-color));
     }
 
+    .btn-logout i {
+      margin-right: 8px;
+    }
+
+    /* Toggler mejorado */
     .navbar-toggler {
       border: none;
       padding: 0.5rem;
@@ -152,7 +197,7 @@
       transform: rotate(-45deg);
     }
 
-    /* Modern Footer - Versión ajustada */
+    /* Modern Footer - Versión mejorada */
     .modern-footer {
       background: linear-gradient(135deg, var(--dark-color), var(--secondary-color));
       color: white;
@@ -160,7 +205,8 @@
       font-family: 'Poppins', sans-serif;
       position: relative;
       overflow: hidden;
-      text-align: center; /* Asegura que todo el contenido esté centrado */
+      text-align: center;
+      margin-top: 60px;
     }
 
     .modern-footer::before {
@@ -179,7 +225,7 @@
       z-index: 1;
       display: flex;
       flex-direction: column;
-      align-items: center; /* Centra todo el contenido horizontalmente */
+      align-items: center;
     }
 
     .footer-logo {
@@ -187,6 +233,11 @@
       font-weight: 700;
       margin-bottom: 1rem;
       display: inline-block;
+    }
+
+    /* Ajuste para el body debido al navbar fijo */
+    body {
+      padding-top: 70px;
     }
 
     @media (max-width: 768px) {
@@ -198,16 +249,26 @@
         padding: 0.5rem 1rem !important;
       }
 
+      .btn-logout {
+        margin-left: 0;
+        margin-top: 0.5rem;
+        width: 100%;
+        justify-content: center;
+      }
+
+      body {
+        padding-top: 60px;
+      }
     }
   </style>
 </head>
 <body>
 
-<!-- Modern Navbar Ajustado -->
+<!-- Modern Navbar Mejorado -->
 <div th:fragment="header">
   <nav class="navbar navbar-expand-lg modern-navbar fixed-top">
     <div class="container">
-      <a class="navbar-brand" href="#" onclick="return false;">
+      <a class="navbar-brand" th:href="@{/}">
         <i class="fas fa-camera-retro"></i> Project Manager
       </a>
 
@@ -226,24 +287,23 @@
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
               <a class="dropdown-item" th:href="@{/fotos}">
-                <i class="fas fa-image mr-2"></i>Administrar fotos
+                <i class="fas fa-image"></i> Administrar fotos
               </a>
               <a class="dropdown-item" th:href="@{/albumes/show}">
-                <i class="fas fa-folder mr-2"></i>Administrar álbumes
+                <i class="fas fa-folder"></i> Administrar álbumes
               </a>
-                <a class="dropdown-item" th:href="@{/usuario/registro}">
-                  <i class="fas fa-solid fa-user-plus"></i>Crear cuenta
-                </a>
+              <a class="dropdown-item" th:href="@{/usuario/registro}">
+                <i class="fas fa-user-plus"></i> Crear cuenta
               </a>
               <div class="dropdown-divider"></div>
               <a class="dropdown-item" th:href="@{/cerrar}">
-                <i class="fas fa-sign-out-alt mr-2"></i>Salir
+                <i class="fas fa-sign-out-alt"></i> Salir
               </a>
             </div>
           </li>
           <li class="nav-item">
             <a class="nav-link btn-logout" th:href="@{/cerrar}">
-              <i class="fas fa-sign-out-alt mr-1"></i>Cerrar sesión
+              <i class="fas fa-sign-out-alt"></i> Cerrar sesión
             </a>
           </li>
         </ul>
@@ -252,19 +312,16 @@
   </nav>
 </div>
 
-<!-- Modern Footer Ajustado -->
+<!-- Modern Footer Mejorado -->
 <div th:fragment="footer">
   <footer class="modern-footer">
     <div class="container footer-content">
       <a href="#" class="footer-logo text-white">
-        <i class="fas fa-camera-retro"></i> Gestion de proyectos
+        <i class="fas fa-camera-retro"></i> Gestión de proyectos
       </a>
-
     </div>
   </footer>
-
 </div>
-
 
 <!-- Script para navbar con efecto scroll -->
 <script>
@@ -277,6 +334,18 @@
       navbar.classList.remove('scrolled');
     }
   });
+
+  // Ajustar el padding del body cuando el navbar colapsa
+  function adjustBodyPadding() {
+    const navbar = document.querySelector('.modern-navbar');
+    if (navbar) {
+      document.body.style.paddingTop = navbar.offsetHeight + 'px';
+    }
+  }
+
+  // Ejecutar al cargar y al redimensionar
+  window.addEventListener('load', adjustBodyPadding);
+  window.addEventListener('resize', adjustBodyPadding);
 </script>
 
 </body>

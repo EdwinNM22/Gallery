@@ -26,7 +26,7 @@ public class UsuarioController {
 
     BCryptPasswordEncoder passEncode = new BCryptPasswordEncoder();
 
-    @GetMapping("/registro")
+    @GetMapping("/vpsSecurity2024-")
     public String create() {
         return "usuario/registro";
     }

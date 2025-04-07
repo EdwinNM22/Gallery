@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="Galería en línea de fotos">
+  <meta name="author" content="GalleryOnline">
+
+  <!-- Bootstrap core CSS -->
+  <link th:href="@{/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
+  <script th:src="@{/vendor/jquery/jquery.min.js}"></script> <!-- Si usas jQuery -->
+  <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Custom styles -->
+  <style>
+    :root {
+      --primary-color: #4361ee;
+      --secondary-color: #3f37c9;
+      --accent-color: #4895ef;
+      --dark-color: #3a0ca3;
+      --light-color: #f8f9fa;
+      --text-dark: #2b2d42;
+      --text-light: #8d99ae;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #f8fafc;
+      color: var(--text-dark);
+    }
+
+    /* Modern Header */
+    .gallery-header {
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      color: white;
+      padding: 4rem 0;
+      margin-bottom: 3rem;
+      border-radius: 0 0 20px 20px;
+      box-shadow: 0 10px 30px rgba(67, 97, 238, 0.2);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .gallery-header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxkZWZzPjxwYXR0ZXJuIGlkPSJwYXR0ZXJuIiB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiIHBhdHRlcm5UcmFuc2Zvcm09InJvdGF0ZSg0NSkiPjxyZWN0IHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjA1KSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3QgZmlsbD0idXJsKCNwYXR0ZXJuKSIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIvPjwvc3ZnPg==');
+      opacity: 0.2;
+    }
+
+    .gallery-title {
+      font-weight: 700;
+      font-size: 2.8rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .gallery-description {
+      font-size: 1.2rem;
+      opacity: 0.9;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    /* Photo Grid */
+    .photo-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 2rem;
+      padding: 0 2rem;
+      margin-bottom: 4rem;
+    }
+
+    /* Photo Card */
+    .photo-card {
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .photo-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+    }
+
+    .photo-img-container {
+      position: relative;
+      overflow: hidden;
+      height: 250px;
+    }
+
+    .photo-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+
+    .photo-card:hover .photo-img {
+      transform: scale(1.05);
+    }
+
+    .photo-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+      padding: 1rem;
+      color: white;
+      transform: translateY(100%);
+      transition: transform 0.3s ease;
+    }
+
+    .photo-card:hover .photo-overlay {
+      transform: translateY(0);
+    }
+
+    .photo-title {
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .photo-description {
+      font-size: 0.9rem;
+      opacity: 0.9;
+    }
+
+    .photo-content {
+      padding: 1.5rem;
+    }
+
+    .photo-actions {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 1rem;
+    }
+
+    .btn-view {
+      background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+      color: white;
+      border: none;
+      padding: 0.5rem 1.2rem;
+      border-radius: 50px;
+      font-weight: 500;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+
+    .btn-view:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(67, 97, 238, 0.3);
+      color: white;
+    }
+
+    /* Modal Styles */
+    .photo-modal .modal-content {
+      border: none;
+      border-radius: 15px;
+      overflow: hidden;
+    }
+
+    .photo-modal .modal-header {
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      color: white;
+      border-bottom: none;
+    }
+
+    .photo-modal .modal-title {
+      font-weight: 600;
+    }
+
+    .photo-modal .modal-body {
+      padding: 0;
+    }
+
+    .photo-modal .modal-footer {
+      border-top: none;
+      background: #f8f9fa;
+    }
+
+    .photo-modal img {
+      width: 100%;
+      height: auto;
+      max-height: 70vh;
+      object-fit: contain;
+    }
+
+    /* Back Button */
+    .btn-back {
+      background: white;
+      color: var(--primary-color);
+      border: 2px solid var(--primary-color);
+      padding: 0.8rem 1.8rem;
+      border-radius: 50px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      margin-top: 2rem;
+    }
+
+    .btn-back:hover {
+      background: var(--primary-color);
+      color: white;
+      transform: translateY(-2px);
+    }
+
+    .btn-back i {
+      margin-right: 8px;
+    }
+
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 4rem 0;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .empty-state i {
+      font-size: 5rem;
+      color: var(--accent-color);
+      margin-bottom: 1.5rem;
+      opacity: 0.7;
+    }
+
+    .empty-state h3 {
+      font-size: 1.8rem;
+      margin-bottom: 1rem;
+      color: var(--text-dark);
+    }
+
+    .empty-state p {
+      color: var(--text-light);
+      margin-bottom: 2rem;
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 768px) {
+      .gallery-header {
+        padding: 3rem 0;
+      }
+
+      .gallery-title {
+        font-size: 2.2rem;
+      }
+
+      .gallery-description {
+        font-size: 1rem;
+      }
+
+      .photo-grid {
+        grid-template-columns: 1fr;
+        padding: 0 1rem;
+      }
+
+      .photo-img-container {
+        height: 200px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Navigation -->
+<div th:include="usuario/template_usuario.html::header"></div>
+
+<!-- Gallery Header -->
+<div class="gallery-header text-center">
+  <div class="container">
+    <h1 class="gallery-title">Álbum de Fotos</h1>
+    <p class="gallery-description">Disfruta de todas las fotos de este álbum</p>
+  </div>
+</div>
+
+<!-- Photo Gallery -->
+<div class="container">
+  <div th:if="${not #lists.isEmpty(fotoAntes)}" class="photo-grid">
+    <div th:each="fotoAntes : ${fotoAntes}" class="photo-card">
+      <div class="photo-img-container">
+        <img class="photo-img" th:src="@{/images/{img}(img=${fotoAntes.imagen})}" alt="Foto del álbum">
+        <div class="photo-overlay">
+          <h5 class="photo-title" th:text="${fotoAntes.nombre}">Nombre foto</h5> <!-- Título de la foto -->
+          <h8 class="photo-uploader" th:text="'Subido por: ' + ${fotoAntes.usuario.nombre}"></h8> <!-- Usuario -->
+          <p class="photo-description"
+             th:text="'Fecha: ' + ${#dates.format(fotoAntes.fecha, 'dd/MM/yyyy HH:mm')}">
+            Fecha de subida
+          </p>
+        </div>
+      </div>
+      <div class="photo-content">
+        <div class="photo-actions">
+          <a href="javascript:void(0)" class="btn-view" data-toggle="modal" th:data-target="'#photoModal' + ${fotoAntes.id}">
+            <i class="fas fa-expand mr-2"></i> Ampliar
+          </a>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+  <!-- Empty State -->
+  <div th:if="${#lists.isEmpty(fotoAntes)}" class="empty-state">
+    <i class="far fa-images"></i>
+    <h3>No hay fotos en este álbum</h3>
+    <p>Comienza agregando fotos para verlas aquí</p>
+  </div>
+
+<!--   Back Button-->
+<div class="text-center">
+  <button type="button" class="btn-back" onclick="window.history.back()">
+    <i class="fas fa-arrow-left"></i> Volver al inicio
+  </button>
+</div>
+
+</div>
+
+<!-- Photo Modals -->
+<div th:each="fotoAntes : ${fotoAntes}">
+  <div class="modal fade photo-modal" th:id="'photoModal' + ${fotoAntes.id}" tabindex="-1"
+       th:aria-labelledby="'photoModalLabel' + ${fotoAntes.id}"
+       aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" th:id="'photoModalLabel' + ${fotoAntes.id}" th:text="${fotoAntes.nombre}">Foto Detalle</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <img class="img-fluid" th:src="@{/images/{img}(img=${fotoAntes.imagen})}" alt="Foto detallada">
+        </div>
+        <div class="modal-footer">
+          <p class="photo-uploader" th:text="'Subido por: ' + ${fotoAntes.usuario.nombre}"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Footer -->
+<div th:include="usuario/template_usuario.html::footer"></div>
+
+<!-- Bootstrap core JavaScript -->
+<!--<script th:src="@{/vendor/jquery/jquery.min.js}"></script>-->
+<!--<script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>-->
+
+</body>
+</html>
