@@ -118,67 +118,6 @@
             min-height: 120px;
         }
 
-        /* Cover Image Upload */
-        .cover-upload {
-            position: relative;
-            overflow: hidden;
-            margin-bottom: 1.5rem;
-        }
-
-        .cover-upload-input {
-            position: absolute;
-            top: 0;
-            right: 0;
-            margin: 0;
-            padding: 0;
-            font-size: 20px;
-            cursor: pointer;
-            opacity: 0;
-            width: 100%;
-            height: 100%;
-        }
-
-        .cover-upload-label {
-            display: block;
-            border: 2px dashed #e2e8f0;
-            border-radius: 8px;
-            padding: 2rem;
-            text-align: center;
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-
-        .cover-upload-label:hover {
-            border-color: var(--accent-color);
-            background-color: rgba(72, 149, 239, 0.05);
-        }
-
-        .cover-upload-icon {
-            font-size: 2.5rem;
-            color: var(--accent-color);
-            margin-bottom: 1rem;
-        }
-
-        .cover-upload-text {
-            font-weight: 500;
-            margin-bottom: 0.5rem;
-        }
-
-        .cover-upload-hint {
-            font-size: 0.9rem;
-            color: var(--text-light);
-        }
-
-        /* Preview Image */
-        .cover-preview {
-            display: none;
-            max-width: 100%;
-            max-height: 200px;
-            border-radius: 8px;
-            margin-top: 1rem;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        }
-
         /* Submit Button */
         .btn-create {
             background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
@@ -349,7 +288,7 @@
 <div class="album-header text-center">
     <div class="container">
         <h1 class="album-title">Crea tu nuevo proyecto</h1>
-        <p class="album-subtitle">Organiza tus proyectos en carpetas</p>
+        <p class="album-subtitle">Organiza tus proyectos</p>
     </div>
 </div>
 
@@ -357,7 +296,7 @@
 <div class="container">
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a th:href="@{/menu-principal}">Inicio</a></li>
+            <li class="breadcrumb-item"><a th:href="@{/mainMenu}">Inicio</a></li>
             <li class="breadcrumb-item active">Crear Proyecto</li>
         </ol>
     </nav>
