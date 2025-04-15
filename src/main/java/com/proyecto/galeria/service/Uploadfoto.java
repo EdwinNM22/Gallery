@@ -8,30 +8,27 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.UUID;
 
 @Service
 public class Uploadfoto {
-
     private String folder = "images//";
+
     public String saveImage(MultipartFile file) throws IOException {
         if (!file.isEmpty()) {
-            byte[] bytes= file.getBytes();
-            Path path = Paths.get(folder + file.getOriginalFilename());
+            String originalFilename = file.getOriginalFilename();
+            byte[] bytes = file.getBytes();
+            Path path = Paths.get(folder + originalFilename);
             Files.write(path, bytes);
-            return file.getOriginalFilename();
+
+            return originalFilename;
         }
         return "default.jpg";
     }
 
-    public void deleteImage(String filename) {
-        String ruta = "images//";
-        File file = new File(ruta + filename);
-        if (file.delete()) {
-            System.out.println("File deleted successfully");
-        } else {
-            System.out.println("Error: File not deleted");
-        }
+    public void deleteImage(String nombre) {
+        File file = new File(folder + nombre);
+        file.delete();
     }
-
-
 }
+

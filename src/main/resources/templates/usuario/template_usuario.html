@@ -179,7 +179,7 @@
       z-index: 1;
       display: flex;
       flex-direction: column;
-      align-items: center; /* Centra todo el contenido horizontalmente */
+      align-items: center;
     }
 
     .footer-logo {
@@ -237,13 +237,13 @@
             <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
               <div class="dropdown-divider"></div>
               <a class="dropdown-item" th:href="@{/cerrar}">
-                <i class="fas fa-sign-out-alt mr-2"></i>Salir
+                <i class="fas fa-sign-out-alt mr-2"></i>Exit
               </a>
             </div>
           </li>
           <li class="nav-item">
             <a class="nav-link btn-logout" th:href="@{/cerrar}">
-              <i class="fas fa-sign-out-alt mr-1"></i>Cerrar sesión
+              <i class="fas fa-sign-out-alt mr-1"></i>Log out
             </a>
           </li>
         </ul>
@@ -257,19 +257,12 @@
   <footer class="modern-footer">
     <div class="container footer-content">
       <a href="#" class="footer-logo text-white">
-        <i class="fas fa-camera-retro"></i> Gestion de proyectos
+        <i class="fas fa-camera-retro"></i> Project management
       </a>
 
     </div>
   </footer>
 </div>
-
-<!-- Botón flotante para nuevo proyecto-->
-<!--<a th:href="@{/albumes/create}" class="fab">-->
-<!--  <i class="fas fa-plus"></i>-->
-<!--</a>-->
-
-<!-- Script para navbar con efecto scroll -->
 <script>
   // Efecto de cambio en navbar al hacer scroll
   window.addEventListener('scroll', function() {

@@ -358,7 +358,7 @@
                 gap: 10px;
             }
 
-            .btn-back, .btn-action {
+            .btn-back{
                 width: 100%;
                 justify-content: center;
                 margin-right: 0;
@@ -374,15 +374,11 @@
 <!-- Project Header -->
 <div class="project-header text-center">
     <div class="container project-header-content">
-        <h1 class="project-title" th:text="${album.nombre}">Nombre del Álbum</h1>
-        <p class="project-description">Agrega una nueva foto a las carpetas</p>
+        <h1 class="project-title" th:text="${album.nombre}">Project name.</h1>
+        <p class="project-description">Add a new photo to the folders.</p>
         <div class="button-group">
             <button type="button" class="btn-back" onclick="window.location.href = '/home'">
-                <i class="fas fa-arrow-left"></i> Volver al Menú
-            </button>
-
-            <button type="button" class="btn-action" data-toggle="modal" data-target="#agregarFotoModal">
-                <i class="fas fa-plus-circle"></i> Agregar foto
+                <i class="fas fa-arrow-left"></i> Back to Menu.
             </button>
         </div>
     </div>
@@ -392,19 +388,19 @@
 <!-- Todos los álbumes en un solo contenedor horizontal -->
 <div class="all-albums-container">
     <div class="container">
-        <h2 class="section-title">Mis Álbumes</h2>
+        <h2 class="section-title">Proyects</h2>
         <div class="albums-horizontal-scroll">
             <!-- Álbumes Antes -->
             <div th:each="subAlbum : ${subAlbumAntes}" class="album-card antes">
                 <div class="album-card-content">
                     <h3>
                         <span th:text="${subAlbum.nombre}">Nombre del Subálbum</span>
-                        <span class="badge bg-danger">Antes</span>
+                        <span class="badge bg-danger">Before</span>
                     </h3>
                     <p th:text="${subAlbum.descripcion} ?: 'Sin descripción'">Descripción del subálbum</p>
                     <div class="album-card-footer">
                         <a th:href="@{/subAlbumes/antes/{id}(id=${subAlbum.id})}" class="btn-view">
-                            <i class="fas fa-eye"></i> Ver
+                            <i class="fas fa-eye"></i> View
                         </a>
                     </div>
                 </div>
@@ -415,12 +411,12 @@
                 <div class="album-card-content">
                     <h3>
                         <span th:text="${subAlbum.nombre}">Nombre del Subálbum</span>
-                        <span class="badge bg-success">Después</span>
+                        <span class="badge bg-success">Later</span>
                     </h3>
                     <p th:text="${subAlbum.descripcion} ?: 'Sin descripción'">Descripción del subálbum</p>
                     <div class="album-card-footer">
                         <a th:href="@{/subAlbumes/despues/{id}(id=${subAlbum.id})}" class="btn-view">
-                            <i class="fas fa-eye"></i> Ver
+                            <i class="fas fa-eye"></i> View
                         </a>
                     </div>
                 </div>
@@ -432,64 +428,12 @@
 <!-- Empty State -->
 <div th:if="${#lists.isEmpty(subAlbumAntes) and #lists.isEmpty(subAlbumDespues)}" class="text-center py-5">
     <i class="fas fa-folder-open fa-4x mb-4" style="color: var(--accent-color); opacity: 0.7;"></i>
-    <h3 class="mb-3">No hay subálbumes en este proyecto</h3>
-    <p>Comienza agregando fotos para organizar tu proyecto</p>
+    <h3 class="mb-3">The project is empty.</h3>
     <div class="button-group">
         <a th:href="@{/menu-principal}" class="btn-back">
-            <i class="fas fa-arrow-left"></i> Volver al Menu
+            <i class="fas fa-arrow-left"></i> Back to Menu
         </a>
-        <button type="button" class="btn-action" data-toggle="modal" data-target="#agregarFotoModal">
-            <i class="fas fa-plus-circle"></i> Agregar foto
-        </button>
-    </div>
-</div>
 
-<!-- Modal para agregar foto -->
-<div class="modal fade" id="agregarFotoModal" tabindex="-1" role="dialog" aria-labelledby="agregarFotoModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="agregarFotoModalLabel"><i class="fas fa-camera"></i> Subir nueva foto</h5>
-                <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form class="form-horizontal" th:action="@{/fotos/save}" method="post" enctype="multipart/form-data" id="fotoForm">
-                    <div class="mb-3">
-                        <label for="nombre" class="form-label">Nombre</label>
-                        <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Nombre para la foto" required>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="album" class="form-label">Álbum</label>
-                        <select class="form-control" id="album" name="album" required style="padding: 1px;">
-                            <option value="">Selecciona un álbum</option>
-                            <option th:each="album : ${album}" th:value="${album.id}" th:text="${album.nombre}"></option>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label for="SubAlbum" class="form-label">Sub Álbum</label>
-                        <select class="form-control" id="SubAlbum" name="subalbum" required style="padding: 1px;">
-                            <option value="">Selecciona un sub álbum</option>
-                            <option th:each="subAlbum : ${subAlbumAntes}" th:value="${subAlbum.id}" th:text="${subAlbum.nombre}"></option>
-                            <option th:each="subAlbum : ${subAlbumDespues}" th:value="${subAlbum.id}" th:text="${subAlbum.nombre}"></option>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label for="img" class="form-label">Imagen</label>
-                        <div class="custom-file">
-                            <input type="file" class="custom-file-input" id="img" name="img" required>
-                            <label class="custom-file-label" for="img">Seleccionar archivo</label>
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fas fa-times mr-2"></i>Cancelar</button>
-                <button type="submit" class="btn btn-primary" form="fotoForm">
-                    <i class="fas fa-save mr-2"></i>Guardar foto
-                </button>
-            </div>
-        </div>
     </div>
 </div>
 
@@ -500,21 +444,6 @@
 <script th:src="@{/vendor/jquery/jquery.min.js}"></script>
 <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
 
-<!-- Script para el input file -->
-<script>
-    // Muestra el nombre del archivo seleccionado
-    document.querySelector('.custom-file-input').addEventListener('change', function(e) {
-        var fileName = document.getElementById("img").files[0].name;
-        var nextSibling = e.target.nextElementSibling;
-        nextSibling.innerText = fileName;
-    });
-
-    // Resetear el formulario al cerrar el modal
-    $('#agregarFotoModal').on('hidden.bs.modal', function () {
-        $('#fotoForm')[0].reset();
-        $('.custom-file-label').text('Seleccionar archivo');
-    });
-</script>
 
 </body>
 </html>

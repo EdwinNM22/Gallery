@@ -18,6 +18,8 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Optional;
 
@@ -59,51 +61,56 @@ public class FotoController {
 
     @PostMapping("/save")
     public String save(Model model, foto foto,
-                       @RequestParam("img") MultipartFile file,
+                       @RequestParam("img") MultipartFile[] files,
                        HttpSession session,
-                       @RequestParam("subalbum") Integer subAlbumId) throws IOException {
-        LOGGER.info("Saving foto: {}", foto);
+                       @RequestParam("subalbum") Integer subAlbumId,
+                       @RequestParam("nombre") String nombre,
+                       @RequestParam(value = "hora", required = false) String hora) throws IOException {
 
-        // Obtener el usuario de la sesión
         Optional<usuario> optionalUsuario = usuarioService.findById(Integer.parseInt(session.getAttribute("idusuario").toString()));
-        if (optionalUsuario.isPresent()) {
-            usuario u = optionalUsuario.get();
-            foto.setUsuario(u);
-
-        } else {
+        if (!optionalUsuario.isPresent()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado");
         }
 
-        // Obtener el subálbum desde la base de datos
+        usuario u = optionalUsuario.get();
         SubAlbum subAlbum = subAlbumService.get(subAlbumId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "SubAlbum not found"));
 
-        // Asociar la foto al subálbum
-        foto.setSubAlbum(subAlbum);
-        subAlbum.getFotos().add(foto);
-
-        // Imagen
-        if (foto.getId() == null) {
-            String nombrefoto = upload.saveImage(file);
-            foto.setImagen(nombrefoto);
+        // Establecer la fecha y hora de la foto. Si no se pasa hora, se usa la hora actual.
+        Date fechaFoto = new Date();
+        if (hora != null && !hora.isEmpty()) {
+            // Si el usuario ingresa una hora, la parseamos y la asignamos
+            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+            try {
+                fechaFoto = sdf.parse(hora);
+            } catch (ParseException e) {
+                // Si hay error en el formato, utilizamos la hora actual
+                fechaFoto = new Date();
+            }
         }
 
-        // Asignar la fecha de subida a la foto (con el tipo Date)
-        Date fechaHoraSubida = new Date();  // Obtiene la fecha y hora actual
-        foto.setFecha(fechaHoraSubida);  // Usando el setter para asignar el valor
+        for (MultipartFile file : files) {
+            foto nuevaFoto = new foto();
+            nuevaFoto.setUsuario(u);
+            nuevaFoto.setSubAlbum(subAlbum);
+            nuevaFoto.setFecha(fechaFoto); // Asignamos la fecha y hora
+            nuevaFoto.setNombre(nombre); // Aquí se establece el nombre que estaba faltando
 
+            String nombrefoto = upload.saveImage(file); // este es el nombre del archivo guardado en disco
+            nuevaFoto.setImagen(nombrefoto); // este nombre sí se usa para mostrar la imagen
 
+            fotoService.save(nuevaFoto);
+            subAlbum.getFotos().add(nuevaFoto);
+        }
 
-        // Guardar la foto
-        fotoService.save(foto);
         subAlbumService.save(subAlbum);
+        model.addAttribute("message", "Fotos subidas correctamente");
 
-        // Agregar mensaje de éxito
-        model.addAttribute("message", "La foto se ha agregado con éxito");
-
-        // Redirigir
         return "redirect:/albumes/" + subAlbum.getAlbum().getId();
     }
+
+
+
 
     @GetMapping("/edit/{id}")
     public String edit(@PathVariable Integer id, Model model) {

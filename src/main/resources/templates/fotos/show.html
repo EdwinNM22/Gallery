@@ -106,25 +106,6 @@
       background-color: rgba(67, 97, 238, 0.05);
     }
 
-    .btn-primary {
-      background-color: var(--primary-color);
-      color: white;
-      border: none;
-      border-radius: 8px;
-      padding: 10px 20px;
-      font-weight: 500;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
-      display: inline-flex;
-      align-items: center;
-    }
-
-    .btn-primary:hover {
-      background-color: var(--secondary-color);
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(67, 97, 238, 0.4);
-      color: white;
-    }
 
     .btn-primary i {
       margin-right: 8px;
@@ -231,12 +212,7 @@
         flex-direction: column;
       }
 
-      .btn-back, .btn-primary {
-        width: 100%;
-        justify-content: center;
-        margin-right: 0;
-        margin-bottom: 10px;
-      }
+
     }
   </style>
 </head>
@@ -251,13 +227,13 @@
   <!-- Page Heading -->
   <div class="page-header">
     <h1 class="mb-3">
-      <i class="fas fa-images mr-2"></i>Respalda tus fotos
+      <i class="fas fa-images mr-2"></i>Manage project photos
     </h1>
 
     <nav aria-label="breadcrumb">
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a th:href="@{/adm}"><i class="fas fa-home mr-1"></i>Inicio</a></li>
-        <li class="breadcrumb-item active">Ver fotos</li>
+        <li class="breadcrumb-item active">View photos</li>
       </ol>
     </nav>
   </div>
@@ -265,23 +241,23 @@
   <!-- Botones de acción -->
   <div class="btn-container">
     <a class="btn btn-back" th:href="@{/adm}">
-      <i class="fas fa-arrow-left"></i> Volver al Menú
+      <i class="fas fa-arrow-left"></i> Back to Menu
     </a>
   </div>
 
   <!-- Tabla de fotos -->
   <div class="card">
     <div class="card-header">
-      <i class="fas fa-table mr-2"></i>Lista de Fotos
+      <i class="fas fa-table mr-2"></i>Photo list
     </div>
     <div class="card-body">
       <div class="table-responsive">
         <table class="table table-hover">
           <thead>
           <tr>
-            <th>Nombre</th>
-            <th>Descripción</th>
-            <th>Acciones</th>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Actions</th>
           </tr>
           </thead>
           <tbody>
@@ -291,10 +267,10 @@
             <td>
               <div class="action-buttons">
                 <a class="btn btn-warning" th:href="@{/fotos/edit/{id}(id=${foto.id})}">
-                  <i class="fas fa-edit"></i> Editar
+                  <i class="fas fa-edit"></i> Edit
                 </a>
                 <a class="btn btn-danger" th:href="@{/fotos/delete/{id}(id=${foto.id})}">
-                  <i class="fas fa-trash"></i> Eliminar
+                  <i class="fas fa-trash"></i> Delete
                 </a>
               </div>
             </td>

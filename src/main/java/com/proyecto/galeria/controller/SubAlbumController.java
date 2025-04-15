@@ -38,7 +38,7 @@ public class SubAlbumController {
 
         // Si se encuentra el subálbum, obtener sus fotos
         if (subAlbumAntes != null) {
-            model.addAttribute("fotoAntes", subAlbumAntes.getFotos()); // Asumiendo que SubAlbum tiene el método getFotos()
+            model.addAttribute("fotoAntes", subAlbumAntes.getFotos()); // Asumiendo que SubAlbum tiene el metodo getFotos()
         }
 
         return showSubAlbum(id, model, "subAlbumes/subalbumAntes");
@@ -57,7 +57,8 @@ public class SubAlbumController {
 
         // Si se encuentra el subálbum, obtener sus fotos
         if (subAlbumDespues != null) {
-            model.addAttribute("fotoDespues", subAlbumDespues.getFotos()); // Asumiendo que SubAlbum tiene el método getFotos()
+            model.addAttribute("fotoDespues", subAlbumDespues.getFotos()); // Asumiendo que SubAlbum tiene el metodo getFotos()
+            model.addAttribute("subAlbum", subAlbumDespues);
         }
 
         return "subAlbumes/subalbumDespues";

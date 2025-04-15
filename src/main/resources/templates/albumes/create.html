@@ -274,8 +274,8 @@
     <div class="success-notification-content">
         <i class="fas fa-check-circle success-icon"></i>
         <div class="success-message">
-            <div class="success-title">Proyecto creado</div>
-            <div class="success-detail">El álbum se ha creado correctamente</div>
+            <div class="success-title">Project created.</div>
+            <div class="success-detail">The album has been created successfully.</div>
         </div>
         <span class="success-close" onclick="hideSuccessNotification()">&times;</span>
     </div>
@@ -287,8 +287,8 @@
 <!-- Album Header -->
 <div class="album-header text-center">
     <div class="container">
-        <h1 class="album-title">Crea tu nuevo proyecto</h1>
-        <p class="album-subtitle">Organiza tus proyectos</p>
+        <h1 class="album-title">Create your new project</h1>
+        <p class="album-subtitle">Organize your projects</p>
     </div>
 </div>
 
@@ -296,8 +296,8 @@
 <div class="container">
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a th:href="@{/mainMenu}">Inicio</a></li>
-            <li class="breadcrumb-item active">Crear Proyecto</li>
+            <li class="breadcrumb-item"><a th:href="@{/mainMenu}">Home</a></li>
+            <li class="breadcrumb-item active">Create Project</li>
         </ol>
     </nav>
 </div>
@@ -308,25 +308,25 @@
         <form th:action="@{/albumes/save}" method="post" enctype="multipart/form-data" id="albumForm">
             <!-- Album Name -->
             <div class="mb-4">
-                <label for="nombre" class="form-label">Nombre del Álbum</label>
+                <label for="nombre" class="form-label">Proyect Name</label>
                 <input type="text" class="form-control" id="nombre" name="nombre"
-                       placeholder="Nombre de su proximo proyecto" required>
+                       placeholder="Name of your next project." required>
             </div>
 
             <!-- Description -->
             <div class="mb-4">
-                <label for="descripcion" class="form-label">Descripción</label>
+                <label for="descripcion" class="form-label">Description.</label>
                 <textarea class="form-control" id="descripcion" name="descripcion" rows="4"
-                          placeholder="Describe el contenido de este nuevo proyecto (opcional)"></textarea>
+                          placeholder="Describe the content of this new project (optional)."></textarea>
             </div>
 
             <!-- Submit Button and Back Button -->
             <div class="button-group">
                 <button type="button" class="btn btn-back" onclick="window.history.back()">
-                    <i class="fas fa-arrow-left"></i> Volver al Menú
+                    <i class="fas fa-arrow-left"></i> Back to Menu
                 </button>
                 <button type="submit" class="btn-create">
-                    <i class="fas fa-plus-circle"></i> Crear Proyecto
+                    <i class="fas fa-plus-circle"></i> Create Project
                 </button>
             </div>
 

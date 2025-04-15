@@ -95,7 +95,7 @@ public class AlbumController {
         album savedAlbum = albumService.save(album);
 
         // Crear los subálbumes asociados al álbum
-        SubAlbum subAlbumAntes = new SubAlbum(null, "Antes", "Subálbum creado por default", "Antes", savedAlbum, u);
+        SubAlbum subAlbumAntes = new SubAlbum(null, "Antes", "Guarda el estado ", "Antes", savedAlbum, u);
         SubAlbum subAlbumDespues = new SubAlbum(null, "Después", "Subálbum creado por default", "Despues", savedAlbum, u);
 
         // Guardar los subálbumes

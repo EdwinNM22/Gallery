@@ -8,7 +8,7 @@
   <meta name="description" content="">
   <meta name="author" content="">
 
-  <title>Spring eCommerce</title>
+  <title>ProyectManager</title>
 
   <!-- Bootstrap core CSS -->
   <link th:href="@{/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
@@ -28,15 +28,15 @@
 
   <!-- Page Heading/Breadcrumbs -->
   <h1 class="mt-4 mb-3">
-    Spring eCommerce <small>Productos</small>
+     <small>Fotos</small>
   </h1>
 
   <ol class="breadcrumb">
     <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-    <li class="breadcrumb-item active">Actualizar Producto</li>
+    <li class="breadcrumb-item active">Update photo</li>
   </ol>
 
-  <h2>Actualizar Producto</h2>
+  <h2>Update phot</h2>
   <form class="form-horizontal" th:action="@{/fotos/update}" method="post" enctype="multipart/form-data">
     <input type="hidden" name="id" th:value="${foto.id}">
 
@@ -57,7 +57,7 @@
 
     <div class="row">
       <div class="col-sm-2">
-        <button type="submit" class="btn btn-success">Guardar</button>
+        <button type="submit" class="btn btn-success">Save</button>
       </div>
     </div>
 
