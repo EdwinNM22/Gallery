@@ -73,17 +73,6 @@
       text-decoration: none;
     }
 
-    .success-notification {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      z-index: 9999;
-      min-width: 350px;
-      border-left: 4px solid #28a745;
-      display: flex;
-      align-items: center;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    }
 
     .credentials-box {
       background-color: #f8f9fa;
@@ -119,6 +108,87 @@
     .btn-clear {
       margin-top: 0.5rem;
     }
+
+    /* Estilos mejorados para el selector de tipo de usuario */
+    .user-type-selector {
+      position: relative;
+      margin-bottom: 1.5rem;
+    }
+
+    .user-type-options {
+      display: flex;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid #dee2e6;
+      background-color: #f8f9fa;
+    }
+
+    .user-type-option {
+      flex: 1;
+      text-align: center;
+      padding: 0.8rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .user-type-option input[type="radio"] {
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .user-type-option label {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+      margin-bottom: 0;
+    }
+
+    .user-type-option i {
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+      transition: all 0.3s ease;
+    }
+
+    .user-type-option .option-text {
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+
+    .user-type-option input[type="radio"]:checked + label {
+      color: #4361ee;
+    }
+
+    .user-type-option input[type="radio"]:checked + label i {
+      color: #4361ee;
+      transform: scale(1.1);
+    }
+
+    .user-type-option:not(:last-child) {
+      border-right: 1px solid #dee2e6;
+    }
+
+    .user-type-option:hover {
+      background-color: #e9ecef;
+    }
+
+    .user-type-option input[type="radio"]:checked ~ .option-highlight {
+      opacity: 1;
+    }
+
+    .option-highlight {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background-color: #4361ee;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
   </style>
 </head>
 
@@ -153,6 +223,30 @@
                  placeholder="Asigne una contraseña">
         </div>
 
+        <div class="form-group">
+          <label>User Type:</label>
+          <div class="user-type-selector">
+            <div class="user-type-options">
+              <div class="user-type-option">
+                <input type="radio" id="userTypeWorker" name="tipo_usuario" value="USER" checked>
+                <label for="userTypeWorker">
+                  <i class="fas fa-user-tie"></i>
+                  <span class="option-text">Worker</span>
+                </label>
+                <div class="option-highlight"></div>
+              </div>
+              <div class="user-type-option">
+                <input type="radio" id="userTypeAdmin" name="tipo_usuario" value="ADMIN">
+                <label for="userTypeAdmin">
+                  <i class="fas fa-user-shield"></i>
+                  <span class="option-text">Administrator</span>
+                </label>
+                <div class="option-highlight"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div class="d-flex justify-content-between mt-4">
           <button type="button" class="btn btn-back" onclick="window.history.back()">
             <i class="fas fa-arrow-left mr-2"></i>Back to menu
@@ -161,7 +255,6 @@
             <i class="fas fa-save mr-2" style="color: white;"></i>Register
           </button>
         </div>
-
 
         <!-- Credentials Box -->
         <div id="credentialsBox" class="credentials-box">
@@ -178,6 +271,10 @@
           <div class="credentials-item">
             <span class="credentials-label">Password:</span>
             <span id="credPassword" class="credentials-value"></span>
+          </div>
+          <div class="credentials-item">
+            <span class="credentials-label">User Type:</span>
+            <span id="credType" class="credentials-value"></span>
           </div>
           <div class="text-right mt-2">
             <button type="button" class="btn btn-sm btn-outline-primary" onclick="copyCredentials()">
@@ -218,11 +315,12 @@
   function copyCredentials() {
     const email = document.getElementById('credEmail').textContent;
     const password = document.getElementById('credPassword').textContent;
-    const text = `Email: ${email}\nContraseña: ${password}`;
+    const userType = document.getElementById('credType').textContent;
+    const text = `Email: ${email}\nPassword: ${password}\nUser Type: ${userType}`;
 
     navigator.clipboard.writeText(text).then(() => {
       const originalText = event.target.innerHTML;
-      event.target.innerHTML = '<i class="fas fa-check mr-1"></i>Copiado';
+      event.target.innerHTML = '<i class="fas fa-check mr-1"></i>Copied';
       setTimeout(() => {
         event.target.innerHTML = originalText;
       }, 2000);
@@ -236,6 +334,14 @@
     document.getElementById('registerForm').reset();
     document.getElementById('credentialsBox').style.display = 'none';
     document.getElementById('nombre').focus();
+    // Restablecer la selección de tipo de usuario a Worker
+    document.getElementById('userTypeWorker').checked = true;
+    const labels = document.querySelectorAll('.user-type-option label');
+    labels.forEach(label => {
+      label.style.color = '';
+    });
+    document.querySelector('#userTypeWorker + label').style.color = '#4361ee';
+    document.querySelector('#userTypeWorker + label i').style.color = '#4361ee';
   }
 
   // Manejar el envío del formulario
@@ -245,17 +351,20 @@
 
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
+    const userType = document.querySelector('input[name="tipo_usuario"]:checked').value;
 
     document.getElementById('credEmail').textContent = email;
     document.getElementById('credPassword').textContent = password;
+    document.getElementById('credType').textContent = userType === 'ADMIN' ? 'Administrator' : 'Worker';
     document.getElementById('credentialsBox').style.display = 'block';
 
     fetch(form.action, {
       method: form.method,
       body: new FormData(form)
     })
-            .then(response => {
-              if (response.ok) {
+            .then(response => response.text())
+            .then(text => {
+              if (text.includes("Usuario registrado")) {
                 showSuccessNotification();
               } else {
                 alert('Error al registrar el usuario');
@@ -268,6 +377,29 @@
 
     return false;
   }
+
+  // Efecto visual para los botones de tipo de usuario
+  document.querySelectorAll('.user-type-option input[type="radio"]').forEach(radio => {
+    radio.addEventListener('change', function() {
+      document.querySelectorAll('.user-type-option label').forEach(label => {
+        label.style.color = '';
+      });
+      document.querySelectorAll('.user-type-option i').forEach(icon => {
+        icon.style.color = '';
+      });
+      if (this.checked) {
+        const label = this.nextElementSibling;
+        label.style.color = '#4361ee';
+        label.querySelector('i').style.color = '#4361ee';
+      }
+    });
+  });
+
+  // Inicializar colores al cargar la página
+  document.addEventListener('DOMContentLoaded', function() {
+    document.querySelector('#userTypeWorker + label').style.color = '#4361ee';
+    document.querySelector('#userTypeWorker + label i').style.color = '#4361ee';
+  });
 </script>
 
 </body>

@@ -1,19 +1,22 @@
 package com.proyecto.galeria.controller;
 
+import com.proyecto.galeria.model.foto;
 import com.proyecto.galeria.model.usuario;
 import com.proyecto.galeria.service.IUsuarioService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 import java.util.Optional;
+
+import static org.hibernate.tool.schema.SchemaToolingLogging.LOGGER;
 
 @Controller
 @RequestMapping("/usuario")
@@ -24,7 +27,54 @@ public class UsuarioController {
 
     private final Logger logger = LoggerFactory.getLogger(UsuarioController.class);
 
+
     BCryptPasswordEncoder passEncode = new BCryptPasswordEncoder();
+
+
+    @GetMapping("/show")
+    public String show(Model model){
+
+        model.addAttribute("usuarios", usuarioService.findAll());
+        return "usuario/show";
+    }
+
+    @GetMapping("/edit/{id}")
+    public String edit(@PathVariable Integer id, Model model) {
+        usuario usuario = new usuario();
+        Optional<usuario> usuarioOpt = usuarioService.get(id);
+        usuario = usuarioOpt.get();
+
+        model.addAttribute("usuario", usuario);
+        return "usuario/edit";
+    }
+
+    @PostMapping("/update")
+    public String update(usuario usuarioParcial) {
+        // Buscar el usuario existente por ID
+        Optional<usuario> usuarioOpt = usuarioService.get(usuarioParcial.getId());
+        if (usuarioOpt.isPresent()) {
+            usuario usuarioExistente = usuarioOpt.get();
+
+            // Actualizar solo los campos modificables
+            usuarioExistente.setNombre(usuarioParcial.getNombre());
+            usuarioExistente.setTipo_usuario(usuarioParcial.getTipo_usuario());
+
+            // Guardar el usuario actualizado
+            usuarioService.save(usuarioExistente);
+        }
+        return "redirect:/usuario/show";
+    }
+
+    @PostMapping("/changeUserType")
+    public String changeUserType(@RequestParam Integer id, @RequestParam String newType) {
+        Optional<usuario> usuarioOpt = usuarioService.get(id);
+        if (usuarioOpt.isPresent()) {
+            usuario usuarioExistente = usuarioOpt.get();
+            usuarioExistente.setTipo_usuario(newType);
+            usuarioService.save(usuarioExistente);
+        }
+        return "redirect:/usuario/show";
+    }
 
     @GetMapping("/vpsSecurity2024-")
     public String create() {
@@ -32,12 +82,17 @@ public class UsuarioController {
     }
 
     @PostMapping("/save")
-    public String save(usuario usuario) {
+    public ResponseEntity<String> save(usuario usuario) {
         logger.info("Usuario registro: {}", usuario);
-        usuario.setTipo_usuario("USER");
+
+        // Validar que el tipo de usuario sea válido
+        if (!"ADMIN".equals(usuario.getTipo_usuario()) && !"USER".equals(usuario.getTipo_usuario())) {
+            return ResponseEntity.badRequest().body("Tipo de usuario no válido");
+        }
+
         usuario.setPassword(passEncode.encode(usuario.getPassword()));
         usuarioService.save(usuario);
-        return "redirect:/";
+        return ResponseEntity.ok("Usuario registrado");
     }
 
     @GetMapping("/login")

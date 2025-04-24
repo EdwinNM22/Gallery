@@ -268,66 +268,18 @@
             font-size: 1rem;
         }
 
-        /* Modal Styles */
-        .modal-content {
-            border: none;
-            border-radius: 12px;
-            overflow: hidden;
-        }
-
-        .modal-header {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: white;
-            border-bottom: none;
-        }
-
-        .modal-title {
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-        }
-
         .modal-title i {
             margin-right: 10px;
         }
 
-        .modal-body {
-            padding: 2rem;
-        }
 
-        .form-label {
-            font-weight: 500;
-            color: var(--text-dark);
-        }
 
-        .form-control {
-            border-radius: 8px;
-            padding: 0.8rem 1rem;
-            border: 1px solid #e2e8f0;
-            transition: all 0.3s ease;
-        }
-
-        .form-control:focus {
+        .custom-file-input:focus ~  {
             border-color: var(--accent-color);
             box-shadow: 0 0 0 0.2rem rgba(72, 149, 239, 0.25);
         }
 
-        .custom-file-label {
-            border-radius: 8px;
-            padding: 0.8rem 1rem;
-            border: 1px solid #e2e8f0;
-            color: var(--text-light);
-        }
 
-        .custom-file-input:focus ~ .custom-file-label {
-            border-color: var(--accent-color);
-            box-shadow: 0 0 0 0.2rem rgba(72, 149, 239, 0.25);
-        }
-
-        .btn-close {
-            filter: invert(1);
-            opacity: 0.8;
-        }
 
         /* Responsive Adjustments */
         @media (max-width: 768px) {
@@ -364,6 +316,51 @@
                 margin-right: 0;
             }
         }
+        .albums-horizontal-scroll {
+            display: flex;
+            overflow-x: auto;
+            gap: 1rem;
+            padding: 1rem 0;
+            scroll-snap-type: x mandatory;
+            flex-wrap: nowrap;
+        }
+
+        /* Estilo de los álbumes */
+        .album-card {
+            min-width: 250px;
+            flex: 0 0 auto;
+            scroll-snap-align: start;
+            border: 1px solid #ccc;
+            padding: 1rem;
+            border-radius: 8px;
+            background: white;
+            box-sizing: border-box;
+        }
+
+
+        @media (max-width: 768px) {
+            .albums-horizontal-scroll {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .album-card {
+                min-width: 200px;
+                width: 100%;
+                margin-bottom: 1rem;
+            }
+        }
+
+
+        @media (min-width: 768px) {
+            .albums-horizontal-scroll {
+                flex-direction: row;
+            }
+
+            .album-card {
+                min-width: 250px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -388,14 +385,14 @@
 <!-- Todos los álbumes en un solo contenedor horizontal -->
 <div class="all-albums-container">
     <div class="container">
-        <h2 class="section-title">Proyects</h2>
+        <h2 class="section-title">Projects</h2>
         <div class="albums-horizontal-scroll">
             <!-- Álbumes Antes -->
             <div th:each="subAlbum : ${subAlbumAntes}" class="album-card antes">
                 <div class="album-card-content">
                     <h3>
-                        <span th:text="${subAlbum.nombre}">Nombre del Subálbum</span>
-                        <span class="badge bg-danger">Before</span>
+                        <span>Before</span>
+                        <span class="badge bg-danger">Antes</span>
                     </h3>
                     <p th:text="${subAlbum.descripcion} ?: 'Sin descripción'">Descripción del subálbum</p>
                     <div class="album-card-footer">
@@ -410,8 +407,8 @@
             <div th:each="subAlbum : ${subAlbumDespues}" class="album-card despues">
                 <div class="album-card-content">
                     <h3>
-                        <span th:text="${subAlbum.nombre}">Nombre del Subálbum</span>
-                        <span class="badge bg-success">Later</span>
+                        <span>After</span>
+                        <span class="badge bg-success">Después</span>
                     </h3>
                     <p th:text="${subAlbum.descripcion} ?: 'Sin descripción'">Descripción del subálbum</p>
                     <div class="album-card-footer">

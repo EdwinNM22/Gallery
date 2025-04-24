@@ -11,7 +11,7 @@ public interface fotoService {
     public void update(foto foto);
     public void delete(Integer id);
     public List<foto> findAll();
-
+    public List<foto> saveAll(List<foto> fotos);
 
 }
 

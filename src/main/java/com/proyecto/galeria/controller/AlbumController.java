@@ -2,16 +2,15 @@ package com.proyecto.galeria.controller;
 
 import com.proyecto.galeria.model.SubAlbum;
 import com.proyecto.galeria.model.album;
+import com.proyecto.galeria.model.foto;
 import com.proyecto.galeria.model.usuario;
-import com.proyecto.galeria.service.UsuarioServiceImpl;
-import com.proyecto.galeria.service.albumService;
+import com.proyecto.galeria.service.*;
 
-import com.proyecto.galeria.service.fotoService;
-import com.proyecto.galeria.service.subAlbumService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,6 +38,9 @@ public class AlbumController {
     private subAlbumService subAlbumService;
     @Autowired
     private fotoService fotoService;
+
+    @Autowired
+    private Uploadfoto upload;
 
     @GetMapping("")
     public String home(Model model) {
@@ -74,19 +76,18 @@ public class AlbumController {
     }
 
     @PostMapping("/save")
-    public String save(album album, HttpSession session) {
+    public ResponseEntity<String> save(album album, HttpSession session) {
         LOGGER.info("Saving album: {}", album);
 
         // Obtener el id del usuario de la sesión
         Object idUsuarioObj = session.getAttribute("idusuario");
         if (idUsuarioObj == null) {
-            return "redirect:/login";
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Usuario no autenticado");
         }
 
         // Obtener el usuario desde la base de datos
         usuario u = usuarioService.findById(Integer.parseInt(idUsuarioObj.toString()))
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-
 
         // Asocia el usuario al álbum
         album.setUsuario(u);
@@ -95,15 +96,16 @@ public class AlbumController {
         album savedAlbum = albumService.save(album);
 
         // Crear los subálbumes asociados al álbum
-        SubAlbum subAlbumAntes = new SubAlbum(null, "Antes", "Guarda el estado ", "Antes", savedAlbum, u);
-        SubAlbum subAlbumDespues = new SubAlbum(null, "Después", "Subálbum creado por default", "Despues", savedAlbum, u);
+        SubAlbum subAlbumAntes = new SubAlbum(null, "Antes", "Upload the photos of the initial state of the project.", "Antes", savedAlbum, u);
+        SubAlbum subAlbumDespues = new SubAlbum(null, "Después", "Upload the photos of the final state of the project.", "Despues", savedAlbum, u);
 
         // Guardar los subálbumes
         subAlbumService.save(subAlbumAntes);
         subAlbumService.save(subAlbumDespues);
 
-        return "redirect:/albumes/create";
+        return ResponseEntity.ok("Álbum guardado con éxito");
     }
+
 
     @GetMapping("/{id}")
     public String viewAlbum(@PathVariable Integer id, Model model) {
@@ -111,7 +113,6 @@ public class AlbumController {
         if (optionalAlbum.isPresent()) {
             album album = optionalAlbum.get();
             List<SubAlbum> subAlbumes = album.getSubAlbumes() != null ? album.getSubAlbumes() : new ArrayList<>();
-// Esto ya trae solo los subálbumes del álbum actual
 
             // Buscar los subálbumes específicos
             SubAlbum antes = subAlbumes.stream()
@@ -134,7 +135,6 @@ public class AlbumController {
             return "redirect:/";
         }
     }
-
 
     @GetMapping("/edit/{id}")
     public String edit(@PathVariable Integer id, Model model) {
@@ -161,13 +161,28 @@ public class AlbumController {
         Optional<album> optionalAlbum = albumService.get(id);
 
         if (optionalAlbum.isPresent()) {
+            album album = optionalAlbum.get();
+
+            // Eliminar todas las fotos de los subálbumes
+            for (SubAlbum subAlbum : album.getSubAlbumes()) {
+                for (foto foto : subAlbum.getFotos()) {
+                    // Eliminar la imagen del sistema de archivos si no es la imagen por defecto
+                    if (!foto.getImagen().equals("default.jpg")) {
+                        upload.deleteImage(foto.getImagen());
+                    }
+                }
+                // Limpiar las fotos del subálbum
+                subAlbum.getFotos().clear();
+                subAlbumService.save(subAlbum);  // Actualizar el subálbum
+            }
+
+            // elimina en cascada los subálbumes si está configurado)
             albumService.delete(id);
         } else {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Album not found");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Álbum no encontrado");
         }
 
         return "redirect:/albumes";
     }
-
-
 }
+

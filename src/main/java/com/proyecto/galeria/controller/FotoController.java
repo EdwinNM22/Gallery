@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -20,8 +21,8 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/fotos")
@@ -60,54 +61,76 @@ public class FotoController {
 
 
     @PostMapping("/save")
-    public String save(Model model, foto foto,
-                       @RequestParam("img") MultipartFile[] files,
-                       HttpSession session,
-                       @RequestParam("subalbum") Integer subAlbumId,
-                       @RequestParam("nombre") String nombre,
-                       @RequestParam(value = "hora", required = false) String hora) throws IOException {
+    @ResponseBody
+    public ResponseEntity<Map<String, String>> save(
+            @RequestParam("img") MultipartFile[] files,
+            HttpSession session,
+            @RequestParam("subalbum") Integer subAlbumId,
+            @RequestParam("nombre") String nombre,
+            @RequestParam(value = "hora", required = false) String hora) throws IOException {
 
-        Optional<usuario> optionalUsuario = usuarioService.findById(Integer.parseInt(session.getAttribute("idusuario").toString()));
-        if (!optionalUsuario.isPresent()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado");
+        // Validación inicial rápida
+        if (files == null || files.length == 0) {
+            return ResponseEntity.badRequest().body(Map.of("error", "No files provided"));
         }
 
-        usuario u = optionalUsuario.get();
+        // Obtener usuario (caché esta operación si se repite mucho)
+        Integer userId = Integer.parseInt(session.getAttribute("idusuario").toString());
+        Optional<usuario> optionalUsuario = usuarioService.findById(userId);
+        if (!optionalUsuario.isPresent()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "Usuario no encontrado"));
+        }
+
+        // Obtener subálbum una sola vez
         SubAlbum subAlbum = subAlbumService.get(subAlbumId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "SubAlbum not found"));
 
-        // Establecer la fecha y hora de la foto. Si no se pasa hora, se usa la hora actual.
-        Date fechaFoto = new Date();
+        // Procesar fecha una sola vez
+        Date fechaFoto = processFecha(hora);
+        usuario u = optionalUsuario.get();
+
+        // Procesar archivos en paralelo
+        List<foto> fotos = Arrays.stream(files)
+                .parallel()
+                .map(file -> {
+                    try {
+                        foto nuevaFoto = new foto();
+                        nuevaFoto.setUsuario(u);
+                        nuevaFoto.setSubAlbum(subAlbum);
+                        nuevaFoto.setFecha(fechaFoto);
+                        nuevaFoto.setNombre(nombre);
+                        String nombrefoto = upload.saveImage(file);
+                        nuevaFoto.setImagen(nombrefoto);
+                        return nuevaFoto;
+                    } catch (IOException e) {
+                        throw new RuntimeException("Error processing file: " + file.getOriginalFilename(), e);
+                    }
+                })
+                .collect(Collectors.toList());
+
+        // Guardar todas las fotos de una vez (implementa batch save en tu servicio si es posible)
+        fotoService.saveAll(fotos);
+
+        // Actualizar subálbum
+        subAlbum.getFotos().addAll(fotos);
+        subAlbumService.save(subAlbum);
+
+        return ResponseEntity.ok(Map.of("message", "Photos or videos uploaded successfully"));
+    }
+
+    private Date processFecha(String hora) {
         if (hora != null && !hora.isEmpty()) {
-            // Si el usuario ingresa una hora, la parseamos y la asignamos
-            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
             try {
-                fechaFoto = sdf.parse(hora);
+                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+                String fechaCompleta = new SimpleDateFormat("dd/MM/yyyy").format(new Date()) + " " + hora;
+                return sdf.parse(fechaCompleta);
             } catch (ParseException e) {
-                // Si hay error en el formato, utilizamos la hora actual
-                fechaFoto = new Date();
+                return new Date();
             }
         }
-
-        for (MultipartFile file : files) {
-            foto nuevaFoto = new foto();
-            nuevaFoto.setUsuario(u);
-            nuevaFoto.setSubAlbum(subAlbum);
-            nuevaFoto.setFecha(fechaFoto); // Asignamos la fecha y hora
-            nuevaFoto.setNombre(nombre); // Aquí se establece el nombre que estaba faltando
-
-            String nombrefoto = upload.saveImage(file); // este es el nombre del archivo guardado en disco
-            nuevaFoto.setImagen(nombrefoto); // este nombre sí se usa para mostrar la imagen
-
-            fotoService.save(nuevaFoto);
-            subAlbum.getFotos().add(nuevaFoto);
-        }
-
-        subAlbumService.save(subAlbum);
-        model.addAttribute("message", "Fotos subidas correctamente");
-
-        return "redirect:/albumes/" + subAlbum.getAlbum().getId();
+        return new Date();
     }
+
 
 
 

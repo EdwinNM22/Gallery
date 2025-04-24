@@ -1,351 +1,339 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-  <!-- Font Awesome -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Bootstrap CSS 4.5.0 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css">
 
-  <style>
-    :root {
-      --primary-color: #2563eb;  /* Azul moderno */
-      --secondary-color: #3f37c9;
-      --accent-color: #1e40af;
-      --dark-color: #3a0ca3;
-      --light-color: #f8f9fa;
-      --text-dark: #1f2937;
-      --text-light: #6b7280;
-      --navbar-bg: rgba(255, 255, 255, 0.98);
-      --navbar-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
-    }
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-    /* Modern Navbar - Versión mejorada */
-    .modern-navbar {
-      background: var(--navbar-bg);
-      box-shadow: var(--navbar-shadow);
-      padding: 0.8rem 0;
-      font-family: 'Poppins', sans-serif;
-      transition: all 0.3s ease;
-      backdrop-filter: blur(8px);
-      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-      position: fixed;
-      width: 100%;
-      top: 0;
-      z-index: 1030;
-    }
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
-    .modern-navbar.scrolled {
-      background: var(--navbar-bg);
-      box-shadow: var(--navbar-shadow);
-      padding: 0.5rem 0;
-    }
+    <style>
+        :root {
+            --primary-color: #2563eb;  /* Azul moderno */
+            --secondary-color: #3f37c9;
+            --accent-color: #1e40af;
+            --dark-color: #3a0ca3;
+            --light-color: #f8f9fa;
+            --text-dark: #1f2937;
+            --text-light: #6b7280;
+            --navbar-bg: rgba(255, 255, 255, 0.98);
+            --navbar-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+        }
 
-    .navbar-brand {
-      font-weight: 700;
-      font-size: 1.5rem;
-      color: var(--primary-color) !important;
-      display: flex;
-      align-items: center;
-      letter-spacing: -0.5px;
-    }
+        /* Modern Navbar - Versión mejorada */
+        .modern-navbar {
+            background: var(--navbar-bg);
+            box-shadow: var(--navbar-shadow);
+            padding: 0.8rem 0;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1030;
+        }
 
-    .navbar-brand i {
-      margin-right: 10px;
-      font-size: 1.3em;
-      color: var(--primary-color);
-    }
+        .modern-navbar.scrolled {
+            background: var(--navbar-bg);
+            box-shadow: var(--navbar-shadow);
+            padding: 0.5rem 0;
+        }
 
-    .nav-link {
-      font-weight: 500;
-      color: var(--text-dark) !important;
-      padding: 0.5rem 1.2rem !important;
-      margin: 0 0.2rem;
-      border-radius: 8px;
-      transition: all 0.3s ease;
-      position: relative;
-    }
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--primary-color) !important;
+            display: flex;
+            align-items: center;
+            letter-spacing: -0.5px;
+        }
 
-    .nav-link:hover {
-      color: var(--primary-color) !important;
-      background: rgba(67, 97, 238, 0.1);
-    }
+        .navbar-brand i {
+            margin-right: 10px;
+            font-size: 1.3em;
+            color: var(--primary-color);
+        }
 
-    /* Efecto de subrayado animado */
-    .nav-link::after {
-      content: '';
-      position: absolute;
-      width: 0;
-      height: 2px;
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      background-color: var(--primary-color);
-      transition: width 0.3s ease;
-    }
+        .modern-navbar .nav-link {
+            font-weight: 500;
+            color: var(--text-dark) !important;
+            padding: 0.5rem 1.2rem !important;
+            margin: 0 0.2rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
 
-    .nav-link:hover::after {
-      width: 60%;
-    }
+        .modern-navbar .nav-link:hover {
+            color: var(--primary-color) !important;
+            background: rgba(67, 97, 238, 0.1);
+        }
 
-    /* Dropdown mejorado */
-    .dropdown-menu {
-      border: none;
-      border-radius: 12px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-      padding: 0.5rem 0;
-      margin-top: 0.5rem;
-      border: 1px solid rgba(0, 0, 0, 0.05);
-    }
+        /* Efecto de subrayado animado */
+        .modern-navbar .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--primary-color);
+            transition: width 0.3s ease;
+        }
 
-    .dropdown-item {
-      padding: 0.6rem 1.5rem;
-      font-weight: 500;
-      transition: all 0.2s ease;
-      color: var(--text-dark);
-    }
+        .modern-navbar .nav-link:hover::after {
+            width: 60%;
+        }
 
-    .dropdown-item:hover {
-      background: rgba(67, 97, 238, 0.1);
-      color: var(--primary-color);
-    }
+        /* Dropdown mejorado */
+        .modern-navbar .dropdown-menu {
+            border: none !important;
+            border-radius: 12px !important;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15) !important;
+            padding: 0.5rem 0 !important;
+            margin-top: 0.5rem !important;
+            border: 1px solid rgba(0, 0, 0, 0.05) !important;
+        }
 
-    .dropdown-item i {
-      width: 20px;
-      text-align: center;
-      margin-right: 10px;
-      color: var(--primary-color);
-    }
+        .modern-navbar .dropdown-item {
+            padding: 0.6rem 1.5rem !important;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            color: var(--text-dark) !important;
+        }
 
-    .dropdown-divider {
-      border-color: rgba(0, 0, 0, 0.05);
-    }
+        .modern-navbar .dropdown-item:hover {
+            background: rgba(67, 97, 238, 0.1) !important;
+            color: var(--primary-color) !important;
+        }
 
-    /* Botón de logout mejorado */
-    .btn-logout {
-      background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
-      color: white !important;
-      border-radius: 8px;
-      padding: 0.5rem 1.5rem !important;
-      font-weight: 500;
-      transition: all 0.3s ease;
-      border: none;
-      box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
-      margin-left: 0.5rem;
-      display: inline-flex;
-      align-items: center;
-    }
+        .modern-navbar .dropdown-item i {
+            width: 20px;
+            text-align: center;
+            margin-right: 10px;
+            color: var(--primary-color);
+        }
 
-    .btn-logout:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(67, 97, 238, 0.4);
-      color: white !important;
-      background: linear-gradient(45deg, var(--accent-color), var(--primary-color));
-    }
+        .modern-navbar .dropdown-divider {
+            border-color: rgba(0, 0, 0, 0.05) !important;
+        }
 
-    .btn-logout i {
-      margin-right: 8px;
-    }
+        /* Botón de logout mejorado */
+        .modern-navbar .btn-logout {
+            background: linear-gradient(45deg, var(--primary-color), var(--accent-color)) !important;
+            color: white !important;
+            border-radius: 8px !important;
+            padding: 0.5rem 1.5rem !important;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: none !important;
+            box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3) !important;
+            margin-left: 0.5rem;
+            display: inline-flex;
+            align-items: center;
+        }
 
-    /* Toggler mejorado */
-    .navbar-toggler {
-      border: none;
-      padding: 0.5rem;
-    }
+        .modern-navbar .btn-logout:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(67, 97, 238, 0.4) !important;
+            color: white !important;
+            background: linear-gradient(45deg, var(--accent-color), var(--primary-color)) !important;
+        }
 
-    .navbar-toggler:focus {
-      outline: none;
-      box-shadow: none;
-    }
+        .modern-navbar .btn-logout i {
+            margin-right: 8px;
+        }
 
-    .navbar-toggler-icon {
-      background-image: none;
-      position: relative;
-      width: 24px;
-      height: 2px;
-      background: var(--primary-color);
-      transition: all 0.3s ease;
-    }
+        /* Toggler mejorado */
+        .modern-navbar .navbar-toggler {
+            border: none !important;
+            padding: 0.5rem !important;
+            color: var(--primary-color) !important;
+            font-size: 1.25rem !important;
+        }
 
-    .navbar-toggler-icon::before,
-    .navbar-toggler-icon::after {
-      content: '';
-      position: absolute;
-      width: 24px;
-      height: 2px;
-      background: var(--primary-color);
-      transition: all 0.3s ease;
-    }
+        .modern-navbar .navbar-toggler:focus {
+            outline: none !important;
+            box-shadow: none !important;
+        }
 
-    .navbar-toggler-icon::before {
-      transform: translateY(-8px);
-    }
+        /* Estilos para el menú colapsado */
+        .modern-navbar .navbar-collapse {
+            background: var(--navbar-bg) !important;
+            border-radius: 0 0 12px 12px !important;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1) !important;
+            margin-top: 8px !important;
+            padding: 1rem !important;
+        }
 
-    .navbar-toggler-icon::after {
-      transform: translateY(8px);
-    }
+        /* Modern Footer - Versión mejorada */
+        .modern-footer {
+            background: linear-gradient(135deg, var(--dark-color), var(--secondary-color));
+            color: white;
+            padding: 3rem 0 1.5rem;
+            font-family: 'Poppins', sans-serif;
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+            margin-top: 60px;
+        }
 
-    .navbar-toggler[aria-expanded="true"] .navbar-toggler-icon {
-      background: transparent;
-    }
+        .modern-footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxkZWZzPjxwYXR0ZXJuIGlkPSJwYXR0ZXJuIiB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiIHBhdHRlcm5UcmFuc2Zvcm09InJvdGF0ZSg0NSkiPjxyZWN0IHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjA1KSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3QgZmlsbD0idXJsKCNwYXR0ZXJuKSIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIvPjwvc3ZnPg==');
+            opacity: 0.2;
+        }
 
-    .navbar-toggler[aria-expanded="true"] .navbar-toggler-icon::before {
-      transform: rotate(45deg);
-    }
+        .footer-content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
 
-    .navbar-toggler[aria-expanded="true"] .navbar-toggler-icon::after {
-      transform: rotate(-45deg);
-    }
+        .footer-logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            display: inline-block;
+        }
 
-    /* Modern Footer - Versión mejorada */
-    .modern-footer {
-      background: linear-gradient(135deg, var(--dark-color), var(--secondary-color));
-      color: white;
-      padding: 3rem 0 1.5rem;
-      font-family: 'Poppins', sans-serif;
-      position: relative;
-      overflow: hidden;
-      text-align: center;
-      margin-top: 60px;
-    }
+        /* Ajuste para el body debido al navbar fijo */
+        body {
+            padding-top: 70px;
+        }
 
-    .modern-footer::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxkZWZzPjxwYXR0ZXJuIGlkPSJwYXR0ZXJuIiB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiIHBhdHRlcm5UcmFuc2Zvcm09InJvdGF0ZSg0NSkiPjxyZWN0IHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjA1KSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3QgZmlsbD0idXJsKCNwYXR0ZXJuKSIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIvPjwvc3ZnPg==');
-      opacity: 0.2;
-    }
+        @media (max-width: 768px) {
+            .navbar-brand {
+                font-size: 1.3rem;
+            }
 
-    .footer-content {
-      position: relative;
-      z-index: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
+            .modern-navbar .nav-link {
+                padding: 0.5rem 1rem !important;
+                margin: 0.2rem 0 !important;
+            }
 
-    .footer-logo {
-      font-size: 1.8rem;
-      font-weight: 700;
-      margin-bottom: 1rem;
-      display: inline-block;
-    }
+            .modern-navbar .btn-logout {
+                margin-left: 0 !important;
+                margin-top: 0.5rem !important;
+                width: 100% !important;
+                justify-content: center;
+            }
 
-    /* Ajuste para el body debido al navbar fijo */
-    body {
-      padding-top: 70px;
-    }
-
-    @media (max-width: 768px) {
-      .navbar-brand {
-        font-size: 1.3rem;
-      }
-
-      .nav-link {
-        padding: 0.5rem 1rem !important;
-      }
-
-      .btn-logout {
-        margin-left: 0;
-        margin-top: 0.5rem;
-        width: 100%;
-        justify-content: center;
-      }
-
-      body {
-        padding-top: 60px;
-      }
-    }
-  </style>
+            body {
+                padding-top: 60px;
+            }
+        }
+    </style>
 </head>
 <body>
 
 <!-- Modern Navbar Mejorado -->
 <div th:fragment="header">
-  <nav class="navbar navbar-expand-lg modern-navbar fixed-top">
-    <div class="container">
-      <a class="navbar-brand" th:href="@{/}">
-        <i class="fas fa-camera-retro"></i> Project Manager
-      </a>
-
-      <button class="navbar-toggler" type="button" data-toggle="collapse"
-              data-target="#navbarResponsive" aria-controls="navbarResponsive"
-              aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-
-      <div class="collapse navbar-collapse" id="navbarResponsive">
-        <ul class="navbar-nav ml-auto align-items-lg-center">
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"
-               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              <i class="fas fa-user-circle mr-1"></i> ADMIN
+    <nav class="navbar navbar-expand-lg modern-navbar fixed-top">
+        <div class="container">
+            <a class="navbar-brand" th:href="@{/}">
+                <i class="fas fa-camera-retro"></i> Project Manager
             </a>
-            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-              <a class="dropdown-item" th:href="@{/fotos}">
-                <i class="fas fa-image"></i> Manage photos
-              </a>
-              <a class="dropdown-item" th:href="@{/albumes/show}">
-                <i class="fas fa-folder"></i> Manage Project
-              </a>
-              <a class="dropdown-item" th:href="@{/usuario/vpsSecurity2024-}">
-                <i class="fas fa-user-plus"></i> Create account
-              </a>
-              <div class="dropdown-divider"></div>
-              <a class="dropdown-item" th:href="@{/cerrar}">
-                <i class="fas fa-sign-out-alt"></i> Exit
-              </a>
+
+            <button class="navbar-toggler" type="button" data-toggle="collapse"
+                    data-target="#navbarResponsive" aria-controls="navbarResponsive"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                <i class="fas fa-bars"></i>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarResponsive">
+                <ul class="navbar-nav ml-auto align-items-lg-center">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"
+                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-user-circle mr-1"></i> ADMIN
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                            <a class="dropdown-item" th:href="@{/fotos}">
+                                <i class="fas fa-image"></i> Manage photos
+                            </a>
+                            <a class="dropdown-item" th:href="@{/albumes/show}">
+                                <i class="fas fa-folder"></i> Manage Project
+                            </a>
+                            <a class="dropdown-item" th:href="@{/usuario/vpsSecurity2024-}">
+                                <i class="fas fa-user-plus"></i> Create account
+                            </a>
+                            <a class="dropdown-item" th:href="@{/usuario/show}">
+                                <i class="fa-solid fa-users-gear "></i>Manage Users
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" th:href="@{/cerrar}">
+                                <i class="fas fa-sign-out-alt"></i> Exit
+                            </a>
+                        </div>
+                    </li>
+<!--                    <li class="nav-item">-->
+<!--                        <a class="nav-link btn-logout" th:href="@{/cerrar}">-->
+<!--                            <i class="fas fa-sign-out-alt"></i> Log out-->
+<!--                        </a>-->
+<!--                    </li>-->
+                </ul>
             </div>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link btn-logout" th:href="@{/cerrar}">
-              <i class="fas fa-sign-out-alt"></i> Log out
-            </a>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </nav>
+        </div>
+    </nav>
 </div>
 
 <!-- Modern Footer Mejorado -->
 <div th:fragment="footer">
-  <footer class="modern-footer">
-    <div class="container footer-content">
-      <a href="#" class="footer-logo text-white">
-        <i class="fas fa-camera-retro"></i> Manage Project
-      </a>
-    </div>
-  </footer>
+    <footer class="modern-footer">
+        <div class="container footer-content">
+            <a href="#" class="footer-logo text-white">
+                <i class="fas fa-camera-retro"></i> Manage Project
+            </a>
+        </div>
+    </footer>
 </div>
+
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.min.js"></script>
 
 <!-- Script para navbar con efecto scroll -->
 <script>
-  // Efecto de cambio en navbar al hacer scroll
-  window.addEventListener('scroll', function() {
-    const navbar = document.querySelector('.modern-navbar');
-    if (window.scrollY > 50) {
-      navbar.classList.add('scrolled');
-    } else {
-      navbar.classList.remove('scrolled');
-    }
-  });
+    // Efecto de cambio en navbar al hacer scroll
+    window.addEventListener('scroll', function() {
+        const navbar = document.querySelector('.modern-navbar');
+        if (window.scrollY > 50) {
+            navbar.classList.add('scrolled');
+        } else {
+            navbar.classList.remove('scrolled');
+        }
+    });
 
-  // Ajustar el padding del body cuando el navbar colapsa
-  function adjustBodyPadding() {
-    const navbar = document.querySelector('.modern-navbar');
-    if (navbar) {
-      document.body.style.paddingTop = navbar.offsetHeight + 'px';
+    // Ajustar el padding del body cuando el navbar colapsa
+    function adjustBodyPadding() {
+        const navbar = document.querySelector('.modern-navbar');
+        if (navbar) {
+            document.body.style.paddingTop = navbar.offsetHeight + 'px';
+        }
     }
-  }
 
-  // Ejecutar al cargar y al redimensionar
-  window.addEventListener('load', adjustBodyPadding);
-  window.addEventListener('resize', adjustBodyPadding);
+    // Ejecutar al cargar y al redimensionar
+    window.addEventListener('load', adjustBodyPadding);
+    window.addEventListener('resize', adjustBodyPadding);
 </script>
 
 </body>

@@ -12,5 +12,7 @@ public interface IUsuarioService {
     usuario save (usuario usuario);
     Optional<usuario> findByEmail(String email);
     public Optional<usuario> get(Integer id);
+    public void update(usuario usuario);
+    public void delete(Integer id);
 
 }

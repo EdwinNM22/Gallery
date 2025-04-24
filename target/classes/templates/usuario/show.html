@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="Gestión de Permisos de Usuario - Administración">
+  <meta name="author" content="">
+
+  <title>Gestión de Permisos de Usuario</title>
+
+  <!-- Bootstrap core CSS -->
+  <link th:href="@{/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
+
+  <!-- Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --primary-color: #4361ee;
+      --secondary-color: #3f37c9;
+      --accent-color: #4895ef;
+      --dark-color: #3a0ca3;
+      --light-color: #f8f9fa;
+      --text-dark: #2b2d42;
+      --text-light: #8d99ae;
+      --danger-color: #f72585;
+      --success-color: #4cc9f0;
+      --warning-color: #ff9e00;
+      --admin-color: #4e73df;
+      --user-color: #1cc88a;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #f8f9fa;
+      color: var(--text-dark);
+      padding-top: 60px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin-bottom: 40px;
+      padding: 0 15px;
+    }
+
+    .page-header {
+      padding-bottom: 10px;
+      margin-bottom: 20px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    .page-header h1 {
+      font-size: 1.5rem;
+    }
+
+    .breadcrumb {
+      background-color: transparent;
+      padding: 0;
+      margin-bottom: 20px;
+      font-size: 0.85rem;
+    }
+
+    .breadcrumb-item a {
+      color: var(--primary-color);
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+
+    .breadcrumb-item a:hover {
+      color: var(--dark-color);
+      text-decoration: underline;
+    }
+
+    .card {
+      border: none;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+
+    .card-header {
+      background-color: var(--primary-color);
+      color: white;
+      font-weight: 500;
+      padding: 12px 15px;
+      border-bottom: none;
+      font-size: 1rem;
+    }
+
+    .table {
+      margin-bottom: 0;
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .table th {
+      background-color: #f8f9fa;
+      color: var(--text-dark);
+      font-weight: 600;
+      border-top: none;
+      padding: 10px 8px;
+      text-align: left;
+      font-size: 0.85rem;
+    }
+
+    .table td {
+      padding: 10px 8px;
+      vertical-align: middle;
+      text-align: left;
+      border-top: 1px solid #dee2e6;
+      font-size: 0.85rem;
+    }
+
+    .table-hover tbody tr:hover {
+      background-color: rgba(67, 97, 238, 0.05);
+    }
+
+    .btn-back {
+      background-color: var(--warning-color);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 8px 15px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(255, 158, 0, 0.3);
+      display: inline-flex;
+      align-items: center;
+      margin-right: 8px;
+      font-size: 0.85rem;
+    }
+
+    .btn-back:hover {
+      background-color: #e68a00;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(255, 158, 0, 0.4);
+      color: white;
+    }
+
+    .btn-back i {
+      margin-right: 5px;
+      font-size: 0.9rem;
+    }
+
+    .btn-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 15px;
+    }
+
+    /* Estilos para nombres y emails destacados */
+    .user-name {
+      font-weight: 600;
+      color: var(--text-dark);
+      font-size: 0.95rem;
+      letter-spacing: 0.2px;
+      margin-bottom: 2px;
+    }
+
+    .user-email {
+      font-weight: 500;
+      color: var(--primary-color);
+      font-size: 0.85rem;
+      word-break: break-word;
+    }
+
+
+    /* Estilos mejorados para el selector de tipo de usuario */
+    .user-type-selector {
+      position: relative;
+      margin-bottom: 0;
+    }
+
+    .user-type-options {
+      display: flex;
+      border-radius: 6px;
+      overflow: hidden;
+      border: 1px solid #dee2e6;
+      background-color: #f8f9fa;
+    }
+
+    .user-type-option {
+      flex: 1;
+      text-align: center;
+      padding: 0.4rem 0.6rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .user-type-option input[type="radio"] {
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .user-type-option label {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      margin-bottom: 0;
+      font-weight: 500;
+      gap: 5px;
+      width: 100%;
+      font-size: 0.8rem;
+      transition: all 0.3s ease;
+      border-radius: 4px;
+      padding: 5px 8px;
+    }
+
+    .user-type-option i {
+      font-size: 0.9rem;
+      transition: all 0.3s ease;
+    }
+
+    .user-type-option .option-text {
+      font-size: 0.8rem;
+    }
+
+    .user-type-option input[type="radio"]:checked + label {
+      color: white;
+      transform: scale(1.02);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .user-type-option input[type="radio"]:checked + label i {
+      color: white;
+      transform: scale(1.15);
+    }
+
+    .user-type-option:not(:last-child) {
+      border-right: 1px solid #dee2e6;
+    }
+
+    .user-type-option:hover {
+      background-color: #e9ecef;
+    }
+
+    /* Estilos específicos para ADMIN/USER */
+    .admin-option input[type="radio"]:checked + label {
+      background-color: var(--admin-color);
+      border: 1px solid #3a56c4;
+    }
+
+    .user-option input[type="radio"]:checked + label {
+      background-color: var(--user-color);
+      border: 1px solid #16a571;
+    }
+
+    .admin-option:hover label {
+      background-color: rgba(78, 115, 223, 0.1);
+    }
+
+    .user-option:hover label {
+      background-color: rgba(28, 200, 138, 0.1);
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      body {
+        padding-top: 56px;
+      }
+
+      .container {
+        padding: 0 10px;
+      }
+
+      .page-header h1 {
+        font-size: 1.3rem;
+      }
+
+      .breadcrumb {
+        font-size: 0.75rem;
+      }
+
+      .card-header {
+        padding: 10px 12px;
+        font-size: 0.9rem;
+      }
+
+      .table-responsive {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .table td, .table th {
+        padding: 8px 6px;
+        font-size: 0.8rem;
+        white-space: nowrap;
+      }
+
+      .user-type-options {
+        flex-direction: column;
+        min-width: 120px;
+      }
+
+      .user-type-option:not(:last-child) {
+        border-right: none;
+        border-bottom: 1px solid #dee2e6;
+      }
+
+      .user-type-option label {
+        justify-content: flex-start;
+        padding: 4px 0;
+      }
+
+      .btn-back {
+        padding: 6px 12px;
+        font-size: 0.8rem;
+      }
+
+      /* Ajustes para nombres y emails en tablet */
+      .user-name {
+        font-size: 0.9rem;
+        font-weight: 700;
+      }
+
+      .user-email {
+        font-size: 0.8rem;
+        color: var(--secondary-color);
+      }
+    }
+
+    @media (max-width: 576px) {
+      .table td, .table th {
+        font-size: 0.75rem;
+      }
+
+      .user-type-option label {
+        font-size: 0.75rem;
+      }
+
+      .user-type-option i {
+        font-size: 0.8rem;
+      }
+
+      .page-header h1 {
+        font-size: 1.2rem;
+      }
+
+      .card-header {
+        font-size: 0.85rem;
+      }
+    }
+
+    /* Estilos para la tabla en móviles */
+    @media (max-width: 480px) {
+      table {
+        display: block;
+        width: 100%;
+      }
+
+      thead {
+        display: none;
+      }
+
+      tbody {
+        display: block;
+        width: 100%;
+      }
+
+      tr {
+        display: block;
+        margin-bottom: 15px;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        padding: 10px;
+        background: white;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      }
+
+      td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 5px;
+        border: none;
+        border-bottom: 1px solid #eee;
+      }
+
+      td:last-child {
+        border-bottom: none;
+      }
+
+      td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        margin-right: 10px;
+        color: var(--text-dark);
+        flex: 1;
+      }
+
+      td > *:not(::before) {
+        flex: 2;
+        text-align: right;
+      }
+
+      .user-type-selector {
+        width: 100%;
+      }
+
+      /* Ajustes para nombres y emails en móviles */
+      td[data-label="Nombre"] .user-name {
+        font-size: 1rem;
+        font-weight: 700;
+      }
+
+      td[data-label="Email"] .user-email {
+        font-size: 0.85rem;
+        color: var(--secondary-color);
+      }
+
+      td[data-label="Nombre"],
+      td[data-label="Email"] {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      td[data-label="Nombre"]::before,
+      td[data-label="Email"]::before {
+        margin-bottom: 4px;
+        font-size: 0.7rem;
+        color: var(--text-light);
+      }
+
+      td[data-label="Nombre"] > *,
+      td[data-label="Email"] > * {
+        width: 100%;
+        text-align: left;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- Navigation -->
+<div th:replace="adm/template_admin.html :: header"></div>
+
+<!-- Page Content -->
+<div class="container">
+  <!-- Page Heading -->
+  <div class="page-header">
+    <h1 class="mb-2">
+      <i class="fas fa-user-cog mr-2"></i>Permission Management
+    </h1>
+
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a th:href="@{/adm}"><i class="fas fa-home mr-1"></i>Inicio</a></li>
+        <li class="breadcrumb-item active">Permission</li>
+      </ol>
+    </nav>
+  </div>
+
+  <!-- Botones de acción -->
+  <div class="btn-container">
+    <a class="btn btn-back" th:href="@{/adm}">
+      <i class="fas fa-arrow-left"></i> Back to Menu
+    </a>
+  </div>
+
+  <!--usuarios -->
+  <div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <h5 class="mb-0"><i class="fas fa-users mr-2"></i>Users</h5>
+      <span class="badge badge-light" th:text="${'Total: ' + #lists.size(usuarios)}"></span>
+    </div>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>User type</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr th:each="usuario, stat : ${usuarios}">
+            <td data-label="Nombre">
+              <div class="user-name" th:text="${usuario.nombre}"></div>
+            </td>
+            <td data-label="Email">
+              <div class="user-email" th:text="${usuario.email} ?: 'Sin email'"></div>
+            </td>
+            <td data-label="Tipo">
+              <form th:action="@{/usuario/changeUserType}" method="post" th:id="${'form-' + stat.index}">
+                <input type="hidden" name="id" th:value="${usuario.id}">
+                <div class="user-type-selector">
+                  <div class="user-type-options">
+                    <div class="user-type-option admin-option">
+                      <input type="radio" th:id="${'admin_' + usuario.id}" name="newType" value="ADMIN"
+                             th:checked="${usuario.tipo_usuario == 'ADMIN'}">
+                      <label th:for="${'admin_' + usuario.id}">
+                        <i class="fas fa-user-shield"></i>
+                        <span class="option-text">ADMIN</span>
+                      </label>
+                    </div>
+                    <div class="user-type-option user-option">
+                      <input type="radio" th:id="${'user_' + usuario.id}" name="newType" value="USER"
+                             th:checked="${usuario.tipo_usuario == 'USER'}">
+                      <label th:for="${'user_' + usuario.id}">
+                        <i class="fas fa-user-tie"></i>
+                        <span class="option-text">USER</span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- /.container -->
+
+<!-- Footer -->
+<div th:replace="adm/template_admin.html :: footer"></div>
+
+<!-- Bootstrap core JavaScript -->
+<script th:src="@{/vendor/jquery/jquery.min.js}"></script>
+<script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+
+<script>
+  // Auto-submit al cambiar el tipo de usuario
+  document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.user-type-option input[type="radio"]').forEach(radio => {
+      radio.addEventListener('change', function(e) {
+        // Prevenir el comportamiento por defecto
+        e.preventDefault();
+
+        // Agregar pequeña animación
+        const label = this.closest('.user-type-option');
+        label.style.transform = 'scale(0.95)';
+
+        // Obtener el formulario
+        const form = this.closest('form');
+
+        // Crear FormData para enviar
+        const formData = new FormData(form);
+
+        // Enviar con fetch para evitar recarga
+        fetch(form.action, {
+          method: 'POST',
+          body: formData,
+          headers: {
+            'Accept': 'application/json'
+          }
+        }).then(response => {
+          if (response.ok) {
+            // Animación de éxito
+            label.style.transform = 'scale(1)';
+            label.style.boxShadow = '0 0 0 2px rgba(76, 201, 240, 0.5)';
+            setTimeout(() => {
+              label.style.boxShadow = 'none';
+            }, 500);
+          }
+        }).catch(error => {
+          console.error('Error:', error);
+          label.style.transform = 'scale(1)';
+        });
+      });
+    });
+
+    // Asegurar que los labels ocupen todo el espacio en móviles
+    if (window.innerWidth <= 480) {
+      document.querySelectorAll('.user-type-option label').forEach(label => {
+        label.style.justifyContent = 'space-between';
+        label.style.padding = '5px 8px';
+      });
+    }
+  });
+</script>
+
+</body>
+</html>

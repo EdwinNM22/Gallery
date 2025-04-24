@@ -535,6 +535,164 @@
       margin-bottom: 15px;
       display: none;
     }
+
+    /* Barra de progreso mejorada */
+    .upload-progress-wrapper {
+      margin: 1.5rem 0;
+      padding: 0;
+    }
+
+    .progress-status {
+      font-weight: 500;
+      color: var(--primary-color);
+    }
+
+    .progress-percent {
+      font-weight: 600;
+      color: var(--dark-color);
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+      border-radius: 3px;
+      transition: width 0.3s ease;
+    }
+
+    .file-counter {
+      font-style: italic;
+    }
+
+    .current-file-num {
+      font-weight: 600;
+      color: var(--primary-color);
+    }
+
+    /* Estado de éxito */
+    .upload-complete .progress-status {
+      color: var(--success-color);
+    }
+
+    .upload-complete .progress-bar-fill {
+      background: var(--success-color);
+    }
+
+    /* New styles for download functionality */
+    .download-actions {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+      padding: 0 2rem;
+    }
+
+    .btn-download-all {
+      background: linear-gradient(45deg, #28a745, #20c997);
+      color: white;
+      border: none;
+      padding: 0.6rem 1.5rem;
+      border-radius: 50px;
+      font-weight: 500;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      transition: all 0.3s ease;
+      font-size: 1rem;
+      box-shadow: 0 4px 10px rgba(40, 167, 69, 0.3);
+    }
+
+    .btn-download-all:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(40, 167, 69, 0.4);
+      color: white;
+    }
+
+    .btn-download-all i {
+      margin-right: 8px;
+    }
+
+    .photo-checkbox {
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      z-index: 10;
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+    }
+
+    .photo-card.selected {
+      box-shadow: 0 0 0 3px var(--accent-color);
+    }
+
+    .download-selected {
+      background: linear-gradient(45deg, #17a2b8, #20c997);
+    }
+
+    /* Loading animation for download */
+    .download-loading {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 9999;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .download-loading-content {
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      text-align: center;
+      max-width: 400px;
+    }
+
+    .download-loading-spinner {
+      width: 50px;
+      height: 50px;
+      border: 5px solid #f3f3f3;
+      border-top: 5px solid var(--primary-color);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 1rem;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .download-notification {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: var(--primary-color);
+      color: white;
+      padding: 15px 25px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      z-index: 1000;
+      display: none;
+      align-items: center;
+    }
+
+    .download-notification.error {
+      background: #dc3545 !important;
+    }
+
+    .download-notification i {
+      margin-right: 10px;
+      font-size: 1.2rem;
+    }
+
+    .download-notification i.fa-exclamation-circle {
+      margin-right: 10px;
+      font-size: 1.2rem;
+    }
   </style>
 </head>
 <body>
@@ -559,35 +717,87 @@
 </div>
 
 <!-- Photo Gallery -->
-<div class="container">
-  <div th:if="${not #lists.isEmpty(fotoAntes)}" class="photo-grid">
-    <div th:each="fotoAntes : ${fotoAntes}" class="photo-card">
-      <div class="photo-img-container">
-        <div th:if="${#strings.endsWith(fotoAntes.imagen, '.mp4') or #strings.endsWith(fotoAntes.imagen, '.avi') or #strings.endsWith(fotoAntes.imagen, '.mov') or #strings.endsWith(fotoAntes.imagen, '.mkv')}">
-          <video class="photo-img" controls>
-            <source th:src="@{/images/{img}(img=${fotoAntes.imagen})}" type="video/mp4">
-            Your browser does not support videos.
-          </video>
-        </div>
-        <div th:unless="${#strings.endsWith(fotoAntes.imagen, '.mp4') or #strings.endsWith(fotoAntes.imagen, '.avi') or #strings.endsWith(fotoAntes.imagen, '.mov') or #strings.endsWith(fotoAntes.imagen, '.mkv')}">
-          <img class="photo-img" th:src="@{/images/{img}(img=${fotoAntes.imagen})}" alt="Foto del álbum">
-        </div>
+<div class="container" style="display: flex; justify-content: center; align-items: center; flex-direction: column; margin-bottom: 1rem;">
+  <!-- Add download buttons above the gallery -->
+  <div class="download-actions" style="display: flex; justify-content: center; align-items: center; flex-direction: column; gap: 5px;">
+    <div style="display: flex; gap: 10px;">
+      <button class="btn-download-all" id="downloadAllBtn">
+        <i class="fas fa-download"></i> Download All
+      </button>
+      <button class="btn-download-all download-selected" id="downloadSelectedBtn" disabled>
+        <i class="fas fa-download"></i> Download Selected
+      </button>
+    </div>
+    <span id="selectedCount">0 selected</span>
+  </div>
+</div>
 
-        <div class="photo-overlay">
-          <h5 class="photo-title" th:text="${fotoAntes.nombre}">Photo name</h5> <!-- Título de la foto -->
-          <h8 class="photo-uploader" th:text="'Uploaded by: ' + ${fotoAntes.usuario.nombre}"></h8> <!-- Usuario -->
-          <p class="photo-description"
-             th:text="'Date: ' + ${#dates.format(fotoAntes.fecha, 'dd/MM/yyyy HH:mm')}">
-            Fecha de subida
-          </p>
-        </div>
+
+<div th:if="${not #lists.isEmpty(fotoAntes)}" class="photo-grid">
+  <div th:each="fotoAntes : ${fotoAntes}" class="photo-card">
+    <input type="checkbox" class="photo-checkbox" th:data-id="${fotoAntes.id}" th:data-url="@{/images/{img}(img=${fotoAntes.imagen})}" th:data-name="${fotoAntes.nombre}">
+    <div class="photo-img-container">
+      <div th:if="${#strings.endsWith(fotoAntes.imagen, '.mp4') or #strings.endsWith(fotoAntes.imagen, '.avi') or #strings.endsWith(fotoAntes.imagen, '.mov') or #strings.endsWith(fotoAntes.imagen, '.mkv')}">
+        <video class="photo-img" controls>
+          <source th:src="@{/images/{img}(img=${fotoAntes.imagen})}" type="video/mp4">
+          Your browser does not support videos.
+        </video>
       </div>
-      <div class="photo-content">
-        <div class="photo-actions">
-          <a href="javascript:void(0)" class="btn-view" data-toggle="modal" th:data-target="'#photoModal' + ${fotoAntes.id}">
-            <i class="fas fa-expand mr-2"></i> Enlarge
-          </a>
-        </div>
+      <div th:unless="${#strings.endsWith(fotoAntes.imagen, '.mp4') or #strings.endsWith(fotoAntes.imagen, '.avi') or #strings.endsWith(fotoAntes.imagen, '.mov') or #strings.endsWith(fotoAntes.imagen, '.mkv')}">
+        <img class="photo-img" th:src="@{/images/{img}(img=${fotoAntes.imagen})}" alt="Foto del álbum">
+      </div>
+
+      <div class="photo-overlay">
+        <h5 class="photo-title" th:text="${fotoAntes.nombre}">Photo name</h5>
+        <h8 class="photo-uploader" th:text="'Uploaded by: ' + ${fotoAntes.usuario.nombre}"></h8>
+        <p class="photo-description"
+           th:text="'Date: ' + ${#dates.format(fotoAntes.fecha, 'dd/MM/yyyy HH:mm')}">
+          Fecha de subida
+        </p>
+      </div>
+    </div>
+    <div class="photo-content">
+      <div class="photo-actions">
+        <a href="javascript:void(0)" class="btn-view" data-toggle="modal" th:data-target="'#photoModal' + ${fotoAntes.id}">
+          <i class="fas fa-expand mr-2"></i> Enlarge
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- Download loading overlay -->
+<div class="download-loading" id="downloadLoading">
+  <div class="download-loading-content">
+    <div class="download-loading-spinner"></div>
+    <h4>Preparing your download...</h4>
+    <p id="downloadProgressText">Downloading files: 0/0</p>
+  </div>
+</div>
+
+<!-- Download notification -->
+<div class="download-notification" id="downloadNotification">
+  <i class="fas fa-check-circle"></i>
+  <span id="downloadNotificationText">Download complete!</span>
+</div>
+
+<!-- Confirmation Modal -->
+<div class="modal fade" id="confirmDownloadModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Confirm Download</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" id="confirmDownloadText">
+        Are you sure you want to download these files?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" id="confirmDownloadBtn">Download</button>
       </div>
     </div>
   </div>
@@ -607,49 +817,62 @@
   </button>
 </div>
 
-<!-- Modal para subir foto directamente a este subálbum -->
+<!-- Modal para subir foto -->
 <div class="modal fade" id="subirFotoModal" tabindex="-1" role="dialog" aria-labelledby="subirFotoModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
       <form id="uploadForm" th:action="@{/fotos/save}" method="post" enctype="multipart/form-data">
-        <div class="modal-header">
-          <h5 class="modal-title" id="subirFotoModalLabel"><i class="fas fa-camera"></i> Upload new photo or video.</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title" id="subirFotoModalLabel"><i class="fas fa-camera"></i> Upload new photo or video</h5>
+          <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
         <div class="modal-body">
-          <!-- Mensaje de éxito (oculto inicialmente) -->
-          <div id="successMessage" class="alert-success" style="display: none;">
-            <i class="fas fa-check-circle"></i> Photo uploaded successfully! You can continue adding more photos.
+          <!-- Mensaje de éxito -->
+          <div id="successMessage" class="alert alert-success d-none">
+            <i class="fas fa-check-circle"></i> Photo uploaded successfully!
+          </div>
+
+          <!-- Barra de progreso -->
+          <div class="upload-progress-wrapper d-none mb-3">
+            <div class="d-flex justify-content-between mb-1">
+              <span class="progress-status small">Uploading files...</span>
+              <span class="progress-percent small font-weight-bold">0%</span>
+            </div>
+            <div class="progress" style="height: 8px;">
+              <div class="progress-bar progress-bar-fill progress-bar-striped progress-bar-animated"
+                   role="progressbar" style="width: 0%; background-color: #4e73df;"></div>
+            </div>
+            <div class="text-right mt-1">
+              <small class="text-muted file-counter">File <span class="current-file-num">1</span> of <span class="total-files">0</span></small>
+            </div>
           </div>
 
           <div class="form-group">
-            <label for="nombre" class="control-label">Photo names</label>
+            <label for="nombre" class="font-weight-bold">Multimedia names</label>
             <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Name for the photo" required>
           </div>
 
           <input type="hidden" name="subalbum" th:value="${subAlbum.id}" />
+          <input type="hidden" id="hora" name="hora" value="">
 
-          <!-- Hora por defecto al momento de subir la foto -->
-          <div class="form-group" hidden>
-            <label for="hora" class="control-label">Photo upload time</label>
-            <input type="time" class="form-control" id="hora" name="hora" value="${#dates.format(new Date(), 'HH:mm')}" required>
-          </div>
-
-          <!-- Reemplaza el div del input de archivo en el modal con este código -->
+          <!-- File input -->
           <div class="form-group">
-            <label for="img" class="control-label">Select Image or Video</label>
+            <label for="img" class="font-weight-bold">Select Image or Video</label>
             <div class="custom-file">
               <input type="file" class="custom-file-input" id="img" name="img" accept="image/*,video/*" multiple required>
-              <label class="custom-file-label" for="img">Select file</label>
+              <label class="custom-file-label" for="img">Choose file(s)</label>
             </div>
+            <small class="form-text text-muted">You can select multiple files at once</small>
           </div>
-
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-          <button type="submit" class="btn btn-primary">Save photo</button>
+          <button type="submit" class="btn btn-primary" id="submitBtn">
+            <span class="btn-text">Upload</span>
+            <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+          </button>
         </div>
       </form>
     </div>
@@ -690,79 +913,315 @@
 </div>
 
 <script>
-  window.onload = function() {
-    var now = new Date();
-    var hours = now.getHours().toString().padStart(2, '0');
-    var minutes = now.getMinutes().toString().padStart(2, '0');
-    document.getElementById('hora').value = hours + ':' + minutes;
-  };
-</script>
-
-<script>
-  // Detener el video cuando el modal se cierra
-  $('#subirFotoModal').on('hidden.bs.modal', function () {
-    var video = $(this).find('video')[0];
-    if (video) {
-      video.pause();  // Pausa el video
-      video.currentTime = 0;  // Resetea la posición del video al inicio
+  $(document).ready(function() {
+    // Set current time
+    function setCurrentTime() {
+      const now = new Date();
+      document.getElementById('hora').value = now.toTimeString().substring(0, 5);
     }
-  });
 
-  // Detener el video al cerrar cualquier modal con clase .photo-modal
-  $('.photo-modal').on('hidden.bs.modal', function () {
-    var video = $(this).find('video')[0];
-    if (video) {
-      video.pause();  // Pausa el video
-      video.currentTime = 0;  // Resetea la posición del video al inicio
+    // Initialize modal behaviors
+    function initModal() {
+      // Set time on modal show
+      $('#subirFotoModal').on('show.bs.modal', setCurrentTime);
+
+      // Reset modal on close
+      $('#subirFotoModal').on('hidden.bs.modal', function() {
+        $(this).find('form')[0].reset();
+        $(this).find('.custom-file-label').text('Choose file(s)');
+        $('#successMessage').addClass('d-none');
+
+        // Pause any videos
+        $(this).find('video').each(function() {
+          this.pause();
+          this.currentTime = 0;
+        });
+      });
+
+      // Update file input label
+      $('.custom-file-input').on('change', function() {
+        const files = this.files;
+        let label = 'Choose file(s)';
+
+        if (files.length > 0) {
+          if (files.length === 1) {
+            label = files[0].name;
+          } else {
+            label = `${files.length} files selected`;
+          }
+        }
+
+        $(this).next('.custom-file-label').text(label);
+      });
     }
-  });
-</script>
-<!-- Footer -->
-<div th:include="adm/template_admin.html::footer"></div>
 
+    // AJAX form submission
+    function initUploadForm() {
+      $('#uploadForm').on('submit', function(e) {
+        e.preventDefault();
+        const form = this;
+        const formData = new FormData(form);
+        const files = $('#img')[0].files;
+        const totalFiles = files.length;
 
-<script>
-  // Mostrar nombre del archivo
-  document.querySelector('.custom-file-input').addEventListener('change', function(e) {
-    var fileName = e.target.files[0].name;
-    e.target.nextElementSibling.innerText = fileName;
-  });
+        // UI updates
+        const progressWrapper = $('.upload-progress-wrapper');
+        const submitBtn = $('#submitBtn');
+        const btnText = submitBtn.find('.btn-text');
+        const spinner = submitBtn.find('.spinner-border');
 
-  // Reset modal al cerrarse
-  $('#subirFotoModal').on('hidden.bs.modal', function () {
-    $('#uploadForm')[0].reset();
-    $('.custom-file-label').text('Select file');
-    $('#successMessage').hide(); // Ocultar mensaje de éxito al cerrar el modal
-  });
+        progressWrapper.removeClass('d-none');
+        $('.total-files').text(totalFiles);
+        $('.current-file-num').text('1');
+        $('.progress-bar-fill').css('width', '0%');
+        $('.progress-percent').text('0%');
 
-  // Manejar el envío del formulario con AJAX
-  $('#uploadForm').on('submit', function(e) {
-    e.preventDefault();
-    var formData = new FormData(this);
+        submitBtn.prop('disabled', true);
+        btnText.text('Uploading...');
+        spinner.removeClass('d-none');
 
-    $.ajax({
-      url: $(this).attr('action'),
-      type: 'POST',
-      data: formData,
-      processData: false,
-      contentType: false,
-      success: function(response) {
-        // Mostrar mensaje de éxito
-        $('#successMessage').show();
+        // AJAX request
+        $.ajax({
+          url: $(form).attr('action'),
+          type: 'POST',
+          data: formData,
+          processData: false,
+          contentType: false,
+          xhr: function() {
+            const xhr = new XMLHttpRequest();
 
-        // Limpiar el formulario pero mantener el modal abierto
-        $('#uploadForm')[0].reset();
-        $('.custom-file-label').text('Select file');
+            xhr.upload.addEventListener('progress', function(e) {
+              if (e.lengthComputable) {
+                const percent = Math.round((e.loaded / e.total) * 100);
 
-        // Recargar la página después de 2 segundos para mostrar la nueva foto
-        setTimeout(function() {
-          location.reload();
-        }, 2000);
-      },
-      error: function(xhr, status, error) {
-        alert('Error uploading photo: ' + error);
+                $('.progress-bar-fill').css('width', percent + '%');
+                $('.progress-percent').text(percent + '%');
+
+                if (totalFiles > 1) {
+                  const currentFile = Math.min(Math.floor(percent / (100 / totalFiles)) + 1, totalFiles);
+                  $('.current-file-num').text(currentFile);
+                }
+              }
+            });
+
+            return xhr;
+          },
+          success: function(response) {
+            // Success handling
+            $('.progress-status').text('Upload complete!');
+            $('.progress-bar-fill').removeClass('progress-bar-animated');
+
+            // Show success message
+            $('#successMessage').removeClass('d-none');
+
+            // Close modal after 1.5 seconds
+            setTimeout(() => {
+              $('#subirFotoModal').modal('hide');
+
+              // If there's a redirect URL in the response
+              if (response.redirect) {
+                window.location.href = response.redirect;
+              } else {
+                // Reload page after closing modal
+                setTimeout(() => location.reload(), 500);
+              }
+            }, 1500);
+          },
+          error: function(xhr) {
+            // Error handling
+            $('.progress-status').text('Upload failed').addClass('text-danger');
+            $('.progress-bar-fill').css('background-color', '#dc3545');
+
+            setTimeout(() => {
+              progressWrapper.addClass('d-none');
+              submitBtn.prop('disabled', false);
+              btnText.text('Upload');
+              spinner.addClass('d-none');
+
+              // Reset progress bar
+              $('.progress-bar-fill').css({
+                'width': '0%',
+                'background-color': '#4e73df'
+              }).addClass('progress-bar-animated');
+              $('.progress-status').text('Uploading files...').removeClass('text-danger');
+            }, 3000);
+
+            // Show error message
+            const errorMsg = xhr.responseJSON?.message || 'An error occurred during upload';
+            alert(`Error: ${errorMsg}`);
+          }
+        });
+      });
+    }
+
+    // Helper function to get file extension
+    function getFileExtension(url) {
+      const lastDot = url.lastIndexOf('.');
+      if (lastDot === -1) return '';
+      return url.substring(lastDot);
+    }
+
+    // Function to generate unique filename
+    function generateUniqueFilename(originalName, url, index = 0) {
+      const timestamp = new Date().getTime();
+      const randomString = Math.random().toString(36).substring(2, 8);
+      return `${originalName}_${timestamp}_${randomString}_${index}${getFileExtension(url)}`;
+    }
+
+    // Function to show notification
+    function showNotification(message, type = 'success') {
+      const notification = $('#downloadNotification');
+      const notificationText = $('#downloadNotificationText');
+
+      // Set notification style based on type
+      if (type === 'error') {
+        notification.css('background', '#dc3545');
+        notification.find('i').removeClass('fa-check-circle').addClass('fa-exclamation-circle');
+      } else {
+        notification.css('background', 'var(--primary-color)');
+        notification.find('i').removeClass('fa-exclamation-circle').addClass('fa-check-circle');
       }
-    });
+
+      notificationText.text(message);
+      notification.fadeIn();
+
+      // Hide notification after 3 seconds
+      setTimeout(() => {
+        notification.fadeOut();
+      }, 3000);
+    }
+
+    // New code for download functionality
+    function initDownloadFunctions() {
+      let selectedPhotos = [];
+      let currentDownloadQueue = [];
+
+      // Handle checkbox selection
+      $('.photo-grid').on('change', '.photo-checkbox', function() {
+        const photoId = $(this).data('id');
+        const photoUrl = $(this).data('url');
+        const photoName = $(this).data('name');
+        const isChecked = $(this).is(':checked');
+
+        // Toggle selected class on card
+        $(this).closest('.photo-card').toggleClass('selected', isChecked);
+
+        // Update selected photos array
+        if (isChecked) {
+          selectedPhotos.push({ id: photoId, url: photoUrl, name: photoName });
+        } else {
+          selectedPhotos = selectedPhotos.filter(photo => photo.id !== photoId);
+        }
+
+        // Update UI
+        $('#selectedCount').text(selectedPhotos.length + ' selected');
+        $('#downloadSelectedBtn').prop('disabled', selectedPhotos.length === 0);
+      });
+
+      // Download all photos
+      $('#downloadAllBtn').on('click', function() {
+        const photos = [];
+        $('.photo-checkbox').each(function() {
+          photos.push({
+            url: $(this).data('url'),
+            name: $(this).data('name')
+          });
+        });
+
+        if (photos.length > 0) {
+          // Show confirmation modal
+          $('#confirmDownloadText').html(`You are about to download <strong>${photos.length}</strong> file${photos.length > 1 ? 's' : ''}.<br>Do you want to continue?`);
+          $('#confirmDownloadBtn').off('click').on('click', function() {
+            $('#confirmDownloadModal').modal('hide');
+            downloadMultipleFiles(photos);
+          });
+          $('#confirmDownloadModal').modal('show');
+        } else {
+          // Show notification when no files are available
+          showNotification('No files available to download', 'error');
+        }
+      });
+
+      // Download selected photos
+      $('#downloadSelectedBtn').on('click', function() {
+        if (selectedPhotos.length > 0) {
+          // Show confirmation modal
+          $('#confirmDownloadText').html(`You are about to download <strong>${selectedPhotos.length}</strong> selected file${selectedPhotos.length > 1 ? 's' : ''}.<br>Do you want to continue?`);
+          $('#confirmDownloadBtn').off('click').on('click', function() {
+            $('#confirmDownloadModal').modal('hide');
+            downloadMultipleFiles(selectedPhotos);
+          });
+          $('#confirmDownloadModal').modal('show');
+        } else {
+          // Show notification when no files are selected
+          showNotification('Please select at least one file to download', 'error');
+        }
+      });
+
+      // Function to download multiple files
+      function downloadMultipleFiles(files) {
+        if (files.length === 0) return;
+
+        currentDownloadQueue = files;
+        const loadingOverlay = $('#downloadLoading');
+        const progressText = $('#downloadProgressText');
+
+        // Show loading overlay
+        loadingOverlay.css('display', 'flex');
+        progressText.text(`Downloading files: 0/${files.length}`);
+
+        // Download each file with a small delay between them
+        files.forEach((file, index) => {
+          setTimeout(() => {
+            // Update progress
+            progressText.text(`Downloading files: ${index + 1}/${files.length}`);
+
+            // Generate unique filename
+            const uniqueName = generateUniqueFilename(file.name, file.url, index);
+
+            // Create invisible download link
+            const link = document.createElement('a');
+            link.href = file.url;
+            link.download = uniqueName;
+            link.style.display = 'none';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            // If it's the last file, close overlay and show notification
+            if (index === files.length - 1) {
+              setTimeout(() => {
+                loadingOverlay.hide();
+                showNotification(`Successfully downloaded ${files.length} file${files.length > 1 ? 's' : ''}`);
+              }, 500);
+            }
+          }, index * 300); // Small delay between downloads
+        });
+      }
+
+      // Handle single download from modal
+      $('.photo-modal').on('click', '.download-single', function(e) {
+        e.preventDefault();
+        const photoUrl = $(this).data('url');
+        const photoName = $(this).data('name');
+        const uniqueName = generateUniqueFilename(photoName, photoUrl);
+
+        const link = document.createElement('a');
+        link.href = photoUrl;
+        link.download = uniqueName;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        showNotification('File downloaded successfully');
+      });
+    }
+
+    // Initialize everything
+    setCurrentTime();
+    initModal();
+    initUploadForm();
+    initDownloadFunctions();
   });
 </script>
 

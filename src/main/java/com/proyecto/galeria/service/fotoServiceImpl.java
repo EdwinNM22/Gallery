@@ -38,4 +38,9 @@ public class fotoServiceImpl implements fotoService{
     public List<foto> findAll() {
         return fotoRepository.findAll();
     }
+
+    @Override
+    public List<foto> saveAll(List<foto> fotos) {
+        return fotoRepository.saveAll(fotos);
+    }
 }
