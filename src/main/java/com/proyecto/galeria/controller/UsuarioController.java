@@ -12,6 +12,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpSession;
 import java.util.Optional;
@@ -133,6 +134,23 @@ public class UsuarioController {
             logger.error("Error en el acceso: {}", e.getMessage());
             return "redirect:/usuario/login";
         }
+    }
+
+    @PostMapping("/delete")
+    public String deleteUser(@RequestParam Integer id, RedirectAttributes redirectAttributes) {
+        try {
+            Optional<usuario> usuarioOpt = usuarioService.get(id);
+            if (usuarioOpt.isPresent()) {
+                usuarioService.delete(id);
+                redirectAttributes.addFlashAttribute("successMessage", "Usuario eliminado correctamente");
+            } else {
+                redirectAttributes.addFlashAttribute("errorMessage", "Usuario no encontrado");
+            }
+        } catch (Exception e) {
+            logger.error("Error al eliminar usuario: {}", e.getMessage());
+            redirectAttributes.addFlashAttribute("errorMessage", "Error al eliminar usuario");
+        }
+        return "redirect:/usuario/show";
     }
 
 }

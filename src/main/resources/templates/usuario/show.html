@@ -171,12 +171,33 @@
       word-break: break-word;
     }
 
+    /* Estilos para botones de acción */
+    .btn-sm {
+      padding: 0.25rem 0.5rem;
+      font-size: 0.75rem;
+      border-radius: 4px;
+      transition: all 0.3s ease;
+    }
+
+    .btn-danger {
+      background-color: #e53935; /* rojo */
+      border-color: #e53935;
+      color: white;
+    }
+
+    .btn-danger:hover {
+      background-color: #c62828; /* rojo más oscuro */
+      border-color: #c62828;
+      transform: translateY(-1px);
+      box-shadow: 0 2px 8px rgba(229, 57, 53, 0.3); /* sombra roja */
+    }
 
     /* Estilos mejorados para el selector de tipo de usuario */
     .user-type-selector {
       position: relative;
       margin-bottom: 0;
     }
+
 
     .user-type-options {
       display: flex;
@@ -272,6 +293,15 @@
 
     .supervisor-option:hover label {
       background-color: rgba(108, 117, 125, 0.1);
+    }
+
+    /* Alertas */
+    .alert {
+      border-radius: 8px;
+      padding: 12px 20px;
+      margin-bottom: 20px;
+      border: none;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     }
 
     /* Responsive adjustments */
@@ -447,6 +477,60 @@
         width: 100%;
         text-align: left;
       }
+
+      /* Ajustes para botones en móviles */
+      td[data-label="Actions"] {
+        display: flex;
+        justify-content: flex-end;
+      }
+
+      td[data-label="Actions"]::before {
+        display: none;
+      }
+
+      td[data-label="Actions"] > * {
+        flex: none;
+        width: auto;
+      }
+
+      /* Estilo mejorado para botón delete */
+      .delete-btn {
+        background-color: #e53935;
+        border: none;
+        color: white;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+        padding: 0.5rem 1.5rem;
+        border-radius: 6px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(229, 57, 53, 0.3);
+        font-size: 0.9rem;
+        min-width: 100px; /* Ancho mínimo para mantener la forma */
+      }
+
+      .delete-btn:hover {
+        background-color: #c62828; /* rojo más oscuro */
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(229, 57, 53, 0.4); /* sombra más intensa */
+      }
+
+      .delete-btn i {
+        font-size: 0.9rem;
+      }
+
+      /* En móviles, ocultar el texto "Delete" */
+      @media (max-width: 576px) {
+        .delete-btn span {
+          display: none;
+        }
+        .delete-btn {
+          padding: 0.35rem 0.5rem;
+        }
+      }
+
     }
   </style>
 </head>
@@ -472,6 +556,21 @@
     </nav>
   </div>
 
+  <!-- Mensajes de retroalimentación -->
+  <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+    <span th:text="${successMessage}"></span>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+    <span th:text="${errorMessage}"></span>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
   <!-- Botones de acción -->
   <div class="btn-container">
     <a class="btn btn-back" th:href="@{/adm}">
@@ -493,6 +592,7 @@
             <th>Name</th>
             <th>Email</th>
             <th>User type</th>
+            <th>Actions</th>
           </tr>
           </thead>
           <tbody>
@@ -534,6 +634,16 @@
                     </div>
                   </div>
                 </div>
+              </form>
+            </td>
+            <td data-label="Actions">
+              <form th:action="@{/usuario/delete}" method="post" th:id="${'delete-form-' + usuario.id}" style="display: inline;">
+                <input type="hidden" name="id" th:value="${usuario.id}">
+                <button type="button" class="btn btn-danger btn-sm delete-btn"
+                        th:attr="data-id=${usuario.id}, data-name=${usuario.nombre}"
+                        style="display: inline-flex; align-items: center; gap: 5px; padding: 0.35rem 0.75rem; border-radius: 6px; font-weight: 500; transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(247, 37, 133, 0.3);">
+                  <i class="fas fa-trash-alt"></i> <span class="d-none d-md-inline">Delete</span>
+                </button>
               </form>
             </td>
           </tr>
@@ -593,7 +703,27 @@
       });
     });
 
-    // Asegurar que los labels ocupen todo el espacio en móviles
+// Confirmación para eliminar usuario
+    document.querySelectorAll('.delete-btn').forEach(btn => {
+      btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        const userId = this.getAttribute('data-id');
+        const userName = this.getAttribute('data-name');
+
+        // Mostrar confirmación
+        if (confirm(`¿Estás seguro de que deseas eliminar al usuario ${userName}? Esta acción no se puede deshacer.`)) {
+          // Encontrar el formulario padre más cercano
+          const form = this.closest('form');
+          if (form) {
+            form.submit();
+          } else {
+            console.error('No se encontró el formulario de eliminación');
+          }
+        }
+      });
+    });
+
+    // Asegurar que los labels ocupen todo el espacio en moviles
     if (window.innerWidth <= 480) {
       document.querySelectorAll('.user-type-option label').forEach(label => {
         label.style.justifyContent = 'space-between';
