@@ -32,6 +32,7 @@
       --warning-color: #ff9e00;
       --admin-color: #4e73df;
       --user-color: #1cc88a;
+      --supervisor-color: #6c757d;
     }
 
     body {
@@ -245,7 +246,7 @@
       background-color: #e9ecef;
     }
 
-    /* Estilos específicos para ADMIN/USER */
+    /* Estilos específicos para ADMIN/USER/SUPERVISOR */
     .admin-option input[type="radio"]:checked + label {
       background-color: var(--admin-color);
       border: 1px solid #3a56c4;
@@ -256,12 +257,21 @@
       border: 1px solid #16a571;
     }
 
+    .supervisor-option input[type="radio"]:checked + label {
+      background-color: var(--supervisor-color);
+      border: 1px solid #5a6268;
+    }
+
     .admin-option:hover label {
       background-color: rgba(78, 115, 223, 0.1);
     }
 
     .user-option:hover label {
       background-color: rgba(28, 200, 138, 0.1);
+    }
+
+    .supervisor-option:hover label {
+      background-color: rgba(108, 117, 125, 0.1);
     }
 
     /* Responsive adjustments */
@@ -504,6 +514,14 @@
                       <label th:for="${'admin_' + usuario.id}">
                         <i class="fas fa-user-shield"></i>
                         <span class="option-text">ADMIN</span>
+                      </label>
+                    </div>
+                    <div class="user-type-option supervisor-option">
+                      <input type="radio" th:id="${'supervisor_' + usuario.id}" name="newType" value="SUPERVISOR"
+                             th:checked="${usuario.tipo_usuario == 'SUPERVISOR'}">
+                      <label th:for="${'supervisor_' + usuario.id}">
+                        <i class="fas fa-user-check"></i>
+                        <span class="option-text">SUPERVISOR</span>
                       </label>
                     </div>
                     <div class="user-type-option user-option">

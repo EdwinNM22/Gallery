@@ -119,6 +119,8 @@ public class UsuarioController {
 
                 if ("ADMIN".equalsIgnoreCase(tipoUsuario)) {
                     return "redirect:/adm";
+                } else if ("SUPERVISOR".equalsIgnoreCase(tipoUsuario)) {
+                    return "redirect:/supervi";
                 } else {
                     return "redirect:/mainMenu";
                 }
@@ -132,4 +134,5 @@ public class UsuarioController {
             return "redirect:/usuario/login";
         }
     }
+
 }
