@@ -15,6 +15,8 @@ public interface subAlbumService {
     public List<SubAlbum> findAll();
     public List<SubAlbum> getSubAlbumesAntes();
     public List<SubAlbum> getSubAlbumesDespues();
+    public List<SubAlbum> findByAlbumId(Integer albumId);
+
 
 
 

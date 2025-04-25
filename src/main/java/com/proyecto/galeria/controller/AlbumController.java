@@ -1,9 +1,6 @@
 package com.proyecto.galeria.controller;
 
-import com.proyecto.galeria.model.SubAlbum;
-import com.proyecto.galeria.model.album;
-import com.proyecto.galeria.model.foto;
-import com.proyecto.galeria.model.usuario;
+import com.proyecto.galeria.model.*;
 import com.proyecto.galeria.service.*;
 
 import org.slf4j.Logger;
@@ -13,17 +10,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpSession;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.*;
 
 @Controller
 @RequestMapping("/albumes")
@@ -44,12 +35,8 @@ public class AlbumController {
 
     @GetMapping("")
     public String home(Model model) {
-
         List<album> albumes = albumService.findAll();
         model.addAttribute("albums", albumes);
-
-
-//        return "albumes/show"; aqui va el show de albumes
         List<SubAlbum> subAlbumes = subAlbumService.findAll();
         model.addAttribute("subAlbumes", subAlbumes);
 
@@ -59,53 +46,44 @@ public class AlbumController {
         } else {
             return "redirect:/albumes/show";
         }
-
     }
 
     @GetMapping("/show")
-    public String show(Model model ){
+    public String show(Model model) {
         model.addAttribute("albumes", albumService.findAll());
         return "albumes/show";
     }
 
     @GetMapping("/create")
     public String albumes(Model model) {
-        model.addAttribute("albumes", albumService.findAll());  // Lista de albumes
-        model.addAttribute("subalbum", subAlbumService.findAll());  // Lista de subálbumes
-        return "albumes/create";  // La vista donde se muestra el modal
+        model.addAttribute("albumes", albumService.findAll());
+        model.addAttribute("subalbum", subAlbumService.findAll());
+        return "albumes/create";
     }
 
     @PostMapping("/save")
     public ResponseEntity<String> save(album album, HttpSession session) {
         LOGGER.info("Saving album: {}", album);
 
-        // Obtener el id del usuario de la sesión
         Object idUsuarioObj = session.getAttribute("idusuario");
         if (idUsuarioObj == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Usuario no autenticado");
         }
 
-        // Obtener el usuario desde la base de datos
         usuario u = usuarioService.findById(Integer.parseInt(idUsuarioObj.toString()))
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        // Asocia el usuario al álbum
         album.setUsuario(u);
-
-        // Guardar el álbum y obtener la referencia guardada
         album savedAlbum = albumService.save(album);
 
-        // Crear los subálbumes asociados al álbum
         SubAlbum subAlbumAntes = new SubAlbum(null, "Antes", "Upload the photos of the initial state of the project.", "Antes", savedAlbum, u);
         SubAlbum subAlbumDespues = new SubAlbum(null, "Después", "Upload the photos of the final state of the project.", "Despues", savedAlbum, u);
 
-        // Guardar los subálbumes
         subAlbumService.save(subAlbumAntes);
         subAlbumService.save(subAlbumDespues);
 
         return ResponseEntity.ok("Álbum guardado con éxito");
     }
-
 
     @GetMapping("/{id}")
     public String viewAlbum(@PathVariable Integer id, Model model) {
@@ -114,7 +92,7 @@ public class AlbumController {
             album album = optionalAlbum.get();
             List<SubAlbum> subAlbumes = album.getSubAlbumes() != null ? album.getSubAlbumes() : new ArrayList<>();
 
-            // Buscar los subálbumes específicos
+            // Subálbumes principales
             SubAlbum antes = subAlbumes.stream()
                     .filter(s -> s.getNombre().equals("Antes"))
                     .findFirst()
@@ -125,14 +103,136 @@ public class AlbumController {
                     .findFirst()
                     .orElse(null);
 
-            // Agregar al modelo
+            // Agrupar subálbumes en fragmentos
+            Map<String, Fragmento> fragmentosMap = new HashMap<>();
+
+            for (SubAlbum subAlbum : subAlbumes) {
+                if (subAlbum.getNombre().contains(" - ")) {
+                    String[] parts = subAlbum.getNombre().split(" - ");
+                    if (parts.length == 2) {
+                        String fragmentName = parts[0];
+                        String tipo = parts[1];
+                        Fragmento fragmento = fragmentosMap.getOrDefault(fragmentName,
+                                new Fragmento(fragmentName, subAlbum.getDescripcion(), new ArrayList<>()));
+
+                        // Actualizar descripción solo si es más específica
+                        if (subAlbum.getDescripcion() != null && !subAlbum.getDescripcion().isEmpty()) {
+                            fragmento.setDescripcion(subAlbum.getDescripcion());
+                        }
+
+                        fragmento.getSubAlbumes().add(subAlbum);
+                        fragmentosMap.put(fragmentName, fragmento);
+                    }
+                }
+            }
+
+            List<Fragmento> fragmentos = new ArrayList<>(fragmentosMap.values());
+
             model.addAttribute("album", album);
-            model.addAttribute("subAlbumAntes", antes); // Objeto único (no lista)
-            model.addAttribute("subAlbumDespues", despues); // Objeto único (no lista)
+            model.addAttribute("subAlbumAntes", antes);
+            model.addAttribute("subAlbumDespues", despues);
+            model.addAttribute("fragmentos", fragmentos);
 
             return "albumes/albumes";
         } else {
             return "redirect:/";
+        }
+    }
+
+    @PostMapping("/saveFragment")
+    public String saveFragment(
+            @RequestParam Integer albumId,
+            @RequestParam(required = false) String fragmentId,
+            @RequestParam String name,
+            @RequestParam(required = false) String description,
+            HttpSession session) {
+
+        try {
+            Object idUsuarioObj = session.getAttribute("idusuario");
+            if (idUsuarioObj == null) {
+                return "redirect:/login";
+            }
+
+            usuario u = usuarioService.findById(Integer.parseInt(idUsuarioObj.toString()))
+                    .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+            Optional<album> optionalAlbum = albumService.get(albumId);
+            if (!optionalAlbum.isPresent()) {
+                return "redirect:/albumes?error=Album+not+found";
+            }
+
+            album album = optionalAlbum.get();
+
+            if ("main".equals(fragmentId)) {
+                // Actualizar descripción del fragmento principal
+                List<SubAlbum> subAlbumes = album.getSubAlbumes();
+                for (SubAlbum subAlbum : subAlbumes) {
+                    if ("Antes".equals(subAlbum.getNombre()) || "Después".equals(subAlbum.getNombre())) {
+                        subAlbum.setDescripcion(description);
+                        subAlbumService.save(subAlbum);
+                    }
+                }
+            } else if (fragmentId == null || fragmentId.isEmpty()) {
+                // Crear nuevo fragmento
+                SubAlbum subAlbumAntes = new SubAlbum(null, name + " - Antes",
+                        description != null ? description : "Fotos del estado inicial del fragmento",
+                        "Antes", album, u);
+
+                SubAlbum subAlbumDespues = new SubAlbum(null, name + " - Después",
+                        description != null ? description : "Fotos del estado final del fragmento",
+                        "Despues", album, u);
+
+                subAlbumService.save(subAlbumAntes);
+                subAlbumService.save(subAlbumDespues);
+            } else {
+                // Editar fragmento existente
+                List<SubAlbum> subAlbumes = subAlbumService.findByAlbumId(albumId);
+                for (SubAlbum subAlbum : subAlbumes) {
+                    if (subAlbum.getNombre().startsWith(fragmentId + " - ")) {
+                        String tipo = subAlbum.getNombre().split(" - ")[1];
+                        subAlbum.setNombre(name + " - " + tipo);
+                        subAlbum.setDescripcion(description);
+                        subAlbumService.save(subAlbum);
+                    }
+                }
+            }
+
+            return "redirect:/albumes/" + albumId + "?success=Fragment+saved+successfully";
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "redirect:/albumes/" + albumId + "?error=Error+saving+fragment";
+        }
+    }
+
+    @PostMapping("/deleteFragment/{fragmentId}")
+    public String deleteFragment(
+            @PathVariable String fragmentId,
+            @RequestParam Integer albumId) {
+
+        try {
+            if ("main".equals(fragmentId)) {
+                return "redirect:/albumes/" + albumId + "?error=Cannot+delete+main+fragment";
+            }
+
+            List<SubAlbum> subAlbumes = subAlbumService.findByAlbumId(albumId);
+            for (SubAlbum subAlbum : subAlbumes) {
+                if (subAlbum.getNombre().startsWith(fragmentId + " - ")) {
+                    // Eliminar fotos asociadas
+                    for (foto foto : subAlbum.getFotos()) {
+                        if (!foto.getImagen().equals("default.jpg")) {
+                            upload.deleteImage(foto.getImagen());
+                        }
+                        fotoService.delete(foto.getId());
+                    }
+                    // Eliminar subálbum
+                    subAlbumService.delete(subAlbum.getId());
+                }
+            }
+
+            return "redirect:/albumes/" + albumId + "?success=Fragment+deleted+successfully";
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "redirect:/albumes/" + albumId + "?error=Error+deleting+fragment";
         }
     }
 
@@ -163,20 +263,16 @@ public class AlbumController {
         if (optionalAlbum.isPresent()) {
             album album = optionalAlbum.get();
 
-            // Eliminar todas las fotos de los subálbumes
             for (SubAlbum subAlbum : album.getSubAlbumes()) {
                 for (foto foto : subAlbum.getFotos()) {
-                    // Eliminar la imagen del sistema de archivos si no es la imagen por defecto
                     if (!foto.getImagen().equals("default.jpg")) {
                         upload.deleteImage(foto.getImagen());
                     }
                 }
-                // Limpiar las fotos del subálbum
                 subAlbum.getFotos().clear();
-                subAlbumService.save(subAlbum);  // Actualizar el subálbum
+                subAlbumService.save(subAlbum);
             }
 
-            // elimina en cascada los subálbumes si está configurado)
             albumService.delete(id);
         } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Álbum no encontrado");
@@ -186,3 +282,4 @@ public class AlbumController {
     }
 }
 
+// Clase Fragmento para agrupar subálbumes

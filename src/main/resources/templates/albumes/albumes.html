@@ -28,6 +28,7 @@
             --text-dark: #2b2d42;
             --text-light: #8d99ae;
             --success-color: #4cc9f0;
+            --card-min-width: 280px; /* Tamaño base para móviles */
         }
 
         body {
@@ -36,14 +37,15 @@
             color: var(--text-dark);
             margin: 0;
             padding: 0;
+            line-height: 1.6;
         }
 
         /* Project Header */
         .project-header {
             background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             color: white;
-            padding: 3rem 0;
-            margin-bottom: 3rem;
+            padding: 2.5rem 0;
+            margin-bottom: 2rem;
             position: relative;
             overflow: hidden;
         }
@@ -62,16 +64,18 @@
         .project-header-content {
             position: relative;
             z-index: 1;
+            padding: 0 1rem;
         }
 
         .project-title {
             font-weight: 700;
-            font-size: 2.5rem;
+            font-size: clamp(1.8rem, 5vw, 2.5rem);
             margin-bottom: 0.5rem;
+            line-height: 1.2;
         }
 
         .project-description {
-            font-size: 1.1rem;
+            font-size: clamp(0.95rem, 3vw, 1.1rem);
             opacity: 0.9;
             max-width: 700px;
             margin: 0 auto 1.5rem;
@@ -82,7 +86,7 @@
             background: white;
             color: var(--primary-color);
             border: none;
-            padding: 0.8rem 1.8rem;
+            padding: 0.7rem 1.5rem;
             border-radius: 50px;
             font-weight: 600;
             text-decoration: none;
@@ -90,6 +94,7 @@
             align-items: center;
             transition: all 0.3s ease;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            font-size: 0.95rem;
         }
 
         .btn-action:hover {
@@ -100,6 +105,7 @@
 
         .btn-action i {
             margin-right: 8px;
+            font-size: 0.9rem;
         }
 
         /* Back Button */
@@ -107,7 +113,7 @@
             background: white;
             color: var(--primary-color);
             border: 1px solid var(--primary-color);
-            padding: 0.8rem 1.8rem;
+            padding: 0.7rem 1.5rem;
             border-radius: 50px;
             font-weight: 600;
             text-decoration: none;
@@ -115,7 +121,8 @@
             align-items: center;
             transition: all 0.3s ease;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            margin-right: 15px;
+            margin-right: 0.8rem;
+            font-size: 0.95rem;
         }
 
         .btn-back:hover {
@@ -126,35 +133,105 @@
 
         .btn-back i {
             margin-right: 8px;
+            font-size: 0.9rem;
         }
 
         .button-group {
             display: flex;
             justify-content: center;
-            margin: 2rem 0;
+            margin: 1.5rem 0;
+            flex-wrap: wrap;
+            gap: 0.8rem;
         }
 
-        /* Contenedor principal de álbumes */
-        .all-albums-container {
-            padding: 2rem;
-            margin-bottom: 4rem;
+        /* Contenedor principal de fragmentos */
+        .fragments-container {
+            padding: 1rem;
+            margin-bottom: 3rem;
             width: 100%;
         }
 
-        /* Contenedor horizontal para TODOS los álbumes */
+        /* Estilos para cada fragmento */
+        .fragment-card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .fragment-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        }
+
+        .fragment-header {
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            color: white;
+            padding: 1.2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+        }
+
+        .fragment-title {
+            font-size: clamp(1.2rem, 4vw, 1.5rem);
+            font-weight: 600;
+            margin: 0;
+            line-height: 1.3;
+        }
+
+        .fragment-description {
+            color: rgba(255, 255, 255, 0.9);
+            margin: 0.3rem 0 0;
+            font-size: 0.9rem;
+            width: 100%;
+        }
+
+        .fragment-actions {
+            display: flex;
+            gap: 0.6rem;
+        }
+
+        .fragment-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 0.4rem 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 32px;
+            min-height: 32px;
+        }
+
+        .fragment-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Contenedor horizontal para los álbumes dentro de cada fragmento */
         .albums-horizontal-scroll {
             display: flex;
             flex-direction: row;
-            gap: 2rem;
-            padding-bottom: 1rem;
+            gap: 1.2rem;
+            padding: 1.2rem;
             overflow-x: auto;
             scrollbar-width: thin;
             scrollbar-color: var(--accent-color) #f1f1f1;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
         }
 
         /* Estilos para la barra de scroll */
         .albums-horizontal-scroll::-webkit-scrollbar {
-            height: 8px;
+            height: 6px;
         }
 
         .albums-horizontal-scroll::-webkit-scrollbar-track {
@@ -167,24 +244,26 @@
             border-radius: 10px;
         }
 
-        /* Subalbum Card - TAMAÑO AUMENTADO */
+        /* Subalbum Card - Versión responsive */
         .album-card {
             background: white;
-            border-radius: 12px;
+            border-radius: 10px;
             overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
             transition: all 0.3s ease;
             position: relative;
-            min-width: 350px;
-            height: 250px;
+            min-width: var(--card-min-width);
+            height: auto;
+            min-height: 220px;
             display: flex;
             flex-direction: column;
             flex-shrink: 0;
+            flex-grow: 1;
         }
 
         .album-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
         }
 
         .album-card::before {
@@ -193,7 +272,7 @@
             top: 0;
             left: 0;
             width: 100%;
-            height: 5px;
+            height: 4px;
             background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
         }
 
@@ -208,32 +287,35 @@
         }
 
         .album-card-content {
-            padding: 1.5rem;
+            padding: 1.2rem;
             flex-grow: 1;
             display: flex;
             flex-direction: column;
         }
 
         .album-card h3 {
-            font-size: 1.5rem;
+            font-size: clamp(1.2rem, 4vw, 1.5rem);
             font-weight: 600;
-            margin-bottom: 0.8rem;
+            margin-bottom: 0.6rem;
             color: var(--text-dark);
             display: flex;
             align-items: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            line-height: 1.3;
         }
 
         .album-card h3 .badge {
-            margin-left: 10px;
-            font-size: 0.7rem;
-            padding: 0.35rem 0.6rem;
+            font-size: 0.65rem;
+            padding: 0.3rem 0.5rem;
+            font-weight: 500;
         }
 
         .album-card p {
             color: var(--text-light);
-            font-size: 1rem;
-            line-height: 1.6;
-            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin-bottom: 1.2rem;
             flex-grow: 1;
         }
 
@@ -247,14 +329,14 @@
             background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
             color: white;
             border: none;
-            padding: 0.6rem 1.5rem;
+            padding: 0.5rem 1.2rem;
             border-radius: 50px;
             font-weight: 500;
             text-decoration: none;
             display: inline-flex;
             align-items: center;
             transition: all 0.3s ease;
-            font-size: 1rem;
+            font-size: 0.9rem;
         }
 
         .btn-view:hover {
@@ -264,101 +346,208 @@
         }
 
         .btn-view i {
-            margin-right: 8px;
-            font-size: 1rem;
+            margin-right: 6px;
+            font-size: 0.9rem;
+        }
+
+        /* Modal para crear/editar fragmentos */
+        .modal-content {
+            border-radius: 10px;
+            border: none;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .modal-header {
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            color: white;
+            border-radius: 10px 10px 0 0;
+            border: none;
+            padding: 1.2rem;
+        }
+
+        .modal-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
         }
 
         .modal-title i {
-            margin-right: 10px;
+            margin-right: 8px;
+            font-size: 1.1rem;
         }
 
-
-
-        .custom-file-input:focus ~  {
-            border-color: var(--accent-color);
-            box-shadow: 0 0 0 0.2rem rgba(72, 149, 239, 0.25);
+        .modal-body {
+            padding: 1.5rem;
         }
 
+        .modal-footer {
+            border-top: 1px solid #eee;
+            padding: 1rem 1.5rem;
+        }
 
+        /* Botón para añadir fragmentos */
+        .btn-add-fragment {
+            background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+            color: white;
+            border: none;
+            padding: 0.7rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            transition: all 0.3s ease;
+            margin-bottom: 0;
+            font-size: 0.95rem;
+        }
+
+        .btn-add-fragment:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(67, 97, 238, 0.3);
+            color: white;
+        }
+
+        .btn-add-fragment i {
+            margin-right: 8px;
+            font-size: 0.9rem;
+        }
+
+        /* Toast notifications */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1100;
+            max-width: 350px;
+            width: 100%;
+            padding: 0 15px;
+        }
+
+        .toast {
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            font-size: 0.9rem;
+            width: 100%;
+        }
+
+        .toast-success {
+            background-color: rgba(76, 201, 240, 0.9);
+            border-color: var(--success-color);
+        }
+
+        .toast-error {
+            background-color: rgba(220, 53, 69, 0.9);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+        }
+
+        .empty-state i {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--accent-color);
+            opacity: 0.7;
+        }
+
+        .empty-state h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--text-dark);
+        }
+
+        /* Mejoras de accesibilidad */
+        [tabindex]:focus-visible {
+            outline: 2px solid var(--accent-color);
+            outline-offset: 2px;
+        }
 
         /* Responsive Adjustments */
-        @media (max-width: 768px) {
+        @media (min-width: 576px) {
+            :root {
+                --card-min-width: 300px;
+            }
+
             .project-header {
-                padding: 2rem 0;
+                padding: 3rem 0;
+                margin-bottom: 3rem;
             }
 
-            .project-title {
-                font-size: 2rem;
-            }
-
-            .project-description {
-                font-size: 1rem;
-            }
-
-            .all-albums-container {
-                padding: 1rem;
+            .fragments-container {
+                padding: 1.5rem;
             }
 
             .album-card {
-                min-width: 280px;
-                height: 220px;
+                min-height: 240px;
+            }
+        }
+
+        @media (min-width: 768px) {
+            :root {
+                --card-min-width: 320px;
+            }
+
+            .project-header-content {
+                padding: 0;
             }
 
             .button-group {
-                flex-direction: column;
-                align-items: center;
-                gap: 10px;
+                margin: 2rem 0;
             }
 
-            .btn-back{
+            .fragment-header {
+                padding: 1.5rem;
+                flex-wrap: nowrap;
+            }
+
+            .fragment-description {
+                width: auto;
+                margin: 0.5rem 0 0;
+            }
+
+            .albums-horizontal-scroll {
+                gap: 1.5rem;
+                padding: 1.5rem;
+            }
+
+            .album-card {
+                min-height: 250px;
+            }
+        }
+
+        @media (min-width: 992px) {
+            :root {
+                --card-min-width: 350px;
+            }
+
+            .fragments-container {
+                padding: 2rem;
+                margin-bottom: 4rem;
+            }
+
+            .album-card-content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .button-group {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .btn-back, .btn-add-fragment {
                 width: 100%;
                 justify-content: center;
                 margin-right: 0;
             }
-        }
-        .albums-horizontal-scroll {
-            display: flex;
-            overflow-x: auto;
-            gap: 1rem;
-            padding: 1rem 0;
-            scroll-snap-type: x mandatory;
-            flex-wrap: nowrap;
-        }
 
-        /* Estilo de los álbumes */
-        .album-card {
-            min-width: 250px;
-            flex: 0 0 auto;
-            scroll-snap-align: start;
-            border: 1px solid #ccc;
-            padding: 1rem;
-            border-radius: 8px;
-            background: white;
-            box-sizing: border-box;
-        }
-
-
-        @media (max-width: 768px) {
-            .albums-horizontal-scroll {
-                flex-direction: column;
-                align-items: center;
-            }
-
-            .album-card {
-                min-width: 200px;
+            .fragment-actions {
                 width: 100%;
-                margin-bottom: 1rem;
-            }
-        }
-
-
-        @media (min-width: 768px) {
-            .albums-horizontal-scroll {
-                flex-direction: row;
-            }
-
-            .album-card {
-                min-width: 250px;
+                justify-content: flex-end;
             }
         }
     </style>
@@ -368,69 +557,221 @@
 <!-- Navigation -->
 <div th:include="usuario/template_usuario.html::header"></div>
 
+<!-- Toast Notifications -->
+<div class="toast-container">
+    <div th:if="${param.success}" class="toast toast-success" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="5000">
+        <div class="toast-header">
+            <strong class="me-auto">Success</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+            <i class="fas fa-check-circle me-2"></i>
+            <span th:text="${param.success}">Operation completed successfully</span>
+        </div>
+    </div>
+    <div th:if="${param.error}" class="toast toast-error" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="5000">
+        <div class="toast-header">
+            <strong class="me-auto">Error</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+            <i class="fas fa-exclamation-circle me-2"></i>
+            <span th:text="${param.error}">An error occurred</span>
+        </div>
+    </div>
+</div>
+
 <!-- Project Header -->
 <div class="project-header text-center">
     <div class="container project-header-content">
         <h1 class="project-title" th:text="${album.nombre}">Project name.</h1>
         <p class="project-description">Add a new photo to the folders.</p>
         <div class="button-group">
-            <button type="button" class="btn-back" onclick="window.location.href = '/home'">
+            <button type="button" class="btn-back" onclick="window.location.href='/home'">
                 <i class="fas fa-arrow-left"></i> Back to Menu.
+            </button>
+            <button type="button" class="btn-add-fragment" onclick="showAddFragmentModal()">
+                <i class="fas fa-plus"></i> Add Fragment
             </button>
         </div>
     </div>
 </div>
 
-
-<!-- Todos los álbumes en un solo contenedor horizontal -->
-<div class="all-albums-container">
+<!-- Fragmentos del proyecto -->
+<div class="fragments-container">
     <div class="container">
-        <h2 class="section-title">Projects</h2>
-        <div class="albums-horizontal-scroll">
-            <!-- Álbumes Antes -->
-            <div th:each="subAlbum : ${subAlbumAntes}" class="album-card antes">
-                <div class="album-card-content">
-                    <h3>
-                        <span>Before</span>
-                        <span class="badge bg-danger">Antes</span>
-                    </h3>
-                    <p th:text="${subAlbum.descripcion} ?: 'Sin descripción'">Descripción del subálbum</p>
-                    <div class="album-card-footer">
-                        <a th:href="@{/subAlbumes/antes/{id}(id=${subAlbum.id})}" class="btn-view">
-                            <i class="fas fa-eye"></i> View
-                        </a>
+        <!-- Fragmento principal (original) -->
+        <div class="fragment-card">
+            <div class="fragment-header">
+                <div>
+                    <h3 class="fragment-title">Main Project</h3>
+                    <p class="fragment-description" th:text="${subAlbumAntes.descripcion} ?: 'Initial project fragment'">Initial project fragment</p>
+                </div>
+                <div class="fragment-actions">
+                    <button class="fragment-btn" title="Edit fragment" onclick="editMainFragment()" aria-label="Edit main fragment">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="fragment-btn" title="Delete fragment" disabled aria-label="Delete main fragment (disabled)">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="albums-horizontal-scroll">
+                <!-- Álbumes Antes originales -->
+                <div th:if="${subAlbumAntes != null}" class="album-card antes">
+                    <div class="album-card-content">
+                        <h3>
+                            <span>Before</span>
+                            <span class="badge bg-danger">Antes</span>
+                        </h3>
+                        <p th:text="${subAlbumAntes.descripcion} ?: 'Sin descripción'">Descripción del subálbum</p>
+                        <div class="album-card-footer">
+                            <a th:href="@{/subAlbumes/antes/{id}(id=${subAlbumAntes.id})}" class="btn-view">
+                                <i class="fas fa-eye"></i> View
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Álbumes Después originales -->
+                <div th:if="${subAlbumDespues != null}" class="album-card despues">
+                    <div class="album-card-content">
+                        <h3>
+                            <span>After</span>
+                            <span class="badge bg-success">Después</span>
+                        </h3>
+                        <p th:text="${subAlbumDespues.descripcion} ?: 'Sin descripción'">Descripción del subálbum</p>
+                        <div class="album-card-footer">
+                            <a th:href="@{/subAlbumes/despues/{id}(id=${subAlbumDespues.id})}" class="btn-view">
+                                <i class="fas fa-eye"></i> View
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- Álbumes Después -->
-            <div th:each="subAlbum : ${subAlbumDespues}" class="album-card despues">
-                <div class="album-card-content">
-                    <h3>
-                        <span>After</span>
-                        <span class="badge bg-success">Después</span>
-                    </h3>
-                    <p th:text="${subAlbum.descripcion} ?: 'Sin descripción'">Descripción del subálbum</p>
-                    <div class="album-card-footer">
-                        <a th:href="@{/subAlbumes/despues/{id}(id=${subAlbum.id})}" class="btn-view">
-                            <i class="fas fa-eye"></i> View
-                        </a>
+        <!-- Fragmentos adicionales -->
+        <div th:each="fragment : ${fragmentos}" class="fragment-card" th:attr="data-fragment-name=${fragment.nombre}">
+            <div class="fragment-header">
+                <div>
+                    <h3 class="fragment-title" th:text="${fragment.nombre}">Fragment Name</h3>
+                    <p class="fragment-description" th:text="${fragment.descripcion} ?: 'No description'">Fragment description</p>
+                </div>
+                <div class="fragment-actions">
+                    <button class="fragment-btn" title="Edit fragment" th:attr="onclick='prepareEditFragment(\'' + ${fragment.nombre} + '\')'" aria-label="Edit fragment">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="fragment-btn" title="Delete fragment" th:attr="onclick='confirmDeleteFragment(\'' + ${fragment.nombre} + '\')'" aria-label="Delete fragment">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="albums-horizontal-scroll">
+                <!-- Álbumes Antes del fragmento -->
+                <div th:each="subAlbum : ${fragment.subAlbumes}"
+                     th:if="${subAlbum.tipo == 'Antes'}"
+                     class="album-card antes">
+                    <div class="album-card-content">
+                        <h3>
+                            <span th:text="${subAlbum.nombre.split(' - ')[0] + ' - Before'}">Before</span>
+                            <span class="badge bg-danger">Antes</span>
+                        </h3>
+                        <p th:text="${subAlbum.descripcion} ?: 'Sin descripción'">Descripción del subálbum</p>
+                        <div class="album-card-footer">
+                            <a th:href="@{/subAlbumes/antes/{id}(id=${subAlbum.id})}" class="btn-view">
+                                <i class="fas fa-eye"></i> View
+                            </a>
+                        </div>
                     </div>
                 </div>
+
+                <!-- Álbumes Después del fragmento -->
+                <div th:each="subAlbum : ${fragment.subAlbumes}"
+                     th:if="${subAlbum.tipo == 'Despues'}"
+                     class="album-card despues">
+                    <div class="album-card-content">
+                        <h3>
+                            <span th:text="${subAlbum.nombre.split(' - ')[0] + ' - After'}">After</span>
+                            <span class="badge bg-success">Después</span>
+                        </h3>
+                        <p th:text="${subAlbum.descripcion} ?: 'Sin descripción'">Descripción del subálbum</p>
+                        <div class="album-card-footer">
+                            <a th:href="@{/subAlbumes/despues/{id}(id=${subAlbum.id})}" class="btn-view">
+                                <i class="fas fa-eye"></i> View
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para añadir/editar fragmento -->
+<div class="modal fade" id="fragmentModal" tabindex="-1" aria-labelledby="fragmentModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="fragmentModalLabel">
+                    <i class="fas fa-plus-circle"></i> <span id="modalActionText">Add New</span> Fragment
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="fragmentForm" th:action="@{/albumes/saveFragment}" method="post">
+                <input type="hidden" name="albumId" th:value="${album.id}">
+                <input type="hidden" id="fragmentId" name="fragmentId" value="">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="fragmentName" class="form-label">Fragment Name</label>
+                        <input type="text" class="form-control" id="fragmentName" name="name" required aria-required="true">
+                    </div>
+                    <div class="mb-3">
+                        <label for="fragmentDescription" class="form-label">Description (Optional)</label>
+                        <textarea class="form-control" id="fragmentDescription" name="description" rows="3" aria-describedby="descriptionHelp"></textarea>
+                        <small id="descriptionHelp" class="text-muted">Add a brief description of this fragment</small>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para confirmar eliminación -->
+<div class="modal fade" id="deleteFragmentModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-exclamation-triangle text-danger me-2"></i>
+                    Confirm Deletion
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete this fragment? All associated subalbums and photos will be permanently deleted.</p>
+                <input type="hidden" id="fragmentToDelete" value="">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" onclick="deleteFragment()">Delete</button>
             </div>
         </div>
     </div>
 </div>
 
 <!-- Empty State -->
-<div th:if="${#lists.isEmpty(subAlbumAntes) and #lists.isEmpty(subAlbumDespues)}" class="text-center py-5">
-    <i class="fas fa-folder-open fa-4x mb-4" style="color: var(--accent-color); opacity: 0.7;"></i>
-    <h3 class="mb-3">The project is empty.</h3>
+<div th:if="${subAlbumAntes == null and subAlbumDespues == null and #lists.isEmpty(fragmentos)}" class="empty-state">
+    <i class="fas fa-folder-open"></i>
+    <h3>The project is empty.</h3>
     <div class="button-group">
         <a th:href="@{/menu-principal}" class="btn-back">
             <i class="fas fa-arrow-left"></i> Back to Menu
         </a>
-
     </div>
 </div>
 
@@ -441,6 +782,116 @@
 <script th:src="@{/vendor/jquery/jquery.min.js}"></script>
 <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
 
+<script>
+    // Variables globales
+    let currentFragmentId = null;
+    const fragmentModal = new bootstrap.Modal(document.getElementById('fragmentModal'));
+    const deleteModal = new bootstrap.Modal(document.getElementById('deleteFragmentModal'));
+
+    // Inicialización cuando el DOM está listo
+    document.addEventListener('DOMContentLoaded', function() {
+        // Mostrar notificaciones toast
+        const toastElList = [].slice.call(document.querySelectorAll('.toast'));
+        const toastList = toastElList.map(function(toastEl) {
+            return new bootstrap.Toast(toastEl, {
+                autohide: true,
+                delay: 5000
+            }).show();
+        });
+
+        // Validación del formulario
+        const fragmentForm = document.getElementById('fragmentForm');
+        if (fragmentForm) {
+            fragmentForm.addEventListener('submit', function(e) {
+                const fragmentName = document.getElementById('fragmentName').value.trim();
+                if (!fragmentName) {
+                    e.preventDefault();
+                    alert('Please enter a fragment name');
+                    document.getElementById('fragmentName').focus();
+                    return false;
+                }
+                return true;
+            });
+        }
+    });
+
+    // Mostrar modal para añadir fragmento
+    function showAddFragmentModal() {
+        currentFragmentId = null;
+        document.getElementById('modalActionText').textContent = 'Add New';
+        document.getElementById('fragmentId').value = '';
+        document.getElementById('fragmentName').value = '';
+        document.getElementById('fragmentName').disabled = false;
+        document.getElementById('fragmentDescription').value = '';
+        fragmentModal.show();
+    }
+
+    // Preparar edición de fragmento
+    function prepareEditFragment(fragmentName) {
+        const fragmentCard = document.querySelector(`[data-fragment-name="${fragmentName}"]`);
+        if (!fragmentCard) return;
+
+        const fragmentTitle = fragmentCard.querySelector('.fragment-title').textContent;
+        const fragmentDescription = fragmentCard.querySelector('.fragment-description').textContent;
+
+        currentFragmentId = fragmentName;
+        document.getElementById('modalActionText').textContent = 'Edit';
+        document.getElementById('fragmentId').value = fragmentName;
+        document.getElementById('fragmentName').value = fragmentTitle;
+        document.getElementById('fragmentName').disabled = false;
+        document.getElementById('fragmentDescription').value = fragmentDescription;
+        fragmentModal.show();
+    }
+
+    // Editar fragmento principal (solo descripción)
+    function editMainFragment() {
+        const mainFragmentDescription = document.querySelector('.fragment-card:first-child .fragment-description').textContent;
+
+        currentFragmentId = 'main';
+        document.getElementById('modalActionText').textContent = 'Edit Main';
+        document.getElementById('fragmentId').value = 'main';
+        document.getElementById('fragmentName').value = 'Main Project';
+        document.getElementById('fragmentName').disabled = true;
+        document.getElementById('fragmentDescription').value = mainFragmentDescription;
+        fragmentModal.show();
+    }
+
+    // Confirmar eliminación de fragmento
+    function confirmDeleteFragment(fragmentName) {
+        currentFragmentId = fragmentName;
+        document.getElementById('fragmentToDelete').value = fragmentName;
+        deleteModal.show();
+    }
+
+    // Eliminar fragmento
+    function deleteFragment() {
+        const fragmentName = document.getElementById('fragmentToDelete').value;
+        if (!fragmentName) return;
+
+        const albumId = window.location.pathname.split('/')[2];
+        if (!albumId) return;
+
+        // Crear un formulario dinámico para enviar la petición
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = `/albumes/deleteFragment/${encodeURIComponent(fragmentName)}?albumId=${albumId}`;
+
+        // Añadir token CSRF si es necesario
+        const csrfToken = document.querySelector('meta[name="_csrf"]')?.content;
+        const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.content;
+
+        if (csrfToken && csrfHeader) {
+            const csrfInput = document.createElement('input');
+            csrfInput.type = 'hidden';
+            csrfInput.name = '_csrf';
+            csrfInput.value = csrfToken;
+            form.appendChild(csrfInput);
+        }
+
+        document.body.appendChild(form);
+        form.submit();
+    }
+</script>
 
 </body>
 </html>

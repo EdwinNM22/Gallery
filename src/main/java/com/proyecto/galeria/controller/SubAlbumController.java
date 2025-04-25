@@ -1,12 +1,17 @@
 package com.proyecto.galeria.controller;
 import com.proyecto.galeria.model.SubAlbum;
 import com.proyecto.galeria.model.foto;
+import com.proyecto.galeria.model.usuario;
 import com.proyecto.galeria.service.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,6 +23,9 @@ public class SubAlbumController {
 
     private final subAlbumService subAlbumService;
 
+    @Autowired
+    private IUsuarioService usuarioService;
+
 
     // Constructor para inyectar el servicio
     public SubAlbumController(subAlbumService subAlbumService) {
@@ -26,7 +34,15 @@ public class SubAlbumController {
 
 
     @GetMapping("/antes/{id}")
-    public String showAntes(@PathVariable("id") Integer id, Model model) {
+    public String showAntes(@PathVariable("id") Integer id, Model model, HttpSession session) {
+
+        // 1. Verificar si el usuario es ADMIN
+        Integer userId = Integer.parseInt(session.getAttribute("idusuario").toString());
+        Optional<usuario> optionalUsuario = usuarioService.findById(userId);
+        boolean isAdmin = optionalUsuario.map(user -> "ADMIN".equals(user.getTipo_usuario()))
+                .orElse(false);
+        model.addAttribute("isAdmin", isAdmin);  // Pasar a la vista
+
         // Obtener solo los subálbumes de tipo "antes"
         List<SubAlbum> subAlbumesAntes = subAlbumService.getSubAlbumesAntes();
 
@@ -45,7 +61,15 @@ public class SubAlbumController {
     }
 
     @GetMapping("/despues/{id}")
-    public String showDespues(@PathVariable("id") Integer id, Model model) {
+    public String showDespues(@PathVariable("id") Integer id, Model model,  HttpSession session) {
+
+        // 1. Verificar si el usuario es ADMIN
+        Integer userId = Integer.parseInt(session.getAttribute("idusuario").toString());
+        Optional<usuario> optionalUsuario = usuarioService.findById(userId);
+        boolean isAdmin = optionalUsuario.map(user -> "ADMIN".equals(user.getTipo_usuario()))
+                .orElse(false);
+        model.addAttribute("isAdmin", isAdmin);  // Pasar a la vista
+
         // Obtener solo los subálbumes de tipo "despues"
         List<SubAlbum> subAlbumesDespues = subAlbumService.getSubAlbumesDespues();
 
@@ -80,9 +104,6 @@ public class SubAlbumController {
             return "redirect:/subAlbumes";
         }
     }
-
-
-
 }
 
 

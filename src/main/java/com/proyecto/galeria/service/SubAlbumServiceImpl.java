@@ -32,7 +32,7 @@ public class SubAlbumServiceImpl implements subAlbumService {
 
     @Override
     public SubAlbum update(SubAlbum subAlbum) {
-       return subAlbumRepo.save(subAlbum); // EN CASO DE ERROR VERIFICAR EL RETURN QUE NO DEBERIA EXISTIR
+       return subAlbumRepo.save(subAlbum);
     }
 
     @Override
@@ -54,6 +54,11 @@ public class SubAlbumServiceImpl implements subAlbumService {
     @Override
     public List<SubAlbum> getSubAlbumesDespues() {
         return subAlbumRepo.findByTipo("despues");
+    }
+
+    @Override
+    public List<SubAlbum> findByAlbumId(Integer albumId) {
+        return subAlbumRepo.findByAlbumId(albumId);
     }
 
 
