@@ -1,6 +1,7 @@
-package com.proyecto.galeria.service;
+package com.proyecto.galeria.service.Impl;
 
 import com.proyecto.galeria.model.usuario;
+import com.proyecto.galeria.service.IUsuarioService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

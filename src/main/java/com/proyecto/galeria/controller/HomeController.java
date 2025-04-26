@@ -1,6 +1,8 @@
 package com.proyecto.galeria.controller;
 
 import com.proyecto.galeria.model.album;
+import com.proyecto.galeria.model.usuario;
+import com.proyecto.galeria.service.IUsuarioService;
 import com.proyecto.galeria.service.albumService;
 
 import org.slf4j.Logger;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpSession;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/")
@@ -23,6 +26,9 @@ public class HomeController {
     @Autowired
     private albumService albumService;
 
+    @Autowired
+    private IUsuarioService usuarioService;
+
 
     @GetMapping({"/", "/mainMenu"})
     public String mainMenu() {
@@ -32,6 +38,14 @@ public class HomeController {
 
     @GetMapping("/home")
     public String home(Model model, HttpSession session) {
+
+        // 1. Verificar si el usuario es ADMIN
+        Integer userId = Integer.parseInt(session.getAttribute("idusuario").toString());
+        Optional<usuario> optionalUsuario = usuarioService.findById(userId);
+        boolean isAdmin = optionalUsuario.map(user -> "ADMIN".equals(user.getTipo_usuario()))
+                .orElse(false);
+        model.addAttribute("isAdmin", isAdmin);  // Pasar a la vista
+
         List<album> albumes = albumService.findAll();
         model.addAttribute("albumes", albumes);
 

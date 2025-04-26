@@ -34,7 +34,7 @@ public class SpringBootSecurity extends WebSecurityConfigurerAdapter {
         http.csrf().disable()
                 .authorizeRequests()
                 .antMatchers(publicUrls).permitAll() // Permitir login y archivos estáticos
-                .antMatchers(userUrls).hasAnyRole("USER", "ADMIN") // Acceso a usuarios y administradores
+                .antMatchers(userUrls).hasAnyRole("USER", "ADMIN", "SUPERVISOR") // Acceso a usuarios y administradores
                 .antMatchers(admUrls).hasRole("ADMIN") // Solo administradores pueden acceder
                 .anyRequest().authenticated() // Bloquear acceso a no autenticados
                 .and()

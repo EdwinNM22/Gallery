@@ -1,7 +1,8 @@
-package com.proyecto.galeria.service;
+package com.proyecto.galeria.service.Impl;
 
 import com.proyecto.galeria.model.album;
 import com.proyecto.galeria.repository.albumRepository;
+import com.proyecto.galeria.service.albumService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

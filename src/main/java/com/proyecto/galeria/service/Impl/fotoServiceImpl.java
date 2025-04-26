@@ -1,14 +1,15 @@
-package com.proyecto.galeria.service;
+package com.proyecto.galeria.service.Impl;
 
 import com.proyecto.galeria.model.foto;
 import com.proyecto.galeria.repository.fotoRepository;
+import com.proyecto.galeria.service.fotoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 @Service
-public class fotoServiceImpl implements fotoService{
+public class fotoServiceImpl implements fotoService {
 
     @Autowired
     private fotoRepository fotoRepository;

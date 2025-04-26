@@ -3,6 +3,7 @@ package com.proyecto.galeria.controller;
 import com.proyecto.galeria.model.*;
 import com.proyecto.galeria.service.*;
 
+import com.proyecto.galeria.service.Impl.UsuarioServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.*;
 
@@ -86,7 +88,15 @@ public class AlbumController {
     }
 
     @GetMapping("/{id}")
-    public String viewAlbum(@PathVariable Integer id, Model model) {
+    public String viewAlbum(@PathVariable Integer id, Model model, HttpSession session) {
+
+        // 1. Verificar si el usuario es ADMIN
+        Integer userId = Integer.parseInt(session.getAttribute("idusuario").toString());
+        Optional<usuario> optionalUsuario = usuarioService.findById(userId);
+        boolean isAdmin = optionalUsuario.map(user -> "ADMIN".equals(user.getTipo_usuario()))
+                .orElse(false);
+        model.addAttribute("isAdmin", isAdmin);  // Pasar a la vista
+
         Optional<album> optionalAlbum = albumService.get(id);
         if (optionalAlbum.isPresent()) {
             album album = optionalAlbum.get();
@@ -257,7 +267,7 @@ public class AlbumController {
     }
 
     @GetMapping("/delete/{id}")
-    public String delete(@PathVariable Integer id) {
+    public String delete(@PathVariable Integer id, HttpServletRequest request) {
         Optional<album> optionalAlbum = albumService.get(id);
 
         if (optionalAlbum.isPresent()) {
@@ -278,7 +288,10 @@ public class AlbumController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Álbum no encontrado");
         }
 
-        return "redirect:/albumes";
+        // Obtiene la URL de referencia (la página actual)
+        String referer = request.getHeader("Referer");
+        // Si no hay referencia, redirige a /albumes por defecto
+        return "redirect:" + (referer != null ? referer : "/albumes");
     }
 }
 

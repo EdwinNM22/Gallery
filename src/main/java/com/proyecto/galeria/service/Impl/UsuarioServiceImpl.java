@@ -1,7 +1,8 @@
-package com.proyecto.galeria.service;
+package com.proyecto.galeria.service.Impl;
 
 import com.proyecto.galeria.model.usuario;
 import com.proyecto.galeria.repository.IUsuarioRepository;
+import com.proyecto.galeria.service.IUsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

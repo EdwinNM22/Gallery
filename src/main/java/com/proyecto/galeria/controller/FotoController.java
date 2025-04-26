@@ -7,6 +7,7 @@ import com.proyecto.galeria.model.usuario;
 import com.proyecto.galeria.service.*;
 
 
+import com.proyecto.galeria.service.Impl.UsuarioServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +19,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
@@ -187,8 +187,9 @@ public class FotoController {
 
 
     @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/delete/{id}")
-    public String delete(@PathVariable Integer id) {
+    @DeleteMapping("/delete/{id}") // Cambiado a @DeleteMapping
+    @ResponseBody // Añadido para devolver respuesta JSON
+    public ResponseEntity<Map<String, String>> delete(@PathVariable Integer id) {
         Optional<foto> optionalFoto = fotoService.get(id);
 
         if (optionalFoto.isPresent()) {
@@ -204,12 +205,11 @@ public class FotoController {
                 upload.deleteImage(p.getImagen());
             }
 
-
             fotoService.delete(id);
+            return ResponseEntity.ok(Map.of("message", "Foto eliminada correctamente"));
         } else {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Foto no encontrada");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("error", "Foto no encontrada"));
         }
-
-        return "redirect:/fotos";
     }
 }
