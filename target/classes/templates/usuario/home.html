@@ -71,6 +71,7 @@
     }
 
     /* Project Card */
+    /* Project Card */
     .project-card {
       background: white;
       border-radius: 12px;
@@ -78,6 +79,9 @@
       box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
       transition: all 0.3s ease;
       position: relative;
+      display: flex; /* Añade esto */
+      flex-direction: column; /* Añade esto */
+      height: 100%; /* Asegura que todas las tarjetas tengan la misma altura */
     }
 
     .project-card:hover {
@@ -97,6 +101,9 @@
 
     .project-card-content {
       padding: 1.5rem;
+      flex-grow: 1; /* Hace que el contenido ocupe todo el espacio disponible */
+      display: flex; /* Añade esto */
+      flex-direction: column; /* Añade esto */
     }
 
     .project-card h2 {
@@ -119,6 +126,7 @@
       align-items: center;
       padding-top: 1rem;
       border-top: 1px solid #eee;
+      margin-top: auto; /* Empuja el footer hacia abajo */
     }
 
     /* Modern Button */
@@ -236,35 +244,19 @@
       }
     }
 
-    /* Floating Action Button */
-    .fab {
-      position: fixed;
-      bottom: 2rem;
-      right: 2rem;
-      width: 60px;
-      height: 60px;
-      background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
-      color: white;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.5rem;
-      box-shadow: 0 5px 20px rgba(67, 97, 238, 0.4);
-      transition: all 0.3s ease;
-      z-index: 100;
-      text-decoration: none;
+    /* Danger Button */
+    .btn-modern.btn-danger {
+      background: linear-gradient(45deg, #ff4d4d, #cc0000);
+      box-shadow: 0 4px 10px rgba(255, 77, 77, 0.3);
     }
 
-    .fab:hover {
-      transform: scale(1.1) rotate(90deg);
-      color: white;
+    .btn-modern.btn-danger:hover {
+      box-shadow: 0 6px 15px rgba(255, 77, 77, 0.4);
     }
+
   </style>
 </head>
-
 <body>
-
 <!-- Navigation -->
 <div th:include="usuario/template_usuario.html::header"></div>
 
@@ -283,10 +275,15 @@
       <h2 th:text="${album.nombre}">Project Name.</h2>
       <p th:text="${album.descripcion} ?: 'Sin descripción'">Project Description.</p>
       <div class="project-card-footer">
-
         <div>
           <a th:href="@{/albumes/{id}(id=${album.id})}" class="btn-modern">
             <i class="fas fa-eye"></i> View
+          </a>
+        </div>
+        <div>
+          <a th:href="@{/albumes/delete/{id}(id=${album.id})}" class="btn-modern btn-danger"
+             onclick="return confirm('¿Estás seguro de que quieres eliminar este álbum? Esta acción no se puede deshacer.');" th:if="${isAdmin}" >
+            <i class="fas fa-trash"></i> Delete
           </a>
         </div>
       </div>
@@ -302,28 +299,6 @@
     </a>
   </div>
 </div>
-
-
-<!-- Empty State -->
-<div th:if="${#lists.isEmpty(albumes)}" class="empty-state">
-  <i class="far fa-folder-open"></i>
-  <h3>You don't have any projects yet.</h3>
-  <p>Start by creating your first project to organize your photos.</p>
-  <div class="button-group">
-    <button type="button" class="btn btn-back" onclick="window.history.back()">
-      <i class="fas fa-arrow-left"></i> Back to Menu.
-    </button>
-    <button type="submit" class="btn-create">
-      <i class="fas fa-plus-circle"></i> Crear Proyecto
-    </button>
-  </div>
-</div>
-
-
-<!-- Floating Action Button -->
-<!--<a th:href="@{/albumes/create}" class="fab">-->
-<!--  <i class="fas fa-plus"></i>-->
-<!--</a>-->
 
 <!-- Footer -->
 <div th:include="usuario/template_usuario.html::footer"></div>
