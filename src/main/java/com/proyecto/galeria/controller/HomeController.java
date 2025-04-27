@@ -25,9 +25,11 @@ public class HomeController {
     private final Logger log = LoggerFactory.getLogger(HomeController.class);
     @Autowired
     private albumService albumService;
-
     @Autowired
     private IUsuarioService usuarioService;
+
+
+
 
 
     @GetMapping({"/", "/mainMenu"})
@@ -35,17 +37,17 @@ public class HomeController {
         return "usuario/mainMenu";
     }
 
-
     @GetMapping("/home")
     public String home(Model model, HttpSession session) {
 
-        // 1. Verificar si el usuario es ADMIN
+        //Verificar si el usuario es ADMIN
         Integer userId = Integer.parseInt(session.getAttribute("idusuario").toString());
         Optional<usuario> optionalUsuario = usuarioService.findById(userId);
         boolean isAdmin = optionalUsuario.map(user -> "ADMIN".equals(user.getTipo_usuario()))
                 .orElse(false);
-        model.addAttribute("isAdmin", isAdmin);  // Pasar a la vista
 
+
+        model.addAttribute("isAdmin", isAdmin);
         List<album> albumes = albumService.findAll();
         model.addAttribute("albumes", albumes);
 
@@ -54,8 +56,6 @@ public class HomeController {
 
         return "usuario/home";
     }
-
-
     @GetMapping("/cerrar")
     public String cerrarSesion( HttpSession session) {
         session.removeAttribute("idusuario");
