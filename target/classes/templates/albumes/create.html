@@ -3,10 +3,8 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="Crear nuevo Proyecto">
-    <meta name="author" content="Proyecto">
-
-    <title>Crear Nuevo Proyecto</title>
+    <meta name="description" content="Agenda de proyectos">
+    <title>Agenda de Proyectos</title>
 
     <!-- Bootstrap core CSS -->
     <link th:href="@{/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
@@ -14,8 +12,9 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FullCalendar CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
+
 
     <!-- Custom styles -->
     <style>
@@ -27,27 +26,33 @@
             --light-color: #f8f9fa;
             --text-dark: #2b2d42;
             --text-light: #8d99ae;
+            --success-color: #4cc9f0;
+            --warning-color: #f8961e;
+            --danger-color: #f94144;
+            --completed-color: #38b000;
         }
 
         body {
             font-family: 'Poppins', sans-serif;
             background-color: #f8fafc;
             color: var(--text-dark);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
         }
 
-        /* Modern Header */
-        .album-header {
+        /* Header Styles */
+        .agenda-header {
             background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             color: white;
-            padding: 4rem 0;
-            margin-bottom: 3rem;
-            border-radius: 0 0 20px 20px;
-            box-shadow: 0 10px 30px rgba(67, 97, 238, 0.2);
+            padding: 2rem 0;
+            margin-bottom: 1.5rem;
             position: relative;
             overflow: hidden;
+            border-radius: 0;
         }
 
-        .album-header::before {
+        .agenda-header::before {
             content: '';
             position: absolute;
             top: 0;
@@ -55,222 +60,1395 @@
             width: 100%;
             height: 100%;
             background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxkZWZzPjxwYXR0ZXJuIGlkPSJwYXR0ZXJuIiB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiIHBhdHRlcm5UcmFuc2Zvcm09InJvdGF0ZSg0NSkiPjxyZWN0IHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjA1KSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3QgZmlsbD0idXJsKCNwYXR0ZXJuKSIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIvPjwvc3ZnPg==');
-            opacity: 0.2;
+            opacity: 0.3;
         }
 
-        .album-title {
+        .agenda-header-content {
+            position: relative;
+            z-index: 1;
+            padding: 0 1rem;
+        }
+
+        .agenda-title {
             font-weight: 700;
-            font-size: 2.5rem;
+            font-size: clamp(1.8rem, 5vw, 2.5rem);
             margin-bottom: 0.5rem;
+            line-height: 1.2;
         }
 
-        .album-subtitle {
-            font-size: 1.2rem;
+        .agenda-description {
+            font-size: clamp(0.95rem, 3vw, 1.1rem);
             opacity: 0.9;
+            max-width: 700px;
+            margin: 0 auto 1.5rem;
         }
 
-        /* Breadcrumb */
-        .breadcrumb {
-            background-color: transparent;
-            padding: 0.75rem 0;
+        /* Button Styles */
+        .btn-rounded {
+            border-radius: 50px !important;
+            padding: 0.6rem 1.2rem !important;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            border: none;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--secondary-color);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            border: none;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+            color: white;
+        }
+
+        .btn-success {
+            background: var(--completed-color);
+            border: none;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #2b8a00;
+            color: white;
+        }
+
+        .btn-warning {
+            background: var(--warning-color);
+            border: none;
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background: #e07e00;
+            color: white;
+        }
+
+        .btn-action i {
+            margin-right: 8px;
             font-size: 0.9rem;
         }
 
-        .breadcrumb-item a {
+        /* Main Content Layout */
+        .main-content-container {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .calendar-section {
+            flex: 0 0 auto;
+            width: 100%;
+            min-width: 300px;
+            display: none; /* Oculto por defecto */
+        }
+
+        .calendar-section.visible {
+            display: block;
+        }
+
+        .list-section {
+            flex: 1 1 100%;
+            min-width: 300px;
+        }
+
+        /* Calendar Container */
+        .calendar-container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            padding: 1.5rem;
+            height: 100%;
+        }
+
+        /* List View Container */
+        .list-container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            padding: 1.5rem;
+            height: 100%;
+        }
+
+        /* List View Header */
+        .list-view-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .list-view-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin: 0;
+            color: var(--text-dark);
+        }
+
+        .list-filter-controls {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .filter-label {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            margin-bottom: 0;
+        }
+
+        .filter-select {
+            border-radius: 50px;
+            padding: 0.4rem 0.8rem;
+            border: 1px solid #ddd;
+            font-size: 0.9rem;
+            background-color: white;
+            cursor: pointer;
+        }
+
+        /* Search Box */
+        .search-box {
+            width: 100%;
+            margin-bottom: 1rem;
+        }
+
+        .search-box .input-group-text {
+            background-color: white;
+            border-right: none;
+        }
+
+        .search-box .form-control {
+            border-left: none;
+        }
+
+        /* Custom FullCalendar styles */
+        .fc .fc-toolbar-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .fc .fc-button {
+            background-color: white;
+            border-color: var(--primary-color);
             color: var(--primary-color);
-            text-decoration: none;
+            font-weight: 500;
+            text-transform: capitalize;
             transition: all 0.3s ease;
         }
 
-        .breadcrumb-item a:hover {
+        .fc .fc-button:hover {
+            background-color: var(--light-color);
+            border-color: var(--secondary-color);
             color: var(--secondary-color);
-            text-decoration: underline;
         }
 
-        /* Album Form */
-        .album-form-container {
+        .fc .fc-button-primary:not(:disabled).fc-button-active {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+        }
+
+        .fc .fc-daygrid-day-number {
+            color: var(--text-dark);
+            font-weight: 500;
+        }
+
+        .fc .fc-daygrid-day.fc-day-today {
+            background-color: rgba(72, 149, 239, 0.1);
+        }
+
+        .fc .fc-daygrid-day.fc-day-today .fc-daygrid-day-number {
+            color: var(--primary-color);
+            font-weight: 700;
+        }
+
+        .fc .fc-event {
+            border: none;
+            padding: 1px 3px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            opacity: 0.9;
+        }
+
+        .fc .fc-event:hover {
+            opacity: 1;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Estilo para eventos completados en el calendario */
+        .fc .fc-event.completed {
+            text-decoration: line-through;
+            opacity: 0.8;
+        }
+
+        /* Project Card Styles */
+        .project-card {
             background: white;
-            border-radius: 12px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
-            padding: 2.5rem;
-            margin-bottom: 3rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-left: 4px solid var(--primary-color);
+            cursor: pointer;
         }
 
-        .form-label {
+        .project-card.completed {
+            border-left-color: var(--completed-color);
+            opacity: 0.9;
+        }
+
+        .project-card.completed .project-card-header {
+            background-color: rgba(56, 176, 0, 0.05);
+        }
+
+        .project-card.completed .project-card-title {
+            text-decoration: line-through;
+            color: var(--text-light);
+        }
+
+        .project-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        }
+
+        .project-card-header {
+            padding: 1rem 1.2rem;
+            background-color: rgba(67, 97, 238, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .project-card-title {
+            font-size: 1.1rem;
             font-weight: 600;
+            margin: 0;
+            color: var(--text-dark);
+            transition: all 0.3s ease;
+        }
+
+        .project-card-date {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.3rem;
+        }
+
+        .project-card-body {
+            padding: 1rem 1.2rem;
+            display: none;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .project-card.active .project-card-body {
+            display: block;
+        }
+
+        .project-card-description {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            margin-bottom: 1rem;
+        }
+
+        .project-card-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.5rem;
+            padding-top: 0.5rem;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .btn-view-report i {
+            margin-right: 6px;
+            font-size: 0.85rem;
+        }
+
+        /* Status Badge */
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
+
+        .status-active {
+            background-color: rgba(67, 97, 238, 0.1);
+            color: var(--primary-color);
+        }
+
+        .status-completed {
+            background-color: rgba(56, 176, 0, 0.1);
+            color: var(--completed-color);
+        }
+
+        /* Completed Projects Section */
+        .completed-projects-section {
+            margin-top: 2.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #eee;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-light);
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #ddd;
+        }
+
+        /* Modal Styles */
+        .modal-content {
+            border-radius: 10px;
+            border: none;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .modal-header {
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            color: white;
+            border-radius: 10px 10px 0 0;
+            border: none;
+            padding: 1.2rem;
+        }
+
+        .modal-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+        }
+
+        .modal-title i {
+            margin-right: 8px;
+            font-size: 1.1rem;
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .modal-footer {
+            border-top: 1px solid #eee;
+            padding: 1rem 1.5rem;
+        }
+
+        /* Form Styles */
+        .form-label {
+            font-weight: 500;
             color: var(--text-dark);
             margin-bottom: 0.5rem;
         }
 
-        .form-control {
+        .form-control, .form-select {
             border-radius: 8px;
-            padding: 0.8rem 1rem;
-            border: 1px solid #e2e8f0;
+            padding: 0.6rem 0.75rem;
+            border: 1px solid #ddd;
             transition: all 0.3s ease;
         }
 
-        .form-control:focus {
+        .form-control:focus, .form-select:focus {
             border-color: var(--accent-color);
-            box-shadow: 0 0 0 0.2rem rgba(72, 149, 239, 0.25);
+            box-shadow: 0 0 0 0.25rem rgba(72, 149, 239, 0.25);
         }
 
-        textarea.form-control {
-            min-height: 120px;
+        /* Toast Notification */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1100;
+            max-width: 350px;
+            width: 100%;
         }
 
-        /* Submit Button */
-        .btn-create {
-            background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
-            color: white;
-            border: none;
-            padding: 0.8rem 2rem;
-            border-radius: 50px;
-            font-weight: 600;
-            font-size: 1.1rem;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
-            display: inline-flex;
-            align-items: center;
+        .toast {
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            font-size: 0.9rem;
+            width: 100%;
         }
 
-        .btn-create:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(67, 97, 238, 0.4);
-            color: white;
+        .toast-success {
+            background-color: rgba(76, 201, 240, 0.9);
+            border-color: var(--success-color);
         }
 
-        .btn-create i {
-            margin-right: 10px;
+        /* Detail Modal Styles */
+        .detail-section {
+            padding: 1.2rem 1.5rem;
+            border-bottom: 1px solid #f0f0f0;
         }
 
-        /* Back to Menu Button */
-        .btn-back {
-            background: white;
+        .detail-section:last-child {
+            border-bottom: none;
+        }
+
+        .detail-section h5 {
             color: var(--primary-color);
-            border: 1px solid var(--primary-color);
-            padding: 0.6rem 1.5rem;
-            border-radius: 50px;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
             font-weight: 600;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            margin-right: 15px;
         }
 
-        .btn-back:hover {
-            background: var(--light-color);
-            color: var(--secondary-color);
-            border-color: var(--secondary-color);
-        }
-
-        .btn-back i {
-            margin-right: 8px;
-        }
-
-        .button-group {
+        .detail-row {
             display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-top: 2rem;
+            flex-wrap: wrap;
+            margin-bottom: 0.8rem;
         }
 
-        /* Success notification - Estilo similar al login */
+        .detail-label {
+            font-weight: 600;
+            color: var(--text-dark);
+            width: 150px;
+            flex-shrink: 0;
+        }
+
+        .detail-value {
+            flex: 1;
+            color: var(--text-light);
+            word-break: break-word;
+        }
+
+        /* Success Notification */
         .success-notification {
             position: fixed;
             top: 20px;
             right: 20px;
-            z-index: 9999;
             width: 350px;
-            border-left: 4px solid #28a745;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            animation: fadeIn 0.3s ease-out;
+            z-index: 9999;
             display: none;
-            padding: 1rem;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            background-color: rgba(76, 201, 240, 0.9);
+            color: white;
         }
 
-        .success-notification-content {
+        /* Project List Grid */
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        /* Project Actions */
+        .project-actions {
             display: flex;
             align-items: center;
-            width: 100%;
+            gap: 0.5rem;
         }
 
-        .success-icon {
-            font-size: 1.5rem;
-            margin-right: 1rem;
-            color: #28a745;
+        .action-btn {
+            opacity: 0.7;
+            transition: all 0.2s ease;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            border: none;
+            background: transparent;
         }
 
-        .success-message {
-            flex: 1;
+        .action-btn:hover {
+            opacity: 1;
+            transform: scale(1.1);
         }
 
-        .success-title {
-            font-weight: 600;
-            margin-bottom: 0.2rem;
-            color: #28a745;
+        .btn-edit {
+            color: var(--primary-color);
         }
 
-        .success-detail {
-            font-size: 0.9rem;
-            color: #6c757d;
+        .btn-delete {
+            color: var(--danger-color);
         }
 
-        .success-close {
-            margin-left: 1rem;
-            color: #6c757d;
-            cursor: pointer;
+        .btn-complete {
+            color: var(--completed-color);
+            display: block !important; /* Siempre visible */
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes fadeOut {
-            from { opacity: 1; transform: translateY(0); }
-            to { opacity: 0; transform: translateY(-20px); }
+        .btn-uncomplete {
+            color: var(--danger-color);
+            display: block !important; /* Siempre visible */
         }
 
         /* Responsive Adjustments */
-        @media (max-width: 768px) {
-            .album-header {
-                padding: 3rem 0;
-            }
-
-            .album-title {
-                font-size: 2rem;
-            }
-
-            .album-subtitle {
-                font-size: 1rem;
-            }
-
-            .album-form-container {
-                padding: 1.5rem;
-            }
-
-            .success-notification {
-                width: 90%;
-                right: 5%;
-            }
-
-            .button-group {
+        @media (max-width: 991px) {
+            .main-content-container {
                 flex-direction: column;
-                gap: 10px;
             }
 
-            .btn-back, .btn-create {
-                width: 100%;
-                justify-content: center;
+            .calendar-section, .list-section {
+                flex: 1 1 100%;
             }
         }
+
+        @media (max-width: 767px) {
+            .calendar-container, .list-container {
+                padding: 1rem;
+            }
+
+            .project-card-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+
+            .list-filter-controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .detail-row {
+                flex-direction: column;
+            }
+
+            .detail-label {
+                width: 100%;
+                margin-bottom: 0.2rem;
+            }
+
+            .projects-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (min-width: 992px) {
+            .calendar-container, .list-container {
+                padding: 2rem;
+            }
+        }
+        /* Estilos para el botón de cierre con X mejorada (sin animaciones) */
+        .btn-close {
+            position: relative;
+            width: 1.75rem;
+            height: 1.75rem;
+            padding: 0;
+            margin: 0;
+            background: none;
+            border: none;
+            cursor: pointer;
+            opacity: 0.8;
+        }
+
+        .btn-close:hover {
+            opacity: 1;
+        }
+
+        .btn-close::before,
+        .btn-close::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 1.25rem;
+            height: 2px;
+            background-color: currentColor;
+            border-radius: 1px;
+        }
+
+        .btn-close::before {
+            transform: translate(-50%, -50%) rotate(45deg);
+        }
+
+        .btn-close::after {
+            transform: translate(-50%, -50%) rotate(-45deg);
+        }
+
+        /* Versión blanca */
+        .btn-close-white {
+            color: white;
+        }
+
+        /* En tu sección de estilos */
+        /* Estilos para el calendario */
+        .fc-event {
+            border: none !important;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .fc-event:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        /* Estilos para los diferentes estados */
+        .completed-event {
+            background-color: #6c757d !important;
+            border-color: #6c757d !important;
+        }
+
+        .cancelled-event {
+            background-color: #f94144 !important;
+            border-color: #f94144 !important;
+        }
+
+        .in-progress-event {
+            background-color:  #66ccff !important;
+            border-color:  #66ccff !important;
+        }
+
+        /* Mejoras para las vistas de tiempo */
+        .fc-timegrid-slots td {
+            height: 2.5em; /* Altura de las celdas de hora */
+        }
+
+
+        /* Estilos para las tarjetas de proyecto según estado */
+        .project-card.pendiente {
+            border-left: 4px solid  #66ccff;
+        }
+
+        .project-card.completado {
+            border-left: 4px solid #6c757d;
+            opacity: 0.8;
+        }
+
+        .project-card.anulado {
+            border-left: 4px solid #f94144;
+            opacity: 0.8;
+        }
+
+        /* Estilos para las tarjetas de proyecto según estado */
+        .project-card.pendiente {
+            border-left: 4px solid #66ccff;
+            background-color: rgba(102, 204, 255, 0.05);
+        }
+
+        .project-card.completado {
+            border-left: 4px solid #6c757d;
+            background-color: rgba(108, 117, 125, 0.1);
+        }
+
+        .project-card.anulado {
+            border-left: 4px solid #f94144;
+            background-color: rgba(249, 65, 68, 0.1);
+        }
+
+        /* Estilos para los badges de estado */
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
+
+        .status-pending {
+            background-color: rgba(67, 97, 238, 0.1);
+            color: var(--primary-color);
+        }
+
+        .status-completed {
+            background-color: rgba(108, 117, 125, 0.1);
+            color: #6c757d;
+        }
+
+        .status-cancelled {
+            background-color: rgba(249, 65, 68, 0.1);
+            color: #f94144;
+        }
+
+
+        /* Estilos para las secciones de proyectos */
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 0.5rem;
+            margin-top: 1.5rem;
+        }
+
+        #archivedProjects {
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #eee;
+        }
+
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        /* Ajustes para responsive */
+        @media (max-width: 767px) {
+            .projects-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .section-title {
+                font-size: 1.1rem;
+            }
+        }
+
+        /* Context Menu Styles (se mantienen igual) */
+        .context-menu {
+            position: absolute;
+            z-index: 1000;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            padding: 8px 0;
+            min-width: 200px;
+            display: none;
+        }
+
+        .context-menu-item {
+            padding: 8px 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            transition: background-color 0.2s;
+        }
+
+        .context-menu-item:hover {
+            background-color: #f5f5f5;
+        }
+
+        .context-menu-item i {
+            margin-right: 8px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .context-menu-divider {
+            height: 1px;
+            background-color: #e0e0e0;
+            margin: 4px 0;
+        }
+
+        /* Estilos para la vista de tabla semanal */
+        .fc-week-table-view {
+            padding: 10px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            overflow-x: auto;
+        }
+
+        .fc-week-table {
+            width: 100%;
+            min-width: 600px; /* Ancho mínimo para mantener la legibilidad */
+            border-collapse: collapse;
+            font-size: 14px;
+            background-color: #fff;
+        }
+
+        .fc-week-table th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+            color: #4a4a4a;
+            padding: 10px 12px;
+            border: 1px solid #e0e0e0;
+            text-align: center;
+        }
+
+        .fc-week-table td {
+            padding: 0;
+            border: 1px solid #e0e0e0;
+            height: 40px;
+            vertical-align: middle;
+        }
+
+        .fc-week-table tr:hover {
+            background-color: #f5f7fa;
+        }
+
+        /* Estilos para celdas de proyecto */
+        .project-name-cell {
+            text-align: left;
+            padding: 8px 12px;
+            max-width: 200px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            position: relative;
+        }
+
+        /* Estilos según estado */
+        .project-name-cell.completed {
+            color: #6c757d;
+            text-decoration: line-through;
+        }
+
+        .project-name-cell.cancelled {
+            color: #f94144;
+            text-decoration: line-through;
+        }
+
+        .project-name-cell.in-progress {
+            color: #006fa6;
+            font-weight: 500;
+        }
+
+        .project-day-cell {
+            position: relative;
+            text-align: center;
+        }
+
+        .project-day-cell.completed {
+            background-color: rgba(108, 117, 125, 0.08);
+        }
+
+        .project-day-cell.cancelled {
+            background-color: rgba(249, 65, 68, 0.08);
+        }
+
+        .project-day-cell.in-progress {
+            background-color: rgba(0, 111, 166, 0.08);
+        }
+
+        /* Indicador de día con proyecto */
+        .day-indicator {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            line-height: 24px;
+            border-radius: 50%;
+            font-weight: 600;
+        }
+
+        .day-indicator.completed {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .day-indicator.cancelled {
+            background-color: #f94144;
+            color: white;
+        }
+
+        .day-indicator.in-progress {
+            background-color: #006fa6;
+            color: white;
+        }
+
+        /* Botones (consistencia con calendario) */
+        .fc-button-weekTable {
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 6px 12px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .fc-button-weekTable:hover {
+            background-color: #5a6268;
+            transform: translateY(-1px);
+        }
+
+        /* Estilos responsive */
+        @media (max-width: 768px) {
+            .fc-week-table-view {
+                padding: 5px;
+            }
+
+            .fc-week-table {
+                font-size: 13px;
+            }
+
+            .fc-week-table th {
+                padding: 8px 6px;
+            }
+
+            .project-name-cell {
+                padding: 6px 8px;
+                max-width: 150px;
+            }
+
+            .day-indicator {
+                width: 20px;
+                height: 20px;
+                line-height: 20px;
+                font-size: 12px;
+            }
+
+            .fc-button-weekTable {
+                padding: 4px 8px;
+                font-size: 13px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .fc-week-table {
+                font-size: 12px;
+            }
+
+            .fc-week-table th {
+                padding: 6px 4px;
+            }
+
+            .project-name-cell {
+                padding: 4px 6px;
+                max-width: 120px;
+            }
+
+            .day-indicator {
+                width: 18px;
+                height: 18px;
+                line-height: 18px;
+                font-size: 11px;
+            }
+
+            .fc-week-table td {
+                height: 35px;
+            }
+        }
+
+        /* Estilos generales para el modal de equipos */
+        #createTeamModal .modal-content {
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        #createTeamModal .modal-header {
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+            padding: 1rem 1.5rem;
+        }
+
+        #createTeamModal .modal-title {
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        #current-project-name {
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        /* Estilos para las pestañas */
+        #teamManagementTabs {
+            padding: 0 1.5rem;
+            border-bottom: 1px solid #e9ecef;
+            background-color: #f8f9fa;
+        }
+
+        #teamManagementTabs .nav-link {
+            color: #6c757d;
+            font-weight: 500;
+            border: none;
+            padding: 0.75rem 1.25rem;
+            transition: all 0.3s ease;
+        }
+
+        #teamManagementTabs .nav-link.active {
+            color: #3498db;
+            background-color: transparent;
+            border-bottom: 3px solid #3498db;
+        }
+
+        #teamManagementTabs .nav-link:hover:not(.active) {
+            color: #495057;
+            background-color: rgba(52, 152, 219, 0.1);
+        }
+
+        /* Estilos para el contenido de las pestañas */
+        #createTeamModal .tab-content {
+            padding: 1.5rem;
+        }
+
+        /* Estilos para el formulario de creación */
+        .team-form label {
+            font-weight: 500;
+            color: #495057;
+            margin-bottom: 0.5rem;
+        }
+
+        .team-form .form-control {
+            border-radius: 6px;
+            padding: 0.5rem 0.75rem;
+            border: 1px solid #ced4da;
+            transition: border-color 0.3s;
+        }
+
+        .team-form .form-control:focus {
+            border-color: #3498db;
+            box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+        }
+
+        .selection-list {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 0.75rem;
+            background-color: #fff;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            scroll-behavior: smooth;
+        }
+
+        .selection-item {
+            padding: 0.75rem 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 6px;
+            background-color: #f9fafb;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.15s ease;
+            border: 1px solid #f1f3f5;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .selection-item:hover {
+            background-color: #f1f3f5;
+            transform: scale(1.01);
+        }
+
+        .selection-item.selected {
+            background-color: #e3f2fd;
+            border-color: #90caf9;
+            box-shadow: 0 0 0 2px rgba(144, 202, 249, 0.4);
+        }
+
+
+        .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: #3498db;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .add-btn, .remove-btn {
+            opacity: 0;
+            transition: opacity 0.2s;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .selection-item:hover .add-btn,
+        .selection-item:hover .remove-btn,
+        .selection-item.selected .remove-btn {
+            opacity: 1;
+        }
+
+        /* Estilos para la lista de equipos */
+        .teams-list-container {
+            max-height: 500px;
+            overflow-y: auto;
+            padding-right: 0.5rem;
+        }
+
+        .team-card {
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .team-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .team-card-header {
+            padding: 1rem;
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .team-card-header h5 {
+            margin: 0;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        .team-times .badge {
+            font-weight: 500;
+            padding: 0.35rem 0.6rem;
+        }
+
+        .team-card-body {
+            padding: 1rem;
+        }
+
+        .team-description {
+            color: #6c757d;
+            margin-bottom: 1rem;
+        }
+
+        .team-members h6 {
+            font-size: 0.9rem;
+            color: #495057;
+            margin-bottom: 0.75rem;
+            font-weight: 500;
+        }
+
+        .members-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+
+        .member-item {
+            display: flex;
+            align-items: center;
+            background-color: #f8f9fa;
+            padding: 0.5rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+        }
+
+        .member-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background-color: #3498db;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 500;
+            font-size: 0.75rem;
+            margin-right: 0.5rem;
+        }
+
+        .member-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .member-name {
+            font-weight: 500;
+            color: #2c3e50;
+        }
+
+        .member-name.duplicate-member {
+            color: #dc3545;
+            font-weight: 600;
+        }
+
+        .member-role {
+            font-size: 0.75rem;
+            color: #6c757d;
+        }
+
+        .team-card-footer {
+            padding: 0.75rem 1rem;
+            background-color: #f8f9fa;
+            border-top: 1px solid #e9ecef;
+            text-align: right;
+        }
+
+        .delete-team-btn {
+            font-size: 0.8rem;
+            padding: 0.25rem 0.75rem;
+        }
+
+        /* Estados de carga y vacío */
+        .loading-teams, .no-teams, .error-loading {
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .loading-teams i, .no-teams i, .error-loading i {
+            margin-bottom: 1rem;
+        }
+
+        .no-teams h5 {
+            color: #6c757d;
+        }
+
+        .error-loading h5 {
+            color: #dc3545;
+        }
+
+        /* Scrollbar personalizada */
+        .teams-list-container::-webkit-scrollbar,
+        .selection-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .teams-list-container::-webkit-scrollbar-track,
+        .selection-list::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+
+        .teams-list-container::-webkit-scrollbar-thumb,
+        .selection-list::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 3px;
+        }
+
+        .teams-list-container::-webkit-scrollbar-thumb:hover,
+        .selection-list::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            #createTeamModal .modal-dialog {
+                margin: 0.5rem;
+            }
+
+            #teamManagementTabs .nav-link {
+                padding: 0.5rem;
+                font-size: 0.85rem;
+            }
+
+            .team-card-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .team-times {
+                margin-top: 0.5rem;
+            }
+        }
+
+        /* Estilos para las tarjetas de equipo */
+        .team-card {
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .team-card:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .team-card-header {
+            padding: 1rem;
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #dee2e6;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .team-card-body {
+            padding: 1rem;
+        }
+
+        .team-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        /* Estilos para la lista de miembros */
+        .members-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .member-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            background-color: #f1f8ff;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+
+        .member-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background-color: #0d6efd;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .member-name {
+            font-weight: 500;
+        }
+
+        .member-role {
+            font-size: 0.8rem;
+            color: #6c757d;
+        }
+
+
+        @media (max-width: 768px) {
+            .calendar-scroll-wrapper {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            #calendar {
+                min-width: 600px; /* o el ancho necesario para que se vea bien */
+            }
+        }
+
     </style>
 </head>
 <body>
+<!-- Navigation -->
+<div th:replace="usuario/template_usuario.html :: header"></div>
 
 <!-- Success Notification -->
-<div id="successNotification" class="alert alert-success success-notification" role="alert">
+<div id="successNotification" class="alert alert-success success-notification" role="alert" style="display: none;">
     <div class="success-notification-content">
         <i class="fas fa-check-circle success-icon"></i>
         <div class="success-message">
@@ -281,137 +1459,2207 @@
     </div>
 </div>
 
-<!-- Navigation -->
-<div th:include="usuario/template_usuario.html::header"></div>
+<!-- Agenda Header -->
+<div class="agenda-header text-center">
+    <div class="container agenda-header-content">
+        <h1 class="agenda-title"><i class="fas fa-calendar-alt me-3"></i> Projects Agenda</h1>
+        <p class="agenda-description">Organize and manage all your projects</p>
+        <div class="button-group" th:if="${canEdit}">
+            <button type="button" class="btn btn-primary btn-rounded" id="btnOpenModal">
+                <i class="fas fa-plus"></i> New Project
+            </button>
+            <button type="button" class="btn btn-secondary btn-rounded" id="toggleCalendarBtn">
+                <i class="fas fa-calendar"></i> Show Calendar
+            </button>
+            <button type="button" class="btn btn-success btn-rounded" id="showCompletedBtn">
+                <i class="fas fa-check-circle"></i> View Completed
+            </button>
 
-<!-- Album Header -->
-<div class="album-header text-center">
-    <div class="container">
-        <h1 class="album-title">Create your new project</h1>
-        <p class="album-subtitle">Organize your projects</p>
+
+        </div>
     </div>
 </div>
 
-<!-- Breadcrumb -->
-<div class="container">
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a th:href="@{/mainMenu}">Home</a></li>
-            <li class="breadcrumb-item active">Create Project</li>
-        </ol>
-    </nav>
-</div>
-
-<!-- Album Form -->
-<div class="container">
-    <div class="album-form-container">
-        <form th:action="@{/albumes/save}" method="post" enctype="multipart/form-data" id="albumForm">
-            <!-- Album Name -->
-            <div class="mb-4">
-                <label for="nombre" class="form-label">Proyect Name</label>
-                <input type="text" class="form-control" id="nombre" name="nombre"
-                       placeholder="Name of your next project." required>
-            </div>
-
-            <!-- Description -->
-            <div class="mb-4">
-                <label for="descripcion" class="form-label">Description.</label>
-                <textarea class="form-control" id="descripcion" name="descripcion" rows="4"
-                          placeholder="Describe the content of this new project (optional)."></textarea>
-            </div>
-
-            <!-- Submit Button and Back Button -->
-            <div class="button-group">
-                <button type="button" class="btn btn-back" onclick="window.history.back()">
-                    <i class="fas fa-arrow-left"></i> Back to Menu
-                </button>
-                <button type="submit" class="btn-create">
-                    <i class="fas fa-plus-circle"></i> Create Project
-                </button>
-            </div>
-
-        </form>
+<!-- Toast Notification -->
+<div class="toast-container">
+    <div id="successToast" class="toast toast-success" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+            <strong class="me-auto">Success</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+            <i class="fas fa-check-circle me-2"></i>
+            <span id="toastMessage">Operation completed successfully</span>
+        </div>
     </div>
 </div>
+
+<!-- Main Content -->
+<div class="container">
+    <div class="main-content-container">
+
+
+        <!-- Calendar Section (hidden by default) -->
+        <div class="calendar-container" id="calendarSection">
+            <div class="calendar-scroll-wrapper">
+                <div id="calendar"></div>
+            </div>
+        </div>
+            <!-- Project Table week -->
+            <div id="projectTableContainer" style="margin-top: 20px;"></div>
+        </div>
+
+        <!-- List Section -->
+        <div class="list-section">
+            <div class="list-container">
+                <div class="list-view-header">
+                    <h3 class="list-view-title"><i class="fa-solid fa-folder-open"></i> My Projects</h3>
+                    <div class="list-filter-controls">
+                        <span class="filter-label">Sort by:</span>
+                        <select id="sortProjects" class="filter-select">
+                            <option value="name-asc">Name (A-Z)</option>
+                            <option value="name-desc">Name (Z-A)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Search Box -->
+                <div class="search-box">
+                    <div class="input-group mb-3">
+                        <span class="input-group-text"><i class="fas fa-search"></i></span>
+                        <input type="text" class="form-control" id="projectSearch" placeholder="Search projects...">
+                    </div>
+                </div>
+
+                <div id="projectsContainer">
+                    <!-- Active Projects Section -->
+                    <div id="activeProjects">
+                        <h4 class="section-title mb-3"><i class="fa-regular fa-folder-open"></i></i> Active Projects</h4>
+                        <div class="projects-grid">
+                            <!-- Active projects card (pending status) -->
+                            <div class="project-card pendiente"
+                                 th:each="album : ${albumes}"
+                                 th:if="${album.estado} == 'pendiente'"
+                                 th:attr="data-id=${album.id}, data-status=${album.estado}">
+                                <div class="project-card-header">
+                                    <div class="project-card-content" onclick="showAlbumDetailsById(this.parentElement.parentElement.getAttribute('data-id'))">
+                                        <h4 class="project-card-title" th:text="${album.nombre}">
+                                            <span class="status-badge status-pending">Pending</span>
+                                        </h4>
+                                        <div class="project-card-date">
+                                            <i class="far fa-clock"></i>
+                                            <span th:if="${album.fechaInicio}" th:text="${#temporals.format(album.fechaInicio, 'dd/MM/yyyy')}">Date</span>
+                                            <span th:unless="${album.fechaInicio}">No date</span>
+                                        </div>
+                                    </div>
+                                    <div class="project-actions" th:if="${canEdit}">
+                                        <button class="action-btn btn-edit" onclick="editAlbum(event, this.closest('.project-card').getAttribute('data-id'))">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="action-btn btn-delete"
+                                                th:attr="data-id=${album.id}"
+                                                onclick="deleteAlbum(event, this.getAttribute('data-id'))">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="project-card-body">
+                                    <p class="project-card-description" th:text="${album.descripcion} ?: 'No description available'">Project description</p>
+                                    <div class="project-card-footer">
+                                        <button class="btn btn-sm btn-outline-primary" onclick="showAlbumDetailsById(this.closest('.project-card').getAttribute('data-id'))">
+                                            <i class="fas fa-eye me-1"></i> View Details
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Archived Projects Section -->
+                    <div id="archivedProjects" style="display: none;">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h4 class="section-title mb-0"><i class="fas fa-archive me-2"></i> Archived Projects</h4>
+                            <!--                            <button class="btn btn-sm btn-outline-secondary" onclick="toggleArchivedProjects()">-->
+                            <!--                                <i class="fas fa-times"></i> Hide-->
+                            <!--                            </button>-->
+                        </div>
+                        <div class="projects-grid">
+                            <!-- Completed/Cancelled projects card -->
+                            <div class="project-card"
+                                 th:each="album : ${albumes}"
+                                 th:if="${album.estado} != 'pendiente'"
+                                 th:attr="data-id=${album.id}, data-status=${album.estado}"
+                                 th:classappend="${album.estado}">
+                                <div class="project-card-header">
+                                    <div class="project-card-content" onclick="showAlbumDetailsById(this.parentElement.parentElement.getAttribute('data-id'))">
+                                        <h4 class="project-card-title" th:text="${album.nombre}">
+                                    <span th:classappend="${album.estado} == 'completado' ? 'status-badge status-completed' :
+                                          ${album.estado} == 'anulado' ? 'status-badge status-cancelled' :
+                                          'status-badge status-pending'">
+                                        <span th:text="${album.estado} == 'completado' ? 'Completed' :
+                                                  ${album.estado} == 'anulado' ? 'Cancelled' : 'Pending'">
+                                        </span>
+                                    </span>
+                                        </h4>
+                                        <div class="project-card-date">
+                                            <i class="far fa-clock"></i>
+                                            <span th:if="${album.fechaInicio}" th:text="${#temporals.format(album.fechaInicio, 'dd/MM/yyyy')}">Date</span>
+                                            <span th:unless="${album.fechaInicio}">No date</span>
+                                        </div>
+                                    </div>
+                                    <div class="project-actions" th:if="${canEdit}">
+                                        <button class="action-btn btn-edit" onclick="editAlbum(event, this.closest('.project-card').getAttribute('data-id'))">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="action-btn btn-delete"
+                                                th:attr="data-id=${album.id}"
+                                                onclick="deleteAlbum(event, this.getAttribute('data-id'))">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="project-card-body">
+                                    <p class="project-card-description" th:text="${album.descripcion} ?: 'No description available'">Project description</p>
+                                    <div class="project-card-footer">
+                                        <button class="btn btn-sm btn-outline-primary" onclick="showAlbumDetailsById(this.closest('.project-card').getAttribute('data-id'))">
+                                            <i class="fas fa-eye me-1"></i> View Details
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Empty state -->
+                    <div class="empty-state" th:if="${#lists.isEmpty(albumes)}">
+                        <i class="fas fa-folder-open"></i>
+                        <h4>No projects created</h4>
+                        <p th:if="${canEdit}">Start by creating your first project</p>
+                        <p th:unless="${canEdit}">You don't have any assigned projects</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Project creation modal -->
+<div class="modal fade" id="projectModal" tabindex="-1" aria-labelledby="projectModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="projectModalLabel">
+                    <i class="fas fa-plus-circle"></i> Create New Project
+                </h5>
+            </div>
+            <form id="projectForm" th:action="@{/albumes/save}" method="post" enctype="multipart/form-data">
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label for="nombre" class="form-label">Project Name *</label>
+                            <input type="text" class="form-control" id="nombre" name="nombre"
+                                   placeholder="Name of your new project" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="descripcion" class="form-label">Description</label>
+                        <textarea class="form-control" id="descripcion" name="descripcion" rows="4"
+                                  placeholder="Describe the content of this new project (optional)"></textarea>
+                    </div>
+
+                    <!-- En el modal de creación de proyectos (projectModal) -->
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="fechaInicio" class="form-label">Start Date</label>
+                            <input type="date" class="form-control" id="fechaInicio" name="fechaInicio">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="horaInicio" class="form-label">Start Time (optional)</label>
+                            <input type="time" class="form-control" id="horaInicio" name="horaInicio">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="fechaFin" class="form-label">End Date</label>
+                            <input type="date" class="form-control" id="fechaFin" name="fechaFin">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="horaFin" class="form-label">End Time (optional)</label>
+                            <input type="time" class="form-control" id="horaFin" name="horaFin">
+                            <small class="text-muted">If not specified, the project will last all day</small>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="notas" class="form-label">Notes</label>
+                        <input type="text" class="form-control" id="notas" name="notas" placeholder="Additional notes">
+                    </div>
+
+
+                    <div class="mb-3">
+                        <label for="ubicacion" class="form-label">Location</label>
+                        <input type="text" class="form-control" id="ubicacion" name="ubicacion" placeholder="Project address">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="contacto" class="form-label">Contact</label>
+                        <input type="text" class="form-control" id="contacto" name="contacto" placeholder="Project contact details">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="claveAlarma" class="form-label">Alarm Code</label>
+                        <input type="text" class="form-control" id="claveAlarma" name="claveAlarma" placeholder="Alarm security code (if any)">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="datosAdicionales" class="form-label">Additional Data</label>
+                        <textarea class="form-control" id="datosAdicionales" name="datosAdicionales" rows="4"
+                                  placeholder="Any additional information about the project"></textarea>
+                    </div>
+
+                    <div class="row" th:if="${userRole == 'EDGAR'}">
+                        <div class="col-md-6 mb-3">
+                            <label for="horasPorProyecto" class="form-label">Hours per Project</label>
+                            <input type="number" class="form-control" id="horasPorProyecto" name="horasPorProyecto" step="0.1"
+                                   placeholder="Total hours dedicated to the project">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="precioHora" class="form-label">Price per Hour</label>
+                            <input type="number" class="form-control" id="precioHora" name="precioHora" step="0.01"
+                                   placeholder="Price per hour for the project">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save Project</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Album details modal -->
+<div class="modal fade" id="albumDetailsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-project-diagram"></i>
+                    <span id="albumDetailsModalLabel">Project Details</span>
+                </h5>
+            </div>
+            <div class="modal-body detail-modal-body">
+                <div class="detail-section">
+                    <h5>Basic Information</h5>
+                    <div class="detail-row">
+                        <div class="detail-label">Name:</div>
+                        <div class="detail-value" id="detail-nombre">-</div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label">Description:</div>
+                        <div class="detail-value" id="detail-descripcion">-</div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label">Status:</div>
+                        <div class="detail-value" id="detail-estado">-</div>
+                    </div>
+                </div>
+
+                <div class="detail-section">
+                    <h5>Dates</h5>
+                    <div class="detail-row">
+                        <div class="detail-label">Start Date:</div>
+                        <div class="detail-value" id="detail-fechaInicio">-</div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label">Start Time:</div>
+                        <div class="detail-value" id="detail-horaInicio">-</div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label">End Date:</div>
+                        <div class="detail-value" id="detail-fechaFin">-</div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label">End Time:</div>
+                        <div class="detail-value" id="detail-horaFin">-</div>
+                    </div>
+                </div>
+
+                <div class="detail-section">
+                    <h5>Location and Contact</h5>
+                    <div class="detail-row">
+                        <div class="detail-label">Location:</div>
+                        <div class="detail-value" id="detail-ubicacion">-</div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label">Contact:</div>
+                        <div class="detail-value" id="detail-contacto">-</div>
+                    </div>
+                </div>
+
+                <div class="detail-section">
+                    <h5>Additional Information</h5>
+                    <div class="detail-row">
+                        <div class="detail-label">Alarm Code:</div>
+                        <div class="detail-value" id="detail-claveAlarma">-</div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label">Notes:</div>
+                        <div class="detail-value" id="detail-notas">-</div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label">Additional Data:</div>
+                        <div class="detail-value" id="detail-datosAdicionales">-</div>
+                    </div>
+                    <div class="detail-row admin-only" th:classappend="${userRole != 'EDGAR'} ? 'd-none' : ''">
+                        <div class="detail-label">Hours per Project:</div>
+                        <div class="detail-value" id="detail-horasPorProyecto">-</div>
+                    </div>
+                    <div class="detail-row admin-only" th:classappend="${userRole != 'EDGAR'} ? 'd-none' : ''">
+                        <div class="detail-label">Price per Hour:</div>
+                        <div class="detail-value" id="detail-precioHora">-</div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer d-flex justify-content-between align-items-center flex-wrap">
+                <!-- Botones de cambio de estado -->
+                <div class="status-change-buttons mb-2 mb-sm-0" id="statusChangeButtons">
+                    <!-- Se insertarán dinámicamente -->
+                </div>
+                <!-- Botones de acción -->
+                <div class="action-buttons text-end">
+                    <button type="button" class="btn btn-success me-2" onclick="generatePdf()">
+                        <i class="fas fa-file-pdf me-1"></i> Generate PDF
+                    </button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Delete confirmation modal -->
+<div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title"><i class="fas fa-exclamation-triangle me-2"></i> Confirm Deletion</h5>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete this project? This action cannot be undone.</p>
+                <p class="fw-bold">All associated subprojects and photos will also be deleted.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Context Menu for Calendar Events -->
+<div id="contextMenu" class="context-menu">
+    <div class="context-menu-item" onclick="openDetailsFromContextMenu()" >
+        <i class="fas fa-eye"></i> View Details
+    </div>
+
+    <div class="context-menu-item" onclick="openNotesFromContextMenu()"
+         th:if="${canEdit}">
+        <i class="fas fa-edit"></i> View/Edit Notes
+    </div>
+
+    <div class="context-menu-item" onclick="createTeamForProjectFromContextMenu()"
+         th:if="${canViewTeams}">
+        <i class="fas fa-users"></i> View/Create Team
+    </div>
+</div>
+
+<!-- Create Team Modal -->
+<div class="modal fade" id="createTeamModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Team Management: ​ ​ <span id="current-project-name"></span></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <!-- Nav tabs -->
+            <ul class="nav nav-tabs" id="teamManagementTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="create-team-tab" data-bs-toggle="tab" data-bs-target="#create-team" type="button" role="tab" aria-controls="create-team" aria-selected="true">
+                        <i class="fas fa-plus-circle me-2"></i>Create Team
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="view-teams-tab" data-bs-toggle="tab" data-bs-target="#view-teams" type="button" role="tab" aria-controls="view-teams" aria-selected="false">
+                        <i class="fas fa-users me-2"></i>View Teams (<span id="teams-count">0</span>)
+                    </button>
+                </li>
+            </ul>
+
+            <!-- Tab panes -->
+            <div class="modal-body tab-content">
+                <!-- Create Team Tab -->
+                <div class="tab-pane fade show active" id="create-team" role="tabpanel" aria-labelledby="create-team-tab">
+                    <div class="team-form">
+                        <div class="mb-3">
+                            <label for="team-name" class="form-label">Team Name</label>
+                            <input type="text" class="form-control mobile-form-control" id="team-name" placeholder="Example: Installation Team">
+                        </div>
+                        <div class="mb-3">
+                            <label for="team-description" class="form-label">Description (Optional)</label>
+                            <textarea class="form-control mobile-form-control" id="team-description" rows="2"
+                                      placeholder="Example: Team specialized in electrical installations"></textarea>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label">Team Members </label>
+                            <small class="text-muted d-block mb-2">You can add team members by selecting them from the list below.</small>
+
+                            <div class="selection-list" id="available-employees">
+                                <!-- Los empleados se cargarán dinámicamente -->
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <button type="button" class="btn btn-secondary mobile-btn touch-feedback" data-bs-dismiss="modal">Cancel</button>
+                            <button id="save-team-btn" class="btn btn-primary" disabled>
+                                <i class="fas fa-save me-2"></i>Save Team
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- View Teams Tab -->
+                <div class="tab-pane fade" id="view-teams" role="tabpanel" aria-labelledby="view-teams-tab">
+                    <div class="teams-list-container" id="project-teams-list">
+                        <div class="text-center py-5 loading-teams">
+                            <i class="fas fa-spinner fa-spin fa-2x text-muted"></i>
+                            <p class="mt-3">Loading teams...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Confirmation Modal for Duplicate Members -->
+<div class="modal fade" id="duplicateMemberModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-warning">
+                <h5 class="modal-title text-white"><i class="fas fa-exclamation-triangle me-2"></i>Duplicate Member</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p id="duplicate-member-message"></p>
+                <p>Do you want to continue adding this member to multiple teams?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" id="confirm-duplicate-member">Continue</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Notes Editor Modal -->
+<div class="modal fade" id="notesModal" tabindex="-1" aria-labelledby="notesModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="notesModalLabel">
+                    <i class="fas fa-sticky-note me-2"></i> Project Notes
+                </h5>
+            </div>
+            <div class="modal-body">
+                <textarea id="notesEditor" class="form-control" rows="10"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="saveNotes()">Save Notes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de confirmación para eliminar -->
+<div class="modal fade" id="confirmDeleteModalteam" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="confirmDeleteModalLabel">Confirm Deletion</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete this team? This action cannot be undone.</p>
+                <p class="fw-bold">All team assignments will be permanently removed.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" id="confirm-delete-btn">Delete Team</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Script para manejar la visibilidad de elementos según el rol -->
+<script th:inline="javascript">
+    document.addEventListener('DOMContentLoaded', function() {
+
+
+        const btnOpenModal = document.getElementById('btnOpenModal');
+        const projectModal = new bootstrap.Modal(document.getElementById('projectModal'));
+
+        btnOpenModal.addEventListener('click', function() {
+            // Resetear las fechas cuando se abre el modal manualmente
+            document.getElementById('fechaInicio').value = '';
+            document.getElementById('fechaFin').value = '';
+
+            // Restaurar título por defecto
+            document.getElementById('projectModalLabel').innerHTML =
+                '<i class="fas fa-plus-circle"></i> Crear Nuevo Proyecto';
+
+            projectModal.show();
+        });
+
+        // Ocultar el botón de nuevo proyecto si no tiene permisos
+        if (!/*[[${canEdit}]]*/ true) {
+            document.getElementById('btnOpenModal').style.display = 'none';
+            document.getElementById('showCompletedBtn').style.display = 'none';
+
+            // Deshabilitar eventos de doble click que podrían permitir edición
+            document.querySelectorAll('.project-card-content').forEach(el => {
+                el.style.cursor = 'default';
+                el.onclick = null;
+            });
+        }
+
+        // Ocultar campos de horas y precio si el usuario no es ADMIN
+        const userRole = /*[[${userRole}]]*/ 'USUARIO';
+        if (userRole !== 'EDGAR') {
+            document.querySelectorAll('.admin-only').forEach(el => {
+                el.classList.add('d-none');
+            });
+        }
+    });
+
+</script>
 
 <!-- Footer -->
-<div th:include="adm/template_admin.html::footer"></div>
+<div th:replace="adm/template_admin.html :: footer"></div>
 
-<!-- Bootstrap core JavaScript -->
-<script th:src="@{/vendor/jquery/jquery.min.js}"></script>
-<script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+<!-- JavaScript -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<!-- FullCalendar JS -->
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/locales/es.min.js"></script>
 
-<!-- Scripts -->
 <script>
-    // Función para mostrar notificación de éxito
-    function showSuccessNotification() {
-        const notification = document.getElementById('successNotification');
-        notification.style.display = 'flex';
-        notification.style.animation = 'fadeIn 0.3s';
+    // Variables globales
+    let currentAlbumId = null;
+    const albumDetailsModal = new bootstrap.Modal(document.getElementById('albumDetailsModal'));
+    let calendar;
+    let selectedColor = '#4361ee';
+    let calendarVisible = false;
+    let projectModal = null;
 
-        // Ocultar después de 5 segundos
-        setTimeout(() => {
-            hideSuccessNotification();
-        }, 5000);
+    // Función para configurar el cierre limpio del modal
+    function setupModalCleanClose() {
+        const modalElement = document.getElementById('projectModal');
+
+        // Limpiar cualquier evento existente
+        const closeButtons = modalElement.querySelectorAll('[data-bs-dismiss="modal"], .btn-close');
+        closeButtons.forEach(btn => {
+            btn.removeEventListener('click', handleModalClose);
+            btn.addEventListener('click', handleModalClose);
+        });
+
+        // Manejar el evento hidden.bs.modal
+        modalElement.removeEventListener('hidden.bs.modal', cleanModalBackdrop);
+        modalElement.addEventListener('hidden.bs.modal', cleanModalBackdrop);
     }
 
-    // Función para ocultar notificación
-    function hideSuccessNotification() {
-        const notification = document.getElementById('successNotification');
-        notification.style.animation = 'fadeOut 0.3s';
-        setTimeout(() => {
-            notification.style.display = 'none';
-        }, 300);
-    }
-
-    // Manejar el envío del formulario
-    document.getElementById('albumForm').addEventListener('submit', function(e) {
+    // Función para manejar el cierre del modal
+    function handleModalClose(e) {
         e.preventDefault();
+        cleanCloseModal(projectModal);
+    }
 
-        // Guardar referencia al formulario
-        const form = this;
+    // Función para cerrar el modal limpiamente
+    function cleanCloseModal(modalInstance) {
+        if (modalInstance) {
+            modalInstance.hide();
+        }
+        cleanModalBackdrop();
+    }
 
-        // Crear FormData para enviar el formulario
-        const formData = new FormData(form);
+    // Función para limpiar el backdrop y restaurar el body
+    function cleanModalBackdrop() {
+        // Eliminar manualmente el backdrop si existe
+        const backdrop = document.querySelector('.modal-backdrop');
+        if (backdrop) {
+            backdrop.remove();
+        }
 
-        // Enviar el formulario con fetch
-        fetch(form.action, {
-            method: form.method,
-            body: new FormData(form)
-        })
-            .then(response => response.text())  // Obtener la respuesta en texto
-            .then(text => {
-                if (text === "Álbum guardado con éxito") {
-                    // Mostrar notificación de éxito
-                    showSuccessNotification();
-                    // Limpiar el formulario después de enviar
-                    form.reset();
+        // Restaurar el scroll del body
+        document.body.style.overflow = 'auto';
+        document.body.style.paddingRight = '0';
+        document.body.classList.remove('modal-open');
+    }
+
+    // Inicialización del modal
+    document.addEventListener('DOMContentLoaded', function() {
+        // Inicializar FullCalendar
+        initCalendar();
+
+        // Verificar que Bootstrap esté cargado
+        if (typeof bootstrap !== 'undefined') {
+            console.log("Bootstrap cargado correctamente");
+
+            // Control manual del modal de creación
+            const btnOpenModal = document.getElementById('btnOpenModal');
+            projectModal = new bootstrap.Modal(document.getElementById('projectModal'), {
+                backdrop: true,
+                keyboard: true,
+                focus: true
+            });
+
+            // Configurar el cierre limpio del modal
+            setupModalCleanClose();
+
+            btnOpenModal.addEventListener('click', function() {
+                // Resetear las fechas cuando se abre el modal manualmente
+                document.getElementById('fechaInicio').value = '';
+                document.getElementById('fechaFin').value = '';
+                projectModal.show();
+            });
+
+            // Manejo del formulario
+            document.getElementById('projectForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                const formData = new FormData(this);
+
+                fetch(this.action, {
+                    method: 'POST',
+                    body: formData
+                })
+                    .then(response => {
+                        if (!response.ok) throw new Error('Error en la respuesta');
+                        return response.text();
+                    })
+                    .then(text => {
+                        if (text === "Álbum guardado con éxito") {
+                            showNotification();
+                            this.reset();
+                            cleanCloseModal(projectModal);
+
+                            // Recargar después de 1 segundo
+                            setTimeout(() => {
+                                window.location.reload();
+                            }, 1000);
+                        } else {
+                            alert("Error: " + text);
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error:", error);
+                        alert("Error al guardar el proyecto");
+                    });
+            });
+
+            // Búsqueda de proyectos
+            document.getElementById('projectSearch').addEventListener('input', function(e) {
+                const searchTerm = this.value.toLowerCase().trim();
+                const projects = document.querySelectorAll('.project-card');
+
+                projects.forEach(project => {
+                    const title = project.querySelector('.project-card-title').textContent.toLowerCase();
+                    const description = project.querySelector('.project-card-description') ?
+                        project.querySelector('.project-card-description').textContent.toLowerCase() : '';
+
+                    if (searchTerm === '' || title.includes(searchTerm) || description.includes(searchTerm)) {
+                        project.style.display = 'block';
+                    } else {
+                        project.style.display = 'none';
+                    }
+                });
+            });
+
+            // Ordenar proyectos
+            document.getElementById('sortProjects').addEventListener('change', function() {
+                const sortValue = this.value;
+                const container = document.querySelector('.projects-grid');
+                const projects = Array.from(document.querySelectorAll('.project-card'));
+
+                projects.sort((a, b) => {
+                    const titleA = a.querySelector('.project-card-title').textContent.toLowerCase();
+                    const titleB = b.querySelector('.project-card-title').textContent.toLowerCase();
+
+                    // Obtener fechas - manejar casos donde no hay fecha
+                    const dateElementA = a.querySelector('.project-card-date span:first-child');
+                    const dateElementB = b.querySelector('.project-card-date span:first-child');
+
+                    const dateA = dateElementA && dateElementA.textContent !== 'Sin fecha' ?
+                        new Date(dateElementA.textContent.split('/').reverse().join('-')) :
+                        new Date(0);
+
+                    const dateB = dateElementB && dateElementB.textContent !== 'Sin fecha' ?
+                        new Date(dateElementB.textContent.split('/').reverse().join('-')) :
+                        new Date(0);
+
+                    // Obtener estados
+                    const statusA = a.getAttribute('data-status');
+                    const statusB = b.getAttribute('data-status');
+
+                    switch(sortValue) {
+                        case 'name-asc':
+                            return titleA.localeCompare(titleB);
+                        case 'name-desc':
+                            return titleB.localeCompare(titleA);
+                        case 'newest':
+                            return dateB - dateA;
+                        case 'oldest':
+                            return dateA - dateB;
+                        case 'status':
+                            return statusA.localeCompare(statusB);
+                        default:
+                            return 0;
+                    }
+                });
+
+                // Reinsertar proyectos ordenados
+                projects.forEach(project => {
+                    container.appendChild(project);
+                });
+            });
+
+            // Botón para mostrar/ocultar calendario
+            const toggleCalendarBtn = document.getElementById('toggleCalendarBtn');
+            toggleCalendarBtn.addEventListener('click', function() {
+                calendarVisible = !calendarVisible;
+                const calendarSection = document.getElementById('calendarSection');
+
+                if (calendarVisible) {
+                    calendarSection.classList.add('visible');
+                    toggleCalendarBtn.innerHTML = '<i class="fas fa-calendar-times"></i> Hide Calendar';
+                    calendar.refetchEvents();
                 } else {
-                    console.error('Error al guardar el proyecto:', text);
+                    calendarSection.classList.remove('visible');
+                    toggleCalendarBtn.innerHTML = '<i class="fas fa-calendar"></i> Show Calendar';
+                }
+            });
+
+            // Alternar visibilidad de proyectos completados
+            document.getElementById('toggleCompletedProjects').addEventListener('click', function() {
+                const completedContainer = document.getElementById('completedProjects');
+                const toggleBtn = document.getElementById('toggleCompletedProjects');
+
+                if (completedContainer.style.display === 'none') {
+                    completedContainer.style.display = 'block';
+                    toggleBtn.innerHTML = '<i class="fas fa-chevron-up"></i> Ocultar';
+                } else {
+                    completedContainer.style.display = 'none';
+                    toggleBtn.innerHTML = '<i class="fas fa-chevron-down"></i> Mostrar';
+                }
+            });
+
+            // Botón para mostrar proyectos completados
+            document.getElementById('showCompletedBtn').addEventListener('click', function() {
+                const completedContainer = document.getElementById('completedProjects');
+                const toggleBtn = document.getElementById('toggleCompletedProjects');
+
+                completedContainer.style.display = 'block';
+                toggleBtn.innerHTML = '<i class="fas fa-chevron-up"></i> Ocultar';
+                document.querySelector('.completed-projects-section').scrollIntoView({ behavior: 'smooth' });
+            });
+        } else {
+            console.error("Bootstrap no está cargado correctamente");
+            alert("Error: Bootstrap no se cargó correctamente");
+        }
+    });
+
+
+    // Función para cambiar estado desde el modal de detalles
+    function changeStatusFromModal(newStatus) {
+        const projectCard = document.querySelector(`.project-card[data-id="${currentAlbumId}"]`);
+        if (projectCard) {
+            // Crear un evento artificial para pasar a changeAlbumStatus
+            const event = { stopPropagation: () => {}, preventDefault: () => {} };
+            changeAlbumStatus(event, projectCard, newStatus);
+        }
+        albumDetailsModal.hide();
+    }
+
+    // Inicializar el calendario
+    function initCalendar() {
+        const calendarEl = document.getElementById('calendar');
+
+        calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            locale: 'en',
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,weekTable,timeGridDay'
+            },
+            customButtons: {
+                weekTable: {
+                    text: 'Week',
+                    click: function() {
+                        calendar.changeView('weekTable');
+                    }
+                }
+            },
+            buttonText: {
+                today: 'Today',
+                month: 'Month',
+                day: 'Day',
+                weekTable: 'Week (Table)'
+            },
+            events: function(fetchInfo, successCallback, failureCallback) {
+                fetch('/albumes/calendar-events')
+                    .then(response => response.json())
+                    .then(data => {
+                        const events = data.map(album => {
+                            let eventColor;
+                            let className = '';
+
+                            switch(album.estado) {
+                                case 'completado':
+                                    eventColor = '#6c757d';
+                                    className = 'completed-event';
+                                    break;
+                                case 'anulado':
+                                    eventColor = '#f94144';
+                                    className = 'cancelled-event';
+                                    break;
+                                default:
+                                    eventColor = '#006fa6';
+                                    className = 'in-progress-event';
+                            }
+
+                            const event = {
+                                id: album.id,
+                                title: album.nombre,
+                                start: album.fechaInicio,
+                                backgroundColor: eventColor,
+                                borderColor: eventColor,
+                                className: className,
+                                extendedProps: {
+                                    description: album.descripcion,
+                                    location: album.ubicacion,
+                                    status: album.estado,
+                                    notes: album.notas,
+                                    horaFin: album.horaFin,
+                                    fechaFin: album.fechaFin || album.fechaInicio
+                                }
+                            };
+
+                            if (album.horaInicio) {
+                                const startDateTime = `${album.fechaInicio}T${album.horaInicio}`;
+                                event.start = startDateTime;
+
+                                if (album.horaFin) {
+                                    const endDate = album.fechaFin ? album.fechaFin : album.fechaInicio;
+                                    event.end = `${endDate}T${album.horaFin}`;
+                                    event.allDay = false;
+                                } else {
+                                    event.allDay = true;
+                                    if (album.fechaFin) {
+                                        const endDate = new Date(album.fechaFin);
+                                        endDate.setDate(endDate.getDate() + 1);
+                                        event.end = endDate.toISOString().split('T')[0];
+                                    }
+                                }
+                            } else {
+                                event.allDay = true;
+                                if (album.fechaFin) {
+                                    const endDate = new Date(album.fechaFin);
+                                    endDate.setDate(endDate.getDate() + 1);
+                                    event.end = endDate.toISOString().split('T')[0];
+                                }
+                            }
+
+                            return event;
+                        });
+
+                        successCallback(events);
+                    })
+                    .catch(error => {
+                        console.error('Error al cargar eventos:', error);
+                        failureCallback(error);
+                    });
+            },
+            eventClick: function(info) {
+                showContextMenu(info.jsEvent, info.event);
+                info.jsEvent.preventDefault();
+            },
+            dateClick: function(info) {
+                if (/*[[${canEdit}]]*/ true) {
+                    const fechaInicioInput = document.getElementById('fechaInicio');
+                    const horaInicioInput = document.getElementById('horaInicio');
+                    const horaFinInput = document.getElementById('horaFin');
+                    const fechaSeleccionada = info.dateStr;
+
+                    fechaInicioInput.value = fechaSeleccionada;
+
+                    if (info.view.type === 'timeGridDay' || info.view.type === 'timeGridWeek') {
+                        const now = new Date();
+                        const hours = now.getHours().toString().padStart(2, '0');
+                        const minutes = now.getMinutes().toString().padStart(2, '0');
+                        horaInicioInput.value = `${hours}:${minutes}`;
+
+                        const endTime = new Date(now.getTime() + 60 * 60 * 1000);
+                        const endHours = endTime.getHours().toString().padStart(2, '0');
+                        const endMinutes = endTime.getMinutes().toString().padStart(2, '0');
+                        horaFinInput.value = `${endHours}:${endMinutes}`;
+                    } else {
+                        horaInicioInput.value = '';
+                        horaFinInput.value = '';
+                    }
+
+                    document.getElementById('fechaFin').value = '';
+                    projectModal.show();
+
+                    document.getElementById('projectModalLabel').innerHTML =
+                        '<i class="fas fa-plus-circle"></i> Nuevo Proyecto para ' +
+                        info.date.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+                }
+            },
+            views: {
+                dayGridMonth: {},
+                timeGridDay: {
+                    dayHeaderFormat: { weekday: 'long', day: 'numeric', month: 'short' },
+                    slotLabelFormat: {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        hour12: false
+                    },
+                    allDaySlot: false,
+                    expandRows: true,
+                    nowIndicator: true,
+                    slotMinTime: '00:00:00',
+                    slotMaxTime: '24:00:00',
+                    slotDuration: '00:30:00',
+                    eventTimeFormat: {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        hour12: false
+                    }
+                },
+                weekTable: {
+                    type: 'basicWeek',
+                    duration: { weeks: 1 },
+                    content: function() {
+                        const container = document.createElement('div');
+                        container.className = 'fc-week-table-view';
+
+                        const events = calendar.getEvents();
+                        const start = calendar.view.activeStart;
+                        const daysOfWeek = [];
+
+                        for (let i = 0; i < 7; i++) {
+                            const date = new Date(start);
+                            date.setDate(start.getDate() + i);
+                            daysOfWeek.push({
+                                label: date.toLocaleDateString('en-US', { weekday: 'short', day: 'numeric' }),
+                                dateStr: date.toISOString().split('T')[0],
+                                dateObj: new Date(date)
+                            });
+                        }
+
+                        const viewStart = new Date(calendar.view.activeStart);
+                        viewStart.setHours(0, 0, 0, 0);
+
+                        const viewEnd = new Date(calendar.view.activeEnd);
+                        viewEnd.setHours(0, 0, 0, 0);
+                        viewEnd.setDate(viewEnd.getDate() - 1);
+
+                        const proyectosSemana = events.filter(event => {
+                            const eventStart = event.start ? new Date(event.start) : null;
+                            let eventEnd = event.end ? new Date(event.end) : eventStart;
+
+                            // NO RESTAMOS UN DÍA AQUÍ
+                            if (!eventStart) return false;
+
+                            const startDate = new Date(eventStart);
+                            startDate.setHours(0, 0, 0, 0);
+
+                            const endDate = eventEnd ? new Date(eventEnd) : startDate;
+                            endDate.setHours(23, 59, 59, 999);
+
+                            return (startDate <= viewEnd && endDate >= viewStart);
+                        });
+
+
+                        const table = document.createElement('table');
+                        table.className = 'fc-week-table';
+
+                        const thead = document.createElement('thead');
+                        const headerRow = document.createElement('tr');
+
+                        // Encabezado de proyecto
+                        const projectHeader = document.createElement('th');
+                        projectHeader.textContent = 'Projects';
+                        projectHeader.style.textAlign = 'left';
+                        projectHeader.style.paddingLeft = '16px';
+                        headerRow.appendChild(projectHeader);
+
+                        // Encabezados de días
+                        daysOfWeek.forEach(dia => {
+                            const th = document.createElement('th');
+                            th.textContent = dia.label;
+                            headerRow.appendChild(th);
+                        });
+
+                        thead.appendChild(headerRow);
+                        table.appendChild(thead);
+
+                        const tbody = document.createElement('tbody');
+
+                        const emptyRowsToShow = 5;
+                        const rowsToCreate = Math.max(emptyRowsToShow, proyectosSemana.length);
+
+                        for (let i = 0; i < rowsToCreate; i++) {
+                            const tr = document.createElement('tr');
+                            const proyecto = proyectosSemana[i];
+
+                            if (proyecto) {
+                                tr.addEventListener('click', function(e) {
+                                    if (e.target.tagName !== 'TD' && e.target.tagName !== 'DIV' && e.target.tagName !== 'SPAN') {
+                                        return;
+                                    }
+                                    showContextMenu(e, proyecto);
+                                    e.preventDefault();
+                                });
+                            }
+
+                            // Celda del nombre del proyecto
+                            const tdProject = document.createElement('td');
+                            tdProject.className = 'project-name-cell';
+
+                            if (proyecto) {
+                                // Determinar clase según estado
+                                let statusClass = '';
+                                switch(proyecto.extendedProps.status) {
+                                    case 'completado':
+                                        statusClass = 'completed';
+                                        break;
+                                    case 'anulado':
+                                        statusClass = 'cancelled';
+                                        break;
+                                    default:
+                                        statusClass = 'in-progress';
+                                }
+                                tdProject.classList.add(statusClass);
+
+                                tdProject.textContent = proyecto.title;
+                            }
+
+                            tr.appendChild(tdProject);
+
+                            // Celdas de días
+                            daysOfWeek.forEach(dia => {
+                                const td = document.createElement('td');
+                                td.className = 'project-day-cell';
+
+                                if (proyecto) {
+                                    const eventStart = new Date(proyecto.start);
+                                    eventStart.setHours(0, 0, 0, 0);
+
+                                    let eventEnd = proyecto.end ? new Date(proyecto.end) : new Date(proyecto.start);
+                                    if (proyecto.allDay && proyecto.end) {
+                                        eventEnd = new Date(eventEnd);
+                                        eventEnd.setDate(eventEnd.getDate() - 1);
+                                    }
+                                    eventEnd.setHours(23, 59, 59, 999);
+
+                                    const currentDay = new Date(dia.dateObj);
+                                    currentDay.setHours(0, 0, 0, 0);
+
+                                    if (currentDay >= eventStart && currentDay <= eventEnd) {
+                                        // Aplicar clase según estado
+                                        let statusClass = '';
+                                        switch(proyecto.extendedProps.status) {
+                                            case 'completado':
+                                                statusClass = 'completed';
+                                                break;
+                                            case 'anulado':
+                                                statusClass = 'cancelled';
+                                                break;
+                                            default:
+                                                statusClass = 'in-progress';
+                                        }
+                                        td.classList.add(statusClass);
+
+                                        // Crear indicador circular
+                                        const indicator = document.createElement('div');
+                                        indicator.className = `day-indicator ${statusClass}`;
+
+                                        // Usar ícono FontAwesome para completado
+                                        if (proyecto.extendedProps.status === 'completado') {
+                                            const icon = document.createElement('i');
+                                            icon.className = 'fas fa-check';
+                                            indicator.appendChild(icon);
+                                        }
+                                        // Usar ícono FontAwesome para anulado
+                                        else if (proyecto.extendedProps.status === 'anulado') {
+                                            const icon = document.createElement('i');
+                                            icon.className = 'fas fa-times';
+                                            indicator.appendChild(icon);
+                                        }
+                                        // Número de día para en progreso
+                                        else {
+                                            indicator.textContent = currentDay.getDate();
+                                        }
+
+                                        td.appendChild(indicator);
+                                    }
+                                }
+
+                                tr.appendChild(td);
+                            });
+
+                            tbody.appendChild(tr);
+                        }
+
+                        table.appendChild(tbody);
+                        container.appendChild(table);
+
+                        return { domNodes: [container] };
+                    }
+                }
+            },
+            nowIndicator: true,
+            eventContent: function(arg) {
+                const eventEl = document.createElement('div');
+                eventEl.className = 'fc-event-content';
+                eventEl.style.whiteSpace = 'normal';
+                eventEl.style.padding = '4px 6px';
+                eventEl.style.borderRadius = '4px';
+
+                const isAllDay = arg.event.allDay ||
+                    (!arg.event.extendedProps.horaFin &&
+                        (!arg.event.end || !arg.event.end.includes('T')));
+
+                if (!isAllDay) {
+                    const timeEl = document.createElement('div');
+                    timeEl.className = 'fc-event-time';
+                    timeEl.style.fontSize = '0.85em';
+                    timeEl.style.marginBottom = '2px';
+                    timeEl.style.fontWeight = 'bold';
+
+                    const startTime = arg.event.start ?
+                        arg.event.start.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', hour12: false}) : '';
+
+                    let timeText = startTime;
+                    if (arg.event.end) {
+                        const endTime = arg.event.end.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', hour12: false});
+                        timeText = `${startTime} - ${endTime}`;
+                    }
+
+                    timeEl.textContent = timeText;
+                    eventEl.appendChild(timeEl);
+                } else {
+                    const allDayEl = document.createElement('div');
+                    allDayEl.className = 'fc-event-time';
+                    allDayEl.style.fontSize = '0.85em';
+                    allDayEl.style.marginBottom = '2px';
+                    allDayEl.style.fontWeight = 'bold';
+                    allDayEl.textContent = 'Todo el día';
+                    eventEl.appendChild(allDayEl);
+                }
+
+                const titleEl = document.createElement('div');
+                titleEl.className = 'fc-event-title';
+                titleEl.textContent = arg.event.title;
+                titleEl.style.fontWeight = 'bold';
+                titleEl.style.fontSize = '0.9em';
+
+                if (arg.event.extendedProps.status === 'completed') {
+                    titleEl.style.textDecoration = 'line-through';
+                    titleEl.style.opacity = '0.8';
+                } else if (arg.event.extendedProps.status === 'cancelled') {
+                    titleEl.style.textDecoration = 'line-through';
+                }
+
+                eventEl.appendChild(titleEl);
+
+                if (arg.event.extendedProps.location) {
+                    const locationEl = document.createElement('div');
+                    locationEl.className = 'fc-event-location';
+                    locationEl.style.fontSize = '0.8em';
+                    locationEl.style.marginTop = '2px';
+                    locationEl.textContent = arg.event.extendedProps.location;
+                    eventEl.appendChild(locationEl);
+                }
+
+                return { domNodes: [eventEl] };
+            },
+            height: 'auto'
+        });
+
+        calendar.render();
+        calendarVisible = true;
+        document.getElementById('calendarSection').classList.add('visible');
+        document.getElementById('toggleCalendarBtn').innerHTML = '<i class="fas fa-calendar-times"></i> Hide Calendar';
+    }
+
+    // Mostrar detalles del álbum por ID
+    // Mostrar detalles del álbum por ID
+    function showAlbumDetailsById(albumId) {
+        currentAlbumId = albumId;
+
+        fetch(`/albumes/${albumId}/details`)
+            .then(response => {
+                if (!response.ok) throw new Error('Error al obtener los detalles');
+                return response.json();
+            })
+            .then(album => {
+                const formatDate = (dateString) => {
+                    if (!dateString) return '-';
+                    const date = new Date(dateString);
+                    date.setMinutes(date.getMinutes() + date.getTimezoneOffset());
+                    return date.toLocaleDateString();
+                };
+
+                const estadoElement = document.getElementById('detail-estado');
+                estadoElement.textContent = album.estado === 'completado' ? 'Completed' :
+                    album.estado === 'anulado' ? 'Annulled' : 'Pending';
+
+                // Aplicar clase según estado
+                estadoElement.className = 'detail-value'; // Reset classes
+                if (album.estado === 'completado') {
+                    estadoElement.classList.add('status-completed');
+                } else if (album.estado === 'anulado') {
+                    estadoElement.classList.add('status-cancelled');
+                } else {
+                    estadoElement.classList.add('status-pending');
+                }
+
+                const formatTime = (timeString) => {
+                    if (!timeString) return '-';
+                    // Asumiendo que timeString viene en formato "HH:mm:ss" o similar
+                    return timeString.substring(0, 5); // Tomamos solo HH:mm
+                };
+
+                document.getElementById('albumDetailsModalLabel').textContent = album.nombre;
+                document.getElementById('detail-nombre').textContent = album.nombre || '-';
+                document.getElementById('detail-descripcion').textContent = album.descripcion || '-';
+                // Eliminar la línea que sobrescribe el estado aquí
+                document.getElementById('detail-fechaInicio').textContent = formatDate(album.fechaInicio);
+                document.getElementById('detail-horaInicio').textContent = formatTime(album.horaInicio);
+                document.getElementById('detail-horaFin').textContent = formatTime(album.horaFin);
+                document.getElementById('detail-fechaFin').textContent = formatDate(album.fechaFin);
+                document.getElementById('detail-ubicacion').textContent = album.ubicacion || '-';
+                document.getElementById('detail-contacto').textContent = album.contacto || '-';
+                document.getElementById('detail-claveAlarma').textContent = album.claveAlarma || '-';
+                document.getElementById('detail-notas').textContent = album.notas || '-';
+                document.getElementById('detail-datosAdicionales').textContent = album.datosAdicionales || '-';
+                document.getElementById('detail-horasPorProyecto').textContent = album.horasPorProyecto ? `${album.horasPorProyecto} horas` : '-';
+                document.getElementById('detail-precioHora').textContent = album.precioHora ? `$${album.precioHora.toFixed(2)}` : '-';
+
+                // Agregar botones para cambiar estado en el modal de detalles
+                const modalFooter = document.querySelector('#albumDetailsModal .modal-footer');
+
+                // Limpiar botones existentes
+                const existingStatusButtons = document.querySelectorAll('.status-change-btn');
+                existingStatusButtons.forEach(btn => btn.remove());
+
+                // Agregar botones solo si no es el estado actual
+                if (album.estado !== 'pendiente') {
+                    const pendingBtn = document.createElement('button');
+                    pendingBtn.className = 'btn status-change-btn me-2';
+                    pendingBtn.style.backgroundColor = '#66ccff';  // Color de fondo cambiado
+                    pendingBtn.innerHTML = '<i class="fas fa-clock"></i> Marcar como En curso';
+                    pendingBtn.onclick = () => changeStatusFromModal('pendiente');
+                    modalFooter.prepend(pendingBtn);
+                }
+
+                if (album.estado !== 'completado') {
+                    const completeBtn = document.createElement('button');
+                    completeBtn.className = 'btn btn-secondary status-change-btn me-2';
+                    completeBtn.innerHTML = '<i class="fas fa-check"></i> Marcar como Completado';
+                    completeBtn.onclick = () => changeStatusFromModal('completado');
+                    modalFooter.prepend(completeBtn);
+                }
+
+                if (album.estado !== 'anulado') {
+                    const cancelBtn = document.createElement('button');
+                    cancelBtn.className = 'btn btn-danger status-change-btn me-2';
+                    cancelBtn.innerHTML = '<i class="fas fa-times"></i> Marcar como Anulado';
+                    cancelBtn.onclick = () => changeStatusFromModal('anulado');
+                    modalFooter.prepend(cancelBtn);
+                }
+
+                albumDetailsModal.show();
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("Error al cargar los detalles del proyecto");
+            });
+    }
+
+
+    // Función para editar el álbum
+    function editAlbum(event, albumId) {
+        event.stopPropagation();
+        event.preventDefault();
+
+        const idToEdit = albumId || currentAlbumId;
+        if (idToEdit) {
+            window.location.href = `/albumes/edit/${idToEdit}`;
+        }
+    }
+
+    // Función para cambiar el estado del proyecto y moverlo entre secciones
+    function changeAlbumStatus(event, projectCard, newStatus) {
+        event.stopPropagation();
+        event.preventDefault();
+
+        const albumId = projectCard.getAttribute('data-id');
+        if (!albumId) return;
+
+        fetch(`/albumes/change-status/${albumId}?nuevoEstado=${newStatus}&actualizarFechaFin=false`, {
+            method: 'POST'
+        })
+            .then(response => {
+                if (response.ok) {
+                    // 1. Actualizar atributos y estilos de la tarjeta
+                    projectCard.setAttribute('data-status', newStatus);
+                    projectCard.className = 'project-card'; // Reset classes
+                    projectCard.classList.add(newStatus);
+
+                    // Actualizar el badge de estado
+                    const statusBadge = projectCard.querySelector('.status-badge');
+                    if (statusBadge) {
+                        statusBadge.className = 'status-badge';
+                        statusBadge.classList.add(newStatus === 'completado' ? 'status-completed' :
+                            newStatus === 'anulado' ? 'status-cancelled' : 'status-pending');
+                        statusBadge.textContent = newStatus === 'completado' ? 'Completed' :
+                            newStatus === 'anulado' ? 'Cancelled' : 'Pending';
+                    }
+
+                    // 2. Determinar contenedores de origen y destino
+                    const activeContainer = document.querySelector('#activeProjects .projects-grid');
+                    const archivedContainer = document.querySelector('#archivedProjects .projects-grid');
+
+                    // 3. Mover la tarjeta al contenedor correspondiente
+                    if (newStatus === 'pendiente') {
+                        activeContainer.appendChild(projectCard);
+                    } else {
+                        archivedContainer.appendChild(projectCard);
+                        // Mostrar sección archivada si estaba oculta
+                        document.getElementById('archivedProjects').style.display = 'block';
+                    }
+
+                    // 4. Refrescar calendario si está visible
+                    if (calendarVisible) {
+                        calendar.refetchEvents();
+                    }
+
+                    showToast(`Project status changed to ${newStatus}`);
+                } else {
+                    throw new Error('Error changing status');
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
+                showToast('Error changing project status');
             });
-    });
+    }
 
-    document.getElementById('portada').addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                const preview = document.getElementById('coverPreview');
-                preview.src = event.target.result;
-                preview.style.display = 'block';
-            };
-            reader.readAsDataURL(file);
+    // Función para mostrar/ocultar proyectos archivados
+    function toggleArchivedProjects() {
+        const archivedSection = document.getElementById('archivedProjects');
+        if (archivedSection.style.display === 'none') {
+            archivedSection.style.display = 'block';
+        } else {
+            archivedSection.style.display = 'none';
         }
+    }
+
+    // Modificación del DOMContentLoaded para clasificar proyectos al cargar
+    document.addEventListener('DOMContentLoaded', function() {
+
+        // Clasificar proyectos al cargar la página
+        const projects = document.querySelectorAll('.project-card');
+        const activeContainer = document.querySelector('#activeProjects .projects-grid');
+        const archivedContainer = document.querySelector('#archivedProjects .projects-grid');
+
+        projects.forEach(project => {
+            const status = project.getAttribute('data-status');
+            if (status === 'pendiente') {
+                activeContainer.appendChild(project);
+            } else {
+                archivedContainer.appendChild(project);
+            }
+        });
+
+        // Mostrar sección archivada si hay proyectos archivados
+        if (archivedContainer.children.length > 0) {
+            document.getElementById('archivedProjects').style.display = 'block';
+        }
+
+        // Modificar el botón "View Completed"
+        document.getElementById('showCompletedBtn').addEventListener('click', function() {
+            document.getElementById('archivedProjects').style.display = 'block';
+            document.getElementById('archivedProjects').scrollIntoView({ behavior: 'smooth' });
+        });
     });
 
-    // Reset form when navigating away (to prevent resubmission)
-    window.addEventListener('beforeunload', function() {
-        document.getElementById('albumForm').reset();
-    });
+    // Función para mostrar notificación
+    function showNotification() {
+        const notification = document.getElementById('successNotification');
+        notification.style.display = 'block';
+        setTimeout(hideNotification, 5000);
+    }
+
+    // Función para ocultar notificación
+    function hideNotification() {
+        document.getElementById('successNotification').style.display = 'none';
+    }
+
+    // Función para mostrar toast
+    function showToast(message) {
+        document.getElementById('toastMessage').textContent = message;
+        var toastEl = document.getElementById('successToast');
+        var toast = new bootstrap.Toast(toastEl);
+        toast.show();
+    }
+
+    // Función para confirmar eliminación desde el modal de detalles
+    function confirmDeleteAlbum() {
+        if (!currentAlbumId) return;
+
+        const confirmModal = new bootstrap.Modal(document.getElementById('confirmDeleteModal'));
+        const confirmBtn = document.getElementById('confirmDeleteBtn');
+
+        confirmBtn.replaceWith(confirmBtn.cloneNode(true));
+
+        document.getElementById('confirmDeleteBtn').addEventListener('click', function() {
+            deleteAlbum(null, currentAlbumId);
+            confirmModal.hide();
+            albumDetailsModal.hide();
+        });
+
+        confirmModal.show();
+    }
+
+    // Función para eliminar un álbum
+    function deleteAlbum(event, albumId) {
+        if (event) {
+            event.stopPropagation();
+        }
+
+        currentAlbumId = albumId;
+
+        const confirmModal = new bootstrap.Modal(document.getElementById('confirmDeleteModal'));
+        const confirmBtn = document.getElementById('confirmDeleteBtn');
+
+        confirmBtn.replaceWith(confirmBtn.cloneNode(true));
+
+        document.getElementById('confirmDeleteBtn').addEventListener('click', function() {
+            fetch(`/albumes/delete/${currentAlbumId}`, {
+                method: 'GET'
+            })
+                .then(response => {
+                    if (response.redirected) {
+                        showToast('Proyecto eliminado correctamente');
+                        setTimeout(() => {
+                            window.location.href = response.url;
+                        }, 1000);
+                    } else {
+                        throw new Error('Error al eliminar el proyecto');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showToast('Error al eliminar el proyecto');
+                });
+
+            confirmModal.hide();
+        });
+
+        confirmModal.show();
+    }
+
+    // Función para generar y descargar PDF
+    function generatePdf() {
+        if (!currentAlbumId) return;
+
+        showToast('Generando PDF...');
+
+        fetch(`/albumes/${currentAlbumId}/pdf`)
+            .then(response => {
+                if (!response.ok) throw new Error('Error al generar el PDF');
+                return response.blob();
+            })
+            .then(blob => {
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `detalle_proyecto_${currentAlbumId}.pdf`;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                a.remove();
+
+                showToast('PDF generado con éxito');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showToast('Error al generar el PDF');
+            });
+    }
+
+
+    // Variables globales para el menú de contexto
+    let contextMenuEventId = null;
+    const contextMenu = document.getElementById('contextMenu');
+    const notesModal = new bootstrap.Modal(document.getElementById('notesModal'));
+
+    // Función para cerrar el menú de contexto
+    function closeContextMenu() {
+        contextMenu.style.display = 'none';
+        document.removeEventListener('click', closeHandler);
+    }
+
+    // Función para abrir detalles desde el menú de contexto
+    function openDetailsFromContextMenu() {
+        if (contextMenuEventId) {
+            showAlbumDetailsById(contextMenuEventId);
+        }
+        closeContextMenu();
+    }
+
+    // Handler para cerrar el menú si se hace clic fuera
+    const closeHandler = (e) => {
+        if (!contextMenu.contains(e.target)) {
+            closeContextMenu();
+        }
+    };
+
+    // Función para mostrar el menú de contexto
+    function showContextMenu(jsEvent, calendarEvent) {
+        jsEvent.stopPropagation(); // Evita que el clic que abre el menú también lo cierre
+
+        // Ocultar cualquier menú previo
+        contextMenu.style.display = 'none';
+
+        // Guardar el ID del evento seleccionado
+        contextMenuEventId = calendarEvent.id;
+
+        // Obtener posición del cursor considerando el scroll
+        const viewportX = jsEvent.clientX;
+        const viewportY = jsEvent.clientY;
+
+        // Calcular posición absoluta considerando el scroll
+        const scrollX = window.pageXOffset || document.documentElement.scrollLeft;
+        const scrollY = window.pageYOffset || document.documentElement.scrollTop;
+        const absoluteX = viewportX + scrollX;
+        const absoluteY = viewportY + scrollY;
+
+        // Obtener dimensiones del menú
+        const menuWidth = contextMenu.offsetWidth;
+        const menuHeight = contextMenu.offsetHeight;
+
+        // Obtener dimensiones de la ventana
+        const windowWidth = window.innerWidth;
+        const windowHeight = window.innerHeight;
+
+        // Ajustar posición si el menú se sale de la pantalla
+        const adjustedX = (viewportX + menuWidth > windowWidth) ?
+            absoluteX - menuWidth : absoluteX;
+        const adjustedY = (viewportY + menuHeight > windowHeight) ?
+            absoluteY - menuHeight : absoluteY;
+
+        // Posicionar el menú
+        contextMenu.style.position = 'absolute';
+        contextMenu.style.left = `${adjustedX}px`;
+        contextMenu.style.top = `${adjustedY}px`;
+        contextMenu.style.display = 'block';
+        contextMenu.style.zIndex = '10000';
+
+        // Agregar listener para cerrar el menú si se hace clic fuera
+        document.addEventListener('click', closeHandler);
+    }
+
+    // Función para abrir editor de notas desde el menú de contexto
+    function openNotesFromContextMenu() {
+        if (contextMenuEventId) {
+            fetch(`/albumes/${contextMenuEventId}/notes`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('notesEditor').value = data.notes || '';
+                    document.getElementById('notesModalLabel').textContent = `Notes: ${data.projectName}`;
+                    notesModal.show();
+                })
+                .catch(error => {
+                    console.error('Error loading notes:', error);
+                    showToast('Error loading project notes');
+                });
+        }
+        closeContextMenu();
+    }
+
+    // Función para guardar notas
+    function saveNotes() {
+        if (!contextMenuEventId) return;
+
+        const notes = document.getElementById('notesEditor').value;
+
+        fetch(`/albumes/${contextMenuEventId}/update-notes`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ notes: notes })
+        })
+            .then(response => {
+                if (response.ok) {
+                    showToast('Notes updated successfully');
+                    notesModal.hide();
+
+                    // Actualizar el evento en el calendario si está visible
+                    if (calendarVisible) {
+                        const event = calendar.getEventById(contextMenuEventId);
+                        if (event) {
+                            event.setExtendedProp('notes', notes);
+                        }
+                    }
+                } else {
+                    throw new Error('Error saving notes');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showToast('Error saving notes');
+            });
+    }
+
+    // Variables globales para equipos
+    let teamMembers = [];
+    let selectedProject = null;
+    let currentTeamId = null;
+    const createTeamModal = new bootstrap.Modal(document.getElementById('createTeamModal'));
+    const duplicateMemberModal = new bootstrap.Modal(document.getElementById('duplicateMemberModal'));
+    let currentDuplicateEmployeeId = null;
+    let projectTeams = [];
+    let duplicateMembers = {};
+
+    // Función para crear equipo desde el menú contextual
+    function createTeamForProjectFromContextMenu() {
+        if (!contextMenuEventId) return;
+
+        // Obtener detalles del proyecto seleccionado
+        const event = calendar.getEventById(contextMenuEventId);
+        if (!event) return;
+
+        // Configurar el proyecto seleccionado
+        selectedProject = {
+            id: contextMenuEventId,
+            name: event.title
+        };
+
+        // Actualizar el nombre del proyecto en el modal
+        document.getElementById('current-project-name').textContent = selectedProject.name;
+
+        // Cargar empleados disponibles usando el nuevo endpoint
+        fetch('/equipo/empleados/json')
+            .then(response => {
+                if (!response.ok) throw new Error('Error al obtener empleados');
+                return response.json();
+            })
+            .then(empleados => {
+                const employeesContainer = document.getElementById('available-employees');
+                employeesContainer.innerHTML = '';
+
+                empleados.forEach(empleado => {
+                    const employeeItem = document.createElement('div');
+                    employeeItem.className = 'selection-item';
+                    employeeItem.dataset.employeeId = empleado.id;
+
+                    employeeItem.innerHTML = `
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div class="d-flex align-items-center">
+                                <div class="avatar me-3">
+                                    <span>${empleado.nombre.charAt(0)}${empleado.email ? empleado.email.charAt(0) : ''}</span>
+                                </div>
+                                <div>
+                                    <h6 class="mb-0">${empleado.nombre}</h6>
+                                    <small class="text-muted">${empleado.tipo_usuario}</small>
+                                </div>
+                            </div>
+                            <button class="btn btn-sm add-btn touch-feedback">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                            <button class="btn btn-sm remove-btn touch-feedback">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                        </div>
+                    `;
+
+                    employeesContainer.appendChild(employeeItem);
+
+                    // Configurar eventos para este empleado
+                    const addBtn = employeeItem.querySelector('.add-btn');
+                    const removeBtn = employeeItem.querySelector('.remove-btn');
+
+                    addBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        checkDuplicateMember(empleado.id, () => {
+                            addTeamMember(empleado.id);
+                        });
+                    });
+
+                    removeBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        removeTeamMember(empleado.id);
+                    });
+
+                    employeeItem.addEventListener('click', (e) => {
+                        if (e.target === addBtn || e.target === removeBtn ||
+                            e.target.closest('.add-btn') || e.target.closest('.remove-btn')) {
+                            return;
+                        }
+
+                        if (employeeItem.classList.contains('selected')) {
+                            removeTeamMember(empleado.id);
+                        } else {
+                            checkDuplicateMember(empleado.id, () => {
+                                addTeamMember(empleado.id);
+                            });
+                        }
+                    });
+                });
+
+                // Mostrar el modal
+                createTeamModal.show();
+                closeContextMenu();
+
+                // Cargar equipos existentes para este proyecto
+                loadProjectTeams(selectedProject.id);
+
+                // Configurar el botón de guardar
+                document.getElementById('save-team-btn').onclick = saveTeamForProject;
+
+                // Event listener para cambios en el nombre del equipo
+                document.getElementById('team-name').addEventListener('input', updateSaveButtonState);
+                document.getElementById('team-description').addEventListener('input', updateSaveButtonState);
+            })
+            .catch(error => {
+                console.error('Error loading employees:', error);
+                showToast('Error loading employees list');
+            });
+    }
+
+    // Función para verificar si un miembro ya está en otro equipo
+    function checkDuplicateMember(employeeId, callback) {
+        if (!selectedProject || !projectTeams || projectTeams.length === 0) {
+            callback();
+            return;
+        }
+
+        // Verificar si el empleado ya está en algún equipo del proyecto
+        const isDuplicate = projectTeams.some(team =>
+            team.miembros.some(member => member.id === employeeId)
+        );
+
+        if (isDuplicate) {
+            // Obtener nombre del empleado
+            const employeeName = document.querySelector(`.selection-item[data-employee-id="${employeeId}"] h6`).textContent;
+
+            // Mostrar modal de confirmación
+            document.getElementById('duplicate-member-message').textContent =
+                `The member "${employeeName}" is already assigned to another team in this project.`;
+
+            currentDuplicateEmployeeId = employeeId;
+
+            // Configurar el botón de confirmación
+            document.getElementById('confirm-duplicate-member').onclick = function() {
+                duplicateMemberModal.hide();
+                callback();
+            };
+
+            duplicateMemberModal.show();
+        } else {
+            callback();
+        }
+    }
+
+    // Función para cargar los equipos del proyecto (actualizada)
+    function loadProjectTeams(projectId) {
+        const teamsListContainer = document.getElementById('project-teams-list');
+        teamsListContainer.innerHTML = `
+        <div class="text-center py-5 loading-teams">
+            <i class="fas fa-spinner fa-spin fa-2x text-muted"></i>
+            <p class="mt-3">Loading teams...</p>
+        </div>`;
+
+        fetch(`/equipo/por-proyecto/${projectId}`)
+            .then(response => {
+                if (!response.ok) throw new Error('Error al obtener equipos');
+                return response.json();
+            })
+            .then(teams => {
+                projectTeams = teams; // Guardar los equipos para verificación de duplicados
+                const teamsListContainer = document.getElementById('project-teams-list');
+
+                if (teams && teams.length > 0) {
+                    let html = '';
+
+                    // Actualizar contador de equipos
+                    document.getElementById('teams-count').textContent = teams.length;
+
+                    // Primero identificar miembros duplicados
+                    duplicateMembers = {};
+                    const memberCount = {};
+
+                    teams.forEach(team => {
+                        team.miembros.forEach(member => {
+                            if (!memberCount[member.id]) {
+                                memberCount[member.id] = 0;
+                            }
+                            memberCount[member.id]++;
+                        });
+                    });
+
+                    // Marcar los miembros que aparecen más de una vez
+                    for (const memberId in memberCount) {
+                        if (memberCount[memberId] > 1) {
+                            duplicateMembers[memberId] = true;
+                        }
+                    }
+
+                    teams.forEach(team => {
+                        html += `
+                        <div class="team-card mb-3" data-team-id="${team.id}">
+                            <div class="team-card-header">
+                                <h5>${team.nombre}</h5>
+                                <div class="team-actions">
+                                    <button class="btn btn-sm btn-outline-primary edit-team-btn" data-team-id="${team.id}">
+                                        <i class="fas fa-edit me-1"></i> Edit
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-danger delete-team-btn" data-team-id="${team.id}">
+                                        <i class="fas fa-trash-alt me-1"></i> Delete
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="team-card-body">
+                                <p class="team-description">${team.descripcion || 'No description available'}</p>
+                                <div class="team-members">
+                                    <h6>Members (${team.miembros.length})</h6>
+                                    <div class="members-list">
+                                        ${team.miembros.map(member => `
+                                            <div class="member-item">
+                                                <div class="member-avatar">
+                                                    ${member.nombre.charAt(0)}${member.apellido ? member.apellido.charAt(0) : ''}
+                                                </div>
+                                                <div class="member-info">
+                                                    <div class="member-name ${duplicateMembers[member.id] ? 'duplicate-member' : ''}">
+                                                        ${member.nombre} ${member.apellido || ''}
+                                                    </div>
+                                                    <div class="member-role">${member.rol}</div>
+                                                </div>
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    });
+
+                    teamsListContainer.innerHTML = html;
+
+                    // Agregar event listeners para los botones
+                    document.querySelectorAll('.delete-team-btn').forEach(btn => {
+                        btn.addEventListener('click', function() {
+                            const teamId = this.getAttribute('data-team-id');
+                            deleteTeam(teamId);
+                        });
+                    });
+
+                    document.querySelectorAll('.edit-team-btn').forEach(btn => {
+                        btn.addEventListener('click', function() {
+                            const teamId = this.getAttribute('data-team-id');
+                            editTeam(teamId);
+                        });
+                    });
+                } else {
+                    teamsListContainer.innerHTML = `
+                    <div class="text-center py-5 no-teams">
+                        <i class="fas fa-users-slash fa-3x text-muted"></i>
+                        <h5 class="mt-3">No teams found</h5>
+                        <p class="text-muted">This project doesn't have any teams assigned yet.</p>
+                    </div>
+                `;
+                    document.getElementById('teams-count').textContent = '0';
+                }
+            })
+            .catch(error => {
+                console.error('Error loading teams:', error);
+                teamsListContainer.innerHTML = `
+                <div class="text-center py-5 error-loading">
+                    <i class="fas fa-exclamation-triangle fa-3x text-danger"></i>
+                    <h5 class="mt-3">Error loading teams</h5>
+                    <p class="text-muted">${error.message}</p>
+                </div>
+            `;
+            });
+    }
+
+    // Función para editar un equipo
+    function editTeam(teamId) {
+        // Obtener detalles del equipo
+        fetch(`/equipo/detalles/${teamId}`)
+            .then(response => {
+                if (!response.ok) throw new Error('Error al obtener detalles del equipo');
+                return response.json();
+            })
+            .then(team => {
+                // Configurar el modal para edición
+                currentTeamId = teamId;
+                document.getElementById('team-name').value = team.nombre;
+                document.getElementById('team-description').value = team.descripcion || '';
+
+                // Establecer los miembros actuales
+                teamMembers = team.miembrosIds;
+
+                // Marcar los miembros seleccionados
+                document.querySelectorAll('#available-employees .selection-item').forEach(item => {
+                    const employeeId = parseInt(item.dataset.employeeId);
+                    if (teamMembers.includes(employeeId)) {
+                        item.classList.add('selected');
+                    } else {
+                        item.classList.remove('selected');
+                    }
+                });
+
+                // Actualizar el botón de guardar
+                document.getElementById('save-team-btn').textContent = 'Update Team';
+                document.getElementById('save-team-btn').onclick = updateTeam;
+
+                // Mostrar el modal
+                createTeamModal.show();
+
+                // Cambiar a la pestaña de creación
+                const createTeamTab = new bootstrap.Tab(document.getElementById('create-team-tab'));
+                createTeamTab.show();
+            })
+            .catch(error => {
+                console.error('Error loading team details:', error);
+                showToast('Error loading team details');
+            });
+    }
+
+    // Función para actualizar un equipo existente
+    function updateTeam() {
+        const teamName = document.getElementById('team-name').value.trim();
+        const teamDescription = document.getElementById('team-description').value.trim();
+
+        if (!teamName || teamMembers.length === 0 || !selectedProject) {
+            return;
+        }
+
+        const saveBtn = document.getElementById('save-team-btn');
+        saveBtn.disabled = true;
+        saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Updating...';
+
+        fetch('/equipo/editar', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({
+                'equipoId': currentTeamId,
+                'nombre': teamName,
+                'descripcion': teamDescription,
+                'proyectoId': selectedProject.id,
+                'miembrosIds': teamMembers.join(',')
+            })
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error al actualizar el equipo');
+                }
+                return response.json();
+            })
+            .then(data => {
+                showToast('Team updated successfully');
+                resetTeamForm();
+
+                if (selectedProject) {
+                    loadProjectTeams(selectedProject.id);
+                }
+
+                // Cambiar a la pestaña de ver equipos
+                const viewTeamsTab = new bootstrap.Tab(document.getElementById('view-teams-tab'));
+                viewTeamsTab.show();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showToast('Error updating team');
+            })
+            .finally(() => {
+                saveBtn.innerHTML = '<i class="fas fa-save me-2"></i>Update Team';
+                updateSaveButtonState();
+            });
+    }
+
+    // Función para eliminar un equipo (actualizada con confirmación mejorada)
+    function deleteTeam(teamId) {
+        // Mostrar modal de confirmación personalizado
+        const deleteModal = new bootstrap.Modal(document.getElementById('confirmDeleteModalteam'));
+        const confirmDeleteBtn = document.getElementById('confirm-delete-btn');
+
+        // Configurar el evento una sola vez
+        const deleteHandler = function() {
+            confirmDeleteBtn.removeEventListener('click', deleteHandler);
+
+            fetch(`/equipo/eliminar/${teamId}`, {
+                method: 'POST'
+            })
+                .then(response => {
+                    if (!response.ok) throw new Error('Error deleting team');
+                    return response.json();
+                })
+                .then(data => {
+                    showToast('Team deleted successfully');
+                    deleteModal.hide();
+
+                    // Recargar la lista de equipos
+                    if (selectedProject) {
+                        loadProjectTeams(selectedProject.id);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error deleting team:', error);
+                    showToast('Error deleting team');
+                    deleteModal.hide();
+                });
+        };
+
+        confirmDeleteBtn.addEventListener('click', deleteHandler);
+        deleteModal.show();
+    }
+
+    // Función para añadir miembro al equipo
+    function addTeamMember(employeeId) {
+        if (!teamMembers.includes(employeeId)) {
+            teamMembers.push(employeeId);
+            const item = document.querySelector(`#available-employees .selection-item[data-employee-id="${employeeId}"]`);
+            if (item) {
+                item.classList.add('selected');
+            }
+            updateSaveButtonState();
+        }
+    }
+
+    // Función para remover miembro del equipo
+    function removeTeamMember(employeeId) {
+        teamMembers = teamMembers.filter(id => id !== employeeId);
+        const item = document.querySelector(`#available-employees .selection-item[data-employee-id="${employeeId}"]`);
+        if (item) {
+            item.classList.remove('selected');
+        }
+        updateSaveButtonState();
+    }
+
+    // Función para actualizar el estado del botón de guardar
+    function updateSaveButtonState() {
+        const teamNameValid = document.getElementById('team-name').value.trim().length > 0;
+        const hasMembers = teamMembers.length > 0;
+        const hasProject = selectedProject !== null;
+
+        document.getElementById('save-team-btn').disabled = !(teamNameValid && hasMembers && hasProject);
+    }
+
+    // Función para guardar el equipo para el proyecto
+    function saveTeamForProject() {
+        const teamName = document.getElementById('team-name').value.trim();
+        const teamDescription = document.getElementById('team-description').value.trim();
+
+        if (!teamName || teamMembers.length === 0 || !selectedProject) {
+            return;
+        }
+
+        // Deshabilitar botón durante la operación
+        const saveBtn = document.getElementById('save-team-btn');
+        saveBtn.disabled = true;
+        saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Saving...';
+
+        // Enviar datos al servidor
+        fetch('/equipo/guardar', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({
+                'nombre': teamName,
+                'descripcion': teamDescription,
+                'proyectoId': selectedProject.id,
+                'miembrosIds': teamMembers.join(',')
+            })
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error al guardar el equipo');
+                }
+                return response.json();
+            })
+            .then(data => {
+                showToast('Team created successfully');
+
+                // Resetear el formulario
+                resetTeamForm();
+
+                // Recargar la lista de equipos
+                if (selectedProject) {
+                    loadProjectTeams(selectedProject.id);
+                }
+
+                // Cambiar a la pestaña de ver equipos
+                const viewTeamsTab = new bootstrap.Tab(document.getElementById('view-teams-tab'));
+                viewTeamsTab.show();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showToast('Error saving team');
+            })
+            .finally(() => {
+                saveBtn.innerHTML = '<i class="fas fa-save me-2"></i>Save Team';
+                updateSaveButtonState();
+            });
+    }
+
+    // Función para resetear el formulario de equipo (actualizada)
+    function resetTeamForm() {
+        document.getElementById('team-name').value = '';
+        document.getElementById('team-description').value = '';
+        teamMembers = [];
+        currentTeamId = null;
+
+        // Restaurar el botón de guardar a su estado original
+        document.getElementById('save-team-btn').textContent = 'Save Team';
+        document.getElementById('save-team-btn').onclick = saveTeamForProject;
+
+        // Limpiar selecciones
+        document.querySelectorAll('#available-employees .selected').forEach(item => {
+            item.classList.remove('selected');
+        });
+    }
+
 </script>
 
 </body>

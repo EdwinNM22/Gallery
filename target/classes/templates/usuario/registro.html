@@ -24,7 +24,7 @@
       border: none;
       border-radius: 10px;
       box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
-      width: 400px;
+      width: 500px;
     }
 
     .card-body {
@@ -236,6 +236,14 @@
                 <div class="option-highlight"></div>
               </div>
               <div class="user-type-option">
+                <input type="radio" id="userTypeSupervisor" name="tipo_usuario" value="SUPERVISOR">
+                <label for="userTypeSupervisor">
+                  <i class="fas fa-user-check"></i>
+                  <span class="option-text">Supervisor</span>
+                </label>
+                <div class="option-highlight"></div>
+              </div>
+              <div class="user-type-option">
                 <input type="radio" id="userTypeAdmin" name="tipo_usuario" value="ADMIN">
                 <label for="userTypeAdmin">
                   <i class="fas fa-user-shield"></i>
@@ -353,9 +361,22 @@
     const password = document.getElementById('password').value;
     const userType = document.querySelector('input[name="tipo_usuario"]:checked').value;
 
+    // Mostrar el tipo de usuario en texto completo
+    let userTypeText = '';
+    switch(userType) {
+      case 'ADMIN':
+        userTypeText = 'Administrator';
+        break;
+      case 'SUPERVISOR':
+        userTypeText = 'Supervisor';
+        break;
+      default:
+        userTypeText = 'Worker';
+    }
+
     document.getElementById('credEmail').textContent = email;
     document.getElementById('credPassword').textContent = password;
-    document.getElementById('credType').textContent = userType === 'ADMIN' ? 'Administrator' : 'Worker';
+    document.getElementById('credType').textContent = userTypeText;
     document.getElementById('credentialsBox').style.display = 'block';
 
     fetch(form.action, {

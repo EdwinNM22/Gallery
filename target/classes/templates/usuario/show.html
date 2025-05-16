@@ -18,6 +18,7 @@
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
+
   <style>
     :root {
       --primary-color: #4361ee;
@@ -33,6 +34,8 @@
       --admin-color: #4e73df;
       --user-color: #1cc88a;
       --supervisor-color: #6c757d;
+      --supervisorplus-color: #ffc107;
+      --info-color: #17a2b8;
     }
 
     body {
@@ -192,12 +195,24 @@
       box-shadow: 0 2px 8px rgba(229, 57, 53, 0.3); /* sombra roja */
     }
 
+    .btn-info {
+      background-color: var(--info-color);
+      border-color: var(--info-color);
+      color: white;
+    }
+
+    .btn-info:hover {
+      background-color: #138496;
+      border-color: #117a8b;
+      transform: translateY(-1px);
+      box-shadow: 0 2px 8px rgba(23, 162, 184, 0.3);
+    }
+
     /* Estilos mejorados para el selector de tipo de usuario */
     .user-type-selector {
       position: relative;
       margin-bottom: 0;
     }
-
 
     .user-type-options {
       display: flex;
@@ -267,7 +282,7 @@
       background-color: #e9ecef;
     }
 
-    /* Estilos específicos para ADMIN/USER/SUPERVISOR */
+    /* Estilos específicos para ADMIN/USER/SUPERVISOR/SUPERVISORPLUS */
     .admin-option input[type="radio"]:checked + label {
       background-color: var(--admin-color);
       border: 1px solid #3a56c4;
@@ -283,6 +298,11 @@
       border: 1px solid #5a6268;
     }
 
+    .supervisorplus-option input[type="radio"]:checked + label {
+      background-color: var(--supervisorplus-color);
+      border: 1px solid #d39e00;
+    }
+
     .admin-option:hover label {
       background-color: rgba(78, 115, 223, 0.1);
     }
@@ -295,6 +315,23 @@
       background-color: rgba(108, 117, 125, 0.1);
     }
 
+    .supervisorplus-option:hover label {
+      background-color: rgba(255, 193, 7, 0.1);
+    }
+
+    /* Estilo para la estrella del SUPERVISORPLUS */
+    .user-name-container {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .supervisorplus-star {
+      color: var(--supervisorplus-color);
+      font-size: 0.9em;
+      display: none;
+    }
+
     /* Alertas */
     .alert {
       border-radius: 8px;
@@ -302,6 +339,29 @@
       margin-bottom: 20px;
       border: none;
       box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    /* Modal personalizado */
+    .modal-header.bg-primary {
+      background-color: var(--primary-color) !important;
+    }
+
+    .modal-content {
+      border: none;
+      border-radius: 10px;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .form-control {
+      border-radius: 6px;
+      padding: 10px 15px;
+      border: 1px solid #ced4da;
+      transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+      border-color: var(--accent-color);
+      box-shadow: 0 0 0 0.2rem rgba(67, 97, 238, 0.25);
     }
 
     /* Responsive adjustments */
@@ -482,6 +542,7 @@
       td[data-label="Actions"] {
         display: flex;
         justify-content: flex-end;
+        gap: 5px;
       }
 
       td[data-label="Actions"]::before {
@@ -502,35 +563,156 @@
         align-items: center;
         justify-content: center;
         gap: 5px;
-        padding: 0.5rem 1.5rem;
+        padding: 0.5rem 1rem;
         border-radius: 6px;
         font-weight: 500;
         transition: all 0.3s ease;
         box-shadow: 0 2px 8px rgba(229, 57, 53, 0.3);
         font-size: 0.9rem;
-        min-width: 100px; /* Ancho mínimo para mantener la forma */
       }
 
       .delete-btn:hover {
-        background-color: #c62828; /* rojo más oscuro */
+        background-color: #c62828;
         transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(229, 57, 53, 0.4); /* sombra más intensa */
+        box-shadow: 0 4px 12px rgba(229, 57, 53, 0.4);
       }
 
       .delete-btn i {
         font-size: 0.9rem;
       }
 
-      /* En móviles, ocultar el texto "Delete" */
+      .change-password-btn {
+        background-color: var(--info-color);
+        border: none;
+        color: white;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(23, 162, 184, 0.3);
+        font-size: 0.9rem;
+      }
+
+      .change-password-btn:hover {
+        background-color: #138496;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(23, 162, 184, 0.4);
+      }
+
+      .change-password-btn i {
+        font-size: 0.9rem;
+      }
+
+      /* En móviles, ocultar el texto de los botones */
       @media (max-width: 576px) {
-        .delete-btn span {
+        .delete-btn span,
+        .change-password-btn span {
           display: none;
         }
-        .delete-btn {
+        .delete-btn,
+        .change-password-btn {
           padding: 0.35rem 0.5rem;
         }
       }
+    }
 
+    /* Nuevos estilos agregados */
+    .password-result {
+      margin-top: 15px;
+      padding: 10px;
+      border-radius: 6px;
+      background-color: #f8f9fa;
+      border: 1px solid #dee2e6;
+      display: none;
+    }
+
+    .password-text {
+      font-family: monospace;
+      font-size: 1rem;
+      word-break: break-all;
+    }
+
+    .copy-password-btn {
+      margin-top: 10px;
+    }
+
+    .modal-message {
+      display: none;
+      margin-bottom: 15px;
+    }
+
+    /* Nuevos estilos agregados */
+    .password-result {
+      margin-top: 15px;
+      padding: 10px;
+      border-radius: 6px;
+      background-color: #f8f9fa;
+      border: 1px solid #dee2e6;
+      display: none;
+    }
+
+    .password-text {
+      font-family: monospace;
+      font-size: 1rem;
+      word-break: break-all;
+    }
+
+    .copy-password-btn {
+      margin-top: 10px;
+    }
+
+    .modal-message {
+      display: none;
+      margin-bottom: 15px;
+    }
+
+    .password-input-group {
+      position: relative;
+    }
+
+    .toggle-password {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: #6c757d;
+    }
+
+    /* Estilos nuevos */
+    .password-result {
+      margin-top: 15px;
+      padding: 10px;
+      border-radius: 6px;
+      background-color: #f8f9fa;
+      border: 1px solid #dee2e6;
+    }
+
+    .password-text {
+      font-family: monospace;
+      font-size: 1rem;
+      word-break: break-all;
+    }
+
+    .copy-password-btn {
+      margin-top: 10px;
+    }
+
+    .password-input-group {
+      position: relative;
+    }
+
+    .toggle-password {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: #6c757d;
     }
   </style>
 </head>
@@ -598,7 +780,11 @@
           <tbody>
           <tr th:each="usuario, stat : ${usuarios}">
             <td data-label="Nombre">
-              <div class="user-name" th:text="${usuario.nombre}"></div>
+              <div class="user-name-container">
+                <div class="user-name" th:text="${usuario.nombre}"></div>
+                <i class="fas fa-star supervisorplus-star"
+                   th:classappend="${usuario.tipo_usuario == 'SUPERVISORPLUS'} ? '' : 'd-none'"></i>
+              </div>
             </td>
             <td data-label="Email">
               <div class="user-email" th:text="${usuario.email} ?: 'Sin email'"></div>
@@ -614,6 +800,14 @@
                       <label th:for="${'admin_' + usuario.id}">
                         <i class="fas fa-user-shield"></i>
                         <span class="option-text">ADMIN</span>
+                      </label>
+                    </div>
+                    <div class="user-type-option supervisorplus-option">
+                      <input type="radio" th:id="${'supervisorplus_' + usuario.id}" name="newType" value="SUPERVISORPLUS"
+                             th:checked="${usuario.tipo_usuario == 'SUPERVISORPLUS'}">
+                      <label th:for="${'supervisorplus_' + usuario.id}">
+                        <i class="fas fa-star"></i>
+                        <span class="option-text">SUPERVISOR+</span>
                       </label>
                     </div>
                     <div class="user-type-option supervisor-option">
@@ -637,6 +831,12 @@
               </form>
             </td>
             <td data-label="Actions">
+              <button type="button" class="btn btn-sm btn-info change-password-btn mr-2"
+                      th:attr="data-id=${usuario.id}, data-name=${usuario.nombre}"
+                      style="display: inline-flex; align-items: center; gap: 5px; padding: 0.35rem 0.75rem; border-radius: 6px; font-weight: 500; transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);">
+                <i class="fas fa-key"></i> <span class="d-none d-md-inline">Password</span>
+              </button>
+
               <form th:action="@{/usuario/delete}" method="post" th:id="${'delete-form-' + usuario.id}" style="display: inline;">
                 <input type="hidden" name="id" th:value="${usuario.id}">
                 <button type="button" class="btn btn-danger btn-sm delete-btn"
@@ -653,7 +853,55 @@
     </div>
   </div>
 </div>
-<!-- /.container -->
+
+<!-- Modal para cambiar contraseña -->
+<div class="modal fade" id="changePasswordModal" tabindex="-1" role="dialog" aria-labelledby="changePasswordModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title" id="changePasswordModalLabel">Cambiar Contraseña</h5>
+        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form id="changePasswordForm" th:action="@{/usuario/changePassword}" method="post">
+        <input type="hidden" id="userId" name="id">
+        <div class="modal-body">
+          <div th:if="${newPassword}" class="password-result">
+            <h6>Nueva Contraseña Generada:</h6>
+            <div class="password-text" th:text="${newPassword}"></div>
+            <button type="button" class="btn btn-sm btn-outline-secondary copy-password-btn" onclick="copyPassword()">
+              <i class="fas fa-copy"></i> Copiar Contraseña
+            </button>
+            <small class="text-muted d-block mt-2">Guarde esta contraseña en un lugar seguro. No podrá verla nuevamente.</small>
+          </div>
+
+          <div id="passwordFormFields">
+            <div class="form-group">
+              <label for="newPassword">Nueva Contraseña</label>
+              <div class="password-input-group">
+                <input type="password" class="form-control" id="newPassword" name="newPassword" required>
+                <i class="fas fa-eye toggle-password" onclick="togglePasswordVisibility('newPassword')"></i>
+              </div>
+              <small class="form-text text-muted">Recomendamos usar una contraseña segura con mayúsculas, números y caracteres especiales.</small>
+            </div>
+            <div class="form-group">
+              <label for="confirmPassword">Confirmar Contraseña</label>
+              <div class="password-input-group">
+                <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+                <i class="fas fa-eye toggle-password" onclick="togglePasswordVisibility('confirmPassword')"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
 
 <!-- Footer -->
 <div th:replace="adm/template_admin.html :: footer"></div>
@@ -663,24 +911,16 @@
 <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
 
 <script>
-  // Auto-submit al cambiar el tipo de usuario
   document.addEventListener('DOMContentLoaded', function() {
+    // Auto-submit al cambiar el tipo de usuario
     document.querySelectorAll('.user-type-option input[type="radio"]').forEach(radio => {
       radio.addEventListener('change', function(e) {
-        // Prevenir el comportamiento por defecto
         e.preventDefault();
-
-        // Agregar pequeña animación
         const label = this.closest('.user-type-option');
         label.style.transform = 'scale(0.95)';
-
-        // Obtener el formulario
         const form = this.closest('form');
-
-        // Crear FormData para enviar
         const formData = new FormData(form);
 
-        // Enviar con fetch para evitar recarga
         fetch(form.action, {
           method: 'POST',
           body: formData,
@@ -689,12 +929,22 @@
           }
         }).then(response => {
           if (response.ok) {
-            // Animación de éxito
             label.style.transform = 'scale(1)';
             label.style.boxShadow = '0 0 0 2px rgba(76, 201, 240, 0.5)';
             setTimeout(() => {
               label.style.boxShadow = 'none';
             }, 500);
+
+            const userId = formData.get('id');
+            const newType = formData.get('newType');
+            const starElement = document.querySelector(`tr[th\\:each="usuario, stat : \${usuarios}"] td .supervisorplus-star`);
+            if (starElement) {
+              if (newType === 'SUPERVISORPLUS') {
+                starElement.classList.remove('d-none');
+              } else {
+                starElement.classList.add('d-none');
+              }
+            }
           }
         }).catch(error => {
           console.error('Error:', error);
@@ -703,16 +953,14 @@
       });
     });
 
-// Confirmación para eliminar usuario
+    // Confirmación para eliminar usuario
     document.querySelectorAll('.delete-btn').forEach(btn => {
       btn.addEventListener('click', function(e) {
         e.preventDefault();
         const userId = this.getAttribute('data-id');
         const userName = this.getAttribute('data-name');
 
-        // Mostrar confirmación
         if (confirm(`¿Estás seguro de que deseas eliminar al usuario ${userName}? Esta acción no se puede deshacer.`)) {
-          // Encontrar el formulario padre más cercano
           const form = this.closest('form');
           if (form) {
             form.submit();
@@ -723,14 +971,55 @@
       });
     });
 
-    // Asegurar que los labels ocupen todo el espacio en moviles
-    if (window.innerWidth <= 480) {
-      document.querySelectorAll('.user-type-option label').forEach(label => {
-        label.style.justifyContent = 'space-between';
-        label.style.padding = '5px 8px';
+    // Manejar el modal de cambio de contraseña
+    document.querySelectorAll('.change-password-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const userId = this.getAttribute('data-id');
+        const userName = this.getAttribute('data-name');
+
+        document.getElementById('userId').value = userId;
+        document.getElementById('changePasswordModalLabel').textContent = `Cambiar Contraseña - ${userName}`;
+
+        $('#changePasswordModal').modal('show');
       });
+    });
+
+    // Si hay una nueva contraseña en el modelo, mostramos el modal automáticamente
+    if (document.querySelector('.password-result')) {
+      $('#changePasswordModal').modal('show');
     }
   });
+
+  // Función para copiar la contraseña al portapapeles
+  function copyPassword() {
+    const passwordText = document.querySelector('.password-text').textContent;
+    navigator.clipboard.writeText(passwordText).then(() => {
+      const copyBtn = document.querySelector('.copy-password-btn');
+      const originalHtml = copyBtn.innerHTML;
+      copyBtn.innerHTML = '<i class="fas fa-check"></i> Copiado!';
+      setTimeout(() => {
+        copyBtn.innerHTML = originalHtml;
+      }, 2000);
+    }).catch(err => {
+      console.error('Error al copiar: ', err);
+    });
+  }
+
+  // Función para mostrar/ocultar contraseña
+  function togglePasswordVisibility(inputId) {
+    const input = document.getElementById(inputId);
+    const icon = document.querySelector(`#${inputId} + .toggle-password`);
+
+    if (input.type === 'password') {
+      input.type = 'text';
+      icon.classList.remove('fa-eye');
+      icon.classList.add('fa-eye-slash');
+    } else {
+      input.type = 'password';
+      icon.classList.remove('fa-eye-slash');
+      icon.classList.add('fa-eye');
+    }
+  }
 </script>
 
 </body>

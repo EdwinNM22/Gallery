@@ -2,165 +2,165 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="">
-  <meta name="author" content="">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
 
-  <title>Login</title>
+    <title>Login</title>
 
-  <!-- Bootstrap core CSS -->
-  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-  <!-- Font Awesome -->
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <!-- Bootstrap core CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
 
-  <!-- Custom styles for this template -->
-  <style>
-    body {
-      background-color: #f0f2f5;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
+    <!-- Custom styles for this template -->
+    <style>
+        body {
+            background-color: #f0f2f5;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
 
-    .card {
-      border: none;
-      border-radius: 8px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    }
+        .card {
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
 
-    .card-body {
-      padding: 2rem;
-    }
+        .card-body {
+            padding: 2rem;
+        }
 
-    .form-control {
-      border-radius: 50px;
-      padding: 1.2rem 1.5rem;
-    }
+        .form-control {
+            border-radius: 50px;
+            padding: 1.2rem 1.5rem;
+        }
 
-    button {
-      width: 100%;
-      border-radius: 50px;
-      padding: 1.2rem;
-    }
+        button {
+            width: 100%;
+            border-radius: 50px;
+            padding: 1.2rem;
+        }
 
-    .btn-dark {
-      background-color: #1877f2;
-      border-color: #1877f2;
-    }
+        .btn-dark {
+            background-color: #1877f2;
+            border-color: #1877f2;
+        }
 
-    .btn-dark:hover {
-      background-color: #145dbf;
-      border-color: #145dbf;
-    }
+        .btn-dark:hover {
+            background-color: #145dbf;
+            border-color: #145dbf;
+        }
 
-    .login-link {
-      text-align: center;
-      margin-top: 15px;
-    }
+        .login-link {
+            text-align: center;
+            margin-top: 15px;
+        }
 
-    .login-link a {
-      color: #1877f2;
-      text-decoration: none;
-    }
+        .login-link a {
+            color: #1877f2;
+            text-decoration: none;
+        }
 
-    .login-link a:hover {
-      text-decoration: underline;
-    }
+        .login-link a:hover {
+            text-decoration: underline;
+        }
 
-    /* Error notification - Versión mejorada */
-    .error-notification {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      z-index: 9999;
-      width: 350px;
-      border-left: 4px solid #dc3545;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-      animation: fadeIn 0.3s ease-out;
-      display: flex;
-      align-items: center;
-      padding: 1rem;
-    }
+        /* Error notification - Versión mejorada */
+        .error-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            width: 350px;
+            border-left: 4px solid #dc3545;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 0.3s ease-out;
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+        }
 
-    .error-notification-content {
-      display: flex;
-      align-items: center;
-      width: 100%;
-    }
+        .error-notification-content {
+            display: flex;
+            align-items: center;
+            width: 100%;
+        }
 
-    .error-icon {
-      font-size: 1.5rem;
-      margin-right: 1rem;
-      color: #dc3545;
-    }
+        .error-icon {
+            font-size: 1.5rem;
+            margin-right: 1rem;
+            color: #dc3545;
+        }
 
-    .error-message {
-      flex: 1;
-    }
+        .error-message {
+            flex: 1;
+        }
 
-    .error-title {
-      font-weight: 600;
-      margin-bottom: 0.2rem;
-      color: #dc3545;
-    }
+        .error-title {
+            font-weight: 600;
+            margin-bottom: 0.2rem;
+            color: #dc3545;
+        }
 
-    .error-detail {
-      font-size: 0.9rem;
-      color: #6c757d;
-    }
+        .error-detail {
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
 
-    .error-close {
-      margin-left: 1rem;
-      color: #6c757d;
-      cursor: pointer;
-    }
+        .error-close {
+            margin-left: 1rem;
+            color: #6c757d;
+            cursor: pointer;
+        }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
-    @keyframes fadeOut {
-      from { opacity: 1; transform: translateY(0); }
-      to { opacity: 0; transform: translateY(-20px); }
-    }
-  </style>
+        @keyframes fadeOut {
+            from { opacity: 1; transform: translateY(0); }
+            to { opacity: 0; transform: translateY(-20px); }
+        }
+    </style>
 </head>
 
 <body>
 
 <!-- Error Notification - Versión mejorada -->
 <div th:if="${param.error}" class="alert alert-danger error-notification" role="alert">
-  <div class="error-notification-content">
-    <i class="fas fa-exclamation-circle error-icon"></i>
-    <div class="error-message">
-      <div class="error-title">Authentication error</div>
-      <div class="error-detail">Incorrect username or password</div>
+    <div class="error-notification-content">
+        <i class="fas fa-exclamation-circle error-icon"></i>
+        <div class="error-message">
+            <div class="error-title">Authentication error</div>
+            <div class="error-detail">Incorrect username or password</div>
+        </div>
+        <span class="error-close" onclick="this.parentElement.parentElement.remove()">&times;</span>
     </div>
-    <span class="error-close" onclick="this.parentElement.parentElement.remove()">&times;</span>
-  </div>
 </div>
 
 <!-- Page Content -->
 <div class="container d-flex justify-content-center align-items-center" style="height: 100vh;">
-  <div class="card" style="width: 400px;">
-    <div class="card-body">
-      <h2 class="text-center mb-4">Log in</h2>
+    <div class="card" style="width: 400px;">
+        <div class="card-body">
+            <h2 class="text-center mb-4">Log in</h2>
 
-      <form th:action="@{/usuario/login}" method="post">
-        <div class="form-group">
-          <label for="username">Email:</label>
-          <input type="email" class="form-control" id="username" name="username" required placeholder="Enter your email" autocomplete="off">
+            <form th:action="@{/usuario/login}" method="post">
+                <div class="form-group">
+                    <label for="username">Email:</label>
+                    <input type="email" class="form-control" id="username" name="username" required placeholder="Enter your email" autocomplete="off">
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" class="form-control" id="password" name="password" required placeholder="Enter your password" autocomplete="off">
+                </div>
+
+                <button type="submit" class="btn btn-dark">Enter</button>
+            </form>
         </div>
-
-        <div class="form-group">
-          <label for="password">Password:</label>
-          <input type="password" class="form-control" id="password" name="password" required placeholder="Enter your password" autocomplete="off">
-        </div>
-
-        <button type="submit" class="btn btn-dark">Enter</button>
-      </form>
     </div>
-  </div>
 </div>
 
 <!-- Bootstrap core JavaScript -->
@@ -169,14 +169,14 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
 <script>
-  // Cerrar automáticamente la notificación después de 5 segundos
-  $(document).ready(function() {
-    setTimeout(function() {
-      $('.error-notification').fadeOut('slow', function() {
-        $(this).remove();
-      });
-    }, 5000);
-  });
+    // Cerrar automáticamente la notificación después de 5 segundos
+    $(document).ready(function() {
+        setTimeout(function() {
+            $('.error-notification').fadeOut('slow', function() {
+                $(this).remove();
+            });
+        }, 5000);
+    });
 </script>
 
 </body>
