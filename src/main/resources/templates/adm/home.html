@@ -209,41 +209,49 @@
 <body>
 
 <!-- Navigation -->
-<div th:include="adm/template_admin.html::header"></div>
-
-<!-- Navigation -->
-<div th:include="adm/template_admin.html::header"></div>
+<!--<div th:include="adm/template_admin.html::header"></div>-->
 
 <!-- Main Content -->
 <div class="main-container">
   <div class="container">
     <div class="hero-section animated">
-      <h1 class="hero-title">Welcome to the Admin menu of project management.</h1>
+      <h1 class="hero-title">Bio/vizion Project Management</h1>
       <p class="hero-subtitle">Choose the option you need</p>
     </div>
 
     <div class="action-buttons">
       <a th:href="@{/albumes/create}" class="btn-mega btn-secondary-mega animated delay-2">
         <i class="fas fa-plus-circle btn-icon"></i>
-        NEW PROJECT
+        Agenda - New project/Nuevo proyecto
       </a>
       <a th:href="@{/home}" class="btn-mega btn-secondary-mega animated delay-2">
         <i class="fas fa-folder-open btn-icon"></i>
-        PREVIOUS PROJECT
+        ONGOING PROJECTS/PROYECTO EN CURSO
       </a>
+      <a th:href="@{admin/reports}" class="btn-mega btn-secondary-mega animated delay-2">
+        <i class="fa-solid fa-clipboard"></i>
+        ​ ​ Manage reports
+      </a>
+
+      <!-- Botón solo visible para ADMIN y EDGAR -->
+<!--      <a th:if="${tipoUsuario == 'ADMIN' or tipoUsuario == 'EDGAR'}"-->
+<!--         th:href="@{/equipo/asignacion}" class="btn-mega btn-secondary-mega animated delay-2">-->
+<!--        <i class="fas fa-users-gear btn-icon"></i>-->
+<!--        TEAM ASSIGNMENT / ASIGNACIÓN DE EQUIPOS-->
+<!--      </a>-->
+
 
       <!-- Botón dividido con margen de separación -->
       <div class="split-button-container" style="width: 100%; display: flex; gap: 4px; border-radius: 12px; overflow: hidden;">
         <a th:href="@{usuario/vpsSecurity2024-}" class="btn-mega btn-secondary-mega" style="flex: 1; border-radius: 12px; margin-right: 2px;">
           <i class="fas fa-solid fa-user-plus btn-icon"></i>
-          REGISTER USER
+          NEW USER
         </a>
         <a th:href="@{/usuario/show}" class="btn-mega btn-secondary-mega" style="flex: 1; border-radius: 12px; margin-left: 2px;">
           <i class="fa-solid fa-users-gear btn-icon"></i>
-          MANAGE USER
+          MANAGE USERS
         </a>
       </div>
-
     </div>
   </div>
 </div>

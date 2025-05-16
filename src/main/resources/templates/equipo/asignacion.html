@@ -1,0 +1,1272 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Asignación de Equipos</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3f37c9;
+            --accent-color: #4895ef;
+            --dark-color: #3a0ca3;
+            --light-color: #f8f9fa;
+            --success-color: #4cc9f0;
+            --text-dark: #2b2d42;
+            --text-light: #8d99ae;
+            --danger-color: #ff4d4d;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8fafc;
+            color: var(--text-dark);
+            touch-action: manipulation;
+        }
+
+        /* Modern Header */
+        .modern-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 2rem 0;
+            margin-bottom: 1rem;
+            border-radius: 0 0 20px 20px;
+            box-shadow: 0 10px 30px rgba(67, 97, 238, 0.2);
+        }
+
+        .modern-header h1 {
+            font-weight: 700;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Cards */
+        .employee-card, .project-card, .team-card {
+            transition: all 0.3s ease;
+            margin-bottom: 0.75rem;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            position: relative;
+        }
+
+        .employee-card:hover, .project-card:hover, .team-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        }
+
+        .employee-card {
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .project-card {
+            border-left: 4px solid var(--success-color);
+        }
+
+        .team-card {
+            border-left: 4px solid var(--accent-color);
+        }
+
+
+
+        /* Avatar */
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            background-color: #e9ecef;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        /* Section Titles */
+        .section-title {
+            color: var(--primary-color);
+            font-weight: 600;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
+            font-size: 1.25rem;
+        }
+
+        /* Forms */
+        .team-form {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Buttons */
+        .btn-modern {
+            background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+            color: white;
+            border: none;
+            padding: 0.6rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 500;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(67, 97, 238, 0.3);
+        }
+
+        .btn-modern:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(67, 97, 238, 0.4);
+            color: white;
+        }
+
+        .btn-modern i {
+            margin-right: 8px;
+        }
+
+        .btn-modern.btn-danger {
+            background: linear-gradient(45deg, var(--danger-color), #cc0000);
+            box-shadow: 0 4px 10px rgba(255, 77, 77, 0.3);
+        }
+
+        .btn-modern.btn-danger:hover {
+            box-shadow: 0 6px 15px rgba(255, 77, 77, 0.4);
+        }
+
+        /* Scrollable Lists */
+        .scrollable-list {
+            max-height: 300px;
+            overflow-y: auto;
+            padding-right: 0.5rem;
+        }
+
+        .scrollable-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .scrollable-list::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        .scrollable-list::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+        }
+
+        .scrollable-list::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+
+        /* Team Display Grid */
+        .team-display {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+
+        /* Search Box */
+        .search-box {
+            position: relative;
+            margin-bottom: 1rem;
+        }
+
+        .search-box i {
+            position: absolute;
+            top: 12px;
+            left: 15px;
+            color: var(--text-light);
+        }
+
+        .search-box input {
+            padding-left: 40px;
+            border-radius: 50px;
+            border: 1px solid #e9ecef;
+            height: 45px;
+        }
+
+        /* Card Headers */
+        .card-header {
+            background-color: white !important;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+            padding: 1rem;
+        }
+
+        /* Team Actions */
+        .team-actions {
+            opacity: 1; /* Always visible on mobile */
+        }
+
+        /* Collapsible Content */
+        .collapsed-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+
+        .show-content {
+            max-height: 1000px;
+            transition: max-height 0.5s ease-in;
+        }
+
+        /* Tabs */
+        .nav-tabs .nav-link {
+            color: var(--text-light);
+            font-weight: 500;
+            border: none;
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+        }
+
+        .nav-tabs .nav-link.active {
+            color: var(--primary-color);
+            font-weight: 600;
+            border-bottom: 3px solid var(--primary-color);
+            background: transparent;
+        }
+
+        /* Resource Container */
+        .resource-container {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Badges */
+        .badge {
+            font-weight: 500;
+            padding: 0.35em 0.65em;
+            font-size: 0.8rem;
+        }
+
+        .bg-primary {
+            background-color: var(--primary-color) !important;
+        }
+
+        /* Main Title */
+        .main-title {
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        /* User Badge */
+        .user-badge {
+            background: linear-gradient(45deg, var(--accent-color), var(--success-color));
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-weight: 500;
+            box-shadow: 0 4px 10px rgba(72, 149, 239, 0.3);
+            font-size: 0.9rem;
+        }
+
+        /* Card Body */
+        .card-body {
+            padding: 1rem;
+        }
+
+        /* Team Member List */
+        .team-member-list {
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+            padding-top: 0.75rem;
+            margin-top: 0.75rem;
+        }
+
+        /* Toggle Members Button */
+        .toggle-members {
+            color: var(--primary-color);
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        /* Mobile Specific Styles */
+        @media (min-width: 992px) {
+            .team-display {
+                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+                gap: 1.5rem;
+            }
+
+            .team-actions {
+                opacity: 0;
+                transition: opacity 0.2s;
+            }
+
+            .team-card:hover .team-actions {
+                opacity: 1;
+            }
+        }
+
+        /* Mobile Enhancements */
+        .mobile-btn {
+            padding: 0.75rem 1.25rem;
+            font-size: 1rem;
+            min-width: 44px;
+            min-height: 44px;
+        }
+
+        .mobile-list-item {
+            padding: 0.75rem;
+            font-size: 0.95rem;
+        }
+
+        .mobile-form-control {
+            font-size: 1rem;
+            padding: 0.75rem;
+        }
+
+        /* Selection Lists */
+        .selection-list {
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .selection-item {
+            padding: 0.75rem;
+            border-bottom: 1px solid #f1f1f1;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .selection-item:last-child {
+            border-bottom: none;
+        }
+
+        .selection-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .selection-item.selected {
+            background-color: rgba(67, 97, 238, 0.1);
+            border-left: 3px solid var(--primary-color);
+        }
+
+        .selection-item .add-btn {
+            display: none;
+            color: var(--success-color);
+        }
+
+        .selection-item:hover .add-btn {
+            display: inline-block;
+        }
+
+        .selection-item.selected .add-btn {
+            display: none;
+        }
+
+        .selection-item.selected .remove-btn {
+            display: inline-block;
+            color: var(--danger-color);
+        }
+
+        .selection-item .remove-btn {
+            display: none;
+        }
+
+        /* Floating Button for Mobile */
+        .mobile-create-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1050;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            font-size: 24px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+            color: white;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .mobile-create-btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+        }
+
+        /* Modal Styles */
+        .modal-header {
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            color: white;
+            border-bottom: none;
+        }
+
+        .modal-title {
+            font-weight: 600;
+        }
+
+        /* Touch Feedback */
+        .touch-feedback:active {
+            transform: scale(0.98);
+            opacity: 0.9;
+        }
+
+        .card-title, .card-text, .badge span {
+            white-space: normal !important;
+            word-wrap: break-word;
+            word-break: break-word;
+        }
+
+    </style>
+</head>
+<body>
+
+<!-- Modern Header -->
+<header class="modern-header text-center">
+    <div class="container d-flex flex-column align-items-center justify-content-center">
+        <h1>Team Management</h1>
+        <p>Assign employees to projects and manage your work teams</p>
+        <div class="mt-3 d-flex gap-3">
+            <!-- Este solo aparece en pantallas grandes -->
+            <button class="btn-modern d-none d-lg-inline-flex" data-bs-toggle="modal" data-bs-target="#createTeamModal">
+                <i class="fas fa-plus me-1"></i>New Team
+            </button>
+
+            <!-- Este aparece siempre (incluyendo en móviles) -->
+            <a href="/adm" class="btn btn-modern">
+                <i class="fas fa-bars me-1"></i>Menu
+            </a>
+        </div>
+    </div>
+</header>
+<div class="container py-3">
+    <div class="d-flex align-items-center justify-content-between mb-3">
+        <h2 class="main-title">Teams</h2>
+        <button class="btn-modern d-none d-lg-inline-flex" data-bs-toggle="modal" data-bs-target="#createTeamModal">
+            <i class="fas fa-plus me-1"></i>New Team
+        </button>
+    </div>
+
+    <!-- List of all teams as blocks -->
+    <div id="all-teams-list" class="team-display">
+        <div th:each="equipo : ${equipos}" class="team-card" th:data-team-id="${equipo.id}">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h5 class="card-title mb-1" th:text="${equipo.nombre}"></h5>
+                            <p class="card-text text-muted small mb-2" th:text="${equipo.descripcion} ?: 'No description'"></p>
+                            <span class="badge bg-primary mb-2">
+                            <i class="fas fa-project-diagram me-1"></i>
+                            <span th:text="${equipo.proyecto.nombre}"></span>
+                        </span>
+
+                            <!-- Nuevo: Mostrar horario -->
+                            <div class="d-flex align-items-center mt-2">
+                            <span class="badge bg-secondary me-2">
+                                <i class="fas fa-clock me-1"></i>
+                                <span th:text="${#temporals.format(equipo.horaInicio, 'HH:mm')}"></span>
+                            </span>
+                                <span class="text-muted small me-1">to</span>
+                                <span class="badge bg-secondary">
+                                <i class="fas fa-clock me-1"></i>
+                                <span th:text="${#temporals.format(equipo.horaFin, 'HH:mm')}"></span>
+                            </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-sm btn-link p-0 mt-2 toggle-members touch-feedback"
+                            data-bs-toggle="collapse"
+                            th:attr="data-bs-target='#members-'+${equipo.id}">
+                        <small>Show members <i class="fas fa-chevron-down"></i></small>
+                    </button>
+
+                    <div th:attr="id='members-'+${equipo.id}" class="collapsed-content">
+                        <div class="team-member-list">
+                            <div th:each="miembro : ${equipo.miembros}" class="d-flex align-items-center mb-2">
+                                <div class="avatar me-2">
+                                    <span th:text="${#strings.substring(miembro.nombre, 0, 1) + #strings.substring(miembro.email, 0, 1)}"></span>
+                                </div>
+                                <div>
+                                    <span th:text="${miembro.nombre}"></span>
+                                    <small class="d-block text-muted" th:text="${miembro.tipo_usuario}"></small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mover los botones de editar y borrar al pie de la card -->
+                <div class="card-footer text-center border-0" style="background-color: transparent;">
+                    <div class="team-actions">
+                        <!-- Botón de editar con estilo de New Team -->
+                        <button class="btn-modern btn-sm touch-feedback me-2" style="font-size: 1rem;">
+                            <i class="fas fa-edit me-1"></i>Edit
+                        </button>
+                        <!-- Botón de borrar con estilo de Menu y color rojo -->
+                        <button class="btn-modern btn-sm btn-danger touch-feedback">
+                            <i class="fas fa-trash me-1"></i>Delete
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- Resources Section (Now at bottom for mobile) -->
+<div class="container pb-5">
+    <div class="resource-container card shadow">
+        <div class="card-header">
+            <ul class="nav nav-tabs card-header-tabs" id="resourcesTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="employees-tab" data-bs-toggle="tab" data-bs-target="#employees" type="button" role="tab">
+                        <i class="fas fa-users me-1"></i>Employees
+                        <span class="badge bg-primary ms-2" th:text="${empleados.size()}"></span>
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="projects-tab" data-bs-toggle="tab" data-bs-target="#projects" type="button" role="tab">
+                        <i class="fas fa-project-diagram me-1"></i>Projects
+                        <span class="badge bg-success ms-2" th:text="${proyectos.size()}"></span>
+                    </button>
+                </li>
+            </ul>
+        </div>
+        <div class="card-body">
+            <div class="tab-content" id="resourcesTabContent">
+                <!-- Employees Tab -->
+                <div class="tab-pane fade show active" id="employees" role="tabpanel">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="employee-search" class="form-control mobile-form-control" placeholder="Search employees...">
+                    </div>
+                    <div id="employees-list" class="scrollable-list mt-2">
+                        <div th:each="empleado : ${empleados}" class="employee-card card mb-2 p-2 mobile-list-item"
+                             th:data-employee-id="${empleado.id}">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div class="d-flex align-items-center">
+                                    <div class="avatar me-3">
+                                        <span th:text="${#strings.substring(empleado.nombre, 0, 1) + #strings.substring(empleado.email, 0, 1)}"></span>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-0" th:text="${empleado.nombre}"></h6>
+                                        <small class="text-muted" th:text="${empleado.tipo_usuario}"></small>
+                                    </div>
+                                </div>
+                                <button class="btn btn-sm btn-outline-success add-employee-btn touch-feedback">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Projects Tab -->
+                <div class="tab-pane fade" id="projects" role="tabpanel">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="project-search" class="form-control mobile-form-control" placeholder="Search projects...">
+                    </div>
+                    <div id="projects-list" class="scrollable-list mt-2">
+                        <div th:each="proyecto : ${proyectos}" class="project-card card mb-2 p-2 mobile-list-item"
+                             th:data-project-id="${proyecto.id}">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div class="d-flex align-items-center">
+                                    <div class="me-3">
+                                        <i class="fas fa-project-diagram" style="color: var(--success-color);"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-0" th:text="${proyecto.nombre}"></h6>
+                                        <small class="text-muted">
+                                            <span th:text="${#temporals.format(proyecto.fechaInicio, 'dd/MM')}"></span>
+                                            <span th:if="${proyecto.fechaFin != null}"
+                                                  th:text="' - ' + ${#temporals.format(proyecto.fechaFin, 'dd/MM')}"></span>
+                                        </small>
+                                    </div>
+                                </div>
+                                <button class="btn btn-sm btn-outline-success add-project-btn touch-feedback">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<!-- Create Team Modal -->
+<div class="modal fade" id="createTeamModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Create New Team</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="team-form">
+                    <div class="mb-3">
+                        <label for="team-name" class="form-label">Team Name</label>
+                        <input type="text" class="form-control mobile-form-control" id="team-name" placeholder="E.g., Installation Team">
+                    </div>
+                    <div class="mb-3">
+                        <label for="team-description" class="form-label">Description</label>
+                        <textarea class="form-control mobile-form-control" id="team-description" rows="2"
+                                  placeholder="E.g., Team specialized in electrical installations"></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="team-start-time" class="form-label">Start Time</label>
+                        <input type="time" class="form-control mobile-form-control" id="team-start-time" name="horaInicio" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="team-end-time" class="form-label">End Time</label>
+                        <input type="time" class="form-control mobile-form-control" id="team-end-time" name="horaFin" required>
+                    </div>
+
+
+
+                    <div class="mb-4">
+                        <label class="form-label">Team Members</label>
+                        <div class="selection-list" id="available-employees">
+                            <div th:each="empleado : ${empleados}" class="selection-item" th:data-employee-id="${empleado.id}">
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar me-3">
+                                            <span th:text="${#strings.substring(empleado.nombre, 0, 1) + #strings.substring(empleado.email, 0, 1)}"></span>
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-0" th:text="${empleado.nombre}"></h6>
+                                            <small class="text-muted" th:text="${empleado.tipo_usuario}"></small>
+                                        </div>
+                                    </div>
+                                    <button class="btn btn-sm add-btn touch-feedback">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                    <button class="btn btn-sm remove-btn touch-feedback">
+                                        <i class="fas fa-minus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label">Assign to Project</label>
+                        <div class="selection-list" id="available-projects">
+                            <div th:each="proyecto : ${proyectos}" class="selection-item" th:data-project-id="${proyecto.id}">
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <div class="d-flex align-items-center">
+                                        <div class="me-3">
+                                            <i class="fas fa-project-diagram" style="color: var(--success-color);"></i>
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-0" th:text="${proyecto.nombre}"></h6>
+                                            <small class="text-muted">
+                                                <span th:text="${#temporals.format(proyecto.fechaInicio, 'dd/MM')}"></span>
+                                                <span th:if="${proyecto.fechaFin != null}"
+                                                      th:text="' - ' + ${#temporals.format(proyecto.fechaFin, 'dd/MM')}"></span>
+                                            </small>
+                                        </div>
+                                    </div>
+                                    <button class="btn btn-sm add-btn touch-feedback">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                    <button class="btn btn-sm remove-btn touch-feedback">
+                                        <i class="fas fa-minus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        <button type="button" class="btn btn-secondary mobile-btn touch-feedback" data-bs-dismiss="modal">Cancel</button>
+                        <button id="save-team-btn" class="btn-modern mobile-btn touch-feedback" disabled>
+                            <i class="fas fa-save me-2"></i>Save Team
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Floating Create Button for Mobile -->
+<button class="mobile-create-btn d-lg-none touch-feedback" data-bs-toggle="modal" data-bs-target="#createTeamModal">
+    <i class="fas fa-plus"></i>
+</button>
+
+<!-- Confirmation Modal -->
+<div class="modal fade" id="confirmationModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modal-title">Team Created</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="modal-body">
+                <p>The team has been successfully created and assigned to the project.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-modern mobile-btn touch-feedback" data-bs-dismiss="modal">Accept</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- Carga de JavaScript en el orden correcto -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Variables para almacenar el estado
+        let teamMembers = [];
+        let selectedProject = null;
+        let currentTeamId = null; // Para almacenar el ID del equipo en edición
+
+        // Inicialización segura del modal
+        const modalElement = document.getElementById('confirmationModal');
+        let modal = null;
+
+        if (modalElement) {
+            modal = new bootstrap.Modal(modalElement);
+        }
+
+        // Elementos del DOM
+        const saveTeamBtn = document.getElementById('save-team-btn');
+        const teamNameInput = document.getElementById('team-name');
+        const teamDescriptionInput = document.getElementById('team-description');
+        const employeeSearch = document.getElementById('employee-search');
+        const projectSearch = document.getElementById('project-search');
+        const createTeamModal = new bootstrap.Modal(document.getElementById('createTeamModal'));
+
+        // Configurar eventos de selección para empleados
+        document.querySelectorAll('#available-employees .selection-item').forEach(item => {
+            const addBtn = item.querySelector('.add-btn');
+            const removeBtn = item.querySelector('.remove-btn');
+            const employeeId = item.dataset.employeeId;
+
+            // Click en el ítem
+            item.addEventListener('click', function(e) {
+                if (e.target === addBtn || e.target === removeBtn ||
+                    e.target.closest('.add-btn') || e.target.closest('.remove-btn')) {
+                    return; // Evitar conflicto con botones
+                }
+
+                if (item.classList.contains('selected')) {
+                    removeTeamMember(employeeId);
+                } else {
+                    addTeamMember(employeeId);
+                }
+            });
+
+            // Click en el botón añadir
+            addBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                addTeamMember(employeeId);
+            });
+
+            // Click en el botón remover
+            removeBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                removeTeamMember(employeeId);
+            });
+        });
+
+        // Configurar eventos de selección para proyectos
+        document.querySelectorAll('#available-projects .selection-item').forEach(item => {
+            const addBtn = item.querySelector('.add-btn');
+            const removeBtn = item.querySelector('.remove-btn');
+            const projectId = item.dataset.projectId;
+
+            // Click en el ítem
+            item.addEventListener('click', function(e) {
+                if (e.target === addBtn || e.target === removeBtn ||
+                    e.target.closest('.add-btn') || e.target.closest('.remove-btn')) {
+                    return; // Evitar conflicto con botones
+                }
+
+                if (item.classList.contains('selected')) {
+                    removeSelectedProject();
+                } else {
+                    selectProject(projectId);
+                }
+            });
+
+            // Click en el botón añadir
+            addBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                selectProject(projectId);
+            });
+
+            // Click en el botón remover
+            removeBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                removeSelectedProject();
+            });
+        });
+
+        // Función para añadir miembro al equipo
+        function addTeamMember(employeeId) {
+            if (!teamMembers.includes(employeeId)) {
+                teamMembers.push(employeeId);
+                const item = document.querySelector(`#available-employees .selection-item[data-employee-id="${employeeId}"]`);
+                if (item) {
+                    item.classList.add('selected');
+                }
+                updateSaveButtonState();
+            }
+        }
+
+        // Función para remover miembro del equipo
+        function removeTeamMember(employeeId) {
+            teamMembers = teamMembers.filter(id => id !== employeeId);
+            const item = document.querySelector(`#available-employees .selection-item[data-employee-id="${employeeId}"]`);
+            if (item) {
+                item.classList.remove('selected');
+            }
+            updateSaveButtonState();
+        }
+
+        // Función para seleccionar proyecto
+        function selectProject(projectId) {
+            // Deseleccionar cualquier proyecto previamente seleccionado
+            document.querySelectorAll('#available-projects .selection-item.selected').forEach(item => {
+                item.classList.remove('selected');
+            });
+
+            // Seleccionar el nuevo proyecto
+            const item = document.querySelector(`#available-projects .selection-item[data-project-id="${projectId}"]`);
+            if (item) {
+                item.classList.add('selected');
+                const projectCard = document.querySelector(`.project-card[data-project-id="${projectId}"]`);
+
+                if (projectCard) {
+                    selectedProject = {
+                        id: projectId,
+                        name: projectCard.querySelector('h6').textContent,
+                        dates: projectCard.querySelector('small').textContent
+                    };
+                }
+            }
+            updateSaveButtonState();
+        }
+
+        // Función para eliminar el proyecto seleccionado
+        function removeSelectedProject() {
+            selectedProject = null;
+            document.querySelectorAll('#available-projects .selection-item.selected').forEach(item => {
+                item.classList.remove('selected');
+            });
+            updateSaveButtonState();
+        }
+
+        // Función para actualizar el estado del botón de guardar
+        function updateSaveButtonState() {
+            const teamNameValid = teamNameInput.value.trim().length > 0;
+            const hasMembers = teamMembers.length > 0;
+            const hasProject = selectedProject !== null;
+
+            saveTeamBtn.disabled = !(teamNameValid && hasMembers && hasProject);
+        }
+
+        // Eventos para los inputs
+        teamNameInput.addEventListener('input', updateSaveButtonState);
+
+        // Función para cargar datos del equipo a editar
+        function loadTeamForEdit(teamId) {
+            fetch(`/equipo/detalles/${teamId}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Error al obtener detalles del equipo');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    currentTeamId = teamId;
+
+                    // Mostrar el modal de creación
+                    createTeamModal.show();
+
+                    // Llenar el formulario con los datos del equipo
+                    teamNameInput.value = data.nombre;
+                    teamDescriptionInput.value = data.descripcion || '';
+                    // Cargar horas
+                    document.getElementById('team-start-time').value = data.horaInicio || '';
+                    document.getElementById('team-end-time').value = data.horaFin || '';
+
+                    // Cargar miembros del equipo
+                    teamMembers = data.miembrosIds.map(String);
+                    teamMembers.forEach(id => {
+                        const item = document.querySelector(`#available-employees .selection-item[data-employee-id="${id}"]`);
+                        if (item) item.classList.add('selected');
+                    });
+
+                    // Cargar proyecto asignado
+                    const projectId = data.proyectoId.toString();
+                    const item = document.querySelector(`#available-projects .selection-item[data-project-id="${projectId}"]`);
+                    if (item) {
+                        item.classList.add('selected');
+                        const projectCard = document.querySelector(`.project-card[data-project-id="${projectId}"]`);
+
+                        if (projectCard) {
+                            selectedProject = {
+                                id: projectId,
+                                name: projectCard.querySelector('h6').textContent,
+                                dates: projectCard.querySelector('small').textContent
+                            };
+                        }
+                    }
+
+                    // Cambiar el botón de guardar para que actualice en lugar de crear
+                    saveTeamBtn.innerHTML = '<i class="fas fa-save me-2"></i>Actualizar Equipo';
+                    saveTeamBtn.onclick = function() {
+                        updateTeam(teamId);
+                    };
+
+                    updateSaveButtonState();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    if (modal) {
+                        document.getElementById('modal-title').textContent = 'Error';
+                        document.getElementById('modal-body').innerHTML = `
+                            <p>Error al cargar equipo para edición: ${error.message}</p>
+                        `;
+                        modal.show();
+                    }
+                });
+        }
+
+        // Función para actualizar un equipo existente
+        function updateTeam(teamId) {
+            const teamName = teamNameInput.value.trim();
+            const teamDescription = teamDescriptionInput.value.trim();
+            const horaInicio = document.getElementById('team-start-time').value;
+            const horaFin = document.getElementById('team-end-time').value;
+
+            if (!teamName || teamMembers.length === 0 || !selectedProject) {
+                return;
+            }
+
+            // Deshabilitar botón durante la operación
+            saveTeamBtn.disabled = true;
+            saveTeamBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Actualizando...';
+
+            // Enviar datos al servidor
+            fetch('/equipo/editar', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                    'equipoId': teamId,
+                    'nombre': teamName,
+                    'descripcion': teamDescription,
+                    'proyectoId': selectedProject.id,
+                    'miembrosIds': teamMembers.join(','),
+                    'horaInicio': horaInicio,
+                    'horaFin': horaFin
+                })
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Error al actualizar el equipo');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // Mostrar modal de confirmación si está inicializado
+                    if (modal) {
+                        document.getElementById('modal-title').textContent = 'Éxito';
+                        document.getElementById('modal-body').innerHTML = `
+                            <p>El equipo <strong>${teamName}</strong> ha sido actualizado exitosamente.</p>
+                            <p>Asignado al proyecto: <strong>${selectedProject.name}</strong></p>
+                        `;
+                        modal.show();
+                    }
+
+                    // Resetear el formulario
+                    resetForm();
+
+                    // Recargar la página para mostrar los cambios
+                    setTimeout(() => location.reload(), 1500);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    if (modal) {
+                        document.getElementById('modal-title').textContent = 'Error';
+                        document.getElementById('modal-body').innerHTML = `
+                            <p>Error al actualizar el equipo: ${error.message}</p>
+                        `;
+                        modal.show();
+                    }
+                })
+                .finally(() => {
+                    saveTeamBtn.innerHTML = '<i class="fas fa-save me-2"></i>Actualizar Equipo';
+                    updateSaveButtonState();
+                });
+        }
+
+        // Función para eliminar un equipo
+        function deleteTeam(teamId, teamName) {
+            if (confirm(`¿Estás seguro de que deseas eliminar el equipo "${teamName}"? Esta acción no se puede deshacer.`)) {
+                fetch(`/equipo/eliminar/${teamId}`, {
+                    method: 'POST'
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Error al eliminar el equipo');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            // Mostrar mensaje de éxito
+                            if (modal) {
+                                document.getElementById('modal-title').textContent = 'Éxito';
+                                document.getElementById('modal-body').innerHTML = `
+                                    <p>El equipo "${teamName}" ha sido eliminado exitosamente.</p>
+                                `;
+                                modal.show();
+                            }
+
+                            // Recargar la página después de un breve retraso
+                            setTimeout(() => location.reload(), 1500);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        if (modal) {
+                            document.getElementById('modal-title').textContent = 'Error';
+                            document.getElementById('modal-body').innerHTML = `
+                                <p>Error al eliminar el equipo: ${error.message}</p>
+                            `;
+                            modal.show();
+                        }
+                    });
+            }
+        }
+
+        // Función para guardar equipo (separada del evento click)
+        function saveTeam() {
+            const teamName = teamNameInput.value.trim();
+            const teamDescription = teamDescriptionInput.value.trim();
+            const horaInicio = document.getElementById('team-start-time').value;
+            const horaFin = document.getElementById('team-end-time').value;
+
+            if (!teamName || teamMembers.length === 0 || !selectedProject || !horaInicio || !horaFin) {
+                return;
+            }
+
+            // Deshabilitar botón durante la operación
+            saveTeamBtn.disabled = true;
+            saveTeamBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Guardando...';
+
+            // Enviar datos al servidor
+            fetch('/equipo/guardar', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                    'nombre': teamName,
+                    'descripcion': teamDescription,
+                    'proyectoId': selectedProject.id,
+                    'miembrosIds': teamMembers.join(','),
+                    'horaInicio': horaInicio,
+                    'horaFin': horaFin
+                })
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Error al guardar el equipo');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // Mostrar modal de confirmación si está inicializado
+                    if (modal) {
+                        document.getElementById('modal-title').textContent = 'Éxito';
+                        document.getElementById('modal-body').innerHTML = `
+                            <p>El equipo <strong>${teamName}</strong> ha sido creado exitosamente.</p>
+                            <p>Asignado al proyecto: <strong>${selectedProject.name}</strong></p>
+                        `;
+                        modal.show();
+                    }
+
+                    // Resetear el formulario
+                    resetForm();
+
+                    // Recargar la página para mostrar el nuevo equipo
+                    setTimeout(() => location.reload(), 1500);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    if (modal) {
+                        document.getElementById('modal-title').textContent = 'Error';
+                        document.getElementById('modal-body').innerHTML = `
+                            <p>Error al guardar el equipo: ${error.message}</p>
+                        `;
+                        modal.show();
+                    }
+                })
+                .finally(() => {
+                    saveTeamBtn.innerHTML = '<i class="fas fa-save me-2"></i>Guardar Equipo';
+                    updateSaveButtonState();
+                });
+        }
+
+        // Función para resetear el formulario
+        function resetForm() {
+            teamNameInput.value = '';
+            teamDescriptionInput.value = '';
+            teamMembers = [];
+            selectedProject = null;
+            currentTeamId = null;
+
+            // Limpiar selecciones
+            document.querySelectorAll('#available-employees .selected').forEach(item => {
+                item.classList.remove('selected');
+            });
+
+            document.querySelectorAll('#available-projects .selected').forEach(item => {
+                item.classList.remove('selected');
+            });
+
+            // Restaurar el botón de guardar al estado original
+            saveTeamBtn.innerHTML = '<i class="fas fa-save me-2"></i>Guardar Equipo';
+            saveTeamBtn.onclick = saveTeam;
+
+            updateSaveButtonState();
+        }
+
+        // Búsqueda de empleados
+        employeeSearch.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            const employeeCards = document.querySelectorAll('#employees-list .employee-card');
+
+            employeeCards.forEach(card => {
+                const name = card.querySelector('h6').textContent.toLowerCase();
+                const role = card.querySelector('small').textContent.toLowerCase();
+
+                if (name.includes(searchTerm) || role.includes(searchTerm)) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+
+        // Búsqueda de proyectos
+        projectSearch.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            const projectCards = document.querySelectorAll('#projects-list .project-card');
+
+            projectCards.forEach(card => {
+                const name = card.querySelector('h6').textContent.toLowerCase();
+                const dates = card.querySelector('small').textContent.toLowerCase();
+
+                if (name.includes(searchTerm) || dates.includes(searchTerm)) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+
+        // Animación para mostrar/ocultar miembros del equipo
+        document.querySelectorAll('.toggle-members').forEach(button => {
+            button.addEventListener('click', function() {
+                const target = this.getAttribute('data-bs-target');
+                const content = document.querySelector(target);
+
+                if (content.classList.contains('show-content')) {
+                    content.classList.remove('show-content');
+                    this.innerHTML = '<small>Mostrar miembros <i class="fas fa-chevron-down"></i></small>';
+                } else {
+                    content.classList.add('show-content');
+                    this.innerHTML = '<small>Ocultar miembros <i class="fas fa-chevron-up"></i></small>';
+                }
+            });
+        });
+
+        // Configurar eventos para los botones de editar y eliminar
+        document.querySelectorAll('.card-footer .team-actions button').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const teamCard = this.closest('.team-card');
+                const teamId = teamCard.dataset.teamId;
+                const teamName = teamCard.querySelector('.card-title').textContent;
+
+                // Verificar qué tipo de botón se ha presionado
+                if (this.querySelector('i').classList.contains('fa-edit')) {
+                    // Botón de editar
+                    if (teamId) {
+                        loadTeamForEdit(parseInt(teamId));
+                    }
+                } else if (this.querySelector('i').classList.contains('fa-trash')) {
+                    // Botón de eliminar
+                    if (teamId) {
+                        deleteTeam(parseInt(teamId), teamName);
+                    }
+                }
+            });
+        });
+
+
+        // Configurar evento para el botón de añadir empleado desde la lista principal
+        document.querySelectorAll('.add-employee-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const employeeCard = this.closest('.employee-card');
+                const employeeId = employeeCard.dataset.employeeId;
+
+                // Mostrar el modal si no está visible
+                createTeamModal.show();
+
+                // Añadir el empleado
+                addTeamMember(employeeId);
+            });
+        });
+
+        // Configurar evento para el botón de añadir proyecto desde la lista principal
+        document.querySelectorAll('.add-project-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const projectCard = this.closest('.project-card');
+                const projectId = projectCard.dataset.projectId;
+
+                // Mostrar el modal si no está visible
+                createTeamModal.show();
+
+                // Seleccionar el proyecto
+                selectProject(projectId);
+            });
+        });
+
+        // Resetear el formulario cuando se cierra el modal
+        document.getElementById('createTeamModal').addEventListener('hidden.bs.modal', resetForm);
+
+        // Configurar el botón de guardar inicialmente
+        saveTeamBtn.onclick = saveTeam;
+    });
+</script>
+</body>
+</html>

@@ -43,4 +43,17 @@ public class albumServiceImpl implements albumService {
     public List<album> findAll() {
         return albumRepo.findAll();
     }
+
+    @Override
+    public album findById(Integer id) {
+        return albumRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Album not found with ID: " + id));
+    }
+
+    // NUEVO
+    @Override
+    public List<album> findAllByUsuarioAsignado(Integer usuarioId) {
+        return albumRepo.findAllByUsuarioAsignado(usuarioId);
+    }
 }
+

@@ -1,22 +1,35 @@
 package com.proyecto.galeria.controller;
 
 import com.proyecto.galeria.model.*;
+import com.proyecto.galeria.repository.EquipoRepository;
 import com.proyecto.galeria.service.*;
-
 import com.proyecto.galeria.service.Impl.UsuarioServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
+import org.xhtmlrenderer.pdf.ITextRenderer;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.*;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/albumes")
@@ -34,6 +47,15 @@ public class AlbumController {
 
     @Autowired
     private Uploadfoto upload;
+
+
+    @Autowired
+    private TemplateEngine templateEngine;
+
+    @Autowired
+    private EquipoRepository equipoRepository;
+
+
 
     @GetMapping("")
     public String home(Model model) {
@@ -57,14 +79,39 @@ public class AlbumController {
     }
 
     @GetMapping("/create")
-    public String albumes(Model model) {
+    public String albumes(Model model, HttpSession session) {
+        // Obtener el ID del usuario de la sesión
+        Integer userId = Integer.parseInt(session.getAttribute("idusuario").toString());
+
+        // Buscar el usuario y obtener su rol
+        Optional<usuario> optionalUsuario = usuarioService.findById(userId);
+        String userRole = optionalUsuario.map(usuario::getTipo_usuario).orElse("USUARIO");
+
+        // Pasar atributos a la vista
         model.addAttribute("albumes", albumService.findAll());
         model.addAttribute("subalbum", subAlbumService.findAll());
+        model.addAttribute("userRole", userRole);
+        model.addAttribute("canEdit",
+                "ADMIN".equals(userRole) ||
+                        "SUPERVISORPLUS".equals(userRole) ||
+                        "EDGAR".equals(userRole));
+        model.addAttribute("canViewTeams",
+                "ADMIN".equals(userRole) ||
+                        "EDGAR".equals(userRole));
+
         return "albumes/create";
     }
 
+
+
     @PostMapping("/save")
-    public ResponseEntity<String> save(album album, HttpSession session) {
+    public ResponseEntity<String> save(
+            @ModelAttribute album album,
+            @RequestParam(required = false) String horaInicioStr,
+            @RequestParam(required = false) String horaFinStr,
+            @RequestParam(required = false) String notas,
+            HttpSession session) {
+
         LOGGER.info("Saving album: {}", album);
 
         Object idUsuarioObj = session.getAttribute("idusuario");
@@ -74,6 +121,40 @@ public class AlbumController {
 
         usuario u = usuarioService.findById(Integer.parseInt(idUsuarioObj.toString()))
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        // Procesar horaInicio si está presente
+        if (horaInicioStr != null && !horaInicioStr.isEmpty()) {
+            try {
+                LocalTime horaInicio = LocalTime.parse(horaInicioStr);
+                album.setHoraInicio(horaInicio);
+            } catch (DateTimeParseException e) {
+                LOGGER.warn("Formato de hora inválido: {}", horaInicioStr);
+            }
+        }
+
+        // Procesar horaFin si está presente
+        if (horaFinStr != null && !horaFinStr.isEmpty()) {
+            try {
+                LocalTime horaFin = LocalTime.parse(horaFinStr);
+                album.setHoraFin(horaFin);
+            } catch (DateTimeParseException e) {
+                LOGGER.warn("Formato de hora inválido: {}", horaFinStr);
+            }
+        } else if (album.getHoraInicio() != null) {
+            // Si no hay horaFin pero sí horaInicio, establecer 1 hora después
+            album.setHoraFin(album.getHoraInicio().plusHours(1));
+        }
+
+        // VALIDACIÓN DE HORAS
+        if (album.getHoraInicio() != null && album.getHoraFin() != null) {
+            if (!album.getHoraFin().isAfter(album.getHoraInicio())) {
+                return ResponseEntity.badRequest().body("La hora de fin debe ser posterior a la hora de inicio");
+            }
+        }
+
+
+        // Establecer notas
+        album.setNotas(notas);
 
         album.setUsuario(u);
         album savedAlbum = albumService.save(album);
@@ -90,12 +171,16 @@ public class AlbumController {
     @GetMapping("/{id}")
     public String viewAlbum(@PathVariable Integer id, Model model, HttpSession session) {
 
-        // 1. Verificar si el usuario es ADMIN
+        // Obtener el ID del usuario desde la sesión
         Integer userId = Integer.parseInt(session.getAttribute("idusuario").toString());
+        // Obtener el usuario desde la base de datos
         Optional<usuario> optionalUsuario = usuarioService.findById(userId);
-        boolean isAdmin = optionalUsuario.map(user -> "ADMIN".equals(user.getTipo_usuario()))
-                .orElse(false);
-        model.addAttribute("isAdmin", isAdmin);  // Pasar a la vista
+        // Determinar el rol
+        String tipoUsuario = optionalUsuario.map(usuario::getTipo_usuario).orElse("");
+        boolean isAdmin = "ADMIN".equals(tipoUsuario);
+        // Pasar los datos a la vista
+        model.addAttribute("isAdmin", isAdmin);
+        model.addAttribute("tipoUsuario", tipoUsuario);
 
         Optional<album> optionalAlbum = albumService.get(id);
         if (optionalAlbum.isPresent()) {
@@ -247,24 +332,34 @@ public class AlbumController {
     }
 
     @GetMapping("/edit/{id}")
-    public String edit(@PathVariable Integer id, Model model) {
+    public String edit(@PathVariable Integer id, Model model, HttpSession session) {
         Optional<album> optionalAlbum = albumService.get(id);
+
+        Integer userId = Integer.parseInt(session.getAttribute("idusuario").toString());
+        Optional<usuario> optionalUsuario = usuarioService.findById(userId);
+
+        boolean isEdgar = optionalUsuario.map(user -> "EDGAR".equals(user.getTipo_usuario()))
+                .orElse(false);
+        model.addAttribute("isEdgar", isEdgar);  // Pasar solo si es EDGAR
 
         LOGGER.info("search album: {}", optionalAlbum);
         if (optionalAlbum.isPresent()) {
             model.addAttribute("album", optionalAlbum.get());
             return "albumes/edit";
         } else {
-            return "redirect:/albumes";
+            return "redirect:/albumes/create";
         }
     }
 
+
+
     @PostMapping("/update")
-    public String update(album album) {
+    public String update(album album, Model model, HttpSession session) {
         LOGGER.info("Updating album: {}", album);
         albumService.update(album);
-        return "redirect:/albumes";
+        return "redirect:/albumes/create";
     }
+
 
     @GetMapping("/delete/{id}")
     public String delete(@PathVariable Integer id, HttpServletRequest request) {
@@ -293,6 +388,246 @@ public class AlbumController {
         // Si no hay referencia, redirige a /albumes por defecto
         return "redirect:" + (referer != null ? referer : "/albumes");
     }
-}
 
-// Clase Fragmento para agrupar subálbumes
+
+    @GetMapping("/{id}/details")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> getAlbumDetails(@PathVariable Integer id) {
+        Optional<album> optionalAlbum = albumService.get(id);
+
+        if (optionalAlbum.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        album album = optionalAlbum.get();
+        Map<String, Object> response = new HashMap<>();
+
+        // Mapear todos los campos necesarios
+        response.put("id", album.getId());
+        response.put("nombre", album.getNombre());
+        response.put("descripcion", album.getDescripcion());
+        response.put("fechaInicio", album.getFechaInicio());
+        response.put("horaInicio", album.getHoraInicio()); // Nuevo campo
+        response.put("horaFin", album.getHoraFin());
+        response.put("fechaFin", album.getFechaFin());
+        response.put("ubicacion", album.getUbicacion());
+        response.put("contacto", album.getContacto());
+        response.put("claveAlarma", album.getClaveAlarma());
+        response.put("datosAdicionales", album.getDatosAdicionales());
+        response.put("notas", album.getNotas()); // Nuevo campo
+        response.put("horasPorProyecto", album.getHorasPorProyecto());
+        response.put("precioHora", album.getPrecioHora());
+        response.put("estado", album.getEstado()); // Nuevo campo
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(response);
+    }
+
+    @GetMapping("/calendar-events")
+    @ResponseBody
+    public ResponseEntity<List<Map<String, Object>>> getCalendarEvents() {
+        List<album> albums = albumService.findAll();
+
+        List<Map<String, Object>> events = new ArrayList<>();
+
+        for (album album : albums) {
+            Map<String, Object> event = new HashMap<>();
+            event.put("id", album.getId());
+            event.put("nombre", album.getNombre());
+            event.put("descripcion", album.getDescripcion());
+            event.put("fechaInicio", album.getFechaInicio());
+            event.put("horaInicio", album.getHoraInicio());
+            event.put("horaFin", album.getHoraFin());// Nuevo campo
+            event.put("fechaFin", album.getFechaFin());
+            event.put("ubicacion", album.getUbicacion());
+            event.put("notas", album.getNotas()); // Nuevo campo
+            event.put("estado", album.getEstado()); // Nuevo campo
+
+            events.add(event);
+        }
+
+        return ResponseEntity.ok(events);
+    }
+
+
+    @PostMapping("/change-status/{id}")
+    public ResponseEntity<String> changeAlbumStatus(
+            @PathVariable Integer id,
+            @RequestParam String nuevoEstado) {
+        try {
+            Optional<album> optionalAlbum = albumService.get(id);
+            if (optionalAlbum.isEmpty()) {
+                return ResponseEntity.notFound().build();
+            }
+
+            album album = optionalAlbum.get();
+
+            // Validar que el estado sea uno de los permitidos
+            if (!Arrays.asList("pendiente", "completado", "anulado").contains(nuevoEstado)) {
+                return ResponseEntity.badRequest().body("Estado no válido");
+            }
+
+            album.setEstado(nuevoEstado); // Solo actualiza el estado, sin tocar fechaFin
+
+            albumService.save(album);
+
+            return ResponseEntity.ok("Estado del álbum actualizado a " + nuevoEstado);
+        } catch (Exception e) {
+            LOGGER.error("Error al cambiar estado del álbum", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error al cambiar estado del álbum");
+        }
+    }
+
+    @GetMapping("/{id}/pdf")
+    public ResponseEntity<InputStreamResource> generatePdf(@PathVariable Integer id) {
+        try {
+            Optional<album> optionalAlbum = albumService.get(id);
+            if (optionalAlbum.isEmpty()) {
+                return ResponseEntity.notFound().build();
+            }
+
+            album album = optionalAlbum.get();
+
+            // Configurar el contexto de Thymeleaf
+            Context context = new Context();
+            context.setVariable("album", album);
+
+            // Procesar la plantilla HTML
+            String htmlContent = templateEngine.process("pdf/detallePDF", context);
+
+            // Configurar el renderizador PDF
+            ITextRenderer renderer = new ITextRenderer();
+            // Configurar el documento
+            renderer.setDocumentFromString(htmlContent);
+            renderer.layout();
+
+            // Generar PDF
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            renderer.createPDF(outputStream);
+            renderer.finishPDF();
+
+            // Configurar la respuesta
+            byte[] pdfBytes = outputStream.toByteArray();
+            ByteArrayInputStream inputStream = new ByteArrayInputStream(pdfBytes);
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Content-Disposition", "attachment; filename=detalle_proyecto_" + album.getId() + ".pdf");
+
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .contentType(MediaType.APPLICATION_PDF)
+                    .body(new InputStreamResource(inputStream));
+
+        } catch (Exception e) {
+
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @PostMapping("/update-notes/{id}")
+    public ResponseEntity<String> updateNotes(@PathVariable Long id, @RequestParam String notas) {
+        try {
+            album album = albumService.findById(id.intValue());
+
+            if (album == null) {
+                return ResponseEntity.notFound().build();
+            }
+
+            album.setNotas(notas);
+            albumService.save(album);
+
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+
+    @GetMapping("/{id}/notes")
+    @ResponseBody
+    public Map<String, String> getAlbumNotes(@PathVariable int id) {
+        album album = albumService.findById(id);
+        Map<String, String> response = new HashMap<>();
+        response.put("notes", album.getNotas());
+        response.put("projectName", album.getNombre());
+        return response;
+    }
+
+    @PostMapping("/{id}/update-notes")
+    @ResponseBody
+    public ResponseEntity<String> updateAlbumNotes(@PathVariable int id, @RequestBody Map<String, String> request) {
+        try {
+            String notas = request.get("notes");
+            album album = albumService.findById(id);
+            album.setNotas(notas);
+            albumService.update(album);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error updating notes");
+        }
+    }
+
+    @GetMapping("/weekly-table/pdf")
+    public ResponseEntity<InputStreamResource> generateWeeklyTablePdf() {
+        try {
+            // Obtener la fecha actual para el título del reporte
+            LocalDate now = LocalDate.now();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM yyyy", new Locale("es", "ES"));
+            String monthYear = now.format(formatter);
+
+            // Configurar el contexto de Thymeleaf
+            Context context = new Context();
+            context.setVariable("monthYear", monthYear);
+
+            // Obtener los eventos del calendario
+            List<album> albums = albumService.findAll();
+            List<Map<String, Object>> events = new ArrayList<>();
+
+            for (album album : albums) {
+                Map<String, Object> event = new HashMap<>();
+                event.put("id", album.getId());
+                event.put("title", album.getNombre());
+                event.put("start", album.getFechaInicio());
+                event.put("end", album.getFechaFin() != null ? album.getFechaFin() : album.getFechaInicio());
+                event.put("status", album.getEstado());
+                event.put("allDay", album.getHoraInicio() == null);
+                events.add(event);
+            }
+
+            context.setVariable("events", events);
+
+            // Procesar la plantilla HTML
+            String htmlContent = templateEngine.process("pdf/weeklyTablePDF", context);
+
+            // Configurar el renderizador PDF
+            ITextRenderer renderer = new ITextRenderer();
+            renderer.setDocumentFromString(htmlContent);
+            renderer.layout();
+
+            // Generar PDF
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            renderer.createPDF(outputStream);
+            renderer.finishPDF();
+
+            // Configurar la respuesta
+            byte[] pdfBytes = outputStream.toByteArray();
+            ByteArrayInputStream inputStream = new ByteArrayInputStream(pdfBytes);
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Content-Disposition", "attachment; filename=reporte_semanal_" + now + ".pdf");
+
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .contentType(MediaType.APPLICATION_PDF)
+                    .body(new InputStreamResource(inputStream));
+
+        } catch (Exception e) {
+            LOGGER.error("Error al generar PDF de tabla semanal", e);
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    // Para los equipos
+}

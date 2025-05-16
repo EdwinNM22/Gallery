@@ -111,7 +111,7 @@ public class FotoController {
                 })
                 .collect(Collectors.toList());
 
-        // Guardar todas las fotos de una vez (implementa batch save en tu servicio si es posible)
+
         fotoService.saveAll(fotos);
 
         // Actualizar subálbum

@@ -4,9 +4,13 @@ import java.util.List;
 import java.util.Optional;
 
 public interface albumService {
-    public album save(album album);
-    public Optional<album> get(Integer id);
-    public void update(album album);
-    public void delete(Integer id);
-    public List<album> findAll();
+    album save(album album);
+    Optional<album> get(Integer id);
+    void update(album album);
+    void delete(Integer id);
+    List<album> findAll();
+    album findById(Integer id);
+
+    // NUEVO
+    List<album> findAllByUsuarioAsignado(Integer usuarioId);
 }

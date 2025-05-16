@@ -723,8 +723,9 @@
 <body>
 
 <!-- Navigation -->
-<div th:if="${isAdmin}" th:include="adm/template_admin.html::header"></div>
-<div th:unless="${isAdmin}" th:include="usuario/template_usuario.html::header"></div>
+<div th:if="${canEdit}" th:include="adm/template_admin.html::header"></div>
+<div th:unless="${canEdit}" th:include="usuario/template_usuario.html::header"></div>
+
 
 <!-- Gallery Header -->
 <div class="project-header text-center">
@@ -732,7 +733,7 @@
     <p class="project-description">Add a new photo to the folders</p>
     <div class="button-group">
       <button type="button" class="btn-back" onclick="window.history.back()">
-        <i class="fas fa-arrow-left"></i> Back to menu
+        <i class="fas fa-arrow-left"></i> Back
       </button>
 
       <button class="btn-back" data-toggle="modal" data-target="#subirFotoModal">
@@ -753,7 +754,7 @@
       <button class="btn-download-all download-selected" id="downloadSelectedBtn" disabled>
         <i class="fas fa-download"></i> Download Selected
       </button>
-      <button class="btn-download-all btn-delete" id="deleteSelectedBtn" disabled th:if="${isAdmin}">
+      <button class="btn-download-all btn-delete" id="deleteSelectedBtn" disabled th:if="${canEdit}">
         <i class="fas fa-trash-alt"></i> Delete Selected
       </button>
     </div>
@@ -789,7 +790,7 @@
         <a href="javascript:void(0)" class="btn-view" data-toggle="modal" th:data-target="'#photoModal' + ${fotoAntes.id}">
           <i class="fas fa-expand mr-2"></i> Enlarge
         </a>
-        <a href="javascript:void(0)" class="btn-delete-single" th:data-id="${fotoAntes.id}" th:if="${isAdmin}">
+        <a href="javascript:void(0)" class="btn-delete-single" th:data-id="${fotoAntes.id}" th:if="${canEdit}">
           <i class="fas fa-trash-alt mr-2"></i> Delete
         </a>
       </div>
@@ -900,6 +901,11 @@
             <i class="fas fa-check-circle"></i> Photo uploaded successfully!
           </div>
 
+          <!-- Mensaje de error de formato -->
+          <div id="formatError" class="alert alert-danger d-none">
+            <i class="fas fa-exclamation-circle"></i> <span id="formatErrorMessage"></span>
+          </div>
+
           <!-- Barra de progreso -->
           <div class="upload-progress-wrapper d-none mb-3">
             <div class="d-flex justify-content-between mb-1">
@@ -977,10 +983,36 @@
   </div>
 </div>
 
-
-
 <script>
   $(document).ready(function() {
+    // Formatos de archivo soportados
+    const supportedFormats = {
+      images: ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'svg'],
+      videos: ['mp4', 'webm', 'ogg']
+    };
+
+
+    // Función para validar los formatos de archivo
+    function validateFileFormats(files) {
+      const invalidFiles = [];
+
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const extension = file.name.split('.').pop().toLowerCase();
+        const isImage = supportedFormats.images.includes(extension);
+        const isVideo = supportedFormats.videos.includes(extension);
+
+        if (!isImage && !isVideo) {
+          invalidFiles.push({
+            name: file.name,
+            extension: extension
+          });
+        }
+      }
+
+      return invalidFiles;
+    }
+
     // Set current time
     function setCurrentTime() {
       const now = new Date();
@@ -997,6 +1029,7 @@
         $(this).find('form')[0].reset();
         $(this).find('.custom-file-label').text('Choose file(s)');
         $('#successMessage').addClass('d-none');
+        $('#formatError').addClass('d-none');
 
         // Pause any videos
         $(this).find('video').each(function() {
@@ -1011,6 +1044,27 @@
         let label = 'Choose file(s)';
 
         if (files.length > 0) {
+          // Validar formatos de archivo
+          const invalidFiles = validateFileFormats(files);
+
+          if (invalidFiles.length > 0) {
+            // Mostrar mensaje de error
+            const errorMessage = invalidFiles.length === 1
+                    ? `The file format .${invalidFiles[0].extension} is not supported. Please select a valid image or video file.`
+                    : `The following file formats are not supported: ${invalidFiles.map(f => `.${f.extension}`).join(', ')}. Please select valid image or video files.`;
+
+            $('#formatErrorMessage').text(errorMessage);
+            $('#formatError').removeClass('d-none');
+
+            // Resetear el input de archivo
+            $(this).val('');
+            $(this).next('.custom-file-label').text('Choose file(s)');
+            return;
+          } else {
+            // Ocultar mensaje de error si estaba visible
+            $('#formatError').addClass('d-none');
+          }
+
           if (files.length === 1) {
             label = files[0].name;
           } else {
@@ -1027,8 +1081,21 @@
       $('#uploadForm').on('submit', function(e) {
         e.preventDefault();
         const form = this;
-        const formData = new FormData(form);
         const files = $('#img')[0].files;
+
+        // Validar formatos antes de enviar
+        const invalidFiles = validateFileFormats(files);
+        if (invalidFiles.length > 0) {
+          const errorMessage = invalidFiles.length === 1
+                  ? `The file format .${invalidFiles[0].extension} is not supported. Please select a valid image or video file.`
+                  : `The following file formats are not supported: ${invalidFiles.map(f => `.${f.extension}`).join(', ')}. Please select valid image or video files.`;
+
+          $('#formatErrorMessage').text(errorMessage);
+          $('#formatError').removeClass('d-none');
+          return;
+        }
+
+        const formData = new FormData(form);
         const totalFiles = files.length;
 
         // UI updates
@@ -1375,6 +1442,8 @@
     initUploadForm();
     initDownloadAndDeleteFunctions();
   });
+
+
 </script>
 
 </body>

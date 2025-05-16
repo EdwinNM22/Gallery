@@ -87,14 +87,21 @@ public class UsuarioController {
         logger.info("Usuario registro: {}", usuario);
 
         // Validar que el tipo de usuario sea válido
-        if (!"ADMIN".equals(usuario.getTipo_usuario()) && !"USER".equals(usuario.getTipo_usuario())) {
+        if (!"ADMIN".equals(usuario.getTipo_usuario()) &&
+                !"USER".equals(usuario.getTipo_usuario()) &&
+                !"SUPERVISOR".equals(usuario.getTipo_usuario()) &&
+                !"SUPERVISORPLUS".equals(usuario.getTipo_usuario())) {
             return ResponseEntity.badRequest().body("Tipo de usuario no válido");
         }
 
+        // Codificar la contraseña antes de guardarla
         usuario.setPassword(passEncode.encode(usuario.getPassword()));
+
+        // Guardar el usuario
         usuarioService.save(usuario);
         return ResponseEntity.ok("Usuario registrado");
     }
+
 
     @GetMapping("/login")
     public String login() {
@@ -118,7 +125,9 @@ public class UsuarioController {
                 String tipoUsuario = user.get().getTipo_usuario();
                 logger.info("Usuario encontrado - Tipo: {}", tipoUsuario);
 
-                if ("ADMIN".equalsIgnoreCase(tipoUsuario)) {
+                if ("ADMIN".equalsIgnoreCase(tipoUsuario) ||
+                        "SUPERVISORPLUS".equalsIgnoreCase(tipoUsuario) ||
+                        "EDGAR".equalsIgnoreCase(tipoUsuario)) {
                     return "redirect:/adm";
                 } else if ("SUPERVISOR".equalsIgnoreCase(tipoUsuario)) {
                     return "redirect:/supervi";
@@ -130,11 +139,13 @@ public class UsuarioController {
                 session.invalidate();
                 return "redirect:/usuario/login";
             }
+
         } catch (Exception e) {
             logger.error("Error en el acceso: {}", e.getMessage());
             return "redirect:/usuario/login";
         }
     }
+
 
     @PostMapping("/delete")
     public String deleteUser(@RequestParam Integer id, RedirectAttributes redirectAttributes) {
@@ -150,6 +161,30 @@ public class UsuarioController {
             logger.error("Error al eliminar usuario: {}", e.getMessage());
             redirectAttributes.addFlashAttribute("errorMessage", "Error al eliminar usuario");
         }
+        return "redirect:/usuario/show";
+    }
+
+    @PostMapping("/changePassword")
+    public String changePassword(
+            @RequestParam Integer id,
+            @RequestParam String newPassword,
+            @RequestParam String confirmPassword,
+            RedirectAttributes redirectAttributes) {
+
+        if (!newPassword.equals(confirmPassword)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Las contraseñas no coinciden");
+            return "redirect:/usuario/show";
+        }
+        Optional<usuario> usuarioOpt = usuarioService.get(id);
+        if (usuarioOpt.isPresent()) {
+            usuario usuarioExistente = usuarioOpt.get();
+            usuarioExistente.setPassword(passEncode.encode(newPassword));
+            usuarioService.save(usuarioExistente);
+            redirectAttributes.addFlashAttribute("successMessage", "Contraseña cambiada exitosamente");
+        } else {
+            redirectAttributes.addFlashAttribute("errorMessage", "Usuario no encontrado");
+        }
+
         return "redirect:/usuario/show";
     }
 

@@ -39,9 +39,10 @@ public class SubAlbumController {
         // 1. Verificar si el usuario es ADMIN
         Integer userId = Integer.parseInt(session.getAttribute("idusuario").toString());
         Optional<usuario> optionalUsuario = usuarioService.findById(userId);
-        boolean isAdmin = optionalUsuario.map(user -> "ADMIN".equals(user.getTipo_usuario()))
+        boolean canEdit = optionalUsuario.map(user -> !"USER".equals(user.getTipo_usuario()))
                 .orElse(false);
-        model.addAttribute("isAdmin", isAdmin);  // Pasar a la vista
+        model.addAttribute("canEdit", canEdit);
+  // Pasar a la vista
 
         // Obtener solo los subálbumes de tipo "antes"
         List<SubAlbum> subAlbumesAntes = subAlbumService.getSubAlbumesAntes();
@@ -66,9 +67,10 @@ public class SubAlbumController {
         // 1. Verificar si el usuario es ADMIN
         Integer userId = Integer.parseInt(session.getAttribute("idusuario").toString());
         Optional<usuario> optionalUsuario = usuarioService.findById(userId);
-        boolean isAdmin = optionalUsuario.map(user -> "ADMIN".equals(user.getTipo_usuario()))
+        boolean canEdit = optionalUsuario.map(user -> !"USER".equals(user.getTipo_usuario()))
                 .orElse(false);
-        model.addAttribute("isAdmin", isAdmin);  // Pasar a la vista
+        model.addAttribute("canEdit", canEdit);
+ // Pasar a la vista
 
         // Obtener solo los subálbumes de tipo "despues"
         List<SubAlbum> subAlbumesDespues = subAlbumService.getSubAlbumesDespues();

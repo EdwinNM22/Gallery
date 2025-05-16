@@ -15,4 +15,9 @@ public interface IUsuarioService {
     public void update(usuario usuario);
     public void delete(Integer id);
 
+    //Agreado para los permisos
+    Optional<usuario> getUsuarioById(Integer id);
+    void asignarPermisoAUsuario(Integer usuarioId, Integer permisoId);
+    void quitarPermisoDeUsuario(Integer usuarioId, Integer permisoId);
+
 }

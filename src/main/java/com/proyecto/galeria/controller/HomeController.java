@@ -21,47 +21,42 @@ import java.util.Optional;
 @RequestMapping("/")
 public class HomeController {
 
-
     private final Logger log = LoggerFactory.getLogger(HomeController.class);
     @Autowired
     private albumService albumService;
     @Autowired
     private IUsuarioService usuarioService;
 
-
-
-
-
     @GetMapping({"/", "/mainMenu"})
     public String mainMenu() {
-        return "usuario/mainMenu";
+        return "home/mainMenu";
     }
 
     @GetMapping("/home")
     public String home(Model model, HttpSession session) {
-
-        //Verificar si el usuario es ADMIN
         Integer userId = Integer.parseInt(session.getAttribute("idusuario").toString());
         Optional<usuario> optionalUsuario = usuarioService.findById(userId);
-        boolean isAdmin = optionalUsuario.map(user -> "ADMIN".equals(user.getTipo_usuario()))
-                .orElse(false);
 
+        String tipoUsuario = optionalUsuario.map(usuario::getTipo_usuario).orElse("UNKNOWN");
+        boolean isAdmin = "ADMIN".equals(tipoUsuario);
 
         model.addAttribute("isAdmin", isAdmin);
+        model.addAttribute("tipoUsuario", tipoUsuario);
+
         List<album> albumes = albumService.findAll();
         model.addAttribute("albumes", albumes);
-
-        log.info("Sesion del usuario: {} ", session.getAttribute("idusuario"));
         model.addAttribute("sesion", session.getAttribute("idusuario"));
 
-        return "usuario/home";
+        log.info("Sesion del usuario: {} ", session.getAttribute("idusuario"));
+
+        return "home/home";
     }
+
     @GetMapping("/cerrar")
-    public String cerrarSesion( HttpSession session) {
+    public String cerrarSesion(HttpSession session) {
         session.removeAttribute("idusuario");
         return "redirect:/usuario/login";
-
-
     }
 
 }
+

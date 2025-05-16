@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -13,46 +14,45 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Configuration
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true) // Habilita @PreAuthorize
 public class SpringBootSecurity extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private UserDetailsService userDetailService;
-
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailService).passwordEncoder(getEnecoder());
     }
 
-
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        String[] publicUrls = {"/usuario/**", "/css/**", "/js/**"};
-        String[] userUrls = {"/album/**", "/fotos/**", "/subAlbumes/**"};
-        String[] admUrls = {"/adm/**"};
+        String[] publicUrls = { "/css/**", "/js/**", "/equipo/**" };
+        String[] userUrls = { "/album/**", "/fotos/**", "/subAlbumes/**", "/home/**" };
+        String[] admUrls = { "/adm/**", "/usuario/**", "/supervi/**" };
 
         http.csrf().disable()
                 .authorizeRequests()
-                .antMatchers(publicUrls).permitAll() // Permitir login y archivos estáticos
-                .antMatchers(userUrls).hasAnyRole("USER", "ADMIN", "SUPERVISOR") // Acceso a usuarios y administradores
-                .antMatchers(admUrls).hasRole("ADMIN") // Solo administradores pueden acceder
-                .anyRequest().authenticated() // Bloquear acceso a no autenticados
+                .antMatchers(publicUrls).permitAll()
+                .antMatchers(userUrls).hasAnyRole("ADMIN", "SUPERVISOR", "SUPERVISORPLUS", "USER", "EDGAR")
+                .antMatchers(admUrls).hasAnyRole("ADMIN", "SUPERVISORPLUS", "EDGAR", "SUPERVISOR", "USER")
+                .anyRequest().authenticated()
                 .and()
                 .formLogin()
-                .loginPage("/usuario/login") // Página de login
+                .loginPage("/usuario/login")
                 .permitAll()
-                .defaultSuccessUrl("/usuario/acceder", true) // Redirigir tras login exitoso
+                .defaultSuccessUrl("/usuario/acceder", true)
                 .and()
                 .logout()
-                .logoutUrl("/cerrar") // URL para cerrar sesión
-                .logoutSuccessUrl("/usuario/login") // Redirigir tras logout
+                .logoutUrl("/cerrar")
+                .logoutSuccessUrl("/usuario/login")
                 .and()
                 .exceptionHandling()
-                .accessDeniedPage("/usuario/login"); // Redirigir si no tiene permisos
+                .accessDeniedPage("/usuario/login");
     }
+
     @Bean
     public BCryptPasswordEncoder getEnecoder() {
         return new BCryptPasswordEncoder();
     }
-
 }

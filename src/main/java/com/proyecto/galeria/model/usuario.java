@@ -2,9 +2,14 @@ package com.proyecto.galeria.model;
 
 
 
-import javax.persistence.*;
-import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+import javax.persistence.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 @Entity
 @Table(name = "usuarios")
 public class usuario {
@@ -16,18 +21,27 @@ public class usuario {
     private String tipo_usuario;
     private String password;
 
-    @OneToMany(mappedBy = "usuario")
+
+    @OneToMany(mappedBy = "usuario", fetch = FetchType.LAZY)
     private List<foto> fotos;
 
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.PERSIST) // O CascadeType.MERGE según el comportamiento deseado
     private List<album> albumes;
 
 
-    public usuario() {
+    //Para los permisos
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "usuario_permiso",
+            joinColumns = @JoinColumn(name = "usuario_id"),
+            inverseJoinColumns = @JoinColumn(name = "permiso_id")
+    )
+    private Set<Permiso> permisos = new HashSet<>();
 
-    }
 
-    public usuario(Integer id, String nombre, String email, String tipo_usuario, String password ) {
+    public usuario() {}
+
+    public usuario(Integer id, String nombre, String email, String tipo_usuario, String password) {
         this.id = id;
         this.nombre = nombre;
         this.email = email;
@@ -89,5 +103,13 @@ public class usuario {
 
     public void setAlbumes(List<album> albumes) {
         this.albumes = albumes;
+    }
+
+    public Set<Permiso> getPermisos() {
+        return permisos;
+    }
+
+    public void setPermisos(Set<Permiso> permisos) {
+        this.permisos = permisos;
     }
 }
