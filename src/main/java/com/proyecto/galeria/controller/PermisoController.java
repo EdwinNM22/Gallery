@@ -13,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -29,8 +30,16 @@ public class PermisoController {
     private PermisoService permisoService;
 
     @GetMapping("/management")
-    public String showPermissionsManagement(Model model) {
+    public String showPermissionsManagement(Model model, HttpSession session) {
         model.addAttribute("permisosAgrupados", permisoService.getPermisosAgrupadosPorVista());
+
+        // Obtener el ID del usuario de la sesión
+        Integer userId = Integer.parseInt(session.getAttribute("idusuario").toString());
+        Optional<usuario> optionalUsuario = usuarioService.findById(userId);
+        String userRole = optionalUsuario.map(usuario::getTipo_usuario).orElse("USUARIO");
+
+        model.addAttribute("userRole", userRole);
+
         return "permiso/permissions-management";
     }
 

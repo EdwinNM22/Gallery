@@ -2,7 +2,9 @@ package com.proyecto.galeria.controller;
 
 import com.proyecto.galeria.model.Permiso;
 import com.proyecto.galeria.model.album;
+import com.proyecto.galeria.model.usuario;
 import com.proyecto.galeria.service.IUsuarioService;
+import com.proyecto.galeria.service.PermisoService;
 import com.proyecto.galeria.service.albumService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpSession;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -21,6 +24,7 @@ public class AdmController {
     @Autowired
     private albumService albumService;
     @Autowired private IUsuarioService usuarioService;
+    @Autowired private PermisoService permisoService;
 
     @GetMapping("")
     public String home(Model model, HttpSession session) {
@@ -31,7 +35,19 @@ public class AdmController {
         usuarioService.findById(idUsuario).ifPresentOrElse(user -> {
             user.getPermisos().size(); // Forzar carga
 
+
+            // para dar permisos a edgar
+            Integer userId = Integer.parseInt(session.getAttribute("idusuario").toString());
+            // Buscar el usuario y obtener su rol
+            Optional<usuario> optionalUsuario = usuarioService.findById(userId);
+            String userRole = optionalUsuario.map(usuario::getTipo_usuario).orElse("USUARIO");
+            model.addAttribute("userRole", userRole);
+
+
             model.addAttribute("usuarioLogueado", user);
+            model.addAttribute("usuarios", usuarioService.findAll());
+            model.addAttribute("permisosAgrupados", permisoService.getPermisosAgrupadosPorVista());
+
 
             // Permisos individuales
             Set<String> permisos = user.getPermisos().stream()

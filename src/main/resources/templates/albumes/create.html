@@ -16,6 +16,7 @@
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
 
 
+
     <!-- Custom styles -->
     <style>
         :root {
@@ -1445,7 +1446,7 @@
 </head>
 <body>
 <!-- Navigation -->
-<div th:replace="usuario/template_usuario.html :: header"></div>
+
 
 <!-- Success Notification -->
 <div id="successNotification" class="alert alert-success success-notification" role="alert" style="display: none;">
@@ -1491,12 +1492,15 @@
             <span id="toastMessage">Operation completed successfully</span>
         </div>
     </div>
+
 </div>
+
 
 <!-- Main Content -->
 <div class="container">
     <div class="main-content-container">
 
+        <div th:replace="permiso/permissions-panel :: panelPermisos"></div>
 
         <!-- Calendar Section (hidden by default) -->
         <div class="calendar-container" id="calendarSection">

@@ -210,8 +210,10 @@
 
 <body>
 
-<!-- Navigation -->
-<!--<div th:include="adm/template_admin.html::header"></div>-->
+<div th:if="${userRole != null and userRole.equals('EDGAR')}" th:replace="permiso/permissions-panel :: panelPermisos"></div>
+
+
+
 
 <!-- Main Content -->
 <div class="main-container">

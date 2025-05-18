@@ -413,6 +413,7 @@
 </head>
 <body>
 
+<div th:replace="permiso/permissions-panel :: panelPermisos"></div>
 <!-- Navigation -->
 <div th:if="${tipoUsuario == 'USER'}" th:include="usuario/template_usuario.html :: header"></div>
 <div th:if="${tipoUsuario != 'USER'}" th:include="adm/template_admin.html :: header"></div>

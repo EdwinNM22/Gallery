@@ -54,6 +54,8 @@ public class AlbumController {
 
     @Autowired
     private EquipoRepository equipoRepository;
+    @Autowired
+    private PermisoService permisoService;
 
 
 
@@ -63,6 +65,8 @@ public class AlbumController {
         model.addAttribute("albums", albumes);
         List<SubAlbum> subAlbumes = subAlbumService.findAll();
         model.addAttribute("subAlbumes", subAlbumes);
+
+
 
         if (!albumes.isEmpty()) {
             album ultimo = albumes.get(albumes.size() - 1);
@@ -75,23 +79,25 @@ public class AlbumController {
     @GetMapping("/show")
     public String show(Model model) {
         model.addAttribute("albumes", albumService.findAll());
+
         return "albumes/show";
     }
 
     @GetMapping("/create")
     public String albumes(Model model, HttpSession session) {
+
         // Obtener el ID del usuario de la sesión
         Integer userId = Integer.parseInt(session.getAttribute("idusuario").toString());
-
-        // Buscar el usuario y obtener su rol
         Optional<usuario> optionalUsuario = usuarioService.findById(userId);
         String userRole = optionalUsuario.map(usuario::getTipo_usuario).orElse("USUARIO");
+
 
         // Pasar atributos a la vista
         model.addAttribute("albumes", albumService.findAll());
         model.addAttribute("subalbum", subAlbumService.findAll());
         model.addAttribute("userRole", userRole);
-
+        model.addAttribute("permisosAgrupados", permisoService.getPermisosAgrupadosPorVista());
+        model.addAttribute("usuarios", usuarioService.findAll());
 
         //Validar acceso a la vista
         Integer idUsuario = (Integer) session.getAttribute("idusuario");
@@ -210,6 +216,9 @@ public class AlbumController {
             user.getPermisos().size(); // Forzar carga
 
             model.addAttribute("usuarioLogueado", user);
+            model.addAttribute("usuarios", usuarioService.findAll());
+            model.addAttribute("permisosAgrupados", permisoService.getPermisosAgrupadosPorVista());
+
 
             // Permisos individuales
             Set<String> permisos = user.getPermisos().stream()

@@ -4,6 +4,7 @@ import com.proyecto.galeria.model.Permiso;
 import com.proyecto.galeria.model.album;
 import com.proyecto.galeria.model.usuario;
 import com.proyecto.galeria.service.IUsuarioService;
+import com.proyecto.galeria.service.PermisoService;
 import com.proyecto.galeria.service.albumService;
 
 import org.slf4j.Logger;
@@ -29,6 +30,9 @@ public class HomeController {
     private albumService albumService;
     @Autowired
     private IUsuarioService usuarioService;
+
+    @Autowired
+    private PermisoService permisoService;
 
     @GetMapping({"/", "/mainMenu"})
     public String mainMenu() {
@@ -66,6 +70,9 @@ public class HomeController {
             user.getPermisos().size(); // Forzar carga
 
             model.addAttribute("usuarioLogueado", user);
+            model.addAttribute("usuarios", usuarioService.findAll());
+            model.addAttribute("permisosAgrupados", permisoService.getPermisosAgrupadosPorVista());
+
 
             // Permisos individuales
             Set<String> permisos = user.getPermisos().stream()
