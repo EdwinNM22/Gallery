@@ -12,6 +12,13 @@
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
+  <!-- Bootstrap JS (con Popper incluido) -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+
   <style>
     :root {
       --primary-color: #4361ee;
@@ -518,11 +525,16 @@
   </div>
 
   <!-- Action buttons - Improved for mobile -->
-  <div class="btn-container">
+  <div class="btn-container" th:if="${tienePermisoAvanzado}">
     <a class="btn btn-back" th:href="@{/adm}">
       <i class="fas fa-arrow-left"></i> Back to Menu
     </a>
   </div>
+
+
+
+  <div th:replace="permiso/permissions-panel :: panelPermisos"></div>
+
 
   <!-- Reports card -->
   <div class="card">
@@ -552,6 +564,7 @@
             <td data-label="Actions">
               <!-- Edit/view button -->
               <button class="btn btn-sm btn-primary"
+                      th:if="${REPORTES_EDIT}"
                       data-id="" th:data-id="${r.id}"
                       data-content="" th:data-content="${r.contenido}"
                       onclick="editBtnClick(this)" title="Edit">
@@ -561,6 +574,7 @@
 
               <!-- Download button -->
               <a class="btn btn-sm btn-success ms-1"
+                 th:if="${REPORTES_PDF}"
                  th:href="@{/admin/reports/{id}/pdf(id=${r.id})}"
                  title="Download PDF">
                 <i class="fas fa-download"></i>
@@ -569,6 +583,7 @@
 
               <!-- Delete button - Nuevo botón -->
               <button class="btn btn-sm btn-danger ms-1"
+                      th:if="${REPORTES_DELETE}"
                       data-id="" th:data-id="${r.id}"
                       data-album-id="" th:data-album-id="${r.album.id}"
                       onclick="deleteReport(this)" title="Delete">
@@ -596,7 +611,7 @@
         <textarea id="editArea" class="form-control" rows="12" placeholder="Write report content here..."></textarea>
       </div>
       <div class="modal-footer">
-        <a id="modalDownloadBtn" class="btn btn-success me-auto" target="_blank">
+        <a id="modalDownloadBtn" class="btn btn-success me-auto" target="_blank" hidden="true">
           <i class="fas fa-download me-1"></i>Download PDF
         </a>
         <button id="saveEditBtn" class="btn btn-primary">
@@ -606,9 +621,6 @@
     </div>
   </div>
 </div>
-
-
-
 
 <!-- Footer -->
 <div th:replace="adm/template_admin.html :: footer"></div>
@@ -668,7 +680,6 @@
               }, 1500);
             });
   });
-
 
   /* Delete report function */
   function deleteReport(btn) {

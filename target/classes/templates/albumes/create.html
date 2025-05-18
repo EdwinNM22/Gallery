@@ -1464,19 +1464,18 @@
     <div class="container agenda-header-content">
         <h1 class="agenda-title"><i class="fas fa-calendar-alt me-3"></i> Projects Agenda</h1>
         <p class="agenda-description">Organize and manage all your projects</p>
-        <div class="button-group" th:if="${canEdit}">
+        <div class="button-group" th:if="${AGENDA_CREATE}">
             <button type="button" class="btn btn-primary btn-rounded" id="btnOpenModal">
                 <i class="fas fa-plus"></i> New Project
             </button>
-            <button type="button" class="btn btn-secondary btn-rounded" id="toggleCalendarBtn">
+            <button type="button" class="btn btn-secondary btn-rounded" id="toggleCalendarBtn" hidden="true">
                 <i class="fas fa-calendar"></i> Show Calendar
             </button>
-            <button type="button" class="btn btn-success btn-rounded" id="showCompletedBtn">
-                <i class="fas fa-check-circle"></i> View Completed
-            </button>
-
 
         </div>
+        <button type="button" class="btn btn-success btn-rounded" id="showCompletedBtn">
+            <i class="fas fa-check-circle"></i> View Completed
+        </button>
     </div>
 </div>
 
@@ -1552,16 +1551,21 @@
                                             <span th:unless="${album.fechaInicio}">No date</span>
                                         </div>
                                     </div>
-                                    <div class="project-actions" th:if="${canEdit}">
-                                        <button class="action-btn btn-edit" onclick="editAlbum(event, this.closest('.project-card').getAttribute('data-id'))">
+                                    <div class="project-actions">
+                                        <button class="action-btn btn-edit"
+                                                th:if="${AGENDA_EDIT}"
+                                                onclick="editAlbum(event, this.closest('.project-card').getAttribute('data-id'))">
                                             <i class="fas fa-edit"></i>
                                         </button>
+
                                         <button class="action-btn btn-delete"
+                                                th:if="${AGENDA_DELETE}"
                                                 th:attr="data-id=${album.id}"
                                                 onclick="deleteAlbum(event, this.getAttribute('data-id'))">
                                             <i class="fas fa-trash"></i>
                                         </button>
                                     </div>
+
                                 </div>
                                 <div class="project-card-body">
                                     <p class="project-card-description" th:text="${album.descripcion} ?: 'No description available'">Project description</p>
@@ -1607,16 +1611,21 @@
                                             <span th:unless="${album.fechaInicio}">No date</span>
                                         </div>
                                     </div>
-                                    <div class="project-actions" th:if="${canEdit}">
-                                        <button class="action-btn btn-edit" onclick="editAlbum(event, this.closest('.project-card').getAttribute('data-id'))">
+                                    <div class="project-actions">
+                                        <button class="action-btn btn-edit"
+                                                th:if="${AGENDA_EDIT}"
+                                                onclick="editAlbum(event, this.closest('.project-card').getAttribute('data-id'))">
                                             <i class="fas fa-edit"></i>
                                         </button>
+
                                         <button class="action-btn btn-delete"
+                                                th:if="${AGENDA_DELETE}"
                                                 th:attr="data-id=${album.id}"
                                                 onclick="deleteAlbum(event, this.getAttribute('data-id'))">
                                             <i class="fas fa-trash"></i>
                                         </button>
                                     </div>
+
                                 </div>
                                 <div class="project-card-body">
                                     <p class="project-card-description" th:text="${album.descripcion} ?: 'No description available'">Project description</p>
@@ -1634,8 +1643,6 @@
                     <div class="empty-state" th:if="${#lists.isEmpty(albumes)}">
                         <i class="fas fa-folder-open"></i>
                         <h4>No projects created</h4>
-                        <p th:if="${canEdit}">Start by creating your first project</p>
-                        <p th:unless="${canEdit}">You don't have any assigned projects</p>
                     </div>
                 </div>
             </div>
@@ -1827,12 +1834,15 @@
             </div>
             <div class="modal-footer d-flex justify-content-between align-items-center flex-wrap">
                 <!-- Botones de cambio de estado -->
-                <div class="status-change-buttons mb-2 mb-sm-0" id="statusChangeButtons">
+                <div class="status-change-buttons mb-2 mb-sm-0" id="statusChangeButtons"
+                     th:if="${AGENDA_STATUS}">
                     <!-- Se insertarán dinámicamente -->
                 </div>
+
                 <!-- Botones de acción -->
                 <div class="action-buttons text-end">
-                    <button type="button" class="btn btn-success me-2" onclick="generatePdf()">
+                    <button type="button" class="btn btn-success me-2" onclick="generatePdf()"
+                            th:if="${AGENDA_PDF}">
                         <i class="fas fa-file-pdf me-1"></i> Generate PDF
                     </button>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -1869,12 +1879,12 @@
     </div>
 
     <div class="context-menu-item" onclick="openNotesFromContextMenu()"
-         th:if="${canEdit}">
+         th:if="${AGENDA_NOTES}">
         <i class="fas fa-edit"></i> View/Edit Notes
     </div>
 
     <div class="context-menu-item" onclick="createTeamForProjectFromContextMenu()"
-         th:if="${canViewTeams}">
+         th:if="${AGENDA_TEAMS}">
         <i class="fas fa-users"></i> View/Create Team
     </div>
 </div>
@@ -2009,6 +2019,11 @@
     </div>
 </div>
 
+<script th:inline="javascript">
+    const hasStatusPermission = [[${AGENDA_STATUS}]];
+</script>
+
+
 <!-- Script para manejar la visibilidad de elementos según el rol -->
 <script th:inline="javascript">
     document.addEventListener('DOMContentLoaded', function() {
@@ -2029,17 +2044,7 @@
             projectModal.show();
         });
 
-        // Ocultar el botón de nuevo proyecto si no tiene permisos
-        if (!/*[[${canEdit}]]*/ true) {
-            document.getElementById('btnOpenModal').style.display = 'none';
-            document.getElementById('showCompletedBtn').style.display = 'none';
 
-            // Deshabilitar eventos de doble click que podrían permitir edición
-            document.querySelectorAll('.project-card-content').forEach(el => {
-                el.style.cursor = 'default';
-                el.onclick = null;
-            });
-        }
 
         // Ocultar campos de horas y precio si el usuario no es ADMIN
         const userRole = /*[[${userRole}]]*/ 'USUARIO';
@@ -2404,7 +2409,7 @@
                 info.jsEvent.preventDefault();
             },
             dateClick: function(info) {
-                if (/*[[${canEdit}]]*/ true) {
+                if (/*[[${AGENDA_CREATE}]]*/ true) {
                     const fechaInicioInput = document.getElementById('fechaInicio');
                     const horaInicioInput = document.getElementById('horaInicio');
                     const horaFinInput = document.getElementById('horaFin');
@@ -2775,31 +2780,36 @@
                 const existingStatusButtons = document.querySelectorAll('.status-change-btn');
                 existingStatusButtons.forEach(btn => btn.remove());
 
-                // Agregar botones solo si no es el estado actual
-                if (album.estado !== 'pendiente') {
-                    const pendingBtn = document.createElement('button');
-                    pendingBtn.className = 'btn status-change-btn me-2';
-                    pendingBtn.style.backgroundColor = '#66ccff';  // Color de fondo cambiado
-                    pendingBtn.innerHTML = '<i class="fas fa-clock"></i> Marcar como En curso';
-                    pendingBtn.onclick = () => changeStatusFromModal('pendiente');
-                    modalFooter.prepend(pendingBtn);
+                // Agregar botones solo si el usuario tiene permiso
+                if (typeof hasStatusPermission !== 'undefined' && hasStatusPermission) {
+
+                    if (album.estado !== 'pendiente') {
+                        const pendingBtn = document.createElement('button');
+                        pendingBtn.className = 'btn status-change-btn me-2';
+                        pendingBtn.style.backgroundColor = '#66ccff';
+                        pendingBtn.innerHTML = '<i class="fas fa-clock"></i> Marcar como En curso';
+                        pendingBtn.onclick = () => changeStatusFromModal('pendiente');
+                        modalFooter.prepend(pendingBtn);
+                    }
+
+                    if (album.estado !== 'completado') {
+                        const completeBtn = document.createElement('button');
+                        completeBtn.className = 'btn btn-secondary status-change-btn me-2';
+                        completeBtn.innerHTML = '<i class="fas fa-check"></i> Marcar como Completado';
+                        completeBtn.onclick = () => changeStatusFromModal('completado');
+                        modalFooter.prepend(completeBtn);
+                    }
+
+                    if (album.estado !== 'anulado') {
+                        const cancelBtn = document.createElement('button');
+                        cancelBtn.className = 'btn btn-danger status-change-btn me-2';
+                        cancelBtn.innerHTML = '<i class="fas fa-times"></i> Marcar como Anulado';
+                        cancelBtn.onclick = () => changeStatusFromModal('anulado');
+                        modalFooter.prepend(cancelBtn);
+                    }
+
                 }
 
-                if (album.estado !== 'completado') {
-                    const completeBtn = document.createElement('button');
-                    completeBtn.className = 'btn btn-secondary status-change-btn me-2';
-                    completeBtn.innerHTML = '<i class="fas fa-check"></i> Marcar como Completado';
-                    completeBtn.onclick = () => changeStatusFromModal('completado');
-                    modalFooter.prepend(completeBtn);
-                }
-
-                if (album.estado !== 'anulado') {
-                    const cancelBtn = document.createElement('button');
-                    cancelBtn.className = 'btn btn-danger status-change-btn me-2';
-                    cancelBtn.innerHTML = '<i class="fas fa-times"></i> Marcar como Anulado';
-                    cancelBtn.onclick = () => changeStatusFromModal('anulado');
-                    modalFooter.prepend(cancelBtn);
-                }
 
                 albumDetailsModal.show();
             })

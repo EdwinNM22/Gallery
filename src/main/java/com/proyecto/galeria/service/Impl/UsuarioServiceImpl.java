@@ -57,7 +57,6 @@ public class UsuarioServiceImpl implements IUsuarioService {
     }
 
 
-
     // Nuevos para los permisos
 
     @Override
@@ -96,4 +95,6 @@ public class UsuarioServiceImpl implements IUsuarioService {
     public Optional<usuario> getUsuarioById(Integer id) {
         return usuarioRepository.findById(id);
     }
+
+
 }

@@ -433,7 +433,7 @@
          th:if="${album.estado == 'pendiente'}"
          th:attr="data-id=${album.id}"
          class="project-card">
-      <div th:if="${tipoUsuario == 'EDGAR' or tipoUsuario == 'ADMIN'}"
+      <div th:if="${PROYECTOS_VIEW_TEAMS}"
            class="view-teams-icon"
            th:attr="data-album-id=${album.id}"
            onclick="showTeamsModal(this)">
@@ -455,7 +455,7 @@
           <div>
             <a th:href="@{/albumes/delete/{id}(id=${album.id})}" class="btn-modern btn-danger"
                onclick="return confirm('¿Estás seguro de que quieres eliminar este álbum? Esta acción no se puede deshacer.');"
-               th:if="${tipoUsuario != 'USER'}">
+               th:if="${PROYECTOS_DELETE}">
               <i class="fas fa-trash"></i> Delete
             </a>
           </div>
@@ -477,7 +477,7 @@
            th:if="${album.estado == 'completado'}"
            th:attr="data-id=${album.id}"
            class="project-card completed">
-        <div th:if="${tipoUsuario == 'EDGAR' or tipoUsuario == 'ADMIN'}"
+        <div th:if="${PROYECTOS_VIEW_TEAMS}"
              class="view-teams-icon"
              th:attr="data-album-id=${album.id}"
              onclick="showTeamsModal(this)">
@@ -499,7 +499,7 @@
             <div>
               <a th:href="@{/albumes/delete/{id}(id=${album.id})}" class="btn-modern btn-danger"
                  onclick="return confirm('¿Estás seguro de que quieres eliminar este álbum? Esta acción no se puede deshacer.');"
-                 th:if="${tipoUsuario != 'USER'}">
+                 th:if="${PROYECTOS_DELETE}">
                 <i class="fas fa-trash"></i> Delete
               </a>
             </div>
@@ -520,20 +520,12 @@
 
 <div class="container">
   <div class="button-group">
-    <a th:if="${tipoUsuario != 'USER' and tipoUsuario != 'SUPERVISOR'}"
+    <a th:if="${AGENDA_ACCESS && AGENDA_CREATE }"
        th:href="@{/albumes/create}" class="btn-modern">
       <i class="fas fa-plus"></i> Create Project
     </a>
 
-    <a th:if="${tipoUsuario == 'USER'}" th:href="@{/mainMenu}" class="btn-modern ml-2">
-      <i class="fas fa-bars"></i> Menu
-    </a>
-
-    <a th:if="${tipoUsuario == 'SUPERVISOR'}" th:href="@{/supervi}" class="btn-modern ml-2">
-      <i class="fas fa-bars"></i> Menu
-    </a>
-
-    <a th:if="${tipoUsuario == 'ADMIN' or tipoUsuario == 'EDGAR'or tipoUsuario == 'SUPERVISORPLUS'}" th:href="@{/adm}" class="btn-modern ml-2">
+    <a th:href="@{/adm}" class="btn-modern ml-2">
       <i class="fas fa-bars"></i> Menu
     </a>
   </div>

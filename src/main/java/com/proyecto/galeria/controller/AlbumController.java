@@ -91,13 +91,46 @@ public class AlbumController {
         model.addAttribute("albumes", albumService.findAll());
         model.addAttribute("subalbum", subAlbumService.findAll());
         model.addAttribute("userRole", userRole);
-        model.addAttribute("canEdit",
-                "ADMIN".equals(userRole) ||
-                        "SUPERVISORPLUS".equals(userRole) ||
-                        "EDGAR".equals(userRole));
-        model.addAttribute("canViewTeams",
-                "ADMIN".equals(userRole) ||
-                        "EDGAR".equals(userRole));
+
+
+        //Validar acceso a la vista
+        Integer idUsuario = (Integer) session.getAttribute("idusuario");
+        Optional<usuario> userOpt = usuarioService.findById(idUsuario);
+
+        if (userOpt.isEmpty() || userOpt.get().getPermisos().stream()
+                .noneMatch(p -> "AGENDA_ACCESS".equals(p.getCodigo()))) {
+            return "redirect:/NoAccess/Access";
+        }
+
+
+        usuarioService.findById(idUsuario).ifPresentOrElse(user -> {
+            user.getPermisos().size(); // Forzar carga
+
+            model.addAttribute("usuarioLogueado", user);
+
+            // Permisos individuales
+            Set<String> permisos = user.getPermisos().stream()
+                    .map(Permiso::getCodigo)
+                    .collect(Collectors.toSet());
+
+            model.addAttribute("AGENDA_DELETE", permisos.contains("AGENDA_DELETE"));
+            model.addAttribute("AGENDA_EDIT", permisos.contains("AGENDA_EDIT"));
+            model.addAttribute("AGENDA_CREATE", permisos.contains("AGENDA_CREATE"));
+            model.addAttribute("AGENDA_PDF", permisos.contains("AGENDA_PDF"));
+            model.addAttribute("AGENDA_STATUS", permisos.contains("AGENDA_STATUS"));
+            model.addAttribute("AGENDA_NOTES", permisos.contains("AGENDA_NOTES"));
+            model.addAttribute("AGENDA_TEAMS", permisos.contains("AGENDA_TEAMS"));
+
+        }, () -> {
+            model.addAttribute("AGENDA_DELETE", false);
+            model.addAttribute("AGENDA_EDIT", false);
+            model.addAttribute("AGENDA_CREATE", false);
+            model.addAttribute("AGENDA_PDF", false);
+            model.addAttribute("AGENDA_STATUS", false);
+            model.addAttribute("AGENDA_NOTES", false);
+            model.addAttribute("AGENDA_TEAMS", false);
+
+        });
 
         return "albumes/create";
     }
@@ -171,6 +204,34 @@ public class AlbumController {
     @GetMapping("/{id}")
     public String viewAlbum(@PathVariable Integer id, Model model, HttpSession session) {
 
+        //Validar acceso a la vista
+        Integer idUsuario = (Integer) session.getAttribute("idusuario");
+        usuarioService.findById(idUsuario).ifPresentOrElse(user -> {
+            user.getPermisos().size(); // Forzar carga
+
+            model.addAttribute("usuarioLogueado", user);
+
+            // Permisos individuales
+            Set<String> permisos = user.getPermisos().stream()
+                    .map(Permiso::getCodigo)
+                    .collect(Collectors.toSet());
+
+            model.addAttribute("PROYECTOS_CREATE_REPORT", permisos.contains("PROYECTOS_CREATE_REPORT"));
+            model.addAttribute("PROYECTOS_CREATE_SECTIONS", permisos.contains("PROYECTOS_CREATE_SECTIONS"));
+            model.addAttribute("PROYECTOS_EDIT_SECTIONS", permisos.contains("PROYECTOS_EDIT_SECTIONS"));
+            model.addAttribute("PROYECTOS_DELETE_SECTIONS", permisos.contains("PROYECTOS_DELETE_SECTIONS"));
+
+        }, () -> {
+            model.addAttribute("PROYECTOS_CREATE_REPORT", false);
+            model.addAttribute("PROYECTOS_CREATE_SECTIONS", false);
+            model.addAttribute("PROYECTOS_EDIT_SECTIONS", false);
+            model.addAttribute("PROYECTOS_DELETE_SECTIONS", false);
+
+        });
+
+
+
+
         // Obtener el ID del usuario desde la sesión
         Integer userId = Integer.parseInt(session.getAttribute("idusuario").toString());
         // Obtener el usuario desde la base de datos
@@ -178,8 +239,6 @@ public class AlbumController {
         // Determinar el rol
         String tipoUsuario = optionalUsuario.map(usuario::getTipo_usuario).orElse("");
         boolean isAdmin = "ADMIN".equals(tipoUsuario);
-        // Pasar los datos a la vista
-        model.addAttribute("isAdmin", isAdmin);
         model.addAttribute("tipoUsuario", tipoUsuario);
 
         Optional<album> optionalAlbum = albumService.get(id);

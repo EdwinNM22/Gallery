@@ -33,22 +33,11 @@ public class ReporteController {
         return usuarioService.findById(id).orElseThrow();
     }
 
-    private boolean esAdminOEdgar(String tipo) {
-        return "ADMIN".equals(tipo) || "SUPERVISORPLUS".equals(tipo) || "EDGAR".equals(tipo) || "SUPERVISOR".equals(tipo) ;
-    }
-
-    private boolean esSupervisorAdminOEdgar(String tipo) {
-        return "SUPERVISOR".equals(tipo) || "SUPERVISORPLUS".equals(tipo) || "ADMIN".equals(tipo) || "EDGAR".equals(tipo) ;
-    }
-
     @PostMapping("/draft")
     public ResponseEntity<String> draft(@PathVariable Integer albumId,
                                         @RequestParam String contenido,
                                         HttpSession sesion) {
         usuario u = usuarioSesion(sesion);
-        if (!esSupervisorAdminOEdgar(u.getTipo_usuario()))
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-
         servicio.saveDraft(albumId, u.getId(), contenido);
         return ResponseEntity.ok().build();
     }
@@ -58,9 +47,6 @@ public class ReporteController {
                                        @RequestParam String contenido,
                                        HttpSession sesion) {
         usuario u = usuarioSesion(sesion);
-        if (!esSupervisorAdminOEdgar(u.getTipo_usuario()))
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-
         try {
             servicio.send(albumId, u.getId(), contenido);
             return ResponseEntity.ok().build();
@@ -73,11 +59,8 @@ public class ReporteController {
     public String logs(@PathVariable Integer albumId,
                        Model model,
                        HttpSession sesion) {
-
         usuario u = usuarioSesion(sesion);
-        boolean editable = esAdminOEdgar(u.getTipo_usuario());
-
-        model.addAttribute("editable", editable);
+        model.addAttribute("editable", true); // editable siempre en true
         model.addAttribute("reportes", servicio.logs(albumId));
         return "albumes/report_logs :: body";
     }
@@ -88,18 +71,13 @@ public class ReporteController {
                        @PathVariable Integer id,
                        @RequestParam String contenido,
                        HttpSession sesion) {
-
         usuario u = usuarioSesion(sesion);
-        if (!esAdminOEdgar(u.getTipo_usuario()))
-            return "FORBIDDEN";
-
         servicio.update(id, contenido);
         return "OK";
     }
 
     @GetMapping("/pdf")
     public ResponseEntity<byte[]> allPdf(@PathVariable Integer albumId) throws Exception {
-
         album album = albumService.get(albumId).orElseThrow();
         List<reporte> sent = servicio.logs(albumId);
 
@@ -117,7 +95,6 @@ public class ReporteController {
     @GetMapping("/{id}/pdf")
     public ResponseEntity<byte[]> onePdf(@PathVariable Integer albumId,
                                          @PathVariable Integer id) throws Exception {
-
         album album = albumService.get(albumId).orElseThrow();
         reporte r   = servicio.findSent(id).orElseThrow();
 
@@ -142,12 +119,9 @@ public class ReporteController {
     public String delete(@PathVariable Integer albumId,
                          @PathVariable Integer id,
                          HttpSession sesion) {
-
         usuario u = usuarioSesion(sesion);
-        if (!esAdminOEdgar(u.getTipo_usuario()))
-            return "FORBIDDEN";
-
         servicio.delete(id);
         return "OK";
     }
 }
+

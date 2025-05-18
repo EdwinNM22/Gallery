@@ -17,6 +17,8 @@
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
   <!-- Custom styles -->
   <style>
     :root {
@@ -220,34 +222,25 @@
     </div>
 
     <div class="action-buttons">
-      <a th:href="@{/albumes/create}" class="btn-mega btn-secondary-mega animated delay-2">
+      <a th:href="@{/albumes/create}" class="btn-mega btn-secondary-mega animated delay-2" th:if="${AGENDA_ACCESS}" >
         <i class="fas fa-plus-circle btn-icon"></i>
         Agenda - New project/Nuevo proyecto
       </a>
-      <a th:href="@{/home}" class="btn-mega btn-secondary-mega animated delay-2">
+      <a th:href="@{/home}" class="btn-mega btn-secondary-mega animated delay-2" th:if="${PROYECTOS_ACCESS}">
         <i class="fas fa-folder-open btn-icon"></i>
         ONGOING PROJECTS/PROYECTO EN CURSO
       </a>
-      <a th:href="@{admin/reports}" class="btn-mega btn-secondary-mega animated delay-2">
+      <a th:href="@{admin/reports}" class="btn-mega btn-secondary-mega animated delay-2"th:if="${REPORTES_ACCESS}" >
         <i class="fa-solid fa-clipboard"></i>
         ​ ​ Manage reports
       </a>
-
-      <!-- Botón solo visible para ADMIN y EDGAR -->
-<!--      <a th:if="${tipoUsuario == 'ADMIN' or tipoUsuario == 'EDGAR'}"-->
-<!--         th:href="@{/equipo/asignacion}" class="btn-mega btn-secondary-mega animated delay-2">-->
-<!--        <i class="fas fa-users-gear btn-icon"></i>-->
-<!--        TEAM ASSIGNMENT / ASIGNACIÓN DE EQUIPOS-->
-<!--      </a>-->
-
-
       <!-- Botón dividido con margen de separación -->
       <div class="split-button-container" style="width: 100%; display: flex; gap: 4px; border-radius: 12px; overflow: hidden;">
-        <a th:href="@{usuario/vpsSecurity2024-}" class="btn-mega btn-secondary-mega" style="flex: 1; border-radius: 12px; margin-right: 2px;">
+        <a th:href="@{usuario/vpsSecurity2024-}" class="btn-mega btn-secondary-mega" style="flex: 1; border-radius: 12px; margin-right: 2px;" th:if="${USUARIOS_CREATE}">
           <i class="fas fa-solid fa-user-plus btn-icon"></i>
           NEW USER
         </a>
-        <a th:href="@{/usuario/show}" class="btn-mega btn-secondary-mega" style="flex: 1; border-radius: 12px; margin-left: 2px;">
+        <a th:href="@{/usuario/show}" class="btn-mega btn-secondary-mega" style="flex: 1; border-radius: 12px; margin-left: 2px;"th:if="${USUARIOS_ACCESS}" >
           <i class="fa-solid fa-users-gear btn-icon"></i>
           MANAGE USERS
         </a>

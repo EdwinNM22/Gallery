@@ -1,9 +1,11 @@
 package com.proyecto.galeria.controller;
 
+import com.proyecto.galeria.model.Permiso;
 import com.proyecto.galeria.model.foto;
 import com.proyecto.galeria.model.usuario;
 import com.proyecto.galeria.service.IUsuarioService;
 
+import com.proyecto.galeria.service.PermisoService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpSession;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.hibernate.tool.schema.SchemaToolingLogging.LOGGER;
 
@@ -26,6 +30,9 @@ public class UsuarioController {
     @Autowired
     private IUsuarioService usuarioService;
 
+    @Autowired
+    private PermisoService permisoService;
+
     private final Logger logger = LoggerFactory.getLogger(UsuarioController.class);
 
 
@@ -33,9 +40,43 @@ public class UsuarioController {
 
 
     @GetMapping("/show")
-    public String show(Model model){
+    public String show(Model model, HttpSession session) {
 
         model.addAttribute("usuarios", usuarioService.findAll());
+        model.addAttribute("permisos", permisoService.getAllPermisos());
+        model.addAttribute("permisosAgrupados", permisoService.getPermisosAgrupadosPorVista());
+
+
+        //Validar acceso a la vista
+        Integer idUsuario = (Integer) session.getAttribute("idusuario");
+        Optional<usuario> userOpt = usuarioService.findById(idUsuario);
+
+        if (userOpt.isEmpty() || userOpt.get().getPermisos().stream()
+                .noneMatch(p -> "USUARIOS_ACCESS".equals(p.getCodigo()))) {
+            return "redirect:/NoAccess/Access";
+        }
+
+        usuarioService.findById(idUsuario).ifPresentOrElse(user -> {
+            user.getPermisos().size(); // Forzar carga
+
+            model.addAttribute("usuarioLogueado", user);
+
+            // Permisos individuales
+            Set<String> permisos = user.getPermisos().stream()
+                    .map(Permiso::getCodigo)
+                    .collect(Collectors.toSet());
+
+            model.addAttribute("USUARIOS_EDIT_PASSWORD", permisos.contains("USUARIOS_EDIT_PASSWORD"));
+            model.addAttribute("USUARIOS_DELETE", permisos.contains("USUARIOS_DELETE"));
+
+
+        }, () -> {
+            model.addAttribute("USUARIOS_EDIT_PASSWORD", false);
+            model.addAttribute("USUARIOS_DELETE", false);
+
+
+        });
+
         return "usuario/show";
     }
 
@@ -78,7 +119,16 @@ public class UsuarioController {
     }
 
     @GetMapping("/vpsSecurity2024-")
-    public String create() {
+    public String create(HttpSession session) {
+
+        //Validar acceso a la vista
+        Integer idUsuario = (Integer) session.getAttribute("idusuario");
+        Optional<usuario> userOpt = usuarioService.findById(idUsuario);
+
+        if (userOpt.isEmpty() || userOpt.get().getPermisos().stream()
+                .noneMatch(p -> "USUARIOS_CREATE".equals(p.getCodigo()))) {
+            return "redirect:/NoAccess/Access";
+        }
         return "usuario/registro";
     }
 
@@ -122,18 +172,8 @@ public class UsuarioController {
             Optional<usuario> user = usuarioService.findById(Integer.parseInt(idUsuarioObj.toString()));
 
             if (user.isPresent()) {
-                String tipoUsuario = user.get().getTipo_usuario();
-                logger.info("Usuario encontrado - Tipo: {}", tipoUsuario);
-
-                if ("ADMIN".equalsIgnoreCase(tipoUsuario) ||
-                        "SUPERVISORPLUS".equalsIgnoreCase(tipoUsuario) ||
-                        "EDGAR".equalsIgnoreCase(tipoUsuario)) {
-                    return "redirect:/adm";
-                } else if ("SUPERVISOR".equalsIgnoreCase(tipoUsuario)) {
-                    return "redirect:/supervi";
-                } else {
-                    return "redirect:/mainMenu";
-                }
+                logger.info("Usuario encontrado - Redirigiendo a /adm");
+                return "redirect:/adm";
             } else {
                 logger.error("Usuario no encontrado en BD pero existe en sesión");
                 session.invalidate();
@@ -145,6 +185,7 @@ public class UsuarioController {
             return "redirect:/usuario/login";
         }
     }
+
 
 
     @PostMapping("/delete")

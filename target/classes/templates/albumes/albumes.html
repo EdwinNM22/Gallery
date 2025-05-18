@@ -613,9 +613,7 @@
 </head>
 <body>
 
-<!-- Navigation -->
-<div th:if="${isAdmin}" th:include="adm/template_admin.html::header"></div>
-<div th:unless="${isAdmin}" th:include="usuario/template_usuario.html::header"></div>
+
 
 <!-- Toast Notifications -->
 <div class="toast-container">
@@ -655,18 +653,14 @@
                 <i class="fas fa-arrow-left"></i> Back
             </button>
 
-            <button type="button" class="btn-add-fragment" onclick="showAddFragmentModal()">
+            <button type="button" class="btn-add-fragment" onclick="showAddFragmentModal()"  th:if="${PROYECTOS_CREATE_SECTIONS}">
                 <i class="fas fa-plus"></i> add project section / Agregar sección de proyecto
             </button>
 
-            <th:block th:with="rol=${session.tipo_usuario}">
-
-                <button id="logsBtn"
-                        class="btn btn-outline-info btn-rounded"
-                        th:if="${rol != null and !#strings.equalsIgnoreCase(rol,'USER')}">
-                    <i class="fas fa-book"></i> Manage Reports
-                </button>
-            </th:block>
+            <button id="logsBtn" class="btn btn-outline-info btn-rounded"
+                    th:if="${PROYECTOS_CREATE_REPORT}">
+                <i class="fas fa-book"></i> Manage Reports
+            </button>
         </div>
     </div>
 </div>
@@ -682,12 +676,6 @@
                     <p class="fragment-description" th:text="${album.descripcion} ?: 'Initial project fragment'">Initial project fragment</p>
                 </div>
                 <div class="fragment-actions">
-                    <button class="fragment-btn" title="Edit fragment" disabled aria-label="Edit main fragment (disabled)">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    <button class="fragment-btn" title="Delete fragment" disabled aria-label="Delete main fragment (disabled)">
-                        <i class="fas fa-trash"></i>
-                    </button>
                 </div>
             </div>
             <div class="albums-horizontal-scroll">
@@ -733,10 +721,14 @@
                     <p class="fragment-description" th:text="${fragment.descripcion} ?: 'No description'">Fragment description</p>
                 </div>
                 <div class="fragment-actions">
-                    <button class="fragment-btn" title="Edit fragment" th:attr="onclick='prepareEditFragment(\'' + ${fragment.nombre} + '\')'" aria-label="Edit fragment">
+                    <button class="fragment-btn" title="Edit fragment"
+                            th:attr="onclick='prepareEditFragment(\'' + ${fragment.nombre} + '\')'" aria-label="Edit fragment"
+                            th:if="${PROYECTOS_EDIT_SECTIONS}">
                         <i class="fas fa-edit"></i>
                     </button>
-                    <button class="fragment-btn" title="Delete fragment" th:attr="onclick='confirmDeleteFragment(\'' + ${fragment.nombre} + '\')'" aria-label="Delete fragment">
+                    <button class="fragment-btn" title="Delete fragment"
+                            th:attr="onclick='confirmDeleteFragment(\'' + ${fragment.nombre} + '\')'" aria-label="Delete fragment"
+                            th:if="${PROYECTOS_DELETE_SECTIONS}">
                         <i class="fas fa-trash"></i>
                     </button>
                 </div>
@@ -788,7 +780,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="fragmentModalLabel">
-                    <i class="fas fa-plus-circle"></i> <span id="modalActionText">Add New</span> Fragment
+                    <i class="fas fa-plus-circle"></i> <span id="modalActionText">Add New  </span>​ Section
                 </h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
@@ -799,13 +791,13 @@
                 <input type="hidden" id="fragmentId" name="fragmentId" value="">
                 <div class="modal-body">
                     <div class="form-group">
-                        <label for="fragmentName" class="form-label">Fragment Name</label>
+                        <label for="fragmentName" class="form-label">Section Name</label>
                         <input type="text" class="form-control" id="fragmentName" name="name" required aria-required="true">
                     </div>
                     <div class="form-group">
                         <label for="fragmentDescription" class="form-label">Description (Optional)</label>
                         <textarea class="form-control" id="fragmentDescription" name="description" rows="3" aria-describedby="descriptionHelp"></textarea>
-                        <small id="descriptionHelp" class="form-text text-muted">Add a brief description of this fragment</small>
+                        <small id="descriptionHelp" class="form-text text-muted">Add a brief description of this section</small>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -831,7 +823,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <p>Are you sure you want to delete this fragment? All associated subalbums and photos will be permanently deleted.</p>
+                <p>Are you sure you want to delete this section? All associated subalbums and photos will be permanently deleted.</p>
                 <input type="hidden" id="fragmentToDelete" value="">
             </div>
             <div class="modal-footer">
@@ -885,7 +877,7 @@
                 const fragmentName = $('#fragmentName').val().trim();
                 if (!fragmentName) {
                     e.preventDefault();
-                    alert('Please enter a fragment name');
+                    alert('Please enter a section name');
                     $('#fragmentName').focus();
                     return false;
                 }
