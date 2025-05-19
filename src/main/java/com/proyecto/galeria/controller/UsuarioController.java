@@ -51,6 +51,15 @@ public class UsuarioController {
         Integer idUsuario = (Integer) session.getAttribute("idusuario");
         Optional<usuario> userOpt = usuarioService.findById(idUsuario);
 
+
+
+        // para dar permisos a edgar
+        Integer userId = Integer.parseInt(session.getAttribute("idusuario").toString());
+        // Buscar el usuario y obtener su rol
+        Optional<usuario> optionalUsuario = usuarioService.findById(userId);
+        String userRole = optionalUsuario.map(usuario::getTipo_usuario).orElse("USUARIO");
+        model.addAttribute("userRole", userRole);
+
         if (userOpt.isEmpty() || userOpt.get().getPermisos().stream()
                 .noneMatch(p -> "USUARIOS_ACCESS".equals(p.getCodigo()))) {
             return "redirect:/NoAccess/Access";

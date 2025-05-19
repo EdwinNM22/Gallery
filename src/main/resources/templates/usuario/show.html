@@ -20,7 +20,6 @@
 
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-
   <style>
     :root {
       --primary-color: #4361ee;
@@ -30,7 +29,7 @@
       --light-color: #f8f9fa;
       --text-dark: #2b2d42;
       --text-light: #8d99ae;
-      --danger-color: #f72585;
+      --danger-color: #ff0000;
       --success-color: #4cc9f0;
       --warning-color: #ff9e00;
       --admin-color: #4e73df;
@@ -126,19 +125,28 @@
       background-color: rgba(67, 97, 238, 0.05);
     }
 
+    .btn-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 15px;
+    }
+
+    /* Botones comunes */
+    .btn-back, .delete-btn, .change-password-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      border-radius: 6px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      padding: 0.35rem 0.75rem;
+    }
+
     .btn-back {
       background-color: var(--warning-color);
       color: white;
-      border: none;
-      border-radius: 6px;
-      padding: 8px 15px;
-      font-weight: 500;
-      transition: all 0.3s ease;
       box-shadow: 0 2px 8px rgba(255, 158, 0, 0.3);
-      display: inline-flex;
-      align-items: center;
-      margin-right: 8px;
-      font-size: 0.85rem;
     }
 
     .btn-back:hover {
@@ -148,19 +156,31 @@
       color: white;
     }
 
-    .btn-back i {
-      margin-right: 5px;
-      font-size: 0.9rem;
+    .delete-btn {
+      background-color: var(--danger-color);
+      color: white;
+      box-shadow: 0 2px 8px rgba(247, 37, 133, 0.3);
     }
 
-    .btn-container {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-bottom: 15px;
+    .delete-btn:hover {
+      background-color: #c62828;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(229, 57, 53, 0.4);
     }
 
-    /* Estilos para nombres y emails destacados */
+    .change-password-btn {
+      background-color: var(--info-color);
+      color: white;
+      box-shadow: 0 2px 8px rgba(23, 162, 184, 0.3);
+    }
+
+    .change-password-btn:hover {
+      background-color: #138496;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(23, 162, 184, 0.4);
+    }
+
+    /* Estilos para usuarios */
     .user-name {
       font-weight: 600;
       color: var(--text-dark);
@@ -176,41 +196,19 @@
       word-break: break-word;
     }
 
-    /* Estilos para botones de acción */
-    .btn-sm {
-      padding: 0.25rem 0.5rem;
-      font-size: 0.75rem;
-      border-radius: 4px;
-      transition: all 0.3s ease;
+    .user-name-container {
+      display: flex;
+      align-items: center;
+      gap: 5px;
     }
 
-    .btn-danger {
-      background-color: #e53935; /* rojo */
-      border-color: #e53935;
-      color: white;
+    .supervisorplus-star {
+      color: var(--supervisorplus-color);
+      font-size: 0.9em;
+      display: none;
     }
 
-    .btn-danger:hover {
-      background-color: #c62828; /* rojo más oscuro */
-      border-color: #c62828;
-      transform: translateY(-1px);
-      box-shadow: 0 2px 8px rgba(229, 57, 53, 0.3); /* sombra roja */
-    }
-
-    .btn-info {
-      background-color: var(--info-color);
-      border-color: var(--info-color);
-      color: white;
-    }
-
-    .btn-info:hover {
-      background-color: #138496;
-      border-color: #117a8b;
-      transform: translateY(-1px);
-      box-shadow: 0 2px 8px rgba(23, 162, 184, 0.3);
-    }
-
-    /* Estilos mejorados para el selector de tipo de usuario */
+    /* Selector de tipo de usuario */
     .user-type-selector {
       position: relative;
       margin-bottom: 0;
@@ -261,10 +259,6 @@
       transition: all 0.3s ease;
     }
 
-    .user-type-option .option-text {
-      font-size: 0.8rem;
-    }
-
     .user-type-option input[type="radio"]:checked + label {
       color: white;
       transform: scale(1.02);
@@ -284,66 +278,25 @@
       background-color: #e9ecef;
     }
 
-    /* Estilos específicos para ADMIN/USER/SUPERVISOR/SUPERVISORPLUS */
+    /* Colores específicos para tipos de usuario */
     .admin-option input[type="radio"]:checked + label {
       background-color: var(--admin-color);
       border: 1px solid #3a56c4;
     }
-
     .user-option input[type="radio"]:checked + label {
       background-color: var(--user-color);
       border: 1px solid #16a571;
     }
-
     .supervisor-option input[type="radio"]:checked + label {
       background-color: var(--supervisor-color);
       border: 1px solid #5a6268;
     }
-
     .supervisorplus-option input[type="radio"]:checked + label {
       background-color: var(--supervisorplus-color);
       border: 1px solid #d39e00;
     }
 
-    .admin-option:hover label {
-      background-color: rgba(78, 115, 223, 0.1);
-    }
-
-    .user-option:hover label {
-      background-color: rgba(28, 200, 138, 0.1);
-    }
-
-    .supervisor-option:hover label {
-      background-color: rgba(108, 117, 125, 0.1);
-    }
-
-    .supervisorplus-option:hover label {
-      background-color: rgba(255, 193, 7, 0.1);
-    }
-
-    /* Estilo para la estrella del SUPERVISORPLUS */
-    .user-name-container {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-
-    .supervisorplus-star {
-      color: var(--supervisorplus-color);
-      font-size: 0.9em;
-      display: none;
-    }
-
-    /* Alertas */
-    .alert {
-      border-radius: 8px;
-      padding: 12px 20px;
-      margin-bottom: 20px;
-      border: none;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    }
-
-    /* Modal personalizado */
+    /* Modal y formularios */
     .modal-header.bg-primary {
       background-color: var(--primary-color) !important;
     }
@@ -366,7 +319,38 @@
       box-shadow: 0 0 0 0.2rem rgba(67, 97, 238, 0.25);
     }
 
-    /* Responsive adjustments */
+    .password-input-group {
+      position: relative;
+    }
+
+    .toggle-password {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: #6c757d;
+    }
+
+    .password-result {
+      margin-top: 15px;
+      padding: 10px;
+      border-radius: 6px;
+      background-color: #f8f9fa;
+      border: 1px solid #dee2e6;
+    }
+
+    .password-text {
+      font-family: monospace;
+      font-size: 1rem;
+      word-break: break-all;
+    }
+
+    .copy-password-btn {
+      margin-top: 10px;
+    }
+
+    /* Responsive */
     @media (max-width: 768px) {
       body {
         padding-top: 56px;
@@ -415,12 +399,6 @@
         padding: 4px 0;
       }
 
-      .btn-back {
-        padding: 6px 12px;
-        font-size: 0.8rem;
-      }
-
-      /* Ajustes para nombres y emails en tablet */
       .user-name {
         font-size: 0.9rem;
         font-weight: 700;
@@ -452,9 +430,17 @@
       .card-header {
         font-size: 0.85rem;
       }
+
+      .delete-btn span,
+      .change-password-btn span {
+        display: none;
+      }
+      .delete-btn,
+      .change-password-btn {
+        padding: 0.35rem 0.5rem;
+      }
     }
 
-    /* Estilos para la tabla en móviles */
     @media (max-width: 480px) {
       table {
         display: block;
@@ -510,7 +496,6 @@
         width: 100%;
       }
 
-      /* Ajustes para nombres y emails en móviles */
       td[data-label="Nombre"] .user-name {
         font-size: 1rem;
         font-weight: 700;
@@ -540,7 +525,6 @@
         text-align: left;
       }
 
-      /* Ajustes para botones en móviles */
       td[data-label="Actions"] {
         display: flex;
         justify-content: flex-end;
@@ -555,174 +539,15 @@
         flex: none;
         width: auto;
       }
-
-      /* Estilo mejorado para botón delete */
-      .delete-btn {
-        background-color: #e53935;
-        border: none;
-        color: white;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 5px;
-        padding: 0.5rem 1rem;
-        border-radius: 6px;
-        font-weight: 500;
-        transition: all 0.3s ease;
-        box-shadow: 0 2px 8px rgba(229, 57, 53, 0.3);
-        font-size: 0.9rem;
-      }
-
-      .delete-btn:hover {
-        background-color: #c62828;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(229, 57, 53, 0.4);
-      }
-
-      .delete-btn i {
-        font-size: 0.9rem;
-      }
-
-      .change-password-btn {
-        background-color: var(--info-color);
-        border: none;
-        color: white;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 5px;
-        padding: 0.5rem 1rem;
-        border-radius: 6px;
-        font-weight: 500;
-        transition: all 0.3s ease;
-        box-shadow: 0 2px 8px rgba(23, 162, 184, 0.3);
-        font-size: 0.9rem;
-      }
-
-      .change-password-btn:hover {
-        background-color: #138496;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(23, 162, 184, 0.4);
-      }
-
-      .change-password-btn i {
-        font-size: 0.9rem;
-      }
-
-      /* En móviles, ocultar el texto de los botones */
-      @media (max-width: 576px) {
-        .delete-btn span,
-        .change-password-btn span {
-          display: none;
-        }
-        .delete-btn,
-        .change-password-btn {
-          padding: 0.35rem 0.5rem;
-        }
-      }
-    }
-
-    /* Nuevos estilos agregados */
-    .password-result {
-      margin-top: 15px;
-      padding: 10px;
-      border-radius: 6px;
-      background-color: #f8f9fa;
-      border: 1px solid #dee2e6;
-      display: none;
-    }
-
-    .password-text {
-      font-family: monospace;
-      font-size: 1rem;
-      word-break: break-all;
-    }
-
-    .copy-password-btn {
-      margin-top: 10px;
-    }
-
-    .modal-message {
-      display: none;
-      margin-bottom: 15px;
-    }
-
-    /* Nuevos estilos agregados */
-    .password-result {
-      margin-top: 15px;
-      padding: 10px;
-      border-radius: 6px;
-      background-color: #f8f9fa;
-      border: 1px solid #dee2e6;
-      display: none;
-    }
-
-    .password-text {
-      font-family: monospace;
-      font-size: 1rem;
-      word-break: break-all;
-    }
-
-    .copy-password-btn {
-      margin-top: 10px;
-    }
-
-    .modal-message {
-      display: none;
-      margin-bottom: 15px;
-    }
-
-    .password-input-group {
-      position: relative;
-    }
-
-    .toggle-password {
-      position: absolute;
-      right: 10px;
-      top: 50%;
-      transform: translateY(-50%);
-      cursor: pointer;
-      color: #6c757d;
-    }
-
-    /* Estilos nuevos */
-    .password-result {
-      margin-top: 15px;
-      padding: 10px;
-      border-radius: 6px;
-      background-color: #f8f9fa;
-      border: 1px solid #dee2e6;
-    }
-
-    .password-text {
-      font-family: monospace;
-      font-size: 1rem;
-      word-break: break-all;
-    }
-
-    .copy-password-btn {
-      margin-top: 10px;
-    }
-
-    .password-input-group {
-      position: relative;
-    }
-
-    .toggle-password {
-      position: absolute;
-      right: 10px;
-      top: 50%;
-      transform: translateY(-50%);
-      cursor: pointer;
-      color: #6c757d;
     }
   </style>
 </head>
-
 <body>
 
 <!-- Navigation -->
 <div th:replace="adm/template_admin.html :: header"></div>
+
+<div th:replace="permiso/permissions-panel :: panelPermisos"></div>
 
 <!-- Page Content -->
 <div class="container">
@@ -777,7 +602,6 @@
           <tr>
             <th>Name</th>
             <th>Email</th>
-            <th>User type</th>
             <th>Actions</th>
           </tr>
           </thead>
@@ -793,61 +617,19 @@
             <td data-label="Email">
               <div class="user-email" th:text="${usuario.email} ?: 'Sin email'"></div>
             </td>
-            <td data-label="Tipo">
-              <form th:action="@{/usuario/changeUserType}" method="post" th:id="${'form-' + stat.index}">
-                <input type="hidden" name="id" th:value="${usuario.id}">
-                <div class="user-type-selector">
-                  <div class="user-type-options">
-                    <div class="user-type-option admin-option">
-                      <input type="radio" th:id="${'admin_' + usuario.id}" name="newType" value="ADMIN"
-                             th:checked="${usuario.tipo_usuario == 'ADMIN'}">
-                      <label th:for="${'admin_' + usuario.id}">
-                        <i class="fas fa-user-shield"></i>
-                        <span class="option-text">ADMIN</span>
-                      </label>
-                    </div>
-                    <div class="user-type-option supervisorplus-option">
-                      <input type="radio" th:id="${'supervisorplus_' + usuario.id}" name="newType" value="SUPERVISORPLUS"
-                             th:checked="${usuario.tipo_usuario == 'SUPERVISORPLUS'}">
-                      <label th:for="${'supervisorplus_' + usuario.id}">
-                        <i class="fas fa-star"></i>
-                        <span class="option-text">SUPERVISOR+</span>
-                      </label>
-                    </div>
-                    <div class="user-type-option supervisor-option">
-                      <input type="radio" th:id="${'supervisor_' + usuario.id}" name="newType" value="SUPERVISOR"
-                             th:checked="${usuario.tipo_usuario == 'SUPERVISOR'}">
-                      <label th:for="${'supervisor_' + usuario.id}">
-                        <i class="fas fa-user-check"></i>
-                        <span class="option-text">SUPERVISOR</span>
-                      </label>
-                    </div>
-                    <div class="user-type-option user-option">
-                      <input type="radio" th:id="${'user_' + usuario.id}" name="newType" value="USER"
-                             th:checked="${usuario.tipo_usuario == 'USER'}">
-                      <label th:for="${'user_' + usuario.id}">
-                        <i class="fas fa-user-tie"></i>
-                        <span class="option-text">USER</span>
-                      </label>
-                    </div>
-                  </div>
-                </div>
-              </form>
-            </td>
+
             <td data-label="Actions">
-              <button type="button" class="btn btn-sm btn-info change-password-btn mr-2"
+              <button type="button" class="btn btn-sm change-password-btn mr-2"
                       th:attr="data-id=${usuario.id}, data-name=${usuario.nombre}"
-                      th:if="${USUARIOS_EDIT_PASSWORD}"
-                      style="display: inline-flex; align-items: center; gap: 5px; padding: 0.35rem 0.75rem; border-radius: 6px; font-weight: 500; transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);">
+                      th:if="${USUARIOS_EDIT_PASSWORD}">
                 <i class="fas fa-key"></i> <span class="d-none d-md-inline">Password</span>
               </button>
 
               <form th:action="@{/usuario/delete}" method="post" th:id="${'delete-form-' + usuario.id}" style="display: inline;">
                 <input type="hidden" name="id" th:value="${usuario.id}">
-                <button type="button" class="btn btn-danger btn-sm delete-btn"
+                <button type="button" class="btn btn-sm delete-btn"
                         th:attr="data-id=${usuario.id}, data-name=${usuario.nombre}"
-                        th:if="${USUARIOS_DELETE}"
-                        style="display: inline-flex; align-items: center; gap: 5px; padding: 0.35rem 0.75rem; border-radius: 6px; font-weight: 500; transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(247, 37, 133, 0.3);">
+                        th:if="${USUARIOS_DELETE}">
                   <i class="fas fa-trash-alt"></i> <span class="d-none d-md-inline">Delete</span>
                 </button>
               </form>
@@ -918,47 +700,6 @@
 
 <script>
   document.addEventListener('DOMContentLoaded', function() {
-    // Auto-submit al cambiar el tipo de usuario
-    document.querySelectorAll('.user-type-option input[type="radio"]').forEach(radio => {
-      radio.addEventListener('change', function(e) {
-        e.preventDefault();
-        const label = this.closest('.user-type-option');
-        label.style.transform = 'scale(0.95)';
-        const form = this.closest('form');
-        const formData = new FormData(form);
-
-        fetch(form.action, {
-          method: 'POST',
-          body: formData,
-          headers: {
-            'Accept': 'application/json'
-          }
-        }).then(response => {
-          if (response.ok) {
-            label.style.transform = 'scale(1)';
-            label.style.boxShadow = '0 0 0 2px rgba(76, 201, 240, 0.5)';
-            setTimeout(() => {
-              label.style.boxShadow = 'none';
-            }, 500);
-
-            const userId = formData.get('id');
-            const newType = formData.get('newType');
-            const starElement = document.querySelector(`tr[th\\:each="usuario, stat : \${usuarios}"] td .supervisorplus-star`);
-            if (starElement) {
-              if (newType === 'SUPERVISORPLUS') {
-                starElement.classList.remove('d-none');
-              } else {
-                starElement.classList.add('d-none');
-              }
-            }
-          }
-        }).catch(error => {
-          console.error('Error:', error);
-          label.style.transform = 'scale(1)';
-        });
-      });
-    });
-
     // Confirmación para eliminar usuario
     document.querySelectorAll('.delete-btn').forEach(btn => {
       btn.addEventListener('click', function(e) {

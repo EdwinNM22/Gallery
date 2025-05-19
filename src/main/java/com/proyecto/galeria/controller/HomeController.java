@@ -44,8 +44,18 @@ public class HomeController {
         Integer userId = Integer.parseInt(session.getAttribute("idusuario").toString());
         Optional<usuario> optionalUsuario = usuarioService.findById(userId);
 
+        // para dar permisos a edgar
+
+        // Buscar el usuario y obtener su rol
+
+        String userRole = optionalUsuario.map(usuario::getTipo_usuario).orElse("USUARIO");
+        model.addAttribute("userRole", userRole);
+
+
         String tipoUsuario = optionalUsuario.map(usuario::getTipo_usuario).orElse("UNKNOWN");
         boolean isAdmin = "ADMIN".equals(tipoUsuario);
+
+
 
         model.addAttribute("isAdmin", isAdmin);
         model.addAttribute("tipoUsuario", tipoUsuario);

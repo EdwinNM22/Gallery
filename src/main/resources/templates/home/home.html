@@ -17,6 +17,8 @@
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
   <!-- Custom styles -->
   <style>
     :root {
@@ -413,7 +415,7 @@
 </head>
 <body>
 
-<div th:replace="permiso/permissions-panel :: panelPermisos"></div>
+
 <!-- Navigation -->
 <div th:if="${tipoUsuario == 'USER'}" th:include="usuario/template_usuario.html :: header"></div>
 <div th:if="${tipoUsuario != 'USER'}" th:include="adm/template_admin.html :: header"></div>
@@ -425,6 +427,8 @@
     <p>Select the assigned project.</p>
   </div>
 </header>
+
+<div th:replace="permiso/permissions-panel :: panelPermisos"></div>
 
 <!-- Projects Grid -->
 <div th:if="${not #lists.isEmpty(albumes)}">

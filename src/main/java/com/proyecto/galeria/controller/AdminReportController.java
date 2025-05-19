@@ -39,6 +39,15 @@ public class AdminReportController {
         model.addAttribute("usuarios", usuarioService.findAll());
         model.addAttribute("permisosAgrupados", permisoService.getPermisosAgrupadosPorVista());
 
+        // para dar permisos a edgar
+        Integer userId = Integer.parseInt(session.getAttribute("idusuario").toString());
+        // Buscar el usuario y obtener su rol
+        Optional<usuario> optionalUsuario = usuarioService.findById(userId);
+        String userRole = optionalUsuario.map(usuario::getTipo_usuario).orElse("USUARIO");
+        model.addAttribute("userRole", userRole);
+
+
+
 
         //Validar acceso a la vista
         Integer idUsuario = (Integer) session.getAttribute("idusuario");

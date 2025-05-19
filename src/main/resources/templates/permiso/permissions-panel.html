@@ -17,7 +17,7 @@
       <div class="modal-content">
         <div class="modal-header bg-gradient-primary text-white">
           <h5 class="modal-title font-weight-bold" id="permissionsModalLabel">
-            <i class="fas fa-user-cog mr-2"></i>Gestión de Permisos
+            <i class="fas fa-user-cog mr-2"></i>Permit Management
           </h5>
           <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
@@ -32,7 +32,7 @@
                   <span class="input-group-text bg-light"><i class="fas fa-search"></i></span>
                 </div>
                 <select class="form-control select2-style" id="userSelect">
-                  <option value="">-- Seleccione un usuario --</option>
+                  <option value="">-- Select a user --</option>
                   <option th:each="user : ${usuarios}"
                           th:value="${user.id}"
                           th:text="${user.nombre + ' (' + user.email + ')'}"></option>
@@ -61,10 +61,10 @@
             <div class="col-12 text-center">
               <div class="d-flex flex-column flex-md-row justify-content-center">
                 <button id="selectAllPermsBtn" class="btn btn-info btn-rounded shadow-sm px-3 px-md-4 py-1 py-md-2 mb-2 mb-md-0 mr-md-2">
-                  <i class="fas fa-check-circle mr-1 mr-md-2"></i>Agregar todos
+                  <i class="fas fa-check-circle mr-1 mr-md-2"></i>Add all
                 </button>
                 <button id="deselectAllPermsBtn" class="btn btn-warning btn-rounded shadow-sm px-3 px-md-4 py-1 py-md-2 mb-2 mb-md-0 mr-md-2">
-                  <i class="fas fa-times-circle mr-1 mr-md-2"></i>Quitar todos
+                  <i class="fas fa-times-circle mr-1 mr-md-2"></i>remove all
                 </button>
               </div>
             </div>
@@ -79,7 +79,7 @@
                 <div class="col-12 col-md-6 mb-3 mb-md-4">
                   <div class="card shadow-sm h-100">
                     <div class="card-header bg-primary text-white py-2 py-md-3">
-                      <h6 class="mb-0"><i class="fas fa-door-open mr-1 mr-md-2"></i>Acceso</h6>
+                      <h6 class="mb-0"><i class="fas fa-door-open mr-1 mr-md-2"></i>Access</h6>
                     </div>
                     <div class="card-body p-2 p-md-3">
                       <div th:each="permiso : ${permisosAgrupados.get(vista)}"
@@ -100,7 +100,7 @@
                 <div class="col-12 col-md-6 mb-3 mb-md-0">
                   <div class="card shadow-sm h-100">
                     <div class="card-header bg-success text-white py-2 py-md-3">
-                      <h6 class="mb-0"><i class="fas fa-tasks mr-1 mr-md-2"></i>Acciones</h6>
+                      <h6 class="mb-0"><i class="fas fa-tasks mr-1 mr-md-2"></i>Actions</h6>
                     </div>
                     <div class="card-body p-2 p-md-3">
                       <div th:each="permiso : ${permisosAgrupados.get(vista)}"
@@ -125,7 +125,7 @@
           <div class="row mt-3">
             <div class="col-12 text-center">
               <button id="savePermChangesBtn" class="btn btn-primary btn-rounded shadow-sm px-4 px-md-5 py-1 py-md-2">
-                <i class="fas fa-save mr-1 mr-md-2"></i>Guardar Cambios
+                <i class="fas fa-save mr-1 mr-md-2"></i>Save Changes
               </button>
             </div>
           </div>
@@ -133,7 +133,7 @@
 
         <div class="modal-footer bg-light py-2 py-md-3">
           <button type="button" class="btn btn-outline-secondary btn-rounded px-3 px-md-4 py-1 py-md-2" data-dismiss="modal">
-            <i class="fas fa-times mr-1 mr-md-2"></i>Cerrar
+            <i class="fas fa-times mr-1 mr-md-2"></i>Close
           </button>
         </div>
       </div>

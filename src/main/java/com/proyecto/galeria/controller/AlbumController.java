@@ -210,6 +210,9 @@ public class AlbumController {
     @GetMapping("/{id}")
     public String viewAlbum(@PathVariable Integer id, Model model, HttpSession session) {
 
+
+
+
         //Validar acceso a la vista
         Integer idUsuario = (Integer) session.getAttribute("idusuario");
         usuarioService.findById(idUsuario).ifPresentOrElse(user -> {
@@ -240,15 +243,13 @@ public class AlbumController {
 
 
 
-
-        // Obtener el ID del usuario desde la sesión
+        // para dar permisos a edgar
         Integer userId = Integer.parseInt(session.getAttribute("idusuario").toString());
-        // Obtener el usuario desde la base de datos
+        // Buscar el usuario y obtener su rol
         Optional<usuario> optionalUsuario = usuarioService.findById(userId);
-        // Determinar el rol
-        String tipoUsuario = optionalUsuario.map(usuario::getTipo_usuario).orElse("");
-        boolean isAdmin = "ADMIN".equals(tipoUsuario);
-        model.addAttribute("tipoUsuario", tipoUsuario);
+        String userRole = optionalUsuario.map(usuario::getTipo_usuario).orElse("USUARIO");
+        model.addAttribute("userRole", userRole);
+
 
         Optional<album> optionalAlbum = albumService.get(id);
         if (optionalAlbum.isPresent()) {

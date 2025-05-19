@@ -35,7 +35,6 @@ public class AdmController {
         usuarioService.findById(idUsuario).ifPresentOrElse(user -> {
             user.getPermisos().size(); // Forzar carga
 
-
             // para dar permisos a edgar
             Integer userId = Integer.parseInt(session.getAttribute("idusuario").toString());
             // Buscar el usuario y obtener su rol
