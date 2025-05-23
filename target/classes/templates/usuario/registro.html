@@ -4,293 +4,423 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="Registro de usuarios por administradores">
+  <meta name="description" content="User Registration">
   <meta name="author" content="">
 
-  <title>User Registration | Admin</title>
+  <title>User Registration</title>
 
   <!-- Bootstrap core CSS -->
   <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
   <!-- Font Awesome -->
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+  <!-- Google Fonts - Montserrat -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-  <!-- Custom styles for this template -->
+  <!-- Custom styles -->
   <style>
     body {
-      background-color: #f8f9fa;
+      font-family: 'Montserrat', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #e0e0e0;
+      position: relative;
+      min-height: 100vh;
+      margin: 0;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
     }
 
-    .admin-card {
+    body:before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: -1;
+    }
+
+    .card {
       border: none;
-      border-radius: 10px;
-      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
-      width: 500px;
+      border-radius: 8px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      background: rgba(26, 42, 54, 0.9);
+      overflow: hidden;
+      backdrop-filter: blur(5px);
+      border: 1px solid rgba(74, 144, 226, 0.2);
+      position: relative;
+    }
+
+    .card:before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #4a90e2, #5aa8ff, #4a90e2);
+      background-size: 200% 200%;
+      animation: gradient 3s ease infinite;
+    }
+
+    @keyframes gradient {
+      0% {
+        background-position: 0% 50%;
+      }
+
+      50% {
+        background-position: 100% 50%;
+      }
+
+      100% {
+        background-position: 0% 50%;
+      }
+    }
+
+    .card-header {
+      background-color: rgba(0, 0, 0, 0.2);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 1.5rem;
+      text-align: center;
     }
 
     .card-body {
-      padding: 2rem;
+      padding: 2.5rem;
     }
 
     .form-control {
       border-radius: 6px;
       padding: 1rem 1.25rem;
+      background-color: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #e0e0e0;
+      transition: all 0.3s ease;
     }
 
-    .btn-register {
-      background-color: #4361ee;
-      border-color: #4361ee;
-      padding: 0.8rem 1.5rem;
+    .form-control:focus {
+      background-color: rgba(255, 255, 255, 0.1);
+      border-color: #4a90e2;
+      box-shadow: 0 0 0 0.2rem rgba(74, 144, 226, 0.25);
+      color: #ffffff;
+    }
+
+    .form-group label {
       font-weight: 500;
-      border-radius: 6px;
-      transition: all 0.3s;
-      color: white !important;
+      color: #b0b0b0;
+      margin-bottom: 0.5rem;
     }
 
-    .btn-register:hover {
-      background-color: #3a56d4;
-      border-color: #3a56d4;
-      transform: translateY(-2px);
-      box-shadow: 0 4px 8px rgba(67, 97, 238, 0.2);
-      color: white !important;
-    }
-
-    .btn-back {
-      background-color: #f8f9fa;
-      border: 1px solid #dee2e6;
-      color: #495057;
-      padding: 0.8rem 1.5rem;
-      font-weight: 500;
-      border-radius: 6px;
-      transition: all 0.3s;
-    }
-
-    .btn-back:hover {
-      background-color: #e9ecef;
-      border-color: #ced4da;
-      transform: translateY(-2px);
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-      color: #495057;
-      text-decoration: none;
-    }
-
-
-    .credentials-box {
-      background-color: #f8f9fa;
-      border: 1px solid #dee2e6;
+    button {
       border-radius: 6px;
       padding: 1rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      transition: all 0.3s ease;
+    }
+
+    .btn-primary {
+      background-color: #4a90e2;
+      border-color: #4a90e2;
+    }
+
+    .btn-primary:hover {
+      background-color: #3a7bc8;
+      border-color: #3a7bc8;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(74, 144, 226, 0.3);
+    }
+
+    .login-link {
+      text-align: center;
+      margin-top: 20px;
+      color: #b0b0b0;
+    }
+
+    .login-link a {
+      color: #4a90e2;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .login-link a:hover {
+      text-decoration: underline;
+      color: #3a7bc8;
+    }
+
+    h2 {
+      color: #ffffff;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      position: relative;
+      padding-bottom: 0.5rem;
+    }
+
+    h2:after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 50px;
+      height: 3px;
+      background: linear-gradient(90deg, #4a90e2, #5aa8ff);
+      border-radius: 3px;
+    }
+
+    .accent-line {
+      height: 4px;
+      background: linear-gradient(90deg, #4a90e2, #5aa8ff);
+      margin-bottom: 1.5rem;
+      border-radius: 2px;
+    }
+
+    .company-logo {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .company-logo img {
+      height: 40px;
+      filter: brightness(0) invert(1);
+    }
+
+    .company-logo svg {
+      height: 120px;
+      width: auto;
+      color: #4a90e2;
+      filter: drop-shadow(0 0 8px rgba(74, 144, 226, 0.5));
+    }
+
+    /* Binary code animation in background */
+    .binary-code {
+      position: absolute;
+      color: rgba(74, 144, 226, 0.1);
+      font-family: monospace;
+      font-size: 14px;
+      white-space: nowrap;
+      z-index: -1;
+      animation: scroll 60s linear infinite;
+    }
+
+    @keyframes scroll {
+      0% {
+        transform: translateY(0);
+      }
+
+      100% {
+        transform: translateY(-100%);
+      }
+    }
+
+    /* Credentials Box */
+    .credentials-box {
+      background-color: rgba(42, 59, 71, 0.7);
+      border: 1px solid rgba(74, 144, 226, 0.3);
+      border-radius: 6px;
+      padding: 1.5rem;
       margin-top: 1.5rem;
       display: none;
+      backdrop-filter: blur(5px);
     }
 
     .credentials-box h5 {
       font-size: 1rem;
-      margin-bottom: 0.5rem;
-      color: #495057;
+      margin-bottom: 1rem;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
     }
 
     .credentials-item {
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.8rem;
+      display: flex;
+      align-items: center;
     }
 
     .credentials-label {
       font-weight: 500;
-      color: #6c757d;
+      color: #b0b0b0;
+      min-width: 80px;
     }
 
     .credentials-value {
       font-family: monospace;
-      background-color: #e9ecef;
-      padding: 0.2rem 0.4rem;
-      border-radius: 3px;
+      background-color: rgba(0, 0, 0, 0.3);
+      padding: 0.5rem 0.8rem;
+      border-radius: 4px;
+      flex-grow: 1;
+      color: #ffffff;
+      word-break: break-all;
+    }
+
+    .btn-copy {
+      background-color: rgba(74, 144, 226, 0.2);
+      border: 1px solid rgba(74, 144, 226, 0.5);
+      color: #4a90e2;
+      padding: 0.5rem 1rem;
+      font-size: 0.9rem;
+      transition: all 0.3s;
+    }
+
+    .btn-copy:hover {
+      background-color: rgba(74, 144, 226, 0.3);
+      color: #5aa8ff;
     }
 
     .btn-clear {
-      margin-top: 0.5rem;
-    }
-
-    /* Estilos mejorados para el selector de tipo de usuario */
-    .user-type-selector {
-      position: relative;
-      margin-bottom: 1.5rem;
-    }
-
-    .user-type-options {
-      display: flex;
-      border-radius: 8px;
-      overflow: hidden;
-      border: 1px solid #dee2e6;
-      background-color: #f8f9fa;
-    }
-
-    .user-type-option {
-      flex: 1;
-      text-align: center;
-      padding: 0.8rem;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      position: relative;
-    }
-
-    .user-type-option input[type="radio"] {
-      position: absolute;
-      opacity: 0;
-      width: 0;
-      height: 0;
-    }
-
-    .user-type-option label {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      cursor: pointer;
-      margin-bottom: 0;
-    }
-
-    .user-type-option i {
-      font-size: 1.5rem;
-      margin-bottom: 0.5rem;
-      transition: all 0.3s ease;
-    }
-
-    .user-type-option .option-text {
+      background-color: rgba(231, 76, 60, 0.2);
+      border: 1px solid rgba(231, 76, 60, 0.5);
+      color: #e74c3c;
+      padding: 0.5rem 1rem;
       font-size: 0.9rem;
-      font-weight: 500;
+      transition: all 0.3s;
     }
 
-    .user-type-option input[type="radio"]:checked + label {
-      color: #4361ee;
+    .btn-clear:hover {
+      background-color: rgba(231, 76, 60, 0.3);
+      color: #ff6b6b;
     }
 
-    .user-type-option input[type="radio"]:checked + label i {
-      color: #4361ee;
-      transform: scale(1.1);
+    .btn-back {
+      background-color: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #b0b0b0;
+      padding: 1rem;
+      font-weight: 600;
+      transition: all 0.3s;
     }
 
-    .user-type-option:not(:last-child) {
-      border-right: 1px solid #dee2e6;
+    .btn-back:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+      color: #ffffff;
+      transform: translateY(-2px);
+      text-decoration: none;
     }
 
-    .user-type-option:hover {
-      background-color: #e9ecef;
+    /* Success notification */
+    .success-notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 9999;
+      width: 350px;
+      background-color: rgba(42, 59, 71, 0.9);
+      border-left: 4px solid #2ecc71;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      animation: fadeIn 0.3s ease-out;
+      display: flex;
+      align-items: center;
+      padding: 1rem;
+      color: #ffffff;
+      border-radius: 4px;
+      backdrop-filter: blur(5px);
     }
 
-    .user-type-option input[type="radio"]:checked ~ .option-highlight {
-      opacity: 1;
+    .success-notification i {
+      font-size: 1.5rem;
+      margin-right: 1rem;
+      color: #2ecc71;
     }
 
-    .option-highlight {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: 3px;
-      background-color: #4361ee;
-      opacity: 0;
-      transition: opacity 0.3s ease;
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Responsive fix */
+    @media (max-width: 576px) {
+      .card-body {
+        padding: 1.5rem;
+      }
+
+      h2 {
+        font-size: 1.5rem;
+      }
     }
   </style>
 </head>
 
-<body>
+<body style="background-image: url('https://media.discordapp.net/attachments/1202442224869056576/1374506441750085644/security.jpg?ex=682e4c60&is=682cfae0&hm=f4f5209871f8743fe9f8cb66c754e3f4999b944a56c10cbd429fa3f4a6dd6067&=&format=webp&width=1170&height=585');">
 
 <!-- Page Content -->
 <div class="container d-flex justify-content-center align-items-center" style="min-height: 100vh;">
-  <div class="admin-card">
-    <div class="card-body">
-      <h3 class="text-center mb-4"><i class="fas fa-user-plus mr-2"></i>User Registration</h3>
-
-      <div class="alert alert-info mb-4">
-        <i class="fas fa-info-circle mr-2"></i>Don't forget to notify the user of their credentials.
-      </div>
-
-      <form id="registerForm" th:action="@{/usuario/save}" method="post" onsubmit="return handleFormSubmit(event)">
-        <div class="form-group">
-          <label for="nombre">Names:</label>
-          <input type="text" class="form-control" id="nombre" name="nombre" required
-                 placeholder="Nombres del usuario">
+  <div class="w-100" style="max-width: 500px;">
+    <div class="card">
+      <div class="accent-line"></div>
+      <div class="card-body">
+        <div class="company-logo">
+          <svg xmlns="http://www.w3.org/2000/svg" class="feather feather-user-plus" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+            <circle cx="8.5" cy="7" r="4"></circle>
+            <line x1="20" y1="8" x2="20" y2="14"></line>
+            <line x1="23" y1="11" x2="17" y2="11"></line>
+          </svg>
         </div>
 
-        <div class="form-group">
-          <label for="email">Email:</label>
-          <input type="email" class="form-control" id="email" name="email" required
-                 placeholder="Email del usuario">
-        </div>
+        <h2 class="text-center">User Registration</h2>
 
-        <div class="form-group">
-          <label for="password">Password:</label>
-          <input type="password" class="form-control" id="password" name="password" required
-                 placeholder="Asigne una contraseña">
-        </div>
+        <form id="registerForm" th:action="@{/usuario/save}" method="post" onsubmit="return handleFormSubmit(event)">
+          <div class="form-group">
+            <label for="nombre">Full Name:</label>
+            <input type="text" class="form-control" id="nombre" name="nombre" required
+                   placeholder="Enter user's full name" autocomplete="off">
+          </div>
 
-        <div class="form-group">
-          <label>User Type:</label>
-          <div class="user-type-selector">
-            <div class="user-type-options">
-              <div class="user-type-option">
-                <input type="radio" id="userTypeWorker" name="tipo_usuario" value="USER" checked>
-                <label for="userTypeWorker">
-                  <i class="fas fa-user-tie"></i>
-                  <span class="option-text">Worker</span>
-                </label>
-                <div class="option-highlight"></div>
-              </div>
-              <div class="user-type-option">
-                <input type="radio" id="userTypeSupervisor" name="tipo_usuario" value="SUPERVISOR">
-                <label for="userTypeSupervisor">
-                  <i class="fas fa-user-check"></i>
-                  <span class="option-text">Supervisor</span>
-                </label>
-                <div class="option-highlight"></div>
-              </div>
-              <div class="user-type-option">
-                <input type="radio" id="userTypeAdmin" name="tipo_usuario" value="ADMIN">
-                <label for="userTypeAdmin">
-                  <i class="fas fa-user-shield"></i>
-                  <span class="option-text">Administrator</span>
-                </label>
-                <div class="option-highlight"></div>
-              </div>
+          <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" class="form-control" id="email" name="email" required
+                   placeholder="Enter user's email" autocomplete="off">
+          </div>
+
+          <div class="form-group">
+            <label for="password">Password:</label>
+            <input type="password" class="form-control" id="password" name="password" required
+                   placeholder="Set a password" autocomplete="off">
+          </div>
+
+          <!-- Campo oculto para el tipo de usuario (siempre USER) -->
+          <input type="hidden" name="tipo_usuario" value="USER">
+
+          <div class="d-flex justify-content-between mt-4">
+            <button type="button" class="btn btn-back" onclick="window.history.back()">
+              <i class="fas fa-arrow-left mr-2"></i>Back
+            </button>
+            <button type="submit" class="btn btn-primary">
+              <i class="fas fa-user-plus mr-2"></i>Register
+            </button>
+          </div>
+
+          <!-- Credentials Box -->
+          <div id="credentialsBox" class="credentials-box">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h5 class="mb-0"><i class="fas fa-key mr-2"></i>Registered credentials</h5>
+              <button type="button" class="btn btn-clear" onclick="clearForm()">
+                <i class="fas fa-broom mr-1"></i>Clear
+              </button>
+            </div>
+            <div class="credentials-item">
+              <span class="credentials-label">Email:</span>
+              <span id="credEmail" class="credentials-value"></span>
+            </div>
+            <div class="credentials-item">
+              <span class="credentials-label">Password:</span>
+              <span id="credPassword" class="credentials-value"></span>
+            </div>
+            <div class="text-right mt-3">
+              <button type="button" class="btn btn-copy" onclick="copyCredentials()">
+                <i class="fas fa-copy mr-1"></i>Copy Credentials
+              </button>
             </div>
           </div>
-        </div>
-
-        <div class="d-flex justify-content-between mt-4">
-          <button type="button" class="btn btn-back" onclick="window.history.back()">
-            <i class="fas fa-arrow-left mr-2"></i>Back to menu
-          </button>
-          <button type="submit" class="btn btn-register">
-            <i class="fas fa-save mr-2" style="color: white;"></i>Register
-          </button>
-        </div>
-
-        <!-- Credentials Box -->
-        <div id="credentialsBox" class="credentials-box">
-          <div class="d-flex justify-content-between align-items-center mb-2">
-            <h5 class="mb-0"><i class="fas fa-key mr-2"></i>Registered credentials:</h5>
-            <button type="button" class="btn btn-sm btn-outline-secondary btn-clear" onclick="clearForm()">
-              <i class="fas fa-broom mr-1"></i>Clear
-            </button>
-          </div>
-          <div class="credentials-item">
-            <span class="credentials-label">Email:</span>
-            <span id="credEmail" class="credentials-value"></span>
-          </div>
-          <div class="credentials-item">
-            <span class="credentials-label">Password:</span>
-            <span id="credPassword" class="credentials-value"></span>
-          </div>
-          <div class="credentials-item">
-            <span class="credentials-label">User Type:</span>
-            <span id="credType" class="credentials-value"></span>
-          </div>
-          <div class="text-right mt-2">
-            <button type="button" class="btn btn-sm btn-outline-primary" onclick="copyCredentials()">
-              <i class="fas fa-copy mr-1"></i>Copy
-            </button>
-          </div>
-        </div>
-      </form>
+        </form>
+      </div>
     </div>
   </div>
 </div>
@@ -304,18 +434,22 @@
   // Función para mostrar notificación de éxito
   function showSuccessNotification() {
     const notification = document.createElement('div');
-    notification.className = 'alert alert-success success-notification';
+    notification.className = 'success-notification';
     notification.innerHTML = `
-      <i class="fas fa-check-circle mr-2"></i>
-      <strong>Usuario registrado</strong> - Notify the user of the credentials.
-      <button type="button" class="close ml-3" onclick="this.parentElement.remove()">
-        <span aria-hidden="true">&times;</span>
-      </button>
-    `;
+            <i class="fas fa-check-circle"></i>
+            <div>
+                <strong>User registered successfully</strong>
+                <div class="error-detail">Notify the user of their credentials</div>
+            </div>
+            <span class="error-close ml-3" onclick="this.parentElement.remove()">&times;</span>
+        `;
     document.body.appendChild(notification);
 
     setTimeout(() => {
-      notification.remove();
+      notification.style.animation = 'fadeOut 0.5s ease-out';
+      setTimeout(() => {
+        notification.remove();
+      }, 500);
     }, 5000);
   }
 
@@ -323,17 +457,20 @@
   function copyCredentials() {
     const email = document.getElementById('credEmail').textContent;
     const password = document.getElementById('credPassword').textContent;
-    const userType = document.getElementById('credType').textContent;
-    const text = `Email: ${email}\nPassword: ${password}\nUser Type: ${userType}`;
+    const text = `Email: ${email}\nPassword: ${password}`;
 
     navigator.clipboard.writeText(text).then(() => {
       const originalText = event.target.innerHTML;
-      event.target.innerHTML = '<i class="fas fa-check mr-1"></i>Copied';
+      event.target.innerHTML = '<i class="fas fa-check mr-1"></i>Copied!';
+      event.target.classList.remove('btn-copy');
+      event.target.classList.add('btn-success');
       setTimeout(() => {
         event.target.innerHTML = originalText;
+        event.target.classList.add('btn-copy');
+        event.target.classList.remove('btn-success');
       }, 2000);
     }).catch(err => {
-      console.error('Error al copiar: ', err);
+      console.error('Error copying: ', err);
     });
   }
 
@@ -342,14 +479,6 @@
     document.getElementById('registerForm').reset();
     document.getElementById('credentialsBox').style.display = 'none';
     document.getElementById('nombre').focus();
-    // Restablecer la selección de tipo de usuario a Worker
-    document.getElementById('userTypeWorker').checked = true;
-    const labels = document.querySelectorAll('.user-type-option label');
-    labels.forEach(label => {
-      label.style.color = '';
-    });
-    document.querySelector('#userTypeWorker + label').style.color = '#4361ee';
-    document.querySelector('#userTypeWorker + label i').style.color = '#4361ee';
   }
 
   // Manejar el envío del formulario
@@ -359,24 +488,9 @@
 
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
-    const userType = document.querySelector('input[name="tipo_usuario"]:checked').value;
-
-    // Mostrar el tipo de usuario en texto completo
-    let userTypeText = '';
-    switch(userType) {
-      case 'ADMIN':
-        userTypeText = 'Administrator';
-        break;
-      case 'SUPERVISOR':
-        userTypeText = 'Supervisor';
-        break;
-      default:
-        userTypeText = 'Worker';
-    }
 
     document.getElementById('credEmail').textContent = email;
     document.getElementById('credPassword').textContent = password;
-    document.getElementById('credType').textContent = userTypeText;
     document.getElementById('credentialsBox').style.display = 'block';
 
     fetch(form.action, {
@@ -388,39 +502,16 @@
               if (text.includes("Usuario registrado")) {
                 showSuccessNotification();
               } else {
-                alert('Error al registrar el usuario');
+                alert('Error registering user');
               }
             })
             .catch(error => {
               console.error('Error:', error);
-              alert('Error al registrar el usuario');
+              alert('Error registering user');
             });
 
     return false;
   }
-
-  // Efecto visual para los botones de tipo de usuario
-  document.querySelectorAll('.user-type-option input[type="radio"]').forEach(radio => {
-    radio.addEventListener('change', function() {
-      document.querySelectorAll('.user-type-option label').forEach(label => {
-        label.style.color = '';
-      });
-      document.querySelectorAll('.user-type-option i').forEach(icon => {
-        icon.style.color = '';
-      });
-      if (this.checked) {
-        const label = this.nextElementSibling;
-        label.style.color = '#4361ee';
-        label.querySelector('i').style.color = '#4361ee';
-      }
-    });
-  });
-
-  // Inicializar colores al cargar la página
-  document.addEventListener('DOMContentLoaded', function() {
-    document.querySelector('#userTypeWorker + label').style.color = '#4361ee';
-    document.querySelector('#userTypeWorker + label i').style.color = '#4361ee';
-  });
 </script>
 
 </body>

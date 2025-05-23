@@ -22,38 +22,61 @@
   <!-- Custom styles -->
   <style>
     :root {
-      --primary-color: #4361ee;
-      --secondary-color: #3f37c9;
-      --accent-color: #4895ef;
-      --dark-color: #3a0ca3;
-      --light-color: #f8f9fa;
+      --primary-blue: #4a90e2;
+      --accent-blue: #5aa8ff;
+      --dark-bg: #1a2a36;
+      --darker-bg: #142028;
+      --light-text: #e0e0e0;
+      --lighter-text: #ffffff;
+      --border-color: rgba(74, 144, 226, 0.2);
       --success-color: #4cc9f0;
-      --text-dark: #2b2d42;
-      --text-light: #8d99ae;
+      --danger-color: #ff4d4d;
     }
 
+
+
     body {
-      font-family: 'Poppins', sans-serif;
-      background-color: #f8fafc;
-      color: var(--text-dark);
-      margin: 0;
-      padding: 0;
+      font-family: 'Montserrat', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: var(--light-text);
+      background-color: var(--dark-bg);
+      background-image: url('/img/aver.jpeg'); /* <<--- esta es la línea clave */
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center;
+      background-attachment: fixed;
+
+    }
+
+    @keyframes scroll {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(-100%); }
     }
 
     /* Modern Header */
     .modern-header {
-      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-      color: white;
-      padding: 4rem 0;
-      margin-bottom: 3rem;
-      border-radius: 0 0 20px 20px;
-      box-shadow: 0 10px 30px rgba(67, 97, 238, 0.2);
+
+      padding: 2rem 0;
     }
 
     .modern-header h1 {
       font-weight: 700;
       font-size: 2.8rem;
       margin-bottom: 1rem;
+      position: relative;
+      display: inline-block;
+    }
+
+    .modern-header h1:after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 3px;
+      background: linear-gradient(90deg, var(--primary-blue), var(--accent-blue));
+      border-radius: 3px;
+
     }
 
     .modern-header p {
@@ -74,20 +97,23 @@
 
     /* Project Card */
     .project-card {
-      background: white;
-      border-radius: 12px;
+      background: rgba(26, 42, 54, 0.7);
+      border-radius: 8px;
       overflow: hidden;
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
       transition: all 0.3s ease;
       position: relative;
       display: flex;
       flex-direction: column;
       height: 100%;
+      backdrop-filter: blur(5px);
+      border: 1px solid var(--border-color);
     }
 
     .project-card:hover {
-      transform: translateY(-10px);
-      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.12);
+      transform: translateY(-5px);
+      box-shadow: 0 15px 30px rgba(74, 144, 226, 0.2);
+      border-color: var(--primary-blue);
     }
 
     .project-card::before {
@@ -97,7 +123,7 @@
       left: 0;
       width: 100%;
       height: 5px;
-      background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+      background: linear-gradient(90deg, var(--primary-blue), var(--accent-blue));
     }
 
     .project-card-content {
@@ -111,14 +137,15 @@
       font-size: 1.5rem;
       font-weight: 600;
       margin-bottom: 0.5rem;
-      color: var(--text-dark);
+      color: var(--lighter-text);
     }
 
     .project-card p {
-      color: var(--text-light);
+      color: var(--light-text);
       font-size: 0.95rem;
       line-height: 1.6;
       margin-bottom: 1.5rem;
+      opacity: 0.8;
     }
 
     .project-card-footer {
@@ -126,15 +153,16 @@
       justify-content: space-between;
       align-items: center;
       padding-top: 1rem;
-      border-top: 1px solid #eee;
+      border-top: 1px solid var(--border-color);
       margin-top: auto;
     }
 
     /* Modern Button */
     .btn-modern {
-      background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
-      color: white;
-      border: none;
+      position: relative;
+      background: rgba(26, 42, 54, 0.7);
+      color: var(--light-text);
+      border: 1px solid var(--border-color);
       padding: 0.6rem 1.5rem;
       border-radius: 50px;
       font-weight: 500;
@@ -142,14 +170,34 @@
       display: inline-flex;
       align-items: center;
       transition: all 0.3s ease;
-      box-shadow: 0 4px 10px rgba(67, 97, 238, 0.3);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      backdrop-filter: blur(5px);
+      overflow: hidden;
+      z-index: 1;
+    }
+
+    .btn-modern::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(45deg, var(--primary-blue), var(--accent-blue));
+      z-index: -1;
+      transition: opacity 0.3s ease;
+      opacity: 0;
+    }
+
+    .btn-modern:hover::before {
+      opacity: 1;
     }
 
     .btn-modern:hover {
       transform: translateY(-2px);
-      box-shadow: 0 6px 15px rgba(67, 97, 238, 0.4);
-      color: white;
-      text-decoration: none;
+      box-shadow: 0 6px 15px rgba(74, 144, 226, 0.3);
+      color: var(--lighter-text);
+      border-color: transparent;
     }
 
     .btn-modern i {
@@ -158,9 +206,9 @@
 
     /* Back Button */
     .btn-back {
-      background: white;
-      color: var(--primary-color);
-      border: 1px solid var(--primary-color);
+      background: rgba(26, 42, 54, 0.7);
+      color: var(--primary-blue);
+      border: 1px solid var(--primary-blue);
       padding: 0.6rem 1.5rem;
       border-radius: 50px;
       font-weight: 500;
@@ -170,12 +218,13 @@
       transition: all 0.3s ease;
       box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
       margin-right: 15px;
+      backdrop-filter: blur(5px);
     }
 
     .btn-back:hover {
-      background: var(--light-color);
-      color: var(--secondary-color);
-      border-color: var(--secondary-color);
+      background: rgba(74, 144, 226, 0.2);
+      color: var(--accent-blue);
+      border-color: var(--accent-blue);
       text-decoration: none;
     }
 
@@ -195,40 +244,43 @@
       padding: 4rem 0;
       max-width: 600px;
       margin: 0 auto;
+      position: relative;
+      z-index: 1;
     }
 
     .empty-state i {
       font-size: 5rem;
-      color: var(--accent-color);
+      color: var(--primary-blue);
       margin-bottom: 1.5rem;
-      opacity: 0.7;
+      opacity: 0.5;
     }
 
     .empty-state h3 {
       font-size: 1.8rem;
       margin-bottom: 1rem;
-      color: var(--text-dark);
+      color: var(--lighter-text);
     }
 
     .empty-state p {
-      color: var(--text-light);
+      color: var(--light-text);
       margin-bottom: 2rem;
+      opacity: 0.7;
     }
 
     /* Danger Button */
     .btn-modern.btn-danger {
-      background: linear-gradient(45deg, #ff4d4d, #cc0000);
-      box-shadow: 0 4px 10px rgba(255, 77, 77, 0.3);
+      background: rgba(26, 42, 54, 0.7);
+      border: 1px solid rgba(255, 77, 77, 0.3);
     }
 
-    .btn-modern.btn-danger:hover {
-      box-shadow: 0 6px 15px rgba(255, 77, 77, 0.4);
+    .btn-modern.btn-danger::before {
+      background: linear-gradient(45deg, #ff4d4d, #cc0000);
     }
 
     .completed-projects-section {
       margin-top: 3rem;
       padding-top: 2rem;
-      border-top: 1px solid #eee;
+      border-top: 1px solid var(--border-color);
       display: none;
     }
 
@@ -242,44 +294,35 @@
     }
 
     .status-active {
-      background-color: rgba(67, 97, 238, 0.1);
-      color: #4361ee;
+      background-color: rgba(74, 144, 226, 0.2);
+      color: var(--accent-blue);
     }
 
     .status-completed {
-      background-color: rgba(56, 176, 0, 0.1);
-      color: #38b000;
+      background-color: rgba(76, 201, 240, 0.2);
+      color: var(--success-color);
     }
 
     .project-card.completed {
-      opacity: 0.9;
-      border-left: 4px solid #6c757d;
-      background-color: #f5f5f5;
+      opacity: 0.8;
+      background: rgba(20, 32, 40, 0.7);
       filter: grayscale(30%);
     }
 
     .project-card.completed h2 {
       text-decoration: line-through;
-      color: #6c757d;
+      color: var(--light-text);
+      opacity: 0.7;
     }
 
     .project-card.completed p {
-      color: #adb5bd;
-    }
-
-    .project-card.completed .btn-modern {
-      background: linear-gradient(45deg, #6c757d, #495057);
-      box-shadow: 0 4px 10px rgba(108, 117, 125, 0.3);
-    }
-
-    .project-card.completed .btn-modern:hover {
-      box-shadow: 0 6px 15px rgba(108, 117, 125, 0.4);
+      opacity: 0.6;
     }
 
     .toggle-completed-btn {
       background: none;
       border: none;
-      color: #38b000;
+      color: var(--success-color);
       cursor: pointer;
       font-size: 0.9rem;
       margin-left: 10px;
@@ -289,16 +332,18 @@
       display: block;
       margin: 0 auto 2rem;
       background: none;
-      border: 1px solid #38b000;
-      color: #38b000;
+      border: 1px solid var(--success-color);
+      color: var(--success-color);
       padding: 0.5rem 1.5rem;
       border-radius: 50px;
       cursor: pointer;
       transition: all 0.3s ease;
+      backdrop-filter: blur(5px);
+      background: rgba(20, 32, 40, 0.5);
     }
 
     .toggle-completed-section-btn:hover {
-      background-color: rgba(56, 176, 0, 0.1);
+      background: rgba(76, 201, 240, 0.1);
     }
 
     .toggle-completed-section-btn i {
@@ -309,8 +354,8 @@
       position: absolute;
       top: 15px;
       right: 15px;
-      color: var(--primary-color);
-      background: rgba(255, 255, 255, 0.9);
+      color: var(--primary-blue);
+      background: rgba(26, 42, 54, 0.9);
       width: 30px;
       height: 30px;
       border-radius: 50%;
@@ -320,11 +365,13 @@
       cursor: pointer;
       transition: all 0.3s ease;
       z-index: 1;
+      border: 1px solid var(--border-color);
     }
 
     .view-teams-icon:hover {
-      background: white;
+      background: var(--darker-bg);
       transform: scale(1.1);
+      color: var(--accent-blue);
     }
 
     .teams-modal {
@@ -332,18 +379,20 @@
     }
 
     .teams-modal .modal-header {
-      background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+      background: linear-gradient(90deg, var(--primary-blue), var(--accent-blue));
       color: white;
     }
 
     .teams-modal .modal-body {
       max-height: 60vh;
       overflow-y: auto;
+      background-color: var(--darker-bg);
+      color: var(--light-text);
     }
 
     .team-item {
       padding: 10px 0;
-      border-bottom: 1px solid #eee;
+      border-bottom: 1px solid var(--border-color);
     }
 
     .team-item:last-child {
@@ -353,11 +402,13 @@
     .team-name {
       font-weight: 600;
       margin-bottom: 5px;
+      color: var(--lighter-text);
     }
 
     .team-members {
       font-size: 0.9rem;
-      color: var(--text-light);
+      color: var(--light-text);
+      opacity: 0.8;
     }
 
     .team-member {
@@ -370,14 +421,55 @@
       width: 25px;
       height: 25px;
       border-radius: 50%;
-      background-color: #e9ecef;
+      background-color: rgba(74, 144, 226, 0.2);
       display: flex;
       align-items: center;
       justify-content: center;
       margin-right: 10px;
       font-size: 0.7rem;
       font-weight: bold;
-      color: var(--primary-color);
+      color: var(--primary-blue);
+    }
+
+    /* Modal Footer */
+    .modal-footer {
+      background-color: var(--dark-bg);
+      border-top: 1px solid var(--border-color);
+    }
+
+    /* Toast Notification */
+    .toast-container {
+      z-index: 9999;
+    }
+
+    .toast {
+      background-color: var(--dark-bg);
+      color: var(--light-text);
+      border: 1px solid var(--border-color);
+    }
+
+    .toast-header {
+      background-color: var(--darker-bg);
+      color: var(--lighter-text);
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    /* Accent line */
+    .accent-line {
+      height: 4px;
+      width: 100%;
+      max-width: 500px;
+      margin: 0 auto 2.5rem;
+      background: linear-gradient(90deg, var(--primary-blue), var(--accent-blue));
+      border-radius: 2px;
+      animation: gradient 3s ease infinite;
+      background-size: 200% 200%;
+    }
+
+    @keyframes gradient {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
     }
 
     /* Responsive Adjustments */
@@ -414,19 +506,26 @@
   </style>
 </head>
 <body>
-
-
-<!-- Navigation -->
-<div th:if="${tipoUsuario == 'USER'}" th:include="usuario/template_usuario.html :: header"></div>
-<div th:if="${tipoUsuario != 'USER'}" th:include="adm/template_admin.html :: header"></div>
-
 <!-- Modern Header -->
 <header class="modern-header text-center">
   <div class="container">
     <h1>Projects</h1>
     <p>Select the assigned project.</p>
   </div>
+  <div class="container">
+    <div class="button-group">
+      <a th:if="${AGENDA_ACCESS && AGENDA_CREATE }"
+         th:href="@{/albumes/create}" class="btn-modern">
+        <i class="fas fa-plus"></i> Create Project
+      </a>
+
+      <a th:href="@{/adm}" class="btn-modern ml-2">
+        <i class="fas fa-bars"></i> Menu
+      </a>
+    </div>
+  </div>
 </header>
+
 
 <div th:replace="permiso/permissions-panel :: panelPermisos"></div>
 
@@ -523,18 +622,7 @@
   <p th:unless="${isAdmin}">You don't have any assigned projects</p>
 </div>
 
-<div class="container">
-  <div class="button-group">
-    <a th:if="${AGENDA_ACCESS && AGENDA_CREATE }"
-       th:href="@{/albumes/create}" class="btn-modern">
-      <i class="fas fa-plus"></i> Create Project
-    </a>
 
-    <a th:href="@{/adm}" class="btn-modern ml-2">
-      <i class="fas fa-bars"></i> Menu
-    </a>
-  </div>
-</div>
 <!-- Footer -->
 <div th:include="usuario/template_usuario.html::footer"></div>
 
@@ -561,9 +649,6 @@
         <!-- Los equipos se cargarán aquí dinámicamente -->
       </div>
       <div class="modal-footer">
-<!--        <a th:href="@{/equipo/asignacion}" class="btn btn-primary">-->
-<!--          <i class="fas fa-plus"></i> Create Team-->
-<!--        </a>-->
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
       </div>
     </div>

@@ -17,85 +17,44 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <!-- Custom styles -->
 
     <style>
-        .btn-rounded {
-            border-radius: 50px !important;
-            padding: 0.6rem 1.2rem !important;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        /* Primary variant */
-        .btn-rounded.btn-primary {
-            background: var(--primary-color);
-            border: none;
-            color: white;
-        }
-        .btn-rounded.btn-primary:hover {
-            background: var(--secondary-color);
-        }
-
-        /* Outline‐info variant */
-        .btn-rounded.btn-outline-info {
-            background: white;
-            border: 1px solid var(--accent-color);
-            color: var(--accent-color);
-        }
-        .btn-rounded.btn-outline-info:hover {
-            background: var(--light-color);
-            border-color: var(--primary-color);
-            color: var(--secondary-color);
-        }
-
         :root {
-            --primary-color: #4361ee;
-            --secondary-color: #3f37c9;
-            --accent-color: #4895ef;
-            --dark-color: #3a0ca3;
-            --light-color: #f8f9fa;
-            --text-dark: #2b2d42;
-            --text-light: #8d99ae;
+            --primary-blue: #4a90e2;
+            --accent-blue: #5aa8ff;
+            --dark-bg: #1a2a36;
+            --darker-bg: #142028;
+            --light-text: #e0e0e0;
+            --lighter-text: #ffffff;
+            --border-color: rgba(74, 144, 226, 0.2);
             --success-color: #4cc9f0;
-            --card-min-width: 250px; /* Reducido para móviles */
+            --danger-color: #ff4d4d;
+            --card-min-width: 250px;
         }
 
         body {
-            font-family: 'Poppins', sans-serif;
-            background-color: #f8fafc;
-            color: var(--text-dark);
-            margin: 0;
-            padding: 0;
-            line-height: 1.6;
+            font-family: 'Montserrat', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--light-text);
+            background-color: var(--dark-bg);
+            background-image: url('/img/aver.jpeg'); /* <<--- esta es la línea clave */
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-attachment: fixed;
+
         }
+
 
         /* Project Header */
         .project-header {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: white;
+
             padding: 2rem 0;
-            margin-bottom: 1.5rem;
-            position: relative;
-            overflow: hidden;
         }
 
-        .project-header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxkZWZzPjxwYXR0ZXJuIGlkPSJwYXR0ZXJuIiB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiIHBhdHRlcm5UcmFuc2Zvcm09InJvdGF0ZSg0NSkiPjxyZWN0IHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjA1KSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3QgZmlsbD0idXJsKCNwYXR0ZXJuKSIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIvPjwvc3ZnPg==');
-            opacity: 0.3;
-        }
+
 
         .project-header-content {
             position: relative;
@@ -116,6 +75,72 @@
             max-width: 700px;
             margin: 0 auto 1.5rem;
         }
+
+        /* Buttons */
+        .btn-rounded {
+            border-radius: 50px !important;
+            padding: 0.6rem 1.2rem !important;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .btn-rounded::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, var(--primary-blue), var(--accent-blue));
+            z-index: -1;
+            transition: opacity 0.3s ease;
+            opacity: 0;
+        }
+
+        /* Primary variant */
+        .btn-rounded.btn-primary {
+            background: rgba(26, 42, 54, 0.7);
+            border: 1px solid var(--border-color);
+            color: var(--light-text);
+            backdrop-filter: blur(5px);
+        }
+
+        .btn-rounded.btn-primary:hover::before {
+            opacity: 1;
+        }
+
+        .btn-rounded.btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(74, 144, 226, 0.3);
+            color: var(--lighter-text);
+            border-color: transparent;
+        }
+
+        /* Outline variant */
+        .btn-rounded.btn-outline-info {
+            background: rgba(26, 42, 54, 0.7);
+            border: 1px solid var(--primary-blue);
+            color: var(--primary-blue);
+            backdrop-filter: blur(5px);
+        }
+
+        .btn-rounded.btn-outline-info:hover::before {
+            opacity: 1;
+        }
+
+        .btn-rounded.btn-outline-info:hover {
+            background: rgba(74, 144, 226, 0.2);
+            color: var(--accent-blue);
+            border-color: var(--accent-blue);
+        }
+
         .btn-action i {
             margin-right: 8px;
             font-size: 0.9rem;
@@ -123,9 +148,9 @@
 
         /* Back Button */
         .btn-back {
-            background: white;
-            color: var(--primary-color);
-            border: 1px solid var(--primary-color);
+            background: rgba(26, 42, 54, 0.7);
+            color: var(--primary-blue);
+            border: 1px solid var(--primary-blue);
             padding: 0.7rem 1.5rem;
             border-radius: 50px;
             font-weight: 600;
@@ -136,12 +161,13 @@
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
             margin-right: 0.8rem;
             font-size: 0.95rem;
+            backdrop-filter: blur(5px);
         }
 
         .btn-back:hover {
-            background: var(--light-color);
-            color: var(--secondary-color);
-            border-color: var(--secondary-color);
+            background: rgba(74, 144, 226, 0.2);
+            color: var(--accent-blue);
+            border-color: var(--accent-blue);
         }
 
         .btn-back i {
@@ -166,30 +192,34 @@
 
         /* Estilos para cada fragmento */
         .fragment-card {
-            background: white;
+            background: rgba(26, 42, 54, 0.7);
             border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
             margin-bottom: 1.5rem;
             overflow: hidden;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             display: flex;
             flex-direction: column;
+            border: 1px solid var(--border-color);
+            backdrop-filter: blur(5px);
         }
 
         .fragment-card:hover {
             transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+            box-shadow: 0 8px 20px rgba(74, 144, 226, 0.2);
+            border-color: var(--primary-blue);
         }
 
         .fragment-header {
-            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
-            color: white;
+            background: linear-gradient(90deg, var(--darker-bg), var(--dark-bg));
+            color: var(--lighter-text);
             padding: 1rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
             gap: 0.8rem;
+            border-bottom: 1px solid var(--border-color);
         }
 
         .fragment-title {
@@ -200,7 +230,7 @@
         }
 
         .fragment-description {
-            color: rgba(255, 255, 255, 0.9);
+            color: rgba(224, 224, 224, 0.9);
             margin: 0.3rem 0 0;
             font-size: 0.9rem;
             width: 100%;
@@ -212,9 +242,9 @@
         }
 
         .fragment-btn {
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-            border: none;
+            background: rgba(74, 144, 226, 0.2);
+            color: var(--primary-blue);
+            border: 1px solid var(--border-color);
             border-radius: 50px;
             padding: 0.4rem 0.8rem;
             cursor: pointer;
@@ -228,7 +258,9 @@
         }
 
         .fragment-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
+            background: rgba(74, 144, 226, 0.3);
+            color: var(--accent-blue);
+            border-color: var(--accent-blue);
         }
 
         /* Contenedor horizontal para los álbumes dentro de cada fragmento */
@@ -239,11 +271,11 @@
             padding: 0;
             overflow-x: auto;
             scrollbar-width: thin;
-            scrollbar-color: var(--accent-color) #f1f1f1;
+            scrollbar-color: var(--accent-blue) var(--darker-bg);
             scroll-behavior: smooth;
             -webkit-overflow-scrolling: touch;
             flex-grow: 1;
-            min-height: 240px; /* Altura mínima para mantener consistencia */
+            min-height: 240px;
         }
 
         /* Estilos para la barra de scroll */
@@ -252,35 +284,38 @@
         }
 
         .albums-horizontal-scroll::-webkit-scrollbar-track {
-            background: #f1f1f1;
+            background: var(--darker-bg);
             border-radius: 10px;
         }
 
         .albums-horizontal-scroll::-webkit-scrollbar-thumb {
-            background-color: var(--accent-color);
+            background-color: var(--accent-blue);
             border-radius: 10px;
         }
 
         /* Subalbum Card - Versión responsive */
         .album-card {
-            background: white;
+            background: rgba(26, 42, 54, 0.7);
             border-radius: 10px;
             overflow: hidden;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
             transition: all 0.3s ease;
             position: relative;
             min-width: var(--card-min-width);
-            width: calc(50% - 0.5rem); /* Ocupa la mitad del espacio menos el gap */
-            height: 100%; /* Ocupa toda la altura disponible */
+            width: calc(50% - 0.5rem);
+            height: 100%;
             display: flex;
             flex-direction: column;
             flex-shrink: 0;
             margin: 0;
+            border: 1px solid var(--border-color);
+            backdrop-filter: blur(5px);
         }
 
         .album-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+            box-shadow: 0 8px 20px rgba(74, 144, 226, 0.2);
+            border-color: var(--primary-blue);
         }
 
         .album-card::before {
@@ -290,17 +325,7 @@
             left: 0;
             width: 100%;
             height: 4px;
-            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
-        }
-
-        /* Estilo diferente para álbumes "Antes" */
-        .album-card.antes::before {
-            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
-        }
-
-        /* Estilo diferente para álbumes "Después" */
-        .album-card.despues::before {
-            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            background: linear-gradient(90deg, var(--primary-blue), var(--accent-blue));
         }
 
         .album-card-content {
@@ -316,7 +341,7 @@
             font-size: clamp(1.1rem, 4vw, 1.4rem);
             font-weight: 600;
             margin-bottom: 0.5rem;
-            color: var(--text-dark);
+            color: var(--lighter-text);
             display: flex;
             align-items: center;
             flex-wrap: wrap;
@@ -328,10 +353,12 @@
             font-size: 0.65rem;
             padding: 0.3rem 0.5rem;
             font-weight: 500;
+            background: rgba(74, 144, 226, 0.2);
+            color: var(--accent-blue);
         }
 
         .album-card p {
-            color: var(--text-light);
+            color: var(--light-text);
             font-size: 0.85rem;
             line-height: 1.5;
             margin-bottom: 0.5rem;
@@ -342,6 +369,7 @@
             overflow: hidden;
             text-overflow: ellipsis;
             max-height: 4.5em;
+            opacity: 0.8;
         }
 
         .album-card-footer {
@@ -351,7 +379,7 @@
         }
 
         .btn-view {
-            background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+            background: linear-gradient(45deg, var(--primary-blue), var(--accent-blue));
             color: white;
             border: none;
             padding: 0.5rem 1rem;
@@ -366,7 +394,7 @@
 
         .btn-view:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 10px rgba(67, 97, 238, 0.3);
+            box-shadow: 0 4px 10px rgba(74, 144, 226, 0.3);
             color: white;
         }
 
@@ -375,16 +403,18 @@
             font-size: 0.85rem;
         }
 
-        /* Modal para crear/editar fragmentos */
+        /* Modal */
         .modal-content {
             border-radius: 10px;
             border: none;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            background-color: var(--darker-bg);
+            color: var(--light-text);
         }
 
         .modal-header {
-            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
-            color: white;
+            background: linear-gradient(90deg, var(--primary-blue), var(--accent-blue));
+            color: var(--lighter-text);
             border-radius: 10px 10px 0 0;
             border: none;
             padding: 1.2rem;
@@ -404,16 +434,18 @@
 
         .modal-body {
             padding: 1.5rem;
+            background-color: var(--dark-bg);
         }
 
         .modal-footer {
-            border-top: 1px solid #eee;
+            border-top: 1px solid var(--border-color);
             padding: 1rem 1.5rem;
+            background-color: var(--darker-bg);
         }
 
         /* Botón para añadir fragmentos */
         .btn-add-fragment {
-            background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+            background: linear-gradient(45deg, var(--primary-blue), var(--accent-blue));
             color: white;
             border: none;
             padding: 0.7rem 1.5rem;
@@ -428,7 +460,7 @@
 
         .btn-add-fragment:hover {
             transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(67, 97, 238, 0.3);
+            box-shadow: 0 8px 25px rgba(74, 144, 226, 0.3);
             color: white;
         }
 
@@ -451,18 +483,28 @@
         .toast {
             border-radius: 8px;
             overflow: hidden;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
             font-size: 0.9rem;
             width: 100%;
+            background-color: var(--darker-bg);
+            color: var(--light-text);
+            border: 1px solid var(--border-color);
+        }
+
+        .toast-header {
+            background-color: var(--dark-bg);
+            color: var(--lighter-text);
+            border-bottom: 1px solid var(--border-color);
         }
 
         .toast-success {
-            background-color: rgba(76, 201, 240, 0.9);
+            background-color: rgba(26, 42, 54, 0.9);
             border-color: var(--success-color);
         }
 
         .toast-error {
-            background-color: rgba(220, 53, 69, 0.9);
+            background-color: rgba(26, 42, 54, 0.9);
+            border-color: var(--danger-color);
         }
 
         /* Empty State */
@@ -474,20 +516,19 @@
         .empty-state i {
             font-size: 3.5rem;
             margin-bottom: 1.5rem;
-            color: var(--accent-color);
+            color: var(--primary-blue);
             opacity: 0.7;
         }
 
         .empty-state h3 {
             font-size: 1.5rem;
             margin-bottom: 1.5rem;
-            color: var(--text-dark);
+            color: var(--lighter-text);
         }
 
-        /* Mejoras de accesibilidad */
-        [tabindex]:focus-visible {
-            outline: 2px solid var(--accent-color);
-            outline-offset: 2px;
+        .empty-state p {
+            color: var(--light-text);
+            opacity: 0.8;
         }
 
         /* Responsive Adjustments */
@@ -613,6 +654,7 @@
 </head>
 <body>
 
+
 <div th:replace="permiso/permissions-panel :: panelPermisos"></div>
 
 <!-- Toast Notifications -->
@@ -653,11 +695,11 @@
                 <i class="fas fa-arrow-left"></i> Back
             </button>
 
-            <button type="button" class="btn-add-fragment" onclick="showAddFragmentModal()"  th:if="${PROYECTOS_CREATE_SECTIONS}">
+            <button type="button" class="btn-back" onclick="showAddFragmentModal()"  th:if="${PROYECTOS_CREATE_SECTIONS}">
                 <i class="fas fa-plus"></i> add project section / Agregar sección de proyecto
             </button>
 
-            <button id="logsBtn" class="btn btn-outline-info btn-rounded"
+            <button id="logsBtn" class="btn-back"
                     th:if="${PROYECTOS_CREATE_REPORT}">
                 <i class="fas fa-book"></i> Manage Reports
             </button>

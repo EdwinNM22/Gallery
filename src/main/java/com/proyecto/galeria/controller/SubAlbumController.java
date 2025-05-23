@@ -1,4 +1,5 @@
 package com.proyecto.galeria.controller;
+import com.proyecto.galeria.model.Permiso;
 import com.proyecto.galeria.model.SubAlbum;
 import com.proyecto.galeria.model.foto;
 import com.proyecto.galeria.model.usuario;
@@ -14,6 +15,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 
 @Controller
@@ -36,13 +39,28 @@ public class SubAlbumController {
     @GetMapping("/antes/{id}")
     public String showAntes(@PathVariable("id") Integer id, Model model, HttpSession session) {
 
-        // 1. Verificar si el usuario es ADMIN
-        Integer userId = Integer.parseInt(session.getAttribute("idusuario").toString());
-        Optional<usuario> optionalUsuario = usuarioService.findById(userId);
-        boolean canEdit = optionalUsuario.map(user -> !"USER".equals(user.getTipo_usuario()))
-                .orElse(false);
-        model.addAttribute("canEdit", canEdit);
-  // Pasar a la vista
+
+        //Validar acceso a la vista
+        Integer idUsuario = (Integer) session.getAttribute("idusuario");
+        usuarioService.findById(idUsuario).ifPresentOrElse(user -> {
+            user.getPermisos().size(); // Forzar carga
+
+            model.addAttribute("usuarioLogueado", user);
+            model.addAttribute("usuarios", usuarioService.findAll());
+
+
+            // Permisos individuales
+            Set<String> permisos = user.getPermisos().stream()
+                    .map(Permiso::getCodigo)
+                    .collect(Collectors.toSet());
+
+            model.addAttribute("PROYECTOS_FOTO_DELETE", permisos.contains("PROYECTOS_FOTO_DELETE"));
+
+        }, () -> {
+            model.addAttribute("PROYECTOS_FOTO_DELETE", false);
+
+        });
+
 
         // Obtener solo los subálbumes de tipo "antes"
         List<SubAlbum> subAlbumesAntes = subAlbumService.getSubAlbumesAntes();
@@ -64,13 +82,29 @@ public class SubAlbumController {
     @GetMapping("/despues/{id}")
     public String showDespues(@PathVariable("id") Integer id, Model model,  HttpSession session) {
 
-        // 1. Verificar si el usuario es ADMIN
-        Integer userId = Integer.parseInt(session.getAttribute("idusuario").toString());
-        Optional<usuario> optionalUsuario = usuarioService.findById(userId);
-        boolean canEdit = optionalUsuario.map(user -> !"USER".equals(user.getTipo_usuario()))
-                .orElse(false);
-        model.addAttribute("canEdit", canEdit);
- // Pasar a la vista
+
+
+        //Validar acceso a la vista
+        Integer idUsuario = (Integer) session.getAttribute("idusuario");
+        usuarioService.findById(idUsuario).ifPresentOrElse(user -> {
+            user.getPermisos().size(); // Forzar carga
+
+            model.addAttribute("usuarioLogueado", user);
+            model.addAttribute("usuarios", usuarioService.findAll());
+
+
+            // Permisos individuales
+            Set<String> permisos = user.getPermisos().stream()
+                    .map(Permiso::getCodigo)
+                    .collect(Collectors.toSet());
+
+            model.addAttribute("PROYECTOS_FOTO_DELETE", permisos.contains("PROYECTOS_FOTO_DELETE"));
+
+        }, () -> {
+            model.addAttribute("PROYECTOS_FOTO_DELETE", false);
+
+        });
+
 
         // Obtener solo los subálbumes de tipo "despues"
         List<SubAlbum> subAlbumesDespues = subAlbumService.getSubAlbumesDespues();

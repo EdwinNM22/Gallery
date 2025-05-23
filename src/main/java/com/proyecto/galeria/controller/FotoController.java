@@ -186,8 +186,8 @@ public class FotoController {
     }
 
 
-    @PreAuthorize("hasRole('ADMIN')")
-    @DeleteMapping("/delete/{id}") // Cambiado a @DeleteMapping
+
+    @DeleteMapping("/delete/{id}") //
     @ResponseBody // Añadido para devolver respuesta JSON
     public ResponseEntity<Map<String, String>> delete(@PathVariable Integer id) {
         Optional<foto> optionalFoto = fotoService.get(id);

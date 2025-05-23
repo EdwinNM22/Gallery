@@ -32,6 +32,7 @@ public class PermisoController {
     @GetMapping("/management")
     public String showPermissionsManagement(Model model, HttpSession session) {
         model.addAttribute("permisosAgrupados", permisoService.getPermisosAgrupadosPorVista());
+        model.addAttribute("usuarios", usuarioService.findAll());
 
         // Obtener el ID del usuario de la sesión
         Integer userId = Integer.parseInt(session.getAttribute("idusuario").toString());

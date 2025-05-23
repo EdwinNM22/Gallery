@@ -20,54 +20,189 @@
     <!-- Custom styles -->
     <style>
         :root {
-            --primary-color: #4361ee;
-            --secondary-color: #3f37c9;
-            --accent-color: #4895ef;
-            --dark-color: #3a0ca3;
-            --light-color: #f8f9fa;
-            --text-dark: #2b2d42;
-            --text-light: #8d99ae;
+            --primary-blue: #4361ee;
+            --accent-blue: #4895ef;
+            --dark-bg: #1a2a36;
+            --darker-bg: #142028;
+            --light-text: #e0e0e0;
+            --lighter-text: #ffffff;
+            --border-color: rgba(74, 144, 226, 0.2);
             --success-color: #4cc9f0;
+            --danger-color: #ff4d4d;
+            --card-min-width: 250px;
         }
 
         body {
-            font-family: 'Poppins', sans-serif;
-            background-color: #f8fafc;
-            color: var(--text-dark);
+            font-family: 'Montserrat', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: white;
+            background-color: var(--dark-bg);
+            background-image: url('/img/album.jpeg'); /* <<--- esta es la línea clave */
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-attachment: fixed;
+
         }
 
-        .btn-add-photo i {
-            font-size: 1.1rem;
+        /* Project Header */
+        .project-header {
+
+            padding: 2rem 0;
+        }
+
+
+
+        .project-header-content {
+            position: relative;
+            z-index: 1;
+            padding: 0 1rem;
+        }
+
+        .project-title {
+            font-weight: 700;
+            font-size: clamp(1.8rem, 5vw, 2.5rem);
+            margin-bottom: 0.5rem;
+            line-height: 1.2;
+            color:white;
+        }
+
+        .project-description {
+            font-size: clamp(0.95rem, 3vw, 1.1rem);
+            opacity: 0.9;
+            max-width: 700px;
+            margin: 0 auto 1.5rem;
+            color: white;
+        }
+
+        /* Buttons */
+        .btn-rounded {
+            border-radius: 50px !important;
+            padding: 0.6rem 1.2rem !important;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .btn-rounded::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, var(--primary-blue), var(--accent-blue));
+            z-index: -1;
+            transition: opacity 0.3s ease;
+            opacity: 0;
+        }
+
+        .btn-primary {
+            background: rgba(26, 42, 54, 0.7);
+            border: 1px solid var(--border-color);
+            color: var(--light-text);
+            backdrop-filter: blur(5px);
+        }
+
+        .btn-primary:hover::before {
+            opacity: 1;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(74, 144, 226, 0.3);
+            color: var(--lighter-text);
+            border-color: transparent;
+        }
+
+        .btn-action i {
+            margin-right: 8px;
+            font-size: 0.9rem;
+        }
+
+        /* Back Button */
+        .btn-back {
+            background: rgba(26, 42, 54, 0.7);
+            color: var(--primary-blue);
+            border: 1px solid var(--primary-blue);
+            padding: 0.7rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            margin-right: 0.8rem;
+            font-size: 0.95rem;
+            backdrop-filter: blur(5px);
+        }
+
+        .btn-back:hover {
+            background: rgba(74, 144, 226, 0.2);
+            color: var(--accent-blue);
+            border-color: var(--accent-blue);
+        }
+
+        .btn-back i {
+            margin-right: 8px;
+            font-size: 0.9rem;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: center;
+            margin: 1.5rem 0;
+            flex-wrap: wrap;
+            gap: 0.8rem;
         }
 
         /* Photo Grid */
         .photo-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 2rem;
-            padding: 0 2rem;
-            margin-bottom: 4rem;
+            gap: 1.5rem;
+            padding: 0 1rem;
+            margin-bottom: 2rem;
         }
 
         /* Photo Card */
         .photo-card {
-            background: white;
-            border-radius: 12px;
+            background: rgba(26, 42, 54, 0.7);
+            border-radius: 10px;
             overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
             transition: all 0.3s ease;
             position: relative;
+            border: 1px solid var(--border-color);
+            backdrop-filter: blur(5px);
         }
 
         .photo-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(74, 144, 226, 0.2);
+            border-color: var(--primary-blue);
+        }
+
+        .photo-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-blue), var(--accent-blue));
         }
 
         .photo-img-container {
             position: relative;
             overflow: hidden;
-            height: 250px;
+            height: 200px;
         }
 
         .photo-img {
@@ -100,15 +235,17 @@
         .photo-title {
             font-weight: 600;
             margin-bottom: 0.5rem;
+            color: var(--lighter-text);
         }
 
         .photo-description {
             font-size: 0.9rem;
             opacity: 0.9;
+            color: var(--light-text);
         }
 
         .photo-content {
-            padding: 1.5rem;
+            padding: 1rem;
         }
 
         .photo-actions {
@@ -118,46 +255,61 @@
         }
 
         .btn-view {
-            background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+            background: linear-gradient(45deg, var(--primary-blue), var(--accent-blue));
             color: white;
             border: none;
-            padding: 0.5rem 1.2rem;
+            padding: 0.5rem 1rem;
             border-radius: 50px;
             font-weight: 500;
             text-decoration: none;
             transition: all 0.3s ease;
+            font-size: 0.85rem;
         }
 
         .btn-view:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 10px rgba(67, 97, 238, 0.3);
+            box-shadow: 0 4px 10px rgba(74, 144, 226, 0.3);
             color: white;
         }
 
         /* Modal Styles */
         .photo-modal .modal-content {
+            border-radius: 10px;
             border: none;
-            border-radius: 15px;
-            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            background-color: var(--darker-bg);
+            color: var(--light-text);
         }
 
         .photo-modal .modal-header {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: white;
-            border-bottom: none;
+            background: linear-gradient(90deg, var(--primary-blue), var(--accent-blue));
+            color: var(--lighter-text);
+            border-radius: 10px 10px 0 0;
+            border: none;
+            padding: 1.2rem;
         }
 
         .photo-modal .modal-title {
+            font-size: 1.2rem;
             font-weight: 600;
+            display: flex;
+            align-items: center;
+        }
+
+        .photo-modal .modal-title i {
+            margin-right: 8px;
+            font-size: 1.1rem;
         }
 
         .photo-modal .modal-body {
             padding: 0;
+            background-color: var(--dark-bg);
         }
 
         .photo-modal .modal-footer {
-            border-top: none;
-            background: #f8f9fa;
+            border-top: 1px solid var(--border-color);
+            padding: 1rem 1.5rem;
+            background-color: var(--darker-bg);
         }
 
         .photo-modal img {
@@ -167,443 +319,48 @@
             object-fit: contain;
         }
 
-        /* Back Button */
-        .btn-back {
-            background: white;
-            color: var(--primary-color);
-            border: 2px solid var(--primary-color);
-            padding: 0.8rem 1.8rem;
-            border-radius: 50px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            margin-top: 2rem;
-        }
-
-        .btn-back:hover {
-            background: var(--primary-color);
-            color: white;
-            transform: translateY(-2px);
-        }
-
-        .btn-back i {
-            margin-right: 8px;
-        }
-
         /* Empty State */
         .empty-state {
             text-align: center;
-            padding: 4rem 0;
-            max-width: 600px;
-            margin: 0 auto;
+            padding: 3rem 1rem;
         }
 
         .empty-state i {
-            font-size: 5rem;
-            color: var(--accent-color);
+            font-size: 3.5rem;
             margin-bottom: 1.5rem;
+            color: var(--primary-blue);
             opacity: 0.7;
         }
 
         .empty-state h3 {
-            font-size: 1.8rem;
-            margin-bottom: 1rem;
-            color: var(--text-dark);
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--lighter-text);
         }
 
         .empty-state p {
-            color: var(--text-light);
-            margin-bottom: 2rem;
+            color: var(--light-text);
+            opacity: 0.8;
         }
 
-        .photo-grid {
-            grid-template-columns: 1fr;
-            padding: 0 1rem;
-        }
-
-        .photo-img-container {
-            height: 200px;
-        }
-
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: #f8fafc;
-            color: var(--text-dark);
-            margin: 0;
-            padding: 0;
-        }
-
-        /* Project Header */
-        .project-header {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: white;
-            padding: 3rem 0;
-            margin-bottom: 3rem;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .project-header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxkZWZzPjxwYXR0ZXJuIGlkPSJwYXR0ZXJuIiB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiIHBhdHRlcm5UcmFuc2Zvcm09InJvdGF0ZSg0NSkiPjxyZWN0IHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjA1KSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3QgZmlsbD0idXJsKCNwYXR0ZXJuKSIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIvPjwvc3ZnPg==');
-            opacity: 0.3;
-        }
-
-        .project-header-content {
-            position: relative;
-            z-index: 1;
-        }
-
-        .project-description {
-            font-size: 1.1rem;
-            opacity: 0.9;
-            max-width: 700px;
-            margin: 0 auto 1.5rem;
-        }
-        .btn-action i {
-            margin-right: 8px;
-        }
-        /* Back Button */
-        .btn-back {
-            background: white;
-            color: var(--primary-color);
-            border: 1px solid var(--primary-color);
-            padding: 0.8rem 1.8rem;
-            border-radius: 50px;
-            font-weight: 600;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            margin-right: 15px;
-        }
-
-        .btn-back:hover {
-            background: var(--light-color);
-            color: var(--secondary-color);
-            border-color: var(--secondary-color);
-        }
-
-        .btn-back i {
-            margin-right: 8px;
-        }
-
-        .button-group {
-            display: flex;
-            justify-content: center;
-            margin: 2rem 0;
-        }
-
-        .album-card h3 {
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin-bottom: 0.8rem;
-            color: var(--text-dark);
-            display: flex;
-            align-items: center;
-        }
-
-        .album-card h3 {
-            margin-left: 10px;
-            font-size: 0.7rem;
-            padding: 0.35rem 0.6rem;
-        }
-
-        .album-card p {
-            color: var(--text-light);
-            font-size: 1rem;
-            line-height: 1.6;
-            margin-bottom: 1.5rem;
-            flex-grow: 1;
-        }
-
-        .btn-view {
-            background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
-            color: white;
-            border: none;
-            padding: 0.6rem 1.5rem;
-            border-radius: 50px;
-            font-weight: 500;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            transition: all 0.3s ease;
-            font-size: 1rem;
-        }
-
-        .btn-view:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 10px rgba(67, 97, 238, 0.3);
-            color: white;
-        }
-
-        .btn-view i {
-            margin-right: 8px;
-            font-size: 1rem;
-        }
-
-        /* Modal Styles */
-        .modal-content {
-            border: none;
-            border-radius: 12px;
-            overflow: hidden;
-        }
-
-        .modal-header {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: white;
-            border-bottom: none;
-        }
-
-        .modal-title {
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-        }
-
-        .modal-title i {
-            margin-right: 10px;
-        }
-
-        .modal-body {
-            padding: 2rem;
-        }
-
-        .form-control {
-            border-radius: 8px;
-            padding: 0.8rem 1rem;
-            border: 1px solid #e2e8f0;
-            transition: all 0.3s ease;
-        }
-
-        .form-control:focus {
-            border-color: var(--accent-color);
-            box-shadow: 0 0 0 0.2rem rgba(72, 149, 239, 0.25);
-        }
-
-        /* Responsive Adjustments */
-        @media (max-width: 768px) {
-            .project-header {
-                padding: 2rem 0;
-            }
-            .project-description {
-                font-size: 1rem;
-            }
-
-            .button-group {
-                flex-direction: column;
-                align-items: center;
-                gap: 10px;
-            }
-
-            .btn-back {
-                width: 100%;
-                justify-content: center;
-                margin-right: 0;
-            }
-        }
-
-        /* Responsive Adjustments */
-        @media (max-width: 768px) {
-            .photo-grid {
-                grid-template-columns: 1fr;
-                padding: 0 1rem;
-            }
-
-            .photo-img-container {
-                height: 200px;
-            }
-        }
-
-        /* Photo Grid */
-        .photo-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 2rem;
-            padding: 0 2rem;
-            margin-bottom: 4rem;
-        }
-
-        /* Photo Card */
-        .photo-card {
-            background: white;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-            transition: all 0.3s ease;
-            position: relative;
-        }
-
-        .photo-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
-        }
-
-        .photo-img-container {
-            position: relative;
-            overflow: hidden;
-            height: 250px;
-        }
-
-        .photo-img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.5s ease;
-        }
-
-        .photo-card:hover .photo-img {
-            transform: scale(1.05);
-        }
-
-        .photo-overlay {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
-            padding: 1rem;
-            color: white;
-            transform: translateY(100%);
-            transition: transform 0.3s ease;
-        }
-        .photo-card:hover .photo-overlay {
-            transform: translateY(0);
-        }
-
-        /* Estilos para el input de archivo personalizado */
-        .custom-file-input {
-            opacity: 0;
-            position: absolute;
-            z-index: -1;
-        }
-
-        .custom-file {
-            position: relative;
-            display: inline-block;
-            width: 100%;
-            margin-bottom: 0;
-        }
-
-        .custom-file-label {
-            position: relative;
-            z-index: 2;
-            width: 100%;
-            height: calc(2.25rem + 2px);
-            padding: 0.375rem 0.75rem;
-            line-height: 1.5;
-            color: #495057;
-            background-color: #fff;
-            border: 1px solid #ced4da;
-            border-radius: 0.25rem;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
-        .custom-file-label::after {
-            position: absolute;
-            top: 0;
-            right: 0;
-            bottom: 0;
-            z-index: 3;
-            display: block;
-            height: calc(2.25rem + 2px);
-            padding: 0.375rem 0.75rem;
-            line-height: 1.5;
-            color: #495057;
-            content: "Search";
-            background-color: #e9ecef;
-            border-left: 1px solid #ced4da;
-            border-radius: 0 0.25rem 0.25rem 0;
-        }
-
-        /* Estilos para el mensaje de éxito */
-        .alert-success {
-            background-color: #d4edda;
-            color: #155724;
-            border-color: #c3e6cb;
-            padding: 10px 15px;
-            border-radius: 4px;
-            margin-bottom: 15px;
-            display: none;
-        }
-
-        /* Barra de progreso mejorada */
-        .upload-progress-wrapper {
-            margin: 1.5rem 0;
-            padding: 0;
-        }
-
-        .progress-status {
-            font-weight: 500;
-            color: var(--primary-color);
-        }
-
-        .progress-percent {
-            font-weight: 600;
-            color: var(--dark-color);
-        }
-
-        .progress-bar-fill {
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
-            border-radius: 3px;
-            transition: width 0.3s ease;
-        }
-
-        .file-counter {
-            font-style: italic;
-        }
-
-        .current-file-num {
-            font-weight: 600;
-            color: var(--primary-color);
-        }
-
-        /* Estado de éxito */
-        .upload-complete .progress-status {
-            color: var(--success-color);
-        }
-
-        .upload-complete .progress-bar-fill {
-            background: var(--success-color);
-        }
-
-        /* New styles for download functionality */
-        .download-actions {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 1.5rem;
-            padding: 0 2rem;
-        }
-
+        /* Download/Delete Buttons */
         .btn-download-all {
             background: linear-gradient(45deg, #28a745, #20c997);
             color: white;
             border: none;
-            padding: 0.6rem 1.5rem;
+            padding: 0.6rem 1.2rem;
             border-radius: 50px;
             font-weight: 500;
             text-decoration: none;
             display: inline-flex;
             align-items: center;
             transition: all 0.3s ease;
-            font-size: 1rem;
-            box-shadow: 0 4px 10px rgba(40, 167, 69, 0.3);
+            font-size: 0.85rem;
         }
 
         .btn-download-all:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(40, 167, 69, 0.4);
+            box-shadow: 0 4px 10px rgba(40, 167, 69, 0.3);
             color: white;
         }
 
@@ -611,6 +368,35 @@
             margin-right: 8px;
         }
 
+        .btn-delete-single {
+
+            background: rgba(26, 42, 54, 0.7);
+            border: 1px solid rgba(255, 77, 77, 0.3);
+            color: white;
+            padding: 0.6rem 2.2rem;
+            border-radius: 50px;
+            font-weight: 5000;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            transition: all 0.3s ease;
+            font-size: 0.85rem;
+        }
+
+
+        .btn-delete-single:hover {
+            background: #ff4d4d;
+            border-color: #ff4d4d;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(255, 77, 77, 0.3);
+        }
+
+        .btn-delete-single i {
+            margin-right: 8px;
+        }
+
+        /* Photo Checkbox */
         .photo-checkbox {
             position: absolute;
             top: 15px;
@@ -622,14 +408,10 @@
         }
 
         .photo-card.selected {
-            box-shadow: 0 0 0 3px var(--accent-color);
+            box-shadow: 0 0 0 3px var(--accent-blue);
         }
 
-        .download-selected {
-            background: linear-gradient(45deg, #17a2b8, #20c997);
-        }
-
-        /* Loading animation for download */
+        /* Loading and Notifications */
         .download-loading {
             display: none;
             position: fixed;
@@ -637,25 +419,27 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.5);
+            background: rgba(0, 0, 0, 0.7);
             z-index: 9999;
             justify-content: center;
             align-items: center;
+            backdrop-filter: blur(3px);
         }
 
         .download-loading-content {
-            background: white;
+            background: var(--darker-bg);
             padding: 2rem;
-            border-radius: 12px;
+            border-radius: 10px;
             text-align: center;
             max-width: 400px;
+            border: 1px solid var(--border-color);
         }
 
         .download-loading-spinner {
             width: 50px;
             height: 50px;
-            border: 5px solid #f3f3f3;
-            border-top: 5px solid var(--primary-color);
+            border: 5px solid rgba(74, 144, 226, 0.2);
+            border-top: 5px solid var(--primary-blue);
             border-radius: 50%;
             animation: spin 1s linear infinite;
             margin: 0 auto 1rem;
@@ -670,63 +454,60 @@
             position: fixed;
             bottom: 20px;
             right: 20px;
-            background: var(--primary-color);
+            background: var(--primary-blue);
             color: white;
             padding: 15px 25px;
             border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
             z-index: 1000;
             display: none;
             align-items: center;
+            backdrop-filter: blur(5px);
+            border: 1px solid var(--border-color);
         }
 
         .download-notification.error {
-            background: #dc3545 !important;
+            background: var(--danger-color) !important;
         }
 
         .download-notification i {
             margin-right: 10px;
-            font-size: 1.2rem;
         }
 
-        .download-notification i.fa-exclamation-circle {
-            margin-right: 10px;
-            font-size: 1.2rem;
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .project-header {
+                padding: 2rem 0;
+            }
+
+            .photo-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .button-group {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .btn-back {
+                width: 100%;
+                justify-content: center;
+                margin-right: 0;
+            }
         }
 
-        .btn-delete-single {
-            background: linear-gradient(45deg, #ff4d4d, #cc0000);
-            color: white;
-            border: none;
-            padding: 0.6rem 1.5rem;
-            border-radius: 50px;
-            font-weight: 500;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 10px rgba(255, 77, 77, 0.3);
-            font-size: 1rem;
-        }
+        @media (min-width: 992px) {
+            :root {
+                --card-min-width: 300px;
+            }
 
-        .btn-delete-single:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(255, 77, 77, 0.4);
-            color: white;
-        }
-
-        .btn-delete-single i {
-            margin-right: 8px;
+            .photo-grid {
+                padding: 0 1.5rem;
+            }
         }
     </style>
 </head>
 <body>
-
-<!-- Navigation -->
-<div th:if="${canEdit}" th:include="adm/template_admin.html::header"></div>
-<div th:unless="${canEdit}" th:include="usuario/template_usuario.html::header"></div>
-
-
 <!-- Gallery Header -->
 <div class="project-header text-center">
     <div class="container project-header-content">
@@ -754,7 +535,7 @@
             <button class="btn-download-all download-selected" id="downloadSelectedBtn" disabled>
                 <i class="fas fa-download"></i> Download Selected
             </button>
-            <button class="btn-download-all btn-delete" id="deleteSelectedBtn" disabled th:if="${canEdit}">
+            <button class="btn-download-all btn-delete" id="deleteSelectedBtn" disabled th:if="${PROYECTOS_FOTO_DELETE}">
                 <i class="fas fa-trash-alt"></i> Delete Selected
             </button>
         </div>
@@ -764,16 +545,16 @@
 
 <div th:if="${not #lists.isEmpty(fotoDespues)}" class="photo-grid">
     <div th:each="fotoDespues : ${fotoDespues}" class="photo-card">
-        <input type="checkbox" class="photo-checkbox" th:data-id="${fotoDespues.id}" th:data-url="@{/images/{img}(img=${fotoDespues.imagen})}" th:data-name="${fotoDespues.nombre}">
+        <input type="checkbox" class="photo-checkbox" th:data-id="${fotoDespues.id}" th:data-url="@{/img/{img}(img=${fotoDespues.imagen})}" th:data-name="${fotoDespues.nombre}">
         <div class="photo-img-container">
             <div th:if="${#strings.endsWith(fotoDespues.imagen, '.mp4') or #strings.endsWith(fotoDespues.imagen, '.avi') or #strings.endsWith(fotoDespues.imagen, '.mov') or #strings.endsWith(fotoDespues.imagen, '.mkv')}">
                 <video class="photo-img" controls>
-                    <source th:src="@{/images/{img}(img=${fotoDespues.imagen})}" type="video/mp4">
+                    <source th:src="@{/img/{img}(img=${fotoDespues.imagen})}" type="video/mp4">
                     Your browser does not support videos.
                 </video>
             </div>
             <div th:unless="${#strings.endsWith(fotoDespues.imagen, '.mp4') or #strings.endsWith(fotoDespues.imagen, '.avi') or #strings.endsWith(fotoDespues.imagen, '.mov') or #strings.endsWith(fotoDespues.imagen, '.mkv')}">
-                <img class="photo-img" th:src="@{/images/{img}(img=${fotoDespues.imagen})}" alt="Foto del álbum">
+                <img class="photo-img" th:src="@{/img/{img}(img=${fotoDespues.imagen})}" alt="Foto del álbum">
             </div>
 
             <div class="photo-overlay">
@@ -790,7 +571,7 @@
                 <a href="javascript:void(0)" class="btn-view" data-toggle="modal" th:data-target="'#photoModal' + ${fotoDespues.id}">
                     <i class="fas fa-expand mr-2"></i> Enlarge
                 </a>
-                <a href="javascript:void(0)" class="btn-delete-single" th:data-id="${fotoDespues.id}" th:if="${canEdit}">
+                <a href="javascript:void(0)" class="btn-delete-single" th:data-id="${fotoDespues.id}" th:if="${PROYECTOS_FOTO_DELETE}">
                     <i class="fas fa-trash-alt mr-2"></i> Delete
                 </a>
             </div>
@@ -967,12 +748,12 @@
                     <!-- Verifica si el archivo es un video o una imagen -->
                     <div th:if="${#strings.endsWith(fotoDespues.imagen, '.mp4') or #strings.endsWith(fotoDespues.imagen, '.avi') or #strings.endsWith(fotoDespues.imagen, '.mov') or #strings.endsWith(fotoDespues.imagen, '.mkv')}">
                         <video class="img-fluid video-content" id="videoModal" controls>
-                            <source th:src="@{/images/{img}(img=${fotoDespues.imagen})}" type="video/mp4">
+                            <source th:src="@{/img/{img}(img=${fotoDespues.imagen})}" type="video/mp4">
                             Your browser does not support videos.
                         </video>
                     </div>
                     <div th:unless="${#strings.endsWith(fotoDespues.imagen, '.mp4') or #strings.endsWith(fotoDespues.imagen, '.avi') or #strings.endsWith(fotoDespues.imagen, '.mov') or #strings.endsWith(fotoDespues.imagen, '.mkv')}">
-                        <img class="img-fluid" th:src="@{/images/{img}(img=${fotoDespues.imagen})}" alt="Foto detallada">
+                        <img class="img-fluid" th:src="@{/img/{img}(img=${fotoDespues.imagen})}" alt="Foto detallada">
                     </div>
                 </div>
                 <div class="modal-footer">

@@ -22,14 +22,16 @@
 
   <style>
     :root {
-      --primary-color: #4361ee;
-      --secondary-color: #3f37c9;
-      --accent-color: #4895ef;
-      --dark-color: #3a0ca3;
-      --light-color: #f8f9fa;
-      --text-dark: #2b2d42;
-      --text-light: #8d99ae;
-      --danger-color: #ff0000;
+      --primary-blue: #4361ee;
+      --accent-blue: #4895ef;
+      --secondary-blue: #3f37c9;
+      --dark-blue: #3a0ca3;
+      --dark-bg: #1a2a36;
+      --darker-bg: #142028;
+      --light-text: #e0e0e0;
+      --lighter-text: #ffffff;
+      --border-color: rgba(74, 144, 226, 0.2);
+      --danger-color: #ff4d4d;
       --success-color: #4cc9f0;
       --warning-color: #ff9e00;
       --admin-color: #4e73df;
@@ -37,13 +39,19 @@
       --supervisor-color: #6c757d;
       --supervisorplus-color: #ffc107;
       --info-color: #17a2b8;
+      --card-min-width: 250px;
     }
 
     body {
-      font-family: 'Poppins', sans-serif;
-      background-color: #f8f9fa;
-      color: var(--text-dark);
-      padding-top: 60px;
+      font-family: 'Montserrat', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: var(--light-text);
+      background-color: var(--dark-bg);
+      background-image: url('/img/upscalemedia-transformed.jpeg'); /* <<--- esta es la línea clave */
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center;
+      background-attachment: fixed;
+
     }
 
     .container {
@@ -55,11 +63,12 @@
     .page-header {
       padding-bottom: 10px;
       margin-bottom: 20px;
-      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+      border-bottom: 1px solid var(--border-color);
     }
 
     .page-header h1 {
       font-size: 1.5rem;
+      color: var(--lighter-text);
     }
 
     .breadcrumb {
@@ -69,31 +78,42 @@
       font-size: 0.85rem;
     }
 
+    .breadcrumb-item {
+      color: var(--light-text);
+    }
+
     .breadcrumb-item a {
-      color: var(--primary-color);
+      color: var(--accent-blue);
       text-decoration: none;
       transition: all 0.3s ease;
     }
 
     .breadcrumb-item a:hover {
-      color: var(--dark-color);
+      color: var(--lighter-text);
       text-decoration: underline;
     }
 
+    .breadcrumb-item.active {
+      color: var(--light-text);
+      opacity: 0.7;
+    }
+
     .card {
-      border: none;
+      background: rgba(26, 42, 54, 0.7);
+      border: 1px solid var(--border-color);
       border-radius: 10px;
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
       overflow: hidden;
       margin-bottom: 20px;
+      backdrop-filter: blur(5px);
     }
 
     .card-header {
-      background-color: var(--primary-color);
-      color: white;
+      background: linear-gradient(90deg, var(--darker-bg), var(--dark-bg));
+      color: var(--lighter-text);
       font-weight: 500;
       padding: 12px 15px;
-      border-bottom: none;
+      border-bottom: 1px solid var(--border-color);
       font-size: 1rem;
     }
 
@@ -101,89 +121,98 @@
       margin-bottom: 0;
       width: 100%;
       border-collapse: collapse;
+      color: var(--light-text);
     }
 
     .table th {
-      background-color: #f8f9fa;
-      color: var(--text-dark);
+      background: rgba(26, 42, 54, 0.9);
+      color: var(--lighter-text);
       font-weight: 600;
       border-top: none;
       padding: 10px 8px;
       text-align: left;
       font-size: 0.85rem;
+      border-bottom: 1px solid var(--border-color);
     }
 
     .table td {
       padding: 10px 8px;
       vertical-align: middle;
       text-align: left;
-      border-top: 1px solid #dee2e6;
+      border-top: 1px solid var(--border-color);
       font-size: 0.85rem;
+      background: rgba(26, 42, 54, 0.5);
     }
 
     .table-hover tbody tr:hover {
-      background-color: rgba(67, 97, 238, 0.05);
+      background-color: rgba(67, 97, 238, 0.1);
     }
 
+    /* Button Container */
     .btn-container {
       display: flex;
       flex-wrap: wrap;
-      gap: 8px;
-      margin-bottom: 15px;
+      gap: 0.8rem;
+      margin-bottom: 1.5rem;
     }
 
-    /* Botones comunes */
+    /* Common Button Styles */
     .btn-back, .delete-btn, .change-password-btn {
       display: inline-flex;
       align-items: center;
       gap: 5px;
-      border-radius: 6px;
+      border-radius: 50px;
       font-weight: 500;
       transition: all 0.3s ease;
-      padding: 0.35rem 0.75rem;
+      padding: 0.6rem 1.2rem;
+      border: 1px solid transparent;
+      backdrop-filter: blur(5px);
     }
 
     .btn-back {
-      background-color: var(--warning-color);
-      color: white;
-      box-shadow: 0 2px 8px rgba(255, 158, 0, 0.3);
+      background: rgba(26, 42, 54, 0.7);
+      border-color: var(--warning-color);
+      color: var(--warning-color);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     }
 
     .btn-back:hover {
-      background-color: #e68a00;
+      background: rgba(255, 158, 0, 0.2);
+      color: #ffcc80;
+      border-color: #ffcc80;
       transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(255, 158, 0, 0.4);
-      color: white;
     }
 
     .delete-btn {
-      background-color: var(--danger-color);
-      color: white;
-      box-shadow: 0 2px 8px rgba(247, 37, 133, 0.3);
+      background: rgba(26, 42, 54, 0.7);
+      border-color: var(--danger-color);
+      color: var(--danger-color);
     }
 
     .delete-btn:hover {
-      background-color: #c62828;
+      background: rgba(255, 77, 77, 0.2);
+      color: #ff9e9e;
+      border-color: #ff9e9e;
       transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(229, 57, 53, 0.4);
     }
 
     .change-password-btn {
-      background-color: var(--info-color);
-      color: white;
-      box-shadow: 0 2px 8px rgba(23, 162, 184, 0.3);
+      background: rgba(26, 42, 54, 0.7);
+      border-color: var(--info-color);
+      color: var(--info-color);
     }
 
     .change-password-btn:hover {
-      background-color: #138496;
+      background: rgba(23, 162, 184, 0.2);
+      color: #7ad1e0;
+      border-color: #7ad1e0;
       transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(23, 162, 184, 0.4);
     }
 
-    /* Estilos para usuarios */
+    /* User Info Styles */
     .user-name {
       font-weight: 600;
-      color: var(--text-dark);
+      color: var(--lighter-text);
       font-size: 0.95rem;
       letter-spacing: 0.2px;
       margin-bottom: 2px;
@@ -191,7 +220,7 @@
 
     .user-email {
       font-weight: 500;
-      color: var(--primary-color);
+      color: var(--accent-blue);
       font-size: 0.85rem;
       word-break: break-word;
     }
@@ -208,7 +237,7 @@
       display: none;
     }
 
-    /* Selector de tipo de usuario */
+    /* User Type Selector */
     .user-type-selector {
       position: relative;
       margin-bottom: 0;
@@ -218,8 +247,8 @@
       display: flex;
       border-radius: 6px;
       overflow: hidden;
-      border: 1px solid #dee2e6;
-      background-color: #f8f9fa;
+      border: 1px solid var(--border-color);
+      background-color: rgba(26, 42, 54, 0.7);
     }
 
     .user-type-option {
@@ -252,6 +281,7 @@
       transition: all 0.3s ease;
       border-radius: 4px;
       padding: 5px 8px;
+      color: var(--light-text);
     }
 
     .user-type-option i {
@@ -271,14 +301,14 @@
     }
 
     .user-type-option:not(:last-child) {
-      border-right: 1px solid #dee2e6;
+      border-right: 1px solid var(--border-color);
     }
 
     .user-type-option:hover {
-      background-color: #e9ecef;
+      background-color: rgba(74, 144, 226, 0.1);
     }
 
-    /* Colores específicos para tipos de usuario */
+    /* User Type Colors */
     .admin-option input[type="radio"]:checked + label {
       background-color: var(--admin-color);
       border: 1px solid #3a56c4;
@@ -296,29 +326,70 @@
       border: 1px solid #d39e00;
     }
 
-    /* Modal y formularios */
-    .modal-header.bg-primary {
-      background-color: var(--primary-color) !important;
+    /* Modal and Forms */
+    .modal-content {
+      border-radius: 10px;
+      border: none;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+      background-color: var(--darker-bg);
+      color: var(--light-text);
     }
 
-    .modal-content {
+    .modal-header {
+      background: linear-gradient(90deg, var(--primary-blue), var(--accent-blue));
+      color: var(--lighter-text);
+      border-radius: 10px 10px 0 0;
       border: none;
-      border-radius: 10px;
-      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+      padding: 1.2rem;
+    }
+
+    .modal-header .btn-close {
+      filter: invert(1);
+      opacity: 0.8;
+    }
+
+    .modal-header .btn-close:hover {
+      opacity: 1;
+    }
+
+    .modal-title {
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+    }
+
+    .modal-title i {
+      margin-right: 10px;
+    }
+
+    .modal-body {
+      padding: 1.5rem;
+      background-color: var(--dark-bg);
+    }
+
+    .modal-footer {
+      border-top: 1px solid var(--border-color);
+      padding: 1rem 1.5rem;
+      background-color: var(--darker-bg);
     }
 
     .form-control {
+      background-color: rgba(26, 42, 54, 0.7);
+      border: 1px solid var(--border-color);
+      color: var(--light-text);
       border-radius: 6px;
       padding: 10px 15px;
-      border: 1px solid #ced4da;
       transition: all 0.3s ease;
     }
 
     .form-control:focus {
-      border-color: var(--accent-color);
-      box-shadow: 0 0 0 0.2rem rgba(67, 97, 238, 0.25);
+      background-color: rgba(26, 42, 54, 0.9);
+      border-color: var(--accent-blue);
+      box-shadow: 0 0 0 0.2rem rgba(72, 149, 239, 0.25);
+      color: var(--lighter-text);
     }
 
+    /* Password Input Group */
     .password-input-group {
       position: relative;
     }
@@ -329,28 +400,43 @@
       top: 50%;
       transform: translateY(-50%);
       cursor: pointer;
-      color: #6c757d;
+      color: var(--light-text);
+      opacity: 0.7;
+    }
+
+    .toggle-password:hover {
+      opacity: 1;
     }
 
     .password-result {
       margin-top: 15px;
       padding: 10px;
       border-radius: 6px;
-      background-color: #f8f9fa;
-      border: 1px solid #dee2e6;
+      background-color: rgba(26, 42, 54, 0.7);
+      border: 1px solid var(--border-color);
     }
 
     .password-text {
       font-family: monospace;
       font-size: 1rem;
       word-break: break-all;
+      color: var(--lighter-text);
     }
 
     .copy-password-btn {
       margin-top: 10px;
+      background: rgba(26, 42, 54, 0.7);
+      border: 1px solid var(--success-color);
+      color: var(--success-color);
     }
 
-    /* Responsive */
+    .copy-password-btn:hover {
+      background: rgba(76, 201, 240, 0.2);
+      color: var(--lighter-text);
+      border-color: var(--success-color);
+    }
+
+    /* Responsive Adjustments */
     @media (max-width: 768px) {
       body {
         padding-top: 56px;
@@ -391,7 +477,7 @@
 
       .user-type-option:not(:last-child) {
         border-right: none;
-        border-bottom: 1px solid #dee2e6;
+        border-bottom: 1px solid var(--border-color);
       }
 
       .user-type-option label {
@@ -406,7 +492,7 @@
 
       .user-email {
         font-size: 0.8rem;
-        color: var(--secondary-color);
+        color: var(--accent-blue);
       }
     }
 
@@ -437,7 +523,8 @@
       }
       .delete-btn,
       .change-password-btn {
-        padding: 0.35rem 0.5rem;
+        padding: 0.5rem;
+        min-width: 42px;
       }
     }
 
@@ -459,10 +546,10 @@
       tr {
         display: block;
         margin-bottom: 15px;
-        border: 1px solid #dee2e6;
+        border: 1px solid var(--border-color);
         border-radius: 8px;
         padding: 10px;
-        background: white;
+        background: rgba(26, 42, 54, 0.7);
         box-shadow: 0 2px 5px rgba(0,0,0,0.1);
       }
 
@@ -472,7 +559,8 @@
         align-items: center;
         padding: 8px 5px;
         border: none;
-        border-bottom: 1px solid #eee;
+        border-bottom: 1px solid var(--border-color);
+        background: transparent;
       }
 
       td:last-child {
@@ -483,13 +571,15 @@
         content: attr(data-label);
         font-weight: 600;
         margin-right: 10px;
-        color: var(--text-dark);
+        color: var(--light-text);
         flex: 1;
+        font-size: 0.8rem;
       }
 
       td > *:not(::before) {
         flex: 2;
         text-align: right;
+        font-size: 0.85rem;
       }
 
       .user-type-selector {
@@ -503,7 +593,7 @@
 
       td[data-label="Email"] .user-email {
         font-size: 0.85rem;
-        color: var(--secondary-color);
+        color: var(--accent-blue);
       }
 
       td[data-label="Nombre"],
@@ -516,7 +606,8 @@
       td[data-label="Email"]::before {
         margin-bottom: 4px;
         font-size: 0.7rem;
-        color: var(--text-light);
+        color: var(--light-text);
+        opacity: 0.7;
       }
 
       td[data-label="Nombre"] > *,
@@ -543,12 +634,6 @@
   </style>
 </head>
 <body>
-
-<!-- Navigation -->
-<div th:replace="adm/template_admin.html :: header"></div>
-
-<div th:replace="permiso/permissions-panel :: panelPermisos"></div>
-
 <!-- Page Content -->
 <div class="container">
   <!-- Page Heading -->

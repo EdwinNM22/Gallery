@@ -27,6 +27,7 @@ com\proyecto\galeria\service\Impl\UsuarioServiceImpl.class
 com\proyecto\galeria\controller\AdminReportController.class
 com\proyecto\galeria\controller\ReporteController.class
 com\proyecto\galeria\model\Permiso.class
+com\proyecto\galeria\controller\NoAccessController.class
 com\proyecto\galeria\service\AuditLogService.class
 com\proyecto\galeria\repository\IUsuarioRepository.class
 com\proyecto\galeria\service\subAlbumService.class

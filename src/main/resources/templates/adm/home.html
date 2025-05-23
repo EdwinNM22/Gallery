@@ -3,73 +3,83 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="Galería en línea de fotos">
-  <meta name="author" content="GalleryOnline">
+  <meta name="description" content="Bio/vizion Project Management System">
+  <meta name="author" content="Bio/vizion">
 
-  <title>Galería Online</title>
+  <title>Bio/vizion Dashboard</title>
 
   <!-- Bootstrap core CSS -->
-  <link th:href="@{/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
-
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
   <!-- Font Awesome -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <!-- Google Fonts - Montserrat -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-  <!-- Custom styles -->
   <style>
     :root {
-      --primary-color: #4361ee;
-      --secondary-color: #3f37c9;
-      --accent-color: #4895ef;
-      --dark-color: #3a0ca3;
-      --light-color: #f8f9fa;
+      --primary-blue: #4a90e2;
+      --accent-blue: #5aa8ff;
+      --dark-bg: #1a2a36;
+      --darker-bg: #142028;
+      --light-text: #e0e0e0;
+      --lighter-text: #ffffff;
+      --border-color: rgba(74, 144, 226, 0.2);
     }
 
     body {
-      font-family: 'Poppins', sans-serif;
-      background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
-      margin: 0;
-      padding: 0;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
+      font-family: 'Montserrat', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: var(--light-text);
+      background-color: var(--dark-bg);
+      background-image: url('/img/admrescale.jpeg'); /* <<--- esta es la línea clave */
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center;
+      background-attachment: fixed;
+
     }
 
-    .main-container {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      padding: 2rem;
-    }
 
+
+    /* Header styles */
     .hero-section {
       text-align: center;
       margin-bottom: 3rem;
+      position: relative;
+      z-index: 1;
     }
 
     .hero-title {
-      font-size: 2.8rem;
+      font-size: 2.5rem;
       font-weight: 700;
-      color: var(--dark-color);
+      color: var(--lighter-text);
       margin-bottom: 1rem;
-      background: linear-gradient(to right, #3a0ca3, #4361ee);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      position: relative;
+      display: inline-block;
+    }
+
+    .hero-title:after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 3px;
+      background: linear-gradient(90deg, var(--primary-blue), var(--accent-blue));
+      border-radius: 3px;
     }
 
     .hero-subtitle {
-      font-size: 1.2rem;
-      color: #6c757d;
+      font-size: 1.1rem;
+      color: #b0b0b0;
       max-width: 600px;
       margin: 0 auto 2rem;
       line-height: 1.6;
     }
 
+    /* Action buttons */
     .action-buttons {
       display: flex;
       flex-direction: column;
@@ -77,6 +87,8 @@
       gap: 1.5rem;
       max-width: 500px;
       margin: 0 auto;
+      position: relative;
+      z-index: 1;
     }
 
     .btn-mega {
@@ -86,15 +98,21 @@
       justify-content: center;
       width: 100%;
       padding: 1.5rem 2rem;
-      font-size: 1.3rem;
+      font-size: 1.1rem;
       font-weight: 600;
-      border-radius: 12px;
+      border-radius: 8px;
       border: none;
       cursor: pointer;
       transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
       overflow: hidden;
       z-index: 1;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+      background: rgba(26, 42, 54, 0.7);
+      backdrop-filter: blur(5px);
+      border: 1px solid var(--border-color);
+      color: var(--light-text);
     }
 
     .btn-mega::before {
@@ -104,47 +122,44 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+      background: linear-gradient(45deg, var(--primary-blue), var(--accent-blue));
       z-index: -1;
       transition: opacity 0.3s ease;
-      opacity: 1;
+      opacity: 0;
     }
 
     .btn-mega:hover::before {
-      opacity: 0.9;
+      opacity: 1;
     }
 
     .btn-mega:hover {
       transform: translateY(-3px);
-      box-shadow: 0 8px 25px rgba(67, 97, 238, 0.3);
+      box-shadow: 0 15px 30px rgba(74, 144, 226, 0.3);
+      color: var(--lighter-text);
+      border-color: transparent;
     }
 
     .btn-mega:active {
       transform: translateY(1px);
     }
 
-    .btn-secondary-mega {
-      background: white;
-      color: var(--primary-color);
-      border: 2px solid var(--primary-color);
-    }
-
-    .btn-secondary-mega::before {
-      background: white;
-    }
-
-    .btn-secondary-mega:hover {
-      color: white;
-    }
-
-    .btn-secondary-mega:hover::before {
-      background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
-      opacity: 1;
-    }
-
     .btn-icon {
-      margin-right: 10px;
-      font-size: 1.5rem;
+      margin-right: 12px;
+      font-size: 1.3rem;
+    }
+
+    /* Split button container */
+    .split-button-container {
+      width: 100%;
+      display: flex;
+      gap: 10px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .split-button-container .btn-mega {
+      flex: 1;
+      padding: 1.5rem 0.5rem;
     }
 
     /* Animation */
@@ -165,10 +180,21 @@
       animation-delay: 0.4s;
     }
 
+    /* Accent line */
+    .accent-line {
+    padding: 50px;
+    }
+
+    @keyframes gradient {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
     /* Responsive adjustments */
     @media (max-width: 768px) {
       .hero-title {
-        font-size: 2.2rem;
+        font-size: 2rem;
       }
 
       .hero-subtitle {
@@ -177,71 +203,56 @@
 
       .btn-mega {
         padding: 1.2rem 1.5rem;
-        font-size: 1.1rem;
+        font-size: 1rem;
       }
-    }
 
-    /* Estilos para mantener la animación y efectos */
-    .split-button-container {
-      position: relative;
-      animation: fadeIn 0.6s ease-out forwards;
-      animation-delay: 0.4s;
-    }
-
-    .split-button-container .btn-mega {
-      padding: 1.5rem 0.5rem;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-      transition: all 0.3s ease;
-    }
-
-    .split-button-container .btn-mega:hover {
-      transform: none;
-      box-shadow: 0 8px 25px rgba(67, 97, 238, 0.3);
-    }
-
-    @media (max-width: 768px) {
-      .split-button-container .btn-mega {
-        padding: 1.2rem 0.3rem;
-        font-size: 1.1rem;
+      .split-button-container {
+        flex-direction: column;
+        gap: 1rem;
       }
     }
   </style>
 </head>
-
-<body>
+<body >
 
 <div th:replace="permiso/permissions-panel :: panelPermisos"></div>
 
 <!-- Main Content -->
 <div class="main-container">
   <div class="container">
+    <div class="accent-line animated"></div>
+
     <div class="hero-section animated">
-      <h1 class="hero-title">Bio/vizion Project Management</h1>
-      <p class="hero-subtitle">Choose the option you need</p>
+      <h1 class="hero-title">
+        Bio/vizion<br>
+        Project Management
+      </h1>
+      <p class="hero-subtitle">Secure access to all project management tools</p>
     </div>
 
+
     <div class="action-buttons">
-      <a th:href="@{/albumes/create}" class="btn-mega btn-secondary-mega animated delay-2" th:if="${AGENDA_ACCESS}" >
+      <a th:href="@{/albumes/create}" class="btn-mega animated delay-1" th:if="${AGENDA_ACCESS}">
         <i class="fas fa-plus-circle btn-icon"></i>
-        Agenda - New project/Nuevo proyecto
+        New Project / Nuevo Proyecto
       </a>
-      <a th:href="@{/home}" class="btn-mega btn-secondary-mega animated delay-2" th:if="${PROYECTOS_ACCESS}">
+      <a th:href="@{/home}" class="btn-mega animated delay-1" th:if="${PROYECTOS_ACCESS}">
         <i class="fas fa-folder-open btn-icon"></i>
-        ONGOING PROJECTS/PROYECTO EN CURSO
+        Ongoing Projects / Proyecto en Curso
       </a>
-      <a th:href="@{admin/reports}" class="btn-mega btn-secondary-mega animated delay-2"th:if="${REPORTES_ACCESS}" >
-        <i class="fa-solid fa-clipboard"></i>
-        ​ ​ Manage reports
+      <a th:href="@{admin/reports}" class="btn-mega animated delay-1" th:if="${REPORTES_ACCESS}">
+        <i class="fas fa-clipboard btn-icon"></i>
+        Manage Reports
       </a>
-      <!-- Botón dividido con margen de separación -->
-      <div class="split-button-container" style="width: 100%; display: flex; gap: 4px; border-radius: 12px; overflow: hidden;">
-        <a th:href="@{usuario/vpsSecurity2024-}" class="btn-mega btn-secondary-mega" style="flex: 1; border-radius: 12px; margin-right: 2px;" th:if="${USUARIOS_CREATE}">
-          <i class="fas fa-solid fa-user-plus btn-icon"></i>
-          NEW USER
+
+      <div class="split-button-container animated delay-2">
+        <a th:href="@{usuario/vpsSecurity2024-}" class="btn-mega" th:if="${USUARIOS_CREATE}">
+          <i class="fas fa-user-plus btn-icon"></i>
+          New User
         </a>
-        <a th:href="@{/usuario/show}" class="btn-mega btn-secondary-mega" style="flex: 1; border-radius: 12px; margin-left: 2px;"th:if="${USUARIOS_ACCESS}" >
-          <i class="fa-solid fa-users-gear btn-icon"></i>
-          MANAGE USERS
+        <a th:href="@{/usuario/show}" class="btn-mega" th:if="${USUARIOS_ACCESS}">
+          <i class="fas fa-users-gear btn-icon"></i>
+          Manage Users
         </a>
       </div>
     </div>
@@ -252,8 +263,8 @@
 <div th:include="adm/template_admin.html::footer"></div>
 
 <!-- Bootstrap core JavaScript -->
-<script th:src="@{/vendor/jquery/jquery.min.js}"></script>
-<script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
 </body>
 </html>
