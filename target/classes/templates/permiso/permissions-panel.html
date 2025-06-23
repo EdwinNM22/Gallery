@@ -312,21 +312,28 @@
     }
 
     .btn-floating-permissions {
+      all: unset;
       display: flex;
       align-items: center;
       justify-content: center;
       width: 60px;
       height: 60px;
       border-radius: 50%;
-      background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
-      color: var(--lighter-text);
-      border: none;
+      background: linear-gradient(135deg, #4361ee 0%, #4895ef 100%) !important;
+      color: #ffffff !important;
       box-shadow: 0 5px 20px rgba(67, 97, 238, 0.3);
       cursor: pointer;
       transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
       position: relative;
       overflow: hidden;
       font-size: 1.5rem;
+      border: none !important;
+      text-align: center;
+      text-decoration: none;
+      font-family: inherit;
+      opacity: 1 !important;
+      filter: none !important;
+      background-color: initial !important;
     }
 
     .btn-floating-permissions:hover {
@@ -342,10 +349,10 @@
       position: absolute;
       right: 70px;
       white-space: nowrap;
-      background: var(--primary-blue);
+      background: #4361ee !important;
       padding: 8px 15px;
       border-radius: 30px;
-      color: var(--lighter-text);
+      color: #ffffff !important;
       font-weight: 500;
       opacity: 0;
       pointer-events: none;
@@ -358,6 +365,7 @@
       opacity: 1;
       right: 75px;
     }
+
 
     /* Lista de usuarios - Diseño más limpio */
     #permissionsModal .users-container {

@@ -17,6 +17,16 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
+
+    <!-- Preload -->
+    <link rel="preload"
+          as="image"
+          href="/img/album.webp?width=1200"
+          imagesrcset="/img/album.webp?width=600 600w, /img/album.webp?width=1200 1200w, /img/album.webp?width=1800 1800w"
+          imagesizes="100vw">
+
+
+
     <!-- Custom styles -->
     <style>
         :root {
@@ -32,18 +42,31 @@
             --card-min-width: 250px;
         }
 
+        .bg-fast-load {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .bg-fast-load img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
         body {
             font-family: 'Montserrat', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            color: white;
+            color: var(--light-text);
             background-color: var(--dark-bg);
-            background-image: url('/img/album.jpeg'); /* <<--- esta es la línea clave */
             background-size: cover;
             background-repeat: no-repeat;
             background-position: center;
             background-attachment: fixed;
 
         }
-
         /* Project Header */
         .project-header {
 
@@ -63,7 +86,7 @@
             font-size: clamp(1.8rem, 5vw, 2.5rem);
             margin-bottom: 0.5rem;
             line-height: 1.2;
-            color:white;
+            color: var(--lighter-text);
         }
 
         .project-description {
@@ -71,7 +94,7 @@
             opacity: 0.9;
             max-width: 700px;
             margin: 0 auto 1.5rem;
-            color: white;
+            color: var(--light-text);
         }
 
         /* Buttons */
@@ -508,6 +531,23 @@
     </style>
 </head>
 <body>
+<!-- Imagen -->
+<div class="bg-fast-load">
+    <img
+            src="/img/album.webp"
+            srcset="
+      /img/album.webp?width=600 600w,
+      /img/album.webp?width=1200 1200w,
+      /img/album.webp?width=1800 1800w
+    "
+            sizes="100vw"
+            alt=""
+            decoding="async"
+    >
+</div>
+
+
+
 <!-- Gallery Header -->
 <div class="project-header text-center">
     <div class="container project-header-content">
@@ -535,7 +575,7 @@
             <button class="btn-download-all download-selected" id="downloadSelectedBtn" disabled>
                 <i class="fas fa-download"></i> Download Selected
             </button>
-            <button class="btn-download-all btn-delete" id="deleteSelectedBtn" disabled th:if="${PROYECTOS_FOTO_DELETE}">
+            <button class="btn-download-all btn-delete" id="deleteSelectedBtn" disabled th:if="${canEdit}">
                 <i class="fas fa-trash-alt"></i> Delete Selected
             </button>
         </div>
@@ -545,16 +585,16 @@
 
 <div th:if="${not #lists.isEmpty(fotoDespues)}" class="photo-grid">
     <div th:each="fotoDespues : ${fotoDespues}" class="photo-card">
-        <input type="checkbox" class="photo-checkbox" th:data-id="${fotoDespues.id}" th:data-url="@{/img/{img}(img=${fotoDespues.imagen})}" th:data-name="${fotoDespues.nombre}">
+        <input type="checkbox" class="photo-checkbox" th:data-id="${fotoDespues.id}" th:data-url="@{/images/{img}(img=${fotoDespues.imagen})}" th:data-name="${fotoDespues.nombre}">
         <div class="photo-img-container">
             <div th:if="${#strings.endsWith(fotoDespues.imagen, '.mp4') or #strings.endsWith(fotoDespues.imagen, '.avi') or #strings.endsWith(fotoDespues.imagen, '.mov') or #strings.endsWith(fotoDespues.imagen, '.mkv')}">
                 <video class="photo-img" controls>
-                    <source th:src="@{/img/{img}(img=${fotoDespues.imagen})}" type="video/mp4">
+                    <source th:src="@{/images/{img}(img=${fotoDespues.imagen})}" type="video/mp4">
                     Your browser does not support videos.
                 </video>
             </div>
             <div th:unless="${#strings.endsWith(fotoDespues.imagen, '.mp4') or #strings.endsWith(fotoDespues.imagen, '.avi') or #strings.endsWith(fotoDespues.imagen, '.mov') or #strings.endsWith(fotoDespues.imagen, '.mkv')}">
-                <img class="photo-img" th:src="@{/img/{img}(img=${fotoDespues.imagen})}" alt="Foto del álbum">
+                <img class="photo-img" th:src="@{/images/{img}(img=${fotoDespues.imagen})}" alt="Foto del álbum">
             </div>
 
             <div class="photo-overlay">
@@ -571,7 +611,7 @@
                 <a href="javascript:void(0)" class="btn-view" data-toggle="modal" th:data-target="'#photoModal' + ${fotoDespues.id}">
                     <i class="fas fa-expand mr-2"></i> Enlarge
                 </a>
-                <a href="javascript:void(0)" class="btn-delete-single" th:data-id="${fotoDespues.id}" th:if="${PROYECTOS_FOTO_DELETE}">
+                <a href="javascript:void(0)" class="btn-delete-single" th:data-id="${fotoDespues.id}" th:if="${canEdit}">
                     <i class="fas fa-trash-alt mr-2"></i> Delete
                 </a>
             </div>
@@ -748,12 +788,12 @@
                     <!-- Verifica si el archivo es un video o una imagen -->
                     <div th:if="${#strings.endsWith(fotoDespues.imagen, '.mp4') or #strings.endsWith(fotoDespues.imagen, '.avi') or #strings.endsWith(fotoDespues.imagen, '.mov') or #strings.endsWith(fotoDespues.imagen, '.mkv')}">
                         <video class="img-fluid video-content" id="videoModal" controls>
-                            <source th:src="@{/img/{img}(img=${fotoDespues.imagen})}" type="video/mp4">
+                            <source th:src="@{/images/{img}(img=${fotoDespues.imagen})}" type="video/mp4">
                             Your browser does not support videos.
                         </video>
                     </div>
                     <div th:unless="${#strings.endsWith(fotoDespues.imagen, '.mp4') or #strings.endsWith(fotoDespues.imagen, '.avi') or #strings.endsWith(fotoDespues.imagen, '.mov') or #strings.endsWith(fotoDespues.imagen, '.mkv')}">
-                        <img class="img-fluid" th:src="@{/img/{img}(img=${fotoDespues.imagen})}" alt="Foto detallada">
+                        <img class="img-fluid" th:src="@{/images/{img}(img=${fotoDespues.imagen})}" alt="Foto detallada">
                     </div>
                 </div>
                 <div class="modal-footer">

@@ -20,7 +20,29 @@
 
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
+  <!-- Preload -->
+  <link rel="preload"
+        as="image"
+        href="/img/upscalemedia-transformed.webp?width=1200"
+        imagesrcset="/img/upscalemedia-transformed.webp?width=600 600w, /img/upscalemedia-transformed.webp?width=1200 1200w, /img/upscalemedia-transformed.webp?width=1800 1800w"
+        imagesizes="100vw">
+
   <style>
+    .bg-fast-load {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: -1;
+      overflow: hidden;
+    }
+
+    .bg-fast-load img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
     :root {
       --primary-blue: #4361ee;
       --accent-blue: #4895ef;
@@ -34,26 +56,21 @@
       --danger-color: #ff4d4d;
       --success-color: #4cc9f0;
       --warning-color: #ff9e00;
-      --admin-color: #4e73df;
-      --user-color: #1cc88a;
-      --supervisor-color: #6c757d;
-      --supervisorplus-color: #ffc107;
       --info-color: #17a2b8;
       --card-min-width: 250px;
     }
+
 
     body {
       font-family: 'Montserrat', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       color: var(--light-text);
       background-color: var(--dark-bg);
-      background-image: url('/img/upscalemedia-transformed.jpeg'); /* <<--- esta es la línea clave */
       background-size: cover;
       background-repeat: no-repeat;
       background-position: center;
       background-attachment: fixed;
 
     }
-
     .container {
       max-width: 1200px;
       margin-bottom: 40px;
@@ -231,35 +248,6 @@
       gap: 5px;
     }
 
-    .supervisorplus-star {
-      color: var(--supervisorplus-color);
-      font-size: 0.9em;
-      display: none;
-    }
-
-    /* User Type Selector */
-    .user-type-selector {
-      position: relative;
-      margin-bottom: 0;
-    }
-
-    .user-type-options {
-      display: flex;
-      border-radius: 6px;
-      overflow: hidden;
-      border: 1px solid var(--border-color);
-      background-color: rgba(26, 42, 54, 0.7);
-    }
-
-    .user-type-option {
-      flex: 1;
-      text-align: center;
-      padding: 0.4rem 0.6rem;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      position: relative;
-    }
-
     .user-type-option input[type="radio"] {
       position: absolute;
       opacity: 0;
@@ -298,32 +286,6 @@
     .user-type-option input[type="radio"]:checked + label i {
       color: white;
       transform: scale(1.15);
-    }
-
-    .user-type-option:not(:last-child) {
-      border-right: 1px solid var(--border-color);
-    }
-
-    .user-type-option:hover {
-      background-color: rgba(74, 144, 226, 0.1);
-    }
-
-    /* User Type Colors */
-    .admin-option input[type="radio"]:checked + label {
-      background-color: var(--admin-color);
-      border: 1px solid #3a56c4;
-    }
-    .user-option input[type="radio"]:checked + label {
-      background-color: var(--user-color);
-      border: 1px solid #16a571;
-    }
-    .supervisor-option input[type="radio"]:checked + label {
-      background-color: var(--supervisor-color);
-      border: 1px solid #5a6268;
-    }
-    .supervisorplus-option input[type="radio"]:checked + label {
-      background-color: var(--supervisorplus-color);
-      border: 1px solid #d39e00;
     }
 
     /* Modal and Forms */
@@ -470,16 +432,6 @@
         white-space: nowrap;
       }
 
-      .user-type-options {
-        flex-direction: column;
-        min-width: 120px;
-      }
-
-      .user-type-option:not(:last-child) {
-        border-right: none;
-        border-bottom: 1px solid var(--border-color);
-      }
-
       .user-type-option label {
         justify-content: flex-start;
         padding: 4px 0;
@@ -582,10 +534,6 @@
         font-size: 0.85rem;
       }
 
-      .user-type-selector {
-        width: 100%;
-      }
-
       td[data-label="Nombre"] .user-name {
         font-size: 1rem;
         font-weight: 700;
@@ -634,6 +582,24 @@
   </style>
 </head>
 <body>
+
+
+<!-- Imagen -->
+<div class="bg-fast-load">
+  <img
+          src="//img/upscalemedia-transformed.webp"
+          srcset="
+      /img/upscalemedia-transformed.webp?width=600 600w,
+      /img/upscalemedia-transformed.webp?width=1200 1200w,
+      /img/upscalemedia-transformed.webp?width=1800 1800w
+    "
+          sizes="100vw"
+          alt=""
+          decoding="async"
+  >
+</div>
+
+
 <!-- Page Content -->
 <div class="container">
   <!-- Page Heading -->
