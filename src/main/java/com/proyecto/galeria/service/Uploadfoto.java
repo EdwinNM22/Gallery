@@ -15,7 +15,7 @@ import java.util.UUID;
 @Service
 public class Uploadfoto {
 
-    private String folder = "/opt/images/";
+    private String folder = "/opt/Gallery/images/";
     private final Path root = Paths.get("images");
 
     public Uploadfoto() {
@@ -47,7 +47,7 @@ public class Uploadfoto {
     }
 
     public void deleteImage(String filename) {
-        String ruta = "/opt/images/";
+        String ruta = "/opt/Gallery/images/";
         File file = new File(ruta + filename);
         if (file.delete()) {
             System.out.println("File deleted successfully");

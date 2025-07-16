@@ -3,6 +3,7 @@ com\proyecto\galeria\ResourceWebConfiguration.class
 com\proyecto\galeria\service\albumService.class
 com\proyecto\galeria\model\Auditlog.class
 com\proyecto\galeria\service\Impl\PermisoServiceImpl.class
+com\proyecto\galeria\controller\SelectController.class
 com\proyecto\galeria\service\Impl\UserDetailsServiceImpl.class
 com\proyecto\galeria\service\Impl\AuditLogServiceImpl.class
 com\proyecto\galeria\controller\EquipoController.class

@@ -133,11 +133,6 @@ public class FotoController {
         }
         return new Date();
     }
-
-
-
-
-
     @GetMapping("/edit/{id}")
     public String edit(@PathVariable Integer id, Model model) {
         Optional<foto> optionalFoto = fotoService.get(id);

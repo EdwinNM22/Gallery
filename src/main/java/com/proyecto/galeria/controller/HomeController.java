@@ -34,7 +34,7 @@ public class HomeController {
     @Autowired
     private PermisoService permisoService;
 
-    @GetMapping({"/", "/mainMenu"})
+    @GetMapping({ "/mainMenu"})
     public String mainMenu() {
         return "home/mainMenu";
     }
