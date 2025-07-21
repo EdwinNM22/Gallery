@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Expedientes</title>
+
+  <!-- ========= ESTILOS ========= -->
+  <link th:href="@{/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    .bg-fast-load {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: -1;
+      overflow: hidden;
+    }
+
+    .bg-fast-load img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    :root {
+      --primary-blue: #4361ee;
+      --accent-blue: #4895ef;
+      --secondary-blue: #3f37c9;
+      --dark-blue: #3a0ca3;
+      --dark-bg: #1a2a36;
+      --darker-bg: #142028;
+      --light-text: #e0e0e0;
+      --lighter-text: #ffffff;
+      --border-color: rgba(74, 144, 226, 0.2);
+      --success-color: #4cc9f0;
+      --danger-color: #ff4d4d;
+      --warning-color: #ff9e00;
+      --info-color: #17a2b8;
+    }
+
+    body {
+      font-family: 'Montserrat', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: var(--light-text);
+      background-color: var(--dark-bg);
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center;
+      background-attachment: fixed;
+    }
+
+    /* Modern Header */
+    .modern-header {
+      padding: 2rem 0;
+      text-align: center;
+    }
+
+    .modern-header h1 {
+      font-weight: 700;
+      font-size: 2.8rem;
+      margin-bottom: 1rem;
+      position: relative;
+      display: inline-block;
+    }
+
+    .modern-header h1:after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 3px;
+      background: linear-gradient(90deg, var(--primary-blue), var(--accent-blue));
+      border-radius: 3px;
+    }
+
+    /* Expedientes Grid */
+    .expedientes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* 300px en lugar de 280px */
+      gap: 1.8rem; /* Ligero aumento del espacio entre cards */
+      padding: 0 2rem;
+      margin-bottom: 4rem;
+      width: 100%;
+    }
+
+    /* Expediente Card */
+    .expediente-card {
+      background: rgba(26, 42, 54, 0.7);
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      transition: all 0.3s ease;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      backdrop-filter: blur(5px);
+      border: 1px solid var(--border-color);
+    }
+
+    .expediente-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 30px rgba(74, 144, 226, 0.2);
+      border-color: var(--primary-blue);
+    }
+
+    .expediente-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 5px;
+      background: linear-gradient(90deg, var(--primary-blue), var(--accent-blue));
+    }
+
+    .expediente-card-content {
+      padding: 1.7rem; /* Aumentado de 1.5rem */
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .expediente-card h2 {
+      font-size: 1.4rem; /* Aumentado de 1.3rem */
+      font-weight: 600;
+      margin-bottom: 0.7rem; /* Ligero aumento */
+      color: var(--lighter-text);
+    }
+
+    .expediente-card p {
+      color: var(--light-text);
+      font-size: 0.9rem; /* Aumentado de 0.85rem */
+      line-height: 1.6; /* Mejor interlineado */
+      margin-bottom: 1.2rem; /* Ligero aumento */
+      opacity: 0.8;
+    }
+
+    .expediente-card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.2rem 1.5rem 1.5rem 1.5rem; /* arriba 1.2rem, laterales y abajo 1.5rem */
+      border-top: 1px solid var(--border-color);
+      margin-top: auto;
+      padding-bottom: 1.5rem; /* Agregado para mayor margen inferior */
+    }
+
+    /* Modern Button */
+    .btn-modern {
+      position: relative;
+      background: rgba(26, 42, 54, 0.7);
+      color: var(--light-text);
+      border: 1px solid var(--border-color);
+      padding: 0.55rem 1.1rem; /* Ligero aumento */
+      border-radius: 50px;
+      font-weight: 500;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      backdrop-filter: blur(5px);
+      overflow: hidden;
+      z-index: 1;
+      font-size: 0.85rem; /* Ligero aumento */
+    }
+
+    .btn-modern::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(45deg, var(--primary-blue), var(--accent-blue));
+      z-index: -1;
+      transition: opacity 0.3s ease;
+      opacity: 0;
+    }
+
+    .btn-modern:hover::before {
+      opacity: 1;
+    }
+
+    .btn-modern:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(74, 144, 226, 0.3);
+      color: var(--lighter-text);
+      border-color: transparent;
+    }
+
+    .btn-modern i {
+      margin-right: 7px; /* Ligero aumento */
+      font-size: 0.85rem; /* Ligero aumento */
+    }
+
+    /* Button Variants */
+    .btn-modern.btn-success {
+      border: 1px solid rgba(76, 201, 240, 0.3);
+    }
+    .btn-modern.btn-success::before {
+      background: linear-gradient(45deg, var(--success-color), #2a9d8f);
+    }
+    .btn-modern.btn-warning {
+      border: 1px solid rgba(255, 158, 0, 0.3);
+    }
+    .btn-modern.btn-warning::before {
+      background: linear-gradient(45deg, var(--warning-color), #e76f51);
+    }
+    .btn-modern.btn-danger {
+      border: 1px solid rgba(255, 77, 77, 0.3);
+    }
+    .btn-modern.btn-danger::before {
+      background: linear-gradient(45deg, var(--danger-color), #cc0000);
+    }
+    .btn-modern.btn-info {
+      border: 1px solid rgba(23, 162, 184, 0.3);
+    }
+    .btn-modern.btn-info::before {
+      background: linear-gradient(45deg, var(--info-color), #118ab2);
+    }
+
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 4rem 0;
+      max-width: 600px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    .empty-state i {
+      font-size: 5rem;
+      color: var(--primary-blue);
+      margin-bottom: 1.5rem;
+      opacity: 0.5;
+    }
+
+    .empty-state h3 {
+      font-size: 1.8rem;
+      margin-bottom: 1rem;
+      color: var(--lighter-text);
+    }
+
+    .empty-state p {
+      color: var(--light-text);
+      margin-bottom: 2rem;
+      opacity: 0.7;
+    }
+
+    /* Date Badge */
+    .date-badge {
+      display: inline-block;
+      padding: 0.3rem 0.7rem; /* Ligero aumento */
+      border-radius: 50px;
+      font-size: 0.8rem; /* Ligero aumento */
+      background: rgba(26, 42, 54, 0.9);
+      border: 1px solid var(--border-color);
+      margin-bottom: 1rem; /* Ligero aumento */
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 768px) {
+      .modern-header {
+        padding: 3rem 0;
+      }
+      .modern-header h1 {
+        font-size: 2.2rem;
+      }
+      .expedientes-grid {
+        padding: 0 1rem;
+        gap: 1.5rem; /* Ajuste para móviles */
+      }
+      .expediente-card-content {
+        padding: 1.5rem; /* Ajuste para móviles */
+      }
+    }
+
+    @media (max-width: 576px) {
+      .expedientes-grid {
+        grid-template-columns: 1fr;
+      }
+      .expediente-card {
+        max-width: 100%;
+      }
+      .btn-modern {
+        padding: 0.5rem 1rem; /* Ajuste para móviles */
+      }
+    }
+
+    body .modal.fade.show .modal-dialog .modal-content {
+      background-color: #142028 !important;
+      color: #e0e0e0 !important;
+      border: 1px solid rgba(74, 144, 226, 0.2) !important;
+    }
+
+    body .modal.fade.show .modal-dialog .modal-content .form-control {
+      background-color: #1a2a36 !important;
+      color: #e0e0e0 !important;
+      border: 1px solid rgba(74, 144, 226, 0.2) !important;
+    }
+
+    body .modal.fade.show .modal-dialog .modal-content .form-control:focus {
+      background-color: #1a2a36 !important;
+      color: #ffffff !important;
+      border-color: #4361ee !important;
+      box-shadow: 0 0 0 0.2rem rgba(67, 97, 238, 0.25);
+    }
+  </style>
+
+</head>
+
+<body>
+
+<!-- ========= FONDO ========= -->
+<div class="bg-fast-load">
+  <img
+          src="/img/upscalemedia-transformed.webp"
+          srcset="
+      /img/upscalemedia-transformed.webp?width=600 600w,
+      /img/upscalemedia-transformed.webp?width=1200 1200w,
+      /img/upscalemedia-transformed.webp?width=1800 1800w"
+          sizes="100vw"
+          alt="Fondo">
+</div>
+
+<!-- Menú flotante de permisos -->
+<div th:replace="permiso/permissions-panel :: panelPermisos"></div>
+
+<!-- ========= CONTENIDO PRINCIPAL ========= -->
+<div class="container-fluid">
+  <!-- Modern Header -->
+  <header class="modern-header">
+    <h1><i class="fas fa-folder"></i> Expedientes</h1>
+    <p>Administra tus expedientes de forma eficiente</p>
+
+    <!-- Aquí va permiso EXPEDIENTE_CREATE -->
+    <div class="button-group">
+      <button type="button" class="btn-modern btn-success" data-bs-toggle="modal" data-bs-target="#crearExpedienteModal" th:if="${EXPEDIENTE_CREATE}" >
+        <i class="fas fa-plus"></i> Crear expediente
+      </button>
+    </div>
+  </header>
+
+  <div th:replace="expediente/modal-crear-expediente :: crearExpedienteModal(${expediente}, ${usuarios})"></div>
+  <div th:replace="expediente/editar-expediente-fragment :: editarExpedienteModal(${expediente}, ${usuarios})"></div>
+
+  <!-- Expedientes Grid -->
+  <div class="expedientes-grid">
+    <div class="expediente-card" th:each="expediente : ${expedientes}">
+      <div class="expediente-card-content">
+        <h2 th:text="${expediente.nombre}">Nombre</h2>
+        <p th:text="${expediente.descripcion}">Descripción</p>
+        <p><strong>Usuario propietario:</strong> <span th:text="${expediente.usuario.nombre}">Nombre del usuario</span></p>
+      </div>
+      <div class="expediente-card-footer">
+        <div>
+          <a th:href="@{/form/manage/{usuarioId}/{expedienteId}(usuarioId=${session.idusuario}, expedienteId=${expediente.id})}" class="btn-modern btn-primary">
+            <i class="fas fa-eye"></i> Ver
+          </a>
+
+        </div>
+        <div>
+          <!-- Aquí va permiso EXPEDIENTE_EDIT -->
+          <button type="button" class="btn-modern btn-warning btn-editar"
+                  th:data-id="${expediente.id}" th:if="${EXPEDIENTE_EDIT}">
+            <i class="fas fa-edit"></i> Editar
+          </button>
+
+          <!-- Aquí va permiso EXPEDIENTE_DELETE -->
+          <a th:href="@{/expediente/eliminar/{id}(id=${expediente.id})}" class="btn-modern btn-danger"
+             onclick="return confirm('¿Estás seguro de eliminar este expediente?');" th:if="${EXPEDIENTE_DELETE}">
+            <i class="fas fa-trash"></i> Eliminar
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty state -->
+  <div class="empty-state" style="display: none;">
+    <i class="fas fa-folder-open"></i>
+    <h3>No hay expedientes creados</h3>
+    <p>Comienza creando tu primer expediente para organizar tu trabajo</p>
+    <!-- Aquí va permiso EXPEDIENTE_CREATE para mostrar este botón -->
+    <a href="expediente/new" class="btn-modern btn-success" th:if="${EXPEDIENTE_CREATE}" >
+      <i class="fas fa-plus"></i> Crear expediente
+    </a>
+  </div>
+</div>
+
+<!-- ========= SCRIPTS ========= -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+  // Esperar que cargue DOM antes de usar elementos o jQuery
+  document.addEventListener('DOMContentLoaded', function() {
+    // Modal de notas
+    const notaModal = document.getElementById('notaModal');
+    if(notaModal) {
+      notaModal.addEventListener('show.bs.modal', function (event) {
+        const button = event.relatedTarget;
+        const nota = button.getAttribute('data-nota');
+        const id = button.getAttribute('data-id');
+        const textarea = notaModal.querySelector('#notaContenido');
+        textarea.value = nota || '';
+        textarea.setAttribute('data-id', id);
+      });
+    }
+
+    // Mostrar empty state si no hay cards
+    const cards = document.querySelectorAll('.expediente-card');
+    const emptyState = document.querySelector('.empty-state');
+    if (cards.length === 0 && emptyState) {
+      emptyState.style.display = 'block';
+    }
+
+    // Mostrar modal editar si corresponde
+    if ([[${abrirModalEditar}]]) {
+      var editarModal = new bootstrap.Modal(document.getElementById('editarExpedienteModal'));
+      editarModal.show();
+    }
+
+    // Listener para ocultar modal editar y cambiar URL
+    const editarModalElem = document.getElementById('editarExpedienteModal');
+    if (editarModalElem) {
+      editarModalElem.addEventListener('hidden.bs.modal', function () {
+        window.history.replaceState(null, null, '/expediente');
+      });
+    }
+
+    // Botón editar con jQuery
+    $(document).on('click', '.btn-editar', function() {
+      const id = $(this).data('id');
+      $.getJSON(`/expediente/api/expediente/${id}`, function(expediente) {
+        $('#editarExpedienteModal #nombre').val(expediente.nombre);
+        $('#editarExpedienteModal #descripcion').val(expediente.descripcion);
+        $('#editarExpedienteModal #usuario').val(expediente.usuario?.id || '');
+        $('#editarExpedienteModal input[name="id"]').val(expediente.id);
+
+        // Abrir modal
+        const modal = new bootstrap.Modal(document.getElementById('editarExpedienteModal'));
+        modal.show();
+
+        // Cambiar URL sin recargar
+        window.history.pushState(null, null, `/expediente/editar/${id}`);
+      });
+    });
+  });
+</script>
+
+</body>
+
+
+</html>

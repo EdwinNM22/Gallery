@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="Bio/vizion Project Management System">
+  <meta name="author" content="Bio/vizion">
+
+  <title>Bio/vizion - Fiche d'Évaluation – Conduits de Ventilation </title>
+
+  <!-- Bootstrap core CSS -->
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <!-- Google Fonts - Montserrat -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Custom Form CSS -->
+  <link href="/css/form.css" rel="stylesheet">
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+  <!-- Preload -->
+  <link rel="preload"
+        as="image"
+        href="/img/admrescale.webp?width=1200"
+        imagesrcset="/img/admrescale.webp?width=600 600w, /img/admrescale.webp?width=1200 1200w, /img/admrescale.webp?width=1800 1800w"
+        imagesizes="100vw">
+</head>
+<body>
+
+<!-- Background Image -->
+<div class="bg-fast-load">
+  <img
+          src="/img/admrescale.webp"
+          srcset="
+     /img/admrescale.webp?width=600 600w,
+      /img/admrescale.webp?width=1200 1200w,
+      /img/admrescale.webp?width=1800 1800w
+    "
+          sizes="100vw"
+          alt=""
+          decoding="async"
+  >
+</div>
+
+
+<!-- Main Content -->
+<div class="main-container">
+  <div class="container">
+    <div class="hero-section animated">
+      <h1 class="hero-title">
+        Fiche d'Évaluation – Conduits de Ventilation
+      </h1>
+    </div>
+
+    <!-- Success/Error Messages -->
+    <div th:if="${success}" class="alert alert-success animated delay-1" role="alert">
+      <i class="fas fa-check-circle"></i>
+      <span th:text="${message}">Message de réussite</span>
+    </div>
+
+    <div th:if="${error}" class="alert alert-danger animated delay-1" role="alert">
+      <i class="fas fa-exclamation-circle"></i>
+      <span th:text="${message}">Message d'erreur</span>
+    </div>
+
+    <!-- Action buttons -->
+    <div class="btn-container">
+      <a class="btn btn-back" th:href="@{/adm}">
+        <i class="fas fa-arrow-left"></i> Back to Home
+      </a>
+    </div>
+
+    <form th:action="@{/form/submit}" method="post" enctype="multipart/form-data" class="form-container animated delay-1" id="mainForm">
+
+      <!-- Información General -->
+      <div class="form-section">
+        <h3><i class="fas fa-info-circle"></i> Informations Générales</h3>
+
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label class="form-label">Nom du client <span class="required">*</span></label>
+              <input type="text" class="form-control" name="nombreCliente" required>
+              <input type="hidden" name="expedienteId" th:value="${expedienteId}">
+
+
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group">
+              <label class="form-label">Type de Bâtiment </label>
+              <select class="form-select" name="tipoEdificio" >
+                <option value="">Sélectionner...</option>
+                <option value="Résidentiel">Résidentiel</option>
+                <option value="Commercial">Commercial</option>
+                <option value="Industriel">Industriel</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label class="form-label">Date de l'évaluation<span class="required">*</span></label>
+              <input type="date" class="form-control" name="fechaEvaluacion" required>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group">
+              <label class="form-label">Nom de l'évaluateur<span class="required">*</span></label>
+              <input type="text" class="form-control" name="nombreEvaluador" th:value="${nombreEvaluador}" required >
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label class="form-label">Personne contact sur place</label>
+              <input type="text" class="form-control" name="personaContacto">
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group">
+              <label class="form-label">Historique d'entretien connu</label>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="mantenimientoHistoria" id="mantenimientoHistoriaCheckbox" value="true">
+                <label class="form-check-label" for="mantenimientoHistoriaCheckbox">Oui</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row" id="fechaUltimoMantenimientoRow" style="display: none;">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label class="form-label">Dernière date</label>
+              <input type="date" class="form-control" name="fechaUltimoMantenimiento" value="">
+            </div>
+          </div>
+        </div>
+
+
+        <div class="row">
+          <div class="col-md-12">
+            <div class="form-group">
+              <label class="form-label">Adresse</label>
+              <textarea class="form-control" name="direccion" rows="3" placeholder="Entrez l'adresse ici..."></textarea>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Información del Sistema -->
+      <div class="form-section">
+        <h3><i class="fas fa-cogs"></i> Système de Ventilation</h3>
+
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label class="form-label">Type de système </label>
+              <select class="form-select" name="tipoSistema" >
+                <option value="">Sélectionner...</option>
+                <option value="Résidentiel">Résidentiel (VRC, fournaise)</option>
+                <option value="Salle de bain">Salle de bain</option>
+                <option value="Cuisine">Cuisine</option>
+                <option value="Hotte commerciale">Hotte commerciale</option>
+                <option value="Industriel">Industriel</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="form-group">
+              <label class="form-label">Accessibilité </label>
+              <select class="form-select" name="accesibilidad">
+                <option value="">Sélectionner...</option>
+                <option value="Facile">Facile</option>
+                <option value="Moyenne">Moyenne</option>
+                <option value="Difficile">Difficile</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label class="form-label">Portes d'accès existantes</label>
+              <input type="text" class="form-control" name="puertasAccesoExistentes">
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group">
+              <label class="form-label">À ajouter</label>
+              <input type="text" class="form-control" name="puertasAccesoAAnadir">
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label class="form-label">Conduits visibles?</label>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="conductosVisibles" value="true">
+                <label class="form-check-label">Oui</label>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group">
+              <label class="form-label">Matériaux</label>
+              <select class="form-select" name="tipoMaterial">
+                <option value="">Sélectionner...</option>
+                <option value="Galvanisé">Galvanisé</option>
+                <option value="Aluminium">Aluminium</option>
+                <option value="Plastique">Plastique</option>
+                <option value="Flexible">Flexible</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Condiciones del Sistema -->
+      <div class="form-section">
+        <h3><i class="fas fa-search"></i> État des Conduits</h3>
+
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label class="form-label">Accumulation de poussière</label>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="acumulacionPolvillo" value="true">
+                <label class="form-check-label">Oui</label>
+              </div>
+              <textarea class="form-control mt-2" name="acumulacionPolvilloComentario" placeholder="Comentarios sobre acumulación de polvillo" rows="3"></textarea>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group">
+              <label class="form-label">Débris visibles</label>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="escombrosVisibles" value="true">
+                <label class="form-check-label">Oui</label>
+              </div>
+              <textarea class="form-control mt-2" name="escombrosVisiblesComentario" placeholder="Comentarios sobre escombros" rows="3"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label class="form-label">Moisissure</label>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="moho" value="true">
+                <label class="form-check-label">Oui</label>
+              </div>
+              <textarea class="form-control mt-2" name="mohoComentario" placeholder="Comentarios sobre moho" rows="3"></textarea>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group">
+              <label class="form-label">Présence de rongeurs/insectes</label>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="roedoresInsectos" value="true">
+                <label class="form-check-label">Oui</label>
+              </div>
+              <textarea class="form-control mt-2" name="roedoresInsectosComentario" placeholder="Comentarios sobre roedores/insectos" rows="3"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label class="form-label">Graisse (Si hotte)</label>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="grasaHotte" value="true">
+                <label class="form-check-label">Oui</label>
+              </div>
+              <textarea class="form-control mt-2" name="grasaHotteComentario" placeholder="Comentarios sobre grasa" rows="3"></textarea>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group">
+              <label class="form-label">Odeurs suspectes</label>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="oloresSospechosos" value="true">
+                <label class="form-check-label">Oui</label>
+              </div>
+              <textarea class="form-control mt-2" name="oloresSospechososComentario" placeholder="Comentarios sobre olores" rows="3"></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Estado de Componentes -->
+      <div class="form-section">
+        <h3><i class="fas fa-tools"></i> État des Équipements Connexes</h3>
+
+        <div class="row">
+          <div class="col-md-4">
+            <div class="form-group">
+              <label class="form-label">Grilles / Bouches</label>
+              <select class="form-select" name="estadoRejillas">
+                <option value="">Sélectionner...</option>
+                <option value="Propres">Propres</option>
+                <option value="Encrassées">Encrassées</option>
+                <option value="Endommagées">Endommagées</option>
+              </select>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label class="form-label">Moteur/Ventilateur</label>
+              <select class="form-select" name="estadoMotor">
+                <option value="">Sélectionner...</option>
+                <option value="Fonctionnel">Fonctionnel</option>
+                <option value="Bruit anormal">Bruit anormal</option>
+                <option value="Sale">Sale</option>
+              </select>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label class="form-label">Filtres</label>
+              <select class="form-select" name="estadoFiltros">
+                <option value="">Sélectionner...</option>
+                <option value="Présents">Présents</option>
+                <option value="À remplacer">À remplacer</option>
+                <option value="Manquants">Manquants</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Medidas y Cantidades -->
+      <div class="form-section">
+        <h3><i class="fas fa-ruler"></i> Mesures et Dimensions</h3>
+
+        <div class="row">
+          <div class="col-md-3">
+            <div class="form-group">
+              <label class="form-label">Nombre de conduits principaux</label>
+              <input type="number" class="form-control" name="cantidadConductos" min="0">
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="form-group">
+              <label class="form-label">Longueur estimée</label>
+              <input type="text" class="form-control" name="longitudEstimacion" placeholder="Ex. 50 pieds/mètres">
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="form-group">
+              <label class="form-label">Nombre de coudes/transitions</label>
+              <input type="number" class="form-control" name="cantidadCodos" min="0">
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="form-group">
+              <label class="form-label">Nombre de sorties/pièces desservies</label>
+              <input type="number" class="form-control" name="cantidadSalidas" min="0">
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="form-group">
+              <label class="form-label">Hauteur de travail </label>
+              <select class="form-select" name="alturaTrabajo">
+                <option value="">Sélectionner...</option>
+                <option value="Sol">Sol</option>
+                <option value="Escabeau">Escabeau</option>
+                <option value="Échelle">Échelle</option>
+                <option value="Nacelle">Nacelle</option>
+              </select>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- Observaciones y Recomendaciones -->
+      <div class="form-section">
+        <h3><i class="fas fa-clipboard-list"></i> Photos et Remarques</h3>
+
+        <div class="form-group">
+          <label class="form-label">Observations générales</label>
+          <textarea class="form-control" name="observaciones" rows="4" placeholder="Observations supplémentaires sur l'évaluation"></textarea>
+        </div>
+
+        <div class="file-upload-area" id="fileUploadArea">
+          <i class="fas fa-cloud-upload-alt fa-3x mb-3" style="color: var(--primary-blue);"></i>
+          <h5>Faites glisser ou cliquez ici pour sélectionner les images.</h5>
+          <div class="progress mt-3" id="uploadProgress" style="display: none;">
+            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%"></div>
+          </div>
+          <input type="file" id="fileInput" name="fotos" multiple accept="image/*" style="display: none;">
+        </div>
+
+        <div class="file-preview" id="filePreview"></div>
+      </div>
+
+      <!-- Subida de Fotos -->
+      <div class="form-section">
+        <h3><i class="fas fa-camera"></i> Recommandations</h3>
+
+        <div class="row">
+          <div class="col-md-4">
+            <div class="form-group">
+              <label class="form-label">Nettoyage complet?</label>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="limpiezaCompleta" value="true">
+                <label class="form-check-label">Oui</label>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label class="form-label">Installation de portes d'accès supplémentaires?</label>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="instalarPuertasAcceso" value="true">
+                <label class="form-check-label">Oui</label>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label class="form-label">Remplacement de filtres?</label>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="reemplazoFiltros" value="true">
+                <label class="form-check-label">Oui</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Produits recommandés</label>
+          <textarea class="form-control" name="productosRecomendados" rows="3" placeholder="Liste des produits recommandés pour l'entretien"></textarea>
+        </div>
+      </div>
+
+      <!-- Botón de Envío -->
+      <div class="text-center">
+        <button type="submit" class="btn btn-submit btn-lg" id="submitBtn">
+          <i class="fas fa-paper-plane"></i> Soumettre Formulaire
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Bootstrap core JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<!-- Custom Form JavaScript -->
+<script src="/js/form.js"></script>
+
+</body>
+</html>

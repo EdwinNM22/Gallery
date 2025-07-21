@@ -29,7 +29,7 @@ public class SpringBootSecurity extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         String[] publicUrls = { "/css/**", "/js/**", "/equipo/**","/vpsSecurity2024-", "/", "/img/**" };
         String[] userUrls = { "/album/**", "/fotos/**", "/subAlbumes/**", "/home/**" };
-        String[] admUrls = { "/adm/**", "/usuario/**", "/supervi/**" };
+        String[] admUrls = { "/adm/**", "/usuario/**", "/supervi/**","/expediente" };
 
         http.csrf().disable()
                 .authorizeRequests()

@@ -2,6 +2,7 @@ package com.proyecto.galeria.model;
 
 
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -38,6 +39,15 @@ public class usuario {
     )
 
     private Set<Permiso> permisos = new HashSet<>();
+
+
+    @OneToMany(mappedBy = "usuario")
+    @JsonManagedReference
+    private List<Expediente> expedientes;
+
+    @OneToMany(mappedBy = "usuario")
+    private List<Form> forms;
+
 
 
     public usuario() {}
@@ -112,5 +122,21 @@ public class usuario {
 
     public void setPermisos(Set<Permiso> permisos) {
         this.permisos = permisos;
+    }
+
+    public List<Expediente> getExpedientes() {
+        return expedientes;
+    }
+
+    public void setExpedientes(List<Expediente> expedientes) {
+        this.expedientes = expedientes;
+    }
+
+    public List<Form> getForms() {
+        return forms;
+    }
+
+    public void setForms(List<Form> forms) {
+        this.forms = forms;
     }
 }

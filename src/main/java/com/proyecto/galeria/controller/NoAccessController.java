@@ -10,6 +10,6 @@ public class NoAccessController {
 
     @GetMapping("/Access")
     public String accessDenied() {
-        return "noaccess/access";
+        return "NoAccess/Access";
     }
 }

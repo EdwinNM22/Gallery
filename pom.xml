@@ -75,11 +75,14 @@
             <artifactId>spring-boot-devtools</artifactId>
             <scope>runtime</scope>
         </dependency>
+
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <scope>annotationProcessor</scope>
+            <version>1.18.28</version> <!-- la última versión estable -->
+            <scope>provided</scope>
         </dependency>
+
         <dependency>
             <groupId>com.itextpdf</groupId>
             <artifactId>io</artifactId>
