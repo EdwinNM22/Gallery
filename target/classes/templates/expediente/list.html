@@ -319,7 +319,7 @@
 
 <body>
 
-<!-- ========= FONDO ========= -->
+<!-- ========= BACKGROUND ========= -->
 <div class="bg-fast-load">
   <img
           src="/img/upscalemedia-transformed.webp"
@@ -328,23 +328,23 @@
       /img/upscalemedia-transformed.webp?width=1200 1200w,
       /img/upscalemedia-transformed.webp?width=1800 1800w"
           sizes="100vw"
-          alt="Fondo">
+          alt="Background">
 </div>
 
-<!-- Menú flotante de permisos -->
+<!-- Floating permissions menu -->
 <div th:replace="permiso/permissions-panel :: panelPermisos"></div>
 
-<!-- ========= CONTENIDO PRINCIPAL ========= -->
+<!-- ========= MAIN CONTENT ========= -->
 <div class="container-fluid">
   <!-- Modern Header -->
   <header class="modern-header">
-    <h1><i class="fas fa-folder"></i> Expedientes</h1>
-    <p>Administra tus expedientes de forma eficiente</p>
+    <h1><i class="fas fa-folder"></i> Records</h1>
+    <p>Manage your records efficiently</p>
 
-    <!-- Aquí va permiso EXPEDIENTE_CREATE -->
+    <!-- Here goes permission RECORD_CREATE -->
     <div class="button-group">
       <button type="button" class="btn-modern btn-success" data-bs-toggle="modal" data-bs-target="#crearExpedienteModal" th:if="${EXPEDIENTE_CREATE}" >
-        <i class="fas fa-plus"></i> Crear expediente
+        <i class="fas fa-plus"></i> Create Record
       </button>
     </div>
   </header>
@@ -352,32 +352,32 @@
   <div th:replace="expediente/modal-crear-expediente :: crearExpedienteModal(${expediente}, ${usuarios})"></div>
   <div th:replace="expediente/editar-expediente-fragment :: editarExpedienteModal(${expediente}, ${usuarios})"></div>
 
-  <!-- Expedientes Grid -->
+  <!-- Records Grid -->
   <div class="expedientes-grid">
     <div class="expediente-card" th:each="expediente : ${expedientes}">
       <div class="expediente-card-content">
-        <h2 th:text="${expediente.nombre}">Nombre</h2>
-        <p th:text="${expediente.descripcion}">Descripción</p>
-        <p><strong>Usuario propietario:</strong> <span th:text="${expediente.usuario.nombre}">Nombre del usuario</span></p>
+        <h2 th:text="${expediente.nombre}">Name</h2>
+        <p th:text="${expediente.descripcion}">Description</p>
+        <p><strong>Owner User:</strong> <span th:text="${expediente.usuario.nombre}">User Name</span></p>
       </div>
       <div class="expediente-card-footer">
         <div>
           <a th:href="@{/form/manage/{usuarioId}/{expedienteId}(usuarioId=${session.idusuario}, expedienteId=${expediente.id})}" class="btn-modern btn-primary">
-            <i class="fas fa-eye"></i> Ver
+            <i class="fas fa-eye"></i> View
           </a>
 
         </div>
         <div>
-          <!-- Aquí va permiso EXPEDIENTE_EDIT -->
+          <!-- Here goes permission RECORD_EDIT -->
           <button type="button" class="btn-modern btn-warning btn-editar"
                   th:data-id="${expediente.id}" th:if="${EXPEDIENTE_EDIT}">
-            <i class="fas fa-edit"></i> Editar
+            <i class="fas fa-edit"></i> Edit
           </button>
 
-          <!-- Aquí va permiso EXPEDIENTE_DELETE -->
+          <!-- Here goes permission RECORD_DELETE -->
           <a th:href="@{/expediente/eliminar/{id}(id=${expediente.id})}" class="btn-modern btn-danger"
-             onclick="return confirm('¿Estás seguro de eliminar este expediente?');" th:if="${EXPEDIENTE_DELETE}">
-            <i class="fas fa-trash"></i> Eliminar
+             onclick="return confirm('Are you sure you want to delete this record?');" th:if="${EXPEDIENTE_DELETE}">
+            <i class="fas fa-trash"></i> Delete
           </a>
         </div>
       </div>
@@ -387,14 +387,15 @@
   <!-- Empty state -->
   <div class="empty-state" style="display: none;">
     <i class="fas fa-folder-open"></i>
-    <h3>No hay expedientes creados</h3>
-    <p>Comienza creando tu primer expediente para organizar tu trabajo</p>
-    <!-- Aquí va permiso EXPEDIENTE_CREATE para mostrar este botón -->
+    <h3>No records created</h3>
+    <p>Start by creating your first record to organize your work</p>
+    <!-- Here goes permission RECORD_CREATE to show this button -->
     <a href="expediente/new" class="btn-modern btn-success" th:if="${EXPEDIENTE_CREATE}" >
-      <i class="fas fa-plus"></i> Crear expediente
+      <i class="fas fa-plus"></i> Create Record
     </a>
   </div>
 </div>
+
 
 <!-- ========= SCRIPTS ========= -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

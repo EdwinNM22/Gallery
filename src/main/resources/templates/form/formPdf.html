@@ -180,9 +180,15 @@
     </div>
     <div class="section fotos-section">
         <div class="section-title">Photos</div>
-        <div class="photo-row">
-            <img th:each="foto : ${fotos}" th:src="'data:image/jpeg;base64,' + ${foto.imagenBase64}" alt="Foto" />
+        <div class="photo-row" th:each="foto : ${fotos}" style="display: flex; align-items: center; margin-bottom: 20px;">
+            <div style="flex: 2; padding-right: 20px;">
+                <img th:src="'data:image/jpeg;base64,' + ${foto.imagenBase64}" alt="Foto" style="max-width: 100%; height: auto;" />
+            </div>
+            <div style="flex: 1;">
+                <p th:text="${foto.descripcion}" style="font-size: 16px; color: #333;"></p>
+            </div>
         </div>
+
         <div th:if="${#lists.isEmpty(fotos)}" style="color:#888; font-size:13px; margin-top:10px;">Aucune photo jointe.</div>
     </div>
     <div class="section">
@@ -206,4 +212,4 @@
     </div>
 </div>
 </body>
-</html> 
+</html>

@@ -15,10 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.security.Principal;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.springframework.web.bind.annotation.GetMapping;
@@ -183,28 +180,36 @@ public class FormController {
                 model.addAttribute("errorMessage", "Form not found");
                 return "redirect:/form/manage";
             }
-            // Get photos for this form
+
+            // Obtener fotos del formulario
             List<FotosForm> fotos = fotosFormService.findByFormId(id);
 
-            List<String> base64Fotos = new java.util.ArrayList<>();
+            List<Map<String, String>> fotosConDescripcion = new ArrayList<>();
             for (FotosForm foto : fotos) {
                 String filename = foto.getImagen();
                 String imagePath = "C:\\Users\\Alex\\Documents\\images\\form" + filename;
                 try {
                     byte[] imageBytes = java.nio.file.Files.readAllBytes(java.nio.file.Paths.get(imagePath));
                     String base64Image = java.util.Base64.getEncoder().encodeToString(imageBytes);
-                    base64Fotos.add(base64Image);
+                    Map<String, String> fotoData = new HashMap<>();
+                    fotoData.put("imagenBase64", base64Image);
+                    fotoData.put("descripcion", foto.getDescripcion()); // Asegúrate que exista el campo
+                    fotosConDescripcion.add(fotoData);
                 } catch (Exception ex) {
+                    // Manejo de error (puedes registrar el error si quieres)
                 }
             }
-            model.addAttribute("fotos", base64Fotos);
+
+            model.addAttribute("fotos", fotosConDescripcion);
             model.addAttribute("form", form);
             return "form/ViewForm.html";
+
         } catch (Exception e) {
             model.addAttribute("errorMessage", "Error loading form: " + e.getMessage());
             return "redirect:/form/manage";
         }
     }
+
 
     @GetMapping("/{id}/pdf")
     public ResponseEntity<byte[]> downloadFormPdf(@PathVariable Integer id) {
@@ -224,11 +229,13 @@ public class FormController {
                     String base64Image = java.util.Base64.getEncoder().encodeToString(imageBytes);
                     java.util.Map<String, String> fotoMap = new java.util.HashMap<>();
                     fotoMap.put("imagenBase64", base64Image);
+                    fotoMap.put("descripcion", foto.getDescripcion()); // <-- agrega la descripcion
                     fotosBase64.add(fotoMap);
                 } catch (Exception ex) {
                     // skip image if error
                 }
             }
+
             String title = "Formulaire – " + form.getNombreCliente();
             byte[] pdf = formPdfService.buildPdf(form, fotosBase64, title);
             String fname = safeFileName(form.getNombreCliente()) + "_form_" + id + ".pdf";
@@ -286,6 +293,8 @@ public class FormController {
         }
     }
 
+    // Controller completo con edición de formulario + fotos descripción
+
     @GetMapping("/{id}/edit")
     public String editFormPage(@PathVariable Integer id, Model model) {
         try {
@@ -294,22 +303,108 @@ public class FormController {
                 model.addAttribute("errorMessage", "Form not found");
                 return "redirect:/form/manage";
             }
+
+            List<FotosForm> fotos = fotosFormService.findByFormId(id);
+            List<Map<String, String>> fotosConDescripcion = new ArrayList<>();
+            for (FotosForm foto : fotos) {
+                String filename = foto.getImagen();
+                String imagePath = "C:\\Users\\Alex\\Documents\\images\\form" + filename;
+                try {
+                    byte[] imageBytes = java.nio.file.Files.readAllBytes(java.nio.file.Paths.get(imagePath));
+                    String base64Image = java.util.Base64.getEncoder().encodeToString(imageBytes);
+                    Map<String, String> fotoData = new HashMap<>();
+                    fotoData.put("id", String.valueOf(foto.getId()));
+                    fotoData.put("imagenBase64", base64Image);
+                    fotoData.put("descripcion", foto.getDescripcion());
+                    fotosConDescripcion.add(fotoData);
+                } catch (Exception ex) {
+                    // ignorar error de imagen faltante
+                }
+            }
+
             model.addAttribute("form", form);
+            model.addAttribute("fotos", fotosConDescripcion);
             return "form/EditForm.html";
         } catch (Exception e) {
             model.addAttribute("errorMessage", "Error loading form: " + e.getMessage());
-            return "redirect:/form/manage";
+            return "form/EditForm.html";
         }
     }
 
     @PostMapping("/{id}/edit")
-    public String updateForm(@PathVariable Integer id, @ModelAttribute Form newForm, Model model) {
+    public String updateForm(@PathVariable Integer id,
+                             @ModelAttribute Form newForm,
+                             @RequestParam(name = "fotoIds", required = false) List<Long> fotoIds,
+                             @RequestParam(name = "fotosDescripcion", required = false) List<String> fotosDescripcion,
+                             Model model) {
         try {
-            formService.update(id, newForm);
-            return "redirect:/form/manage";
+            Form original = formService.findById(id).orElseThrow(() -> new Exception("Form not found"));
+
+            original.setNombreCliente(newForm.getNombreCliente());
+            original.setTipoEdificio(newForm.getTipoEdificio());
+            original.setFechaEvaluacion(newForm.getFechaEvaluacion());
+            original.setNombreEvaluador(newForm.getNombreEvaluador());
+            original.setPersonaContacto(newForm.getPersonaContacto());
+            original.setMantenimientoHistoria(newForm.getMantenimientoHistoria());
+            original.setFechaUltimoMantenimiento(newForm.getFechaUltimoMantenimiento());
+            original.setDireccion(newForm.getDireccion());
+
+            original.setTipoSistema(newForm.getTipoSistema());
+            original.setAccesibilidad(newForm.getAccesibilidad());
+            original.setPuertasAccesoExistentes(newForm.getPuertasAccesoExistentes());
+            original.setPuertasAccesoAAnadir(newForm.getPuertasAccesoAAnadir());
+            original.setConductosVisibles(newForm.getConductosVisibles());
+            original.setTipoMaterial(newForm.getTipoMaterial());
+
+            original.setAcumulacionPolvillo(newForm.getAcumulacionPolvillo());
+            original.setAcumulacionPolvilloComentario(newForm.getAcumulacionPolvilloComentario());
+            original.setEscombrosVisibles(newForm.getEscombrosVisibles());
+            original.setEscombrosVisiblesComentario(newForm.getEscombrosVisiblesComentario());
+            original.setMoho(newForm.getMoho());
+            original.setMohoComentario(newForm.getMohoComentario());
+            original.setRoedoresInsectos(newForm.getRoedoresInsectos());
+            original.setRoedoresInsectosComentario(newForm.getRoedoresInsectosComentario());
+            original.setGrasaHotte(newForm.getGrasaHotte());
+            original.setGrasaHotteComentario(newForm.getGrasaHotteComentario());
+            original.setOloresSospechosos(newForm.getOloresSospechosos());
+            original.setOloresSospechososComentario(newForm.getOloresSospechososComentario());
+
+            original.setEstadoRejillas(newForm.getEstadoRejillas());
+            original.setEstadoMotor(newForm.getEstadoMotor());
+            original.setEstadoFiltros(newForm.getEstadoFiltros());
+
+            original.setCantidadConductos(newForm.getCantidadConductos());
+            original.setLongitudEstimacion(newForm.getLongitudEstimacion());
+            original.setCantidadCodos(newForm.getCantidadCodos());
+            original.setCantidadSalidas(newForm.getCantidadSalidas());
+            original.setAlturaTrabajo(newForm.getAlturaTrabajo());
+
+            original.setObservaciones(newForm.getObservaciones());
+
+            original.setLimpiezaCompleta(newForm.getLimpiezaCompleta());
+            original.setInstalarPuertasAcceso(newForm.getInstalarPuertasAcceso());
+            original.setReemplazoFiltros(newForm.getReemplazoFiltros());
+            original.setProductosRecomendados(newForm.getProductosRecomendados());
+
+            // Actualizar descripciones de fotos
+            if (fotoIds != null && fotosDescripcion != null && fotoIds.size() == fotosDescripcion.size()) {
+                for (int i = 0; i < fotoIds.size(); i++) {
+                    FotosForm foto = fotosFormService.findById(fotoIds.get(i).intValue())
+                            .orElse(null);
+                    if (foto != null) {
+                        foto.setDescripcion(fotosDescripcion.get(i));
+                        fotosFormService.save(foto);
+                    }
+                }
+            }
+
+            formService.save(original);
+            return "redirect:/form/" + id + "/edit";
         } catch (Exception e) {
             model.addAttribute("errorMessage", "Error updating form: " + e.getMessage());
             return "form/EditForm.html";
         }
     }
 }
+
+

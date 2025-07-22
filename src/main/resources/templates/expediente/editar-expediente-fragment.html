@@ -172,25 +172,25 @@
             <form th:action="@{/expediente/editar}" method="post" class="modal-content">
                 <div class="modal-header border-0">
                     <h2 class="modal-title w-100 text-center" id="editarExpedienteModalLabel">
-                        <i class="fas fa-folder-edit me-2"></i> Editar expediente
+                        <i class="fas fa-folder-edit me-2"></i> Edit Record
                     </h2>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <input type="hidden" name="id" th:value="${expediente.id}" />
                     <div class="mb-4">
-                        <label for="nombre">Nombre</label>
-                        <input type="text" id="nombre" name="nombre" th:value="${expediente.nombre}" class="form-control" required placeholder="Ingrese el nombre del expediente" />
+                        <label for="nombre">Name</label>
+                        <input type="text" id="nombre" name="nombre" th:value="${expediente.nombre}" class="form-control" required placeholder="Enter the record name" />
                     </div>
                     <div class="mb-4">
-                        <label for="descripcion">Descripción</label>
-                        <textarea id="descripcion" name="descripcion" class="form-control" rows="3" placeholder="Agregue una descripción"
+                        <label for="descripcion">Description</label>
+                        <textarea id="descripcion" name="descripcion" class="form-control" rows="3" placeholder="Add a description"
                                   th:text="${expediente.descripcion}"></textarea>
                     </div>
                     <div class="mb-4">
-                        <label for="usuario">Usuario</label>
+                        <label for="usuario">User</label>
                         <select id="usuario" name="usuario.id" class="form-control" required>
-                            <option value="" disabled>Seleccione un usuario</option>
+                            <option value="" disabled>Select a user</option>
                             <option th:each="u : ${usuarios}" th:value="${u.id}" th:text="${u.nombre}"
                                     th:selected="${expediente.usuario != null and u.id == expediente.usuario.id}"></option>
                         </select>
@@ -198,10 +198,10 @@
                 </div>
                 <div class="modal-footer border-0">
                     <button type="submit" class="btn-modern btn-success">
-                        <i class="fas fa-save"></i> Guardar cambios
+                        <i class="fas fa-save"></i> Save Changes
                     </button>
                     <button type="button" class="btn-modern btn-secondary" data-bs-dismiss="modal">
-                        <i class="fas fa-times"></i> Cancelar
+                        <i class="fas fa-times"></i> Cancel
                     </button>
                 </div>
             </form>
