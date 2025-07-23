@@ -187,7 +187,7 @@ public class FormController {
             List<Map<String, String>> fotosConDescripcion = new ArrayList<>();
             for (FotosForm foto : fotos) {
                 String filename = foto.getImagen();
-                String imagePath = "C:\\Users\\Alex\\Documents\\images\\form" + filename;
+                String imagePath = "/opt/Gallery/form/" + filename;
                 try {
                     byte[] imageBytes = java.nio.file.Files.readAllBytes(java.nio.file.Paths.get(imagePath));
                     String base64Image = java.util.Base64.getEncoder().encodeToString(imageBytes);
@@ -223,7 +223,7 @@ public class FormController {
             List<java.util.Map<String, String>> fotosBase64 = new java.util.ArrayList<>();
             for (FotosForm foto : fotos) {
                 String filename = foto.getImagen();
-                String imagePath = "C:\\Users\\Alex\\Documents\\images\\form" + filename;
+                String imagePath = "/opt/Gallery/form/" + filename;
                 try {
                     byte[] imageBytes = java.nio.file.Files.readAllBytes(java.nio.file.Paths.get(imagePath));
                     String base64Image = java.util.Base64.getEncoder().encodeToString(imageBytes);
@@ -308,7 +308,7 @@ public class FormController {
             List<Map<String, String>> fotosConDescripcion = new ArrayList<>();
             for (FotosForm foto : fotos) {
                 String filename = foto.getImagen();
-                String imagePath = "C:\\Users\\Alex\\Documents\\images\\form" + filename;
+                String imagePath = "/opt/Gallery/form/" + filename;
                 try {
                     byte[] imageBytes = java.nio.file.Files.readAllBytes(java.nio.file.Paths.get(imagePath));
                     String base64Image = java.util.Base64.getEncoder().encodeToString(imageBytes);

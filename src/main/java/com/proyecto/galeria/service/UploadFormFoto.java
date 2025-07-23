@@ -15,7 +15,7 @@ import java.util.UUID;
 @Service
 public class UploadFormFoto {
 
-    private String folder = "C:\\Users\\Alex\\Documents\\images\\form";
+    private String folder = "/opt/Gallery/form/";
     private final Path root = Paths.get("images/form");
 
     public UploadFormFoto() {
@@ -81,7 +81,7 @@ public class UploadFormFoto {
     }
 
     public void deleteImage(String filename) {
-        String ruta = "C:\\Users\\Alex\\Documents\\images\\form";
+        String ruta = "/opt/Gallery/form/";
         File file = new File(ruta + filename);
         if (file.delete()) {
             System.out.println("Form image deleted successfully");
