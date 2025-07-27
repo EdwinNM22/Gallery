@@ -14,9 +14,7 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpSession;
 import java.util.Optional;
 
-/**
- * Custom bridge between Spring-Security and our Usuario entity.
- */
+
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
 
@@ -24,42 +22,37 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     private final HttpSession     session;
     private final Logger          log = LoggerFactory.getLogger(UserDetailsServiceImpl.class);
 
-    /* ---------- constructor injection (preferred) ---------- */
     @Autowired
     public UserDetailsServiceImpl(IUsuarioService usuarioService,
                                   HttpSession session) {
-
         this.usuarioService = usuarioService;
         this.session        = session;
     }
 
-    /* ---------- main contract ---------- */
     @Override
-    public UserDetails loadUserByUsername(String email)
+    public UserDetails loadUserByUsername(String input)
             throws UsernameNotFoundException {
 
-        log.info("Attempting login for: {}", email);
+        log.info("Attempting login for: {}", input);
 
-        Optional<usuario> opt = usuarioService.findByEmail(email);
+        Optional<usuario> opt = usuarioService.findBynombre(input);
+
         if (opt.isEmpty()) {
-            throw new UsernameNotFoundException("Usuario no encontrado");
+            opt = usuarioService.findByEmail(input);
+            if (opt.isEmpty()) {
+                throw new UsernameNotFoundException("Usuario no encontrado");
+            }
         }
 
         usuario u = opt.get();
 
-        /*  Store a few things we’ll need in views (Thymeleaf) */
         session.setAttribute("idusuario",   u.getId());
-        session.setAttribute("tipo_usuario", u.getTipo_usuario());  // ← enables the new buttons
+        session.setAttribute("tipo_usuario", u.getTipo_usuario());
 
-        /*
-         *  Spring-Security principal.
-         *  Roles here must NOT include the “ROLE_” prefix, because
-         *  .roles(…) will add it automatically.
-         */
         return User.builder()
-                .username(u.getNombre())          // or u.getNombre() if you prefer
+                .username(u.getNombre())
                 .password(u.getPassword())
-                .roles(u.getTipo_usuario())      // e.g. ADMIN / SUPERVISOR
+                .roles(u.getTipo_usuario())
                 .build();
     }
 }

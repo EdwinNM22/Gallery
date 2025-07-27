@@ -331,6 +331,21 @@
   </style>
 </head>
 <body>
+
+<div class="bg-fast-load">
+  <img
+          src="/img/admrescale.webp"
+          srcset="
+        /img/admrescale.webp?width=600 600w,
+        /img/admrescale.webp?width=1200 1200w,
+        /img/admrescale.webp?width=1800 1800w
+      "
+          sizes="100vw"
+          alt=""
+          decoding="async"
+  />
+</div>
+
 <nav class="navbar navbar-expand-lg navbar-dark navbar-mega-style">
   <div class="container">
     <a class="navbar-brand" href="#">Biovac</a>
@@ -383,20 +398,6 @@
   </div>
 </nav>
 
-<div class="bg-fast-load">
-  <img
-          src="/img/admrescale.webp"
-          srcset="
-        /img/admrescale.webp?width=600 600w,
-        /img/admrescale.webp?width=1200 1200w,
-        /img/admrescale.webp?width=1800 1800w
-      "
-          sizes="100vw"
-          alt=""
-          decoding="async"
-  />
-</div>
-
 <div th:replace="permiso/permissions-panel :: panelPermisos"></div>
 
 <div class="main-container">
@@ -436,7 +437,7 @@
       </a>
 
       <a th:href="@{/expediente}" class="btn-mega animated delay-1" th:if="${EXPEDIENTE_ACCESS}">
-        <i class="fas fa-folder-open btn-icon"></i>
+        <i class="fa-solid fa-wallet btn-icon"></i>
         <span th:text="#{representatives}">Representatives</span>
       </a>
 

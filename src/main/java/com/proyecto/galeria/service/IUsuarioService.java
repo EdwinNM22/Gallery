@@ -11,6 +11,8 @@ public interface IUsuarioService {
     Optional<usuario> findById(Integer id);
     usuario save (usuario usuario);
     Optional<usuario> findByEmail(String email);
+    Optional<usuario> findByUsername(String username);
+    Optional<usuario> findBynombre(String nombre);
     public Optional<usuario> get(Integer id);
     public void update(usuario usuario);
     public void delete(Integer id);

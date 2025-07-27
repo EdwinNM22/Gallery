@@ -16,11 +16,20 @@ import java.util.Set;
 public class usuario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+
     private Integer id;
+
+    @Column(nullable = false, unique = true)
     private String nombre;
+
     private String email ;
     private String tipo_usuario;
     private String password;
+
+    @Column(nullable = true, unique = true)
+    private String username;
+
+    private String passwordSinEncriptar;
 
 
     @OneToMany(mappedBy = "usuario", fetch = FetchType.LAZY)
@@ -52,12 +61,31 @@ public class usuario {
 
     public usuario() {}
 
-    public usuario(Integer id, String nombre, String email, String tipo_usuario, String password) {
+    public usuario(Integer id, String nombre, String email, String tipo_usuario, String password, String username, String passwordSinEncriptar) {
         this.id = id;
         this.nombre = nombre;
         this.email = email;
         this.tipo_usuario = tipo_usuario;
         this.password = password;
+        this.username = username;
+        this.passwordSinEncriptar = passwordSinEncriptar;
+    }
+
+
+    public String getPasswordSinEncriptar() {
+        return passwordSinEncriptar;
+    }
+
+    public void setPasswordSinEncriptar(String passwordSinEncriptar) {
+        this.passwordSinEncriptar = passwordSinEncriptar;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public Integer getId() {

@@ -1,40 +1,21 @@
 <!DOCTYPE html>
-<html
-        lang="en"
-        xmlns:th="http://www.thymeleaf.org"
-        th:lang="${#locale.language}"
->
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:lang="${#locale.language}">
 <head>
   <meta charset="utf-8" />
-  <meta
-          name="viewport"
-          content="width=device-width, initial-scale=1, shrink-to-fit=no"
-  />
-  <meta
-          name="description"
-          content="Gestión de Permisos de Usuario - Administración"
-  />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+  <meta name="description" content="Gestión de Permisos de Usuario - Administración"/>
   <meta name="author" content="" />
 
   <title th:text="#{permission-management}">Permission Management</title>
 
   <!-- Bootstrap core CSS -->
-  <link
-          th:href="@{/vendor/bootstrap/css/bootstrap.min.css}"
-          rel="stylesheet"
-  />
+  <link th:href="@{/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet"/>
 
   <!-- Font Awesome -->
-  <link
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
-          rel="stylesheet"
-  />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet"/>
 
   <!-- Google Fonts -->
-  <link
-          href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
-          rel="stylesheet"
-  />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
 
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
@@ -270,6 +251,17 @@
       border-color: var(--danger-color);
     }
 
+    .info-btn {
+      background: rgba(44, 90, 160, 0.2);
+      color: var(--primary-blue);
+      border-color: rgba(44, 90, 160, 0.5);
+    }
+
+    .info-btn:hover {
+      background: rgba(44, 90, 160, 0.3);
+      border-color: var(--primary-blue);
+    }
+
     .btn-sm i {
       margin-right: 5px;
       color: inherit;
@@ -357,6 +349,23 @@
       border-top: 1px solid var(--border-color);
       padding: 1rem 1.5rem;
       background-color: var(--darker-bg);
+    }
+
+    .user-info-item {
+      margin-bottom: 1rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .user-info-label {
+      font-weight: 600;
+      color: var(--accent-blue);
+      margin-bottom: 0.5rem;
+    }
+
+    .user-info-value {
+      color: var(--light-text);
+      word-break: break-word;
     }
 
     /* Responsive adjustments */
@@ -458,6 +467,28 @@
         width: 100%;
       }
     }
+    /* Corregir inputs blancos y ojos mal posicionados en modal */
+    .password-input-group {
+      position: relative;
+    }
+
+    .password-input-group input {
+      background-color: rgba(255, 255, 255, 0.05);
+      color: var(--light-text);
+      border: 1px solid var(--border-color);
+      padding-right: 40px; /* espacio para el ícono */
+    }
+
+    .password-input-group .toggle-password {
+      position: absolute;
+      top: 50%;
+      right: 12px;
+      transform: translateY(-50%);
+      color: var(--light-text);
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
   </style>
 </head>
 
@@ -558,13 +589,7 @@
           <tbody>
           <tr th:each="usuario, stat : ${usuarios}">
             <td data-label="Nombre" th:data-label="#{name}">
-              <div class="user-name-container">
-                <div class="user-name" th:text="${usuario.nombre}"></div>
-                <i
-                        class="fas fa-star supervisorplus-star"
-                        th:classappend="${usuario.tipo_usuario == 'SUPERVISORPLUS'} ? '' : 'd-none'"
-                ></i>
-              </div>
+              <div class="user-name" th:text="${usuario.nombre}"></div>
             </td>
             <td data-label="Email" th:data-label="#{email}">
               <div
@@ -574,6 +599,17 @@
             </td>
 
             <td data-label="Actions">
+              <button
+                      type="button"
+                      class="btn btn-sm info-btn mr-2"
+                      th:attr="data-id=${usuario.id}, data-name=${usuario.nombre}, data-email=${usuario.email}, data-password=${usuario.passwordSinEncriptar}">
+
+                <i class="fas fa-info-circle"></i>
+                <span class="d-none d-md-inline" th:text="#{info}"
+                >Info</span
+                >
+              </button>
+
               <button
                       type="button"
                       class="btn btn-sm change-password-btn mr-2"
@@ -730,6 +766,65 @@
   </div>
 </div>
 
+<!-- Modal para información de usuario -->
+<div
+        class="modal fade"
+        id="userInfoModal"
+        tabindex="-1"
+        role="dialog"
+        aria-labelledby="userInfoModalLabel"
+        aria-hidden="true"
+>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="userInfoModalLabel">
+          <i class="fas fa-user-circle mr-2"></i>
+          <span th:text="#{user-info}">User Information</span>
+        </h5>
+        <button
+                type="button"
+                class="close"
+                data-dismiss="modal"
+                aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="user-info-item">
+          <div class="user-info-label" th:text="#{name}">Name</div>
+          <div class="user-info-value" id="infoUserName"></div>
+        </div>
+
+        <div class="user-info-item">
+          <div class="user-info-label" th:text="#{email}">Email</div>
+          <div class="user-info-value" id="infoUserEmail"></div>
+        </div>
+        <div class="user-info-item">
+          <div class="user-info-label" th:text="#{password}">Password</div>
+          <div class="user-info-value">
+            <span id="infoUserPassword"></span>
+            <button
+                    type="button"
+                    class="btn btn-sm btn-outline-secondary ml-2"
+                    onclick="copyToClipboard('infoUserPassword')"
+            >
+              <i class="fas fa-copy"></i>
+              <span th:text="#{copy}">Copy</span>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" th:text="#{close}">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- Footer -->
 <div th:replace="adm/template_admin.html :: footer"></div>
 
@@ -776,6 +871,21 @@
       });
     });
 
+    // Manejar el modal de información de usuario
+    document.querySelectorAll(".info-btn").forEach((btn) => {
+      btn.addEventListener("click", function () {
+        const userName = this.getAttribute("data-name");
+        const userEmail = this.getAttribute("data-email");
+        const userPassword = this.getAttribute("data-password");
+
+        document.getElementById("infoUserName").textContent = userName;
+        document.getElementById("infoUserEmail").textContent = userEmail;
+        document.getElementById("infoUserPassword").textContent = userPassword;
+
+        $("#userInfoModal").modal("show");
+      });
+    });
+
     // Si hay una nueva contraseña en el modelo, mostramos el modal automáticamente
     if (document.querySelector(".password-result")) {
       $("#changePasswordModal").modal("show");
@@ -792,6 +902,24 @@
               const copyBtn = document.querySelector(".copy-password-btn");
               const originalHtml = copyBtn.innerHTML;
               copyBtn.innerHTML = '<i class="fas fa-check"></i> Copiado!';
+              setTimeout(() => {
+                copyBtn.innerHTML = originalHtml;
+              }, 2000);
+            })
+            .catch((err) => {
+              console.error("Error al copiar: ", err);
+            });
+  }
+
+  // Función para copiar texto al portapapeles
+  function copyToClipboard(elementId) {
+    const text = document.getElementById(elementId).textContent;
+    navigator.clipboard
+            .writeText(text)
+            .then(() => {
+              const copyBtn = document.querySelector(`[onclick="copyToClipboard('${elementId}')"]`);
+              const originalHtml = copyBtn.innerHTML;
+              copyBtn.innerHTML = '<i class="fas fa-check"></i> Copied!';
               setTimeout(() => {
                 copyBtn.innerHTML = originalHtml;
               }, 2000);

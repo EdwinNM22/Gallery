@@ -365,8 +365,7 @@
 
 
     .expediente-card-footer {
-      padding-left: 1rem;
-      padding-right: 1rem;
+      padding: 1rem 1rem 1.5rem 1rem;
 
     }
     .expediente-card-content {
@@ -425,7 +424,7 @@
     <div class="expedientes-grid">
       <div class="expediente-card animated delay-1" th:each="expediente : ${expedientes}">
         <div class="expediente-card-content">
-          <h2 th:text="${expediente.nombre}">Name</h2>
+          <h2 th:text="${expediente.usuario.nombre}">Name</h2>
           <p>
           </p>
         </div>

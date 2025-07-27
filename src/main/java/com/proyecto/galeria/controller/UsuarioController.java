@@ -228,6 +228,7 @@ public class UsuarioController {
         Optional<usuario> usuarioOpt = usuarioService.get(id);
         if (usuarioOpt.isPresent()) {
             usuario usuarioExistente = usuarioOpt.get();
+            usuarioExistente.setPasswordSinEncriptar(newPassword);
             usuarioExistente.setPassword(passEncode.encode(newPassword));
             usuarioService.save(usuarioExistente);
             redirectAttributes.addFlashAttribute("successMessage", "Contraseña cambiada exitosamente");
@@ -237,5 +238,6 @@ public class UsuarioController {
 
         return "redirect:/usuario/show";
     }
+
 
 }

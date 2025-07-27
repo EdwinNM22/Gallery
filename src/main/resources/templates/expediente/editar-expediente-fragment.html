@@ -210,15 +210,15 @@
                 </div>
                 <div class="modal-body">
                     <input type="hidden" name="id" th:value="${expediente.id}" />
-                    <div class="mb-4">
-                        <label for="nombre" th:text="#{name}">Name</label>
-                        <input type="text" id="nombre" name="nombre" th:value="${expediente.nombre}" class="form-control" required th:placeholder="#{enter-record-name}" />
-                    </div>
-                    <div class="mb-4">
-                        <label for="descripcion" th:text="#{description}">Description</label>
-                        <textarea id="descripcion" name="descripcion" class="form-control" rows="3" th:placeholder="#{add-description}"
-                                  th:text="${expediente.descripcion}"></textarea>
-                    </div>
+<!--                    <div class="mb-4">-->
+<!--                        <label for="nombre" th:text="#{name}">Name</label>-->
+<!--                        <input type="text" id="nombre" name="nombre" th:value="${expediente.nombre}" class="form-control" required th:placeholder="#{enter-record-name}" />-->
+<!--                    </div>-->
+<!--                    <div class="mb-4">-->
+<!--                        <label for="descripcion" th:text="#{description}">Description</label>-->
+<!--                        <textarea id="descripcion" name="descripcion" class="form-control" rows="3" th:placeholder="#{add-description}"-->
+<!--                                  th:text="${expediente.descripcion}"></textarea>-->
+<!--                    </div>-->
                     <div class="mb-4">
                         <label for="usuario" th:text="#{user}">User</label>
                         <select id="usuario" name="usuario.id" class="form-control" required>

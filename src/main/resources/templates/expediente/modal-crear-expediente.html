@@ -211,14 +211,14 @@
                 </div>
                 <div class="modal-body">
                     <form th:action="@{/expediente/guardar}" method="post" th:object="${expediente}">
-                        <div class="mb-4">
-                            <label for="nombre" th:text="#{name}">Name</label>
-                            <input type="text" id="nombre" th:field="*{nombre}" class="form-control" required th:placeholder="#{enter-record-name}">
-                        </div>
-                        <div class="mb-4">
-                            <label for="descripcion" th:text="#{description}">Description</label>
-                            <textarea id="descripcion" th:field="*{descripcion}" class="form-control" rows="3" th:placeholder="#{add-description}"></textarea>
-                        </div>
+<!--                        <div class="mb-4">-->
+<!--                            <label for="nombre" th:text="#{name}">Name</label>-->
+<!--                            <input type="text" id="nombre" th:field="*{nombre}" class="form-control" required th:placeholder="#{enter-record-name}">-->
+<!--                        </div>-->
+<!--                        <div class="mb-4">-->
+<!--                            <label for="descripcion" th:text="#{description}">Description</label>-->
+<!--                            <textarea id="descripcion" th:field="*{descripcion}" class="form-control" rows="3" th:placeholder="#{add-description}"></textarea>-->
+<!--                        </div>-->
                         <div class="mb-4">
                             <label for="usuario" th:text="#{user}">User</label>
                             <select id="usuario" th:field="*{usuario}" class="form-control" required>
