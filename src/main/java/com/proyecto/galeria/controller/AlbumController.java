@@ -371,7 +371,8 @@ public class AlbumController {
     @PostMapping("/deleteFragment/{fragmentId}")
     public String deleteFragment(
             @PathVariable String fragmentId,
-            @RequestParam Integer albumId) {
+            @RequestParam Integer albumId,
+            HttpServletRequest request) {
 
         try {
             if ("main".equals(fragmentId)) {
@@ -393,10 +394,19 @@ public class AlbumController {
                 }
             }
 
-            return "redirect:/albumes/" + albumId + "?success=Fragment+deleted+successfully";
+            // Verificar si es una petición AJAX
+            if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
+                return "Fragment deleted successfully";
+            } else {
+                return "redirect:/albumes/" + albumId + "?success=Fragment+deleted+successfully";
+            }
         } catch (Exception e) {
             e.printStackTrace();
-            return "redirect:/albumes/" + albumId + "?error=Error+deleting+fragment";
+            if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
+                return "Error deleting fragment";
+            } else {
+                return "redirect:/albumes/" + albumId + "?error=Error+deleting+fragment";
+            }
         }
     }
 
@@ -697,6 +707,4 @@ public class AlbumController {
             return ResponseEntity.internalServerError().build();
         }
     }
-
-    // Para los equipos
 }

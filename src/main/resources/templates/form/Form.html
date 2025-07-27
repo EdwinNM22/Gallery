@@ -56,11 +56,10 @@
       <span th:text="${message}">Message d'erreur</span>
     </div>
 
-    <div class="btn-container">
-      <a class="btn btn-back" th:href="@{/adm}">
-        <i class="fas fa-arrow-left"></i> <span th:text="#{back-to-home}">Back to Home</span>
-      </a>
-    </div>
+    <a class="btn btn-back" href="javascript:history.back()">
+      <i class="fas fa-arrow-left"></i> <span th:text="#{back-to-home}">Back to Home</span>
+    </a>
+
 
     <form th:action="@{/form/submit}" method="post" enctype="multipart/form-data" class="form-container animated delay-1" id="mainForm">
       <input type="hidden" name="futuro" value="false" />

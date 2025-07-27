@@ -837,7 +837,7 @@
                             </button>
                             <button class="fragment-btn" title="Delete fragment"
                                     th:attr="onclick='confirmDeleteFragment(\'' + ${fragment.nombre} + '\')'" aria-label="Delete fragment"
-                                    th:if="${PROYECTOS_DELETE_SECTIONS}">
+                                    >
                                 <i class="fas fa-trash"></i>
                             </button>
                         </div>
@@ -1051,25 +1051,29 @@
         const albumId = window.location.pathname.split('/')[3];
         if (!albumId) return;
 
-        // Crear un formulario dinámico para enviar la petición
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = `/albumes/deleteFragment/${encodeURIComponent(fragmentName)}?albumId=${albumId}`;
-
-        // Añadir token CSRF si es necesario
+        // Obtener token CSRF
         const csrfToken = $('meta[name="_csrf"]').attr('content');
         const csrfHeader = $('meta[name="_csrf_header"]').attr('content');
 
-        if (csrfToken && csrfHeader) {
-            const csrfInput = document.createElement('input');
-            csrfInput.type = 'hidden';
-            csrfInput.name = '_csrf';
-            csrfInput.value = csrfToken;
-            form.appendChild(csrfInput);
-        }
-
-        document.body.appendChild(form);
-        form.submit();
+        // Usar fetch para hacer la petición
+        fetch(`/albumes/deleteFragment/${encodeURIComponent(fragmentName)}?albumId=${albumId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                [csrfHeader]: csrfToken
+            }
+        })
+            .then(response => {
+                if (response.ok) {
+                    window.location.href = `/albumes/${albumId}?success=Fragment+deleted+successfully`;
+                } else {
+                    window.location.href = `/albumes/${albumId}?error=Error+deleting+fragment`;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                window.location.href = `/albumes/${albumId}?error=Error+deleting+fragment`;
+            });
     }
 </script>
 </body>

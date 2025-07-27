@@ -276,11 +276,10 @@
         Vista de Proyecto Futuro
       </h1>
     </div>
-    <div class="btn-container mb-3">
-      <a class="btn btn-back" th:href="@{/form/manage}">
-        <i class="fas fa-arrow-left"></i> <span th:text="#{back-to-list}">Retour à la liste</span>
-      </a>
-    </div>
+    <a class="btn btn-back" href="javascript:history.back()">
+      <i class="fas fa-arrow-left"></i> <span th:text="#{back-to-list}">Retour à la liste</span>
+    </a>
+
     <div class="form-section">
       <h3><i class="fas fa-info-circle"></i> <span th:text="#{general-information}">Informations Générales</span></h3>
       <div class="row">
