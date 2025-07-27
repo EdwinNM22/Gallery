@@ -203,9 +203,9 @@ public class UsuarioController {
             Optional<usuario> usuarioOpt = usuarioService.get(id);
             if (usuarioOpt.isPresent()) {
                 usuarioService.delete(id);
-                redirectAttributes.addFlashAttribute("successMessage", "Usuario eliminado correctamente");
+                redirectAttributes.addFlashAttribute("successMessage", "User succesfully deleted");
             } else {
-                redirectAttributes.addFlashAttribute("errorMessage", "Usuario no encontrado");
+                redirectAttributes.addFlashAttribute("errorMessage", "User not found");
             }
         } catch (Exception e) {
             logger.error("Error al eliminar usuario: {}", e.getMessage());

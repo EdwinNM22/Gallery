@@ -7,6 +7,7 @@ import com.proyecto.galeria.service.IUsuarioService;
 import com.proyecto.galeria.service.PermisoService;
 import com.proyecto.galeria.service.albumService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -68,6 +69,9 @@ public class AdmController {
             model.addAttribute("USUARIOS_CREATE", false);
             model.addAttribute("EXPEDIENTE_ACCESS", false);
         });
+
+        System.out.println(LocaleContextHolder.getLocale());
+
         return "adm/home";
     }
 }

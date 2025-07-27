@@ -1,36 +1,83 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org">
-
+<html
+        lang="en"
+        xmlns:th="http://www.thymeleaf.org"
+        th:lang="${#locale.language}"
+>
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="Gestión de Permisos de Usuario - Administración">
-  <meta name="author" content="">
+  <meta charset="utf-8" />
+  <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1, shrink-to-fit=no"
+  />
+  <meta
+          name="description"
+          content="Gestión de Permisos de Usuario - Administración"
+  />
+  <meta name="author" content="" />
 
-  <title>Gestión de Permisos de Usuario</title>
+  <title th:text="#{permission-management}">Permission Management</title>
 
   <!-- Bootstrap core CSS -->
-  <link th:href="@{/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
+  <link
+          th:href="@{/vendor/bootstrap/css/bootstrap.min.css}"
+          rel="stylesheet"
+  />
 
   <!-- Font Awesome -->
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <link
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+          rel="stylesheet"
+  />
 
   <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link
+          href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+          rel="stylesheet"
+  />
 
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
   <!-- Preload -->
-  <link rel="preload"
-        as="image"
-        href="/img/upscalemedia-transformed.webp?width=1200"
-        imagesrcset="/img/upscalemedia-transformed.webp?width=600 600w, /img/upscalemedia-transformed.webp?width=1200 1200w, /img/upscalemedia-transformed.webp?width=1800 1800w"
-        imagesizes="100vw">
+  <link
+          rel="preload"
+          as="image"
+          href="/img/upscalemedia-transformed.webp?width=1200"
+          imagesrcset="/img/upscalemedia-transformed.webp?width=600 600w, /img/upscalemedia-transformed.webp?width=1200 1200w, /img/upscalemedia-transformed.webp?width=1800 1800w"
+          imagesizes="100vw"
+  />
 
   <style>
+    :root {
+      --primary-blue: #2c5aa0;
+      --accent-blue: #3a7bd5;
+      --dark-bg: #0f1923;
+      --darker-bg: #0a121a;
+      --light-text: #e0e0e0;
+      --lighter-text: #ffffff;
+      --border-color: rgba(44, 90, 160, 0.3);
+      --card-bg: rgba(15, 25, 35, 0.85);
+      --success-color: #4cc9f0;
+      --danger-color: #ff4d4d;
+      --warning-color: #ffc107;
+      --info-color: #17a2b8;
+    }
+
+    body {
+      font-family: 'Montserrat', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: var(--light-text);
+      background-color: rgba(0, 0, 0, 0.94);
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center;
+      background-attachment: fixed;
+      min-height: 100vh;
+    }
+
     .bg-fast-load {
       position: fixed;
-      top: 0; left: 0;
+      top: 0;
+      left: 0;
       width: 100vw;
       height: 100vh;
       z-index: -1;
@@ -41,58 +88,46 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
+      opacity: 0.5;
     }
 
-    :root {
-      --primary-blue: #4361ee;
-      --accent-blue: #4895ef;
-      --secondary-blue: #3f37c9;
-      --dark-blue: #3a0ca3;
-      --dark-bg: #1a2a36;
-      --darker-bg: #142028;
-      --light-text: #e0e0e0;
-      --lighter-text: #ffffff;
-      --border-color: rgba(74, 144, 226, 0.2);
-      --danger-color: #ff4d4d;
-      --success-color: #4cc9f0;
-      --warning-color: #ff9e00;
-      --info-color: #17a2b8;
-      --card-min-width: 250px;
-    }
-
-
-    body {
-      font-family: 'Montserrat', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      color: var(--light-text);
-      background-color: var(--dark-bg);
-      background-size: cover;
-      background-repeat: no-repeat;
-      background-position: center;
-      background-attachment: fixed;
-
-    }
     .container {
-      max-width: 1200px;
-      margin-bottom: 40px;
-      padding: 0 15px;
+      padding-top: 2rem;
+      padding-bottom: 4rem;
     }
 
+    /* Header styles mejorado */
     .page-header {
-      padding-bottom: 10px;
-      margin-bottom: 20px;
-      border-bottom: 1px solid var(--border-color);
+      text-align: center;
+      margin-bottom: 2rem;
+      position: relative;
+      z-index: 1;
     }
 
     .page-header h1 {
-      font-size: 1.5rem;
+      font-size: 2.5rem;
+      font-weight: 700;
       color: var(--lighter-text);
+      margin-bottom: 1rem;
+      position: relative;
+      display: inline-block;
+    }
+
+    .page-header h1:after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 3px;
+      background: linear-gradient(90deg, var(--primary-blue), var(--accent-blue));
+      border-radius: 3px;
     }
 
     .breadcrumb {
       background-color: transparent;
-      padding: 0;
-      margin-bottom: 20px;
-      font-size: 0.85rem;
+      padding: 0.5rem 0;
     }
 
     .breadcrumb-item {
@@ -102,7 +137,7 @@
     .breadcrumb-item a {
       color: var(--accent-blue);
       text-decoration: none;
-      transition: all 0.3s ease;
+      transition: color 0.3s ease;
     }
 
     .breadcrumb-item a:hover {
@@ -110,187 +145,185 @@
       text-decoration: underline;
     }
 
-    .breadcrumb-item.active {
-      color: var(--light-text);
-      opacity: 0.7;
-    }
-
+    /* Card styles mejorado */
     .card {
-      background: rgba(26, 42, 54, 0.7);
-      border: 1px solid var(--border-color);
-      border-radius: 10px;
+      background: var(--card-bg);
+      border-radius: 8px;
       box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-      overflow: hidden;
-      margin-bottom: 20px;
+      margin-bottom: 2rem;
+      border: 1px solid var(--border-color);
       backdrop-filter: blur(5px);
     }
 
     .card-header {
       background: linear-gradient(90deg, var(--darker-bg), var(--dark-bg));
       color: var(--lighter-text);
-      font-weight: 500;
-      padding: 12px 15px;
+      padding: 1rem 1.5rem;
       border-bottom: 1px solid var(--border-color);
-      font-size: 1rem;
+      font-weight: 600;
     }
 
+    /* Table styles mejorado */
     .table {
-      margin-bottom: 0;
-      width: 100%;
-      border-collapse: collapse;
       color: var(--light-text);
+      margin-bottom: 0;
     }
 
     .table th {
-      background: rgba(26, 42, 54, 0.9);
+      background: rgba(15, 25, 35, 0.9);
       color: var(--lighter-text);
-      font-weight: 600;
-      border-top: none;
-      padding: 10px 8px;
-      text-align: left;
-      font-size: 0.85rem;
       border-bottom: 1px solid var(--border-color);
+      font-weight: 600;
+      padding: 1rem;
     }
 
     .table td {
-      padding: 10px 8px;
-      vertical-align: middle;
-      text-align: left;
+      padding: 1rem;
       border-top: 1px solid var(--border-color);
-      font-size: 0.85rem;
-      background: rgba(26, 42, 54, 0.5);
+      background: rgba(15, 25, 35, 0.5);
+      vertical-align: middle;
     }
 
     .table-hover tbody tr:hover {
-      background-color: rgba(67, 97, 238, 0.1);
+      background-color: rgba(44, 90, 160, 0.1);
     }
 
-    /* Button Container */
+    /* Button styles mejorado */
     .btn-container {
       display: flex;
-      flex-wrap: wrap;
       gap: 0.8rem;
       margin-bottom: 1.5rem;
     }
 
-    /* Common Button Styles */
-    .btn-back, .delete-btn, .change-password-btn {
+    .btn-back {
+      position: relative;
       display: inline-flex;
       align-items: center;
-      gap: 5px;
-      border-radius: 50px;
+      justify-content: center;
+      padding: 0.8rem 1.5rem;
+      font-size: 0.95rem;
       font-weight: 500;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      overflow: hidden;
+      z-index: 1;
+      letter-spacing: 0.5px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      background: var(--card-bg);
+      backdrop-filter: blur(8px);
+      border: 1px solid var(--border-color);
+      color: var(--light-text);
+      text-align: center;
+    }
+
+    .btn-back:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(58, 123, 213, 0.2);
+      color: var(--lighter-text);
+      border-color: transparent;
+    }
+
+    /* Botones de acción mejorados */
+    .btn-action-group {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: flex-end;
+    }
+
+    .btn-sm {
+      padding: 0.5rem 1rem;
+      font-size: 0.85rem;
+      border-radius: 6px;
       transition: all 0.3s ease;
-      padding: 0.6rem 1.2rem;
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid var(--border-color);
+      backdrop-filter: blur(5px);
+      min-width: 100px;
+    }
+
+    .btn-sm:hover {
+      color: var(--lighter-text) !important;
+    }
+
+    .change-password-btn {
+      background: rgba(23, 162, 184, 0.2);
+      color: var(--info-color);
+      border-color: rgba(23, 162, 184, 0.5);
+    }
+
+    .change-password-btn:hover {
+      background: rgba(23, 162, 184, 0.3);
+      border-color: var(--info-color);
+    }
+
+    .delete-btn {
+      background: rgba(255, 77, 77, 0.2);
+      color: var(--danger-color);
+      border-color: rgba(255, 77, 77, 0.5);
+    }
+
+    .delete-btn:hover {
+      background: rgba(255, 77, 77, 0.3);
+      border-color: var(--danger-color);
+    }
+
+    .btn-sm i {
+      margin-right: 5px;
+      color: inherit;
+    }
+
+    /* User info styles mejorado */
+    .user-name {
+      font-weight: 600;
+      color: var(--lighter-text);
+    }
+
+    .user-email {
+      color: var(--accent-blue);
+      word-break: break-word;
+    }
+
+    .supervisorplus-star {
+      color: var(--warning-color);
+      margin-left: 5px;
+    }
+
+    /* Badges mejorado */
+    .badge-count {
+      background-color: rgba(255, 255, 255, 0.1);
+      color: var(--light-text);
+      font-weight: 600;
+      padding: 0.5rem 0.8rem;
+      border-radius: 50px;
+    }
+
+    /* Alerts mejorado */
+    .alert {
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 2rem;
       border: 1px solid transparent;
       backdrop-filter: blur(5px);
     }
 
-    .btn-back {
-      background: rgba(26, 42, 54, 0.7);
-      border-color: var(--warning-color);
-      color: var(--warning-color);
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    }
-
-    .btn-back:hover {
-      background: rgba(255, 158, 0, 0.2);
-      color: #ffcc80;
-      border-color: #ffcc80;
-      transform: translateY(-2px);
-    }
-
-    .delete-btn {
-      background: rgba(26, 42, 54, 0.7);
-      border-color: var(--danger-color);
-      color: var(--danger-color);
-    }
-
-    .delete-btn:hover {
-      background: rgba(255, 77, 77, 0.2);
-      color: #ff9e9e;
-      border-color: #ff9e9e;
-      transform: translateY(-2px);
-    }
-
-    .change-password-btn {
-      background: rgba(26, 42, 54, 0.7);
-      border-color: var(--info-color);
-      color: var(--info-color);
-    }
-
-    .change-password-btn:hover {
-      background: rgba(23, 162, 184, 0.2);
-      color: #7ad1e0;
-      border-color: #7ad1e0;
-      transform: translateY(-2px);
-    }
-
-    /* User Info Styles */
-    .user-name {
-      font-weight: 600;
-      color: var(--lighter-text);
-      font-size: 0.95rem;
-      letter-spacing: 0.2px;
-      margin-bottom: 2px;
-    }
-
-    .user-email {
-      font-weight: 500;
-      color: var(--accent-blue);
-      font-size: 0.85rem;
-      word-break: break-word;
-    }
-
-    .user-name-container {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-
-    .user-type-option input[type="radio"] {
-      position: absolute;
-      opacity: 0;
-      width: 0;
-      height: 0;
-    }
-
-    .user-type-option label {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      margin-bottom: 0;
-      font-weight: 500;
-      gap: 5px;
-      width: 100%;
-      font-size: 0.8rem;
-      transition: all 0.3s ease;
-      border-radius: 4px;
-      padding: 5px 8px;
+    .alert-success {
+      background-color: rgba(76, 201, 240, 0.1);
+      border-color: var(--success-color);
       color: var(--light-text);
     }
 
-    .user-type-option i {
-      font-size: 0.9rem;
-      transition: all 0.3s ease;
+    .alert-danger {
+      background-color: rgba(255, 77, 77, 0.1);
+      border-color: var(--danger-color);
+      color: var(--light-text);
     }
 
-    .user-type-option input[type="radio"]:checked + label {
-      color: white;
-      transform: scale(1.02);
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-    }
-
-    .user-type-option input[type="radio"]:checked + label i {
-      color: white;
-      transform: scale(1.15);
-    }
-
-    /* Modal and Forms */
+    /* Modal styles mejorado */
     .modal-content {
-      border-radius: 10px;
+      border-radius: 8px;
       border: none;
       box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
       background-color: var(--darker-bg);
@@ -300,18 +333,9 @@
     .modal-header {
       background: linear-gradient(90deg, var(--primary-blue), var(--accent-blue));
       color: var(--lighter-text);
-      border-radius: 10px 10px 0 0;
+      border-radius: 8px 8px 0 0;
       border: none;
       padding: 1.2rem;
-    }
-
-    .modal-header .btn-close {
-      filter: invert(1);
-      opacity: 0.8;
-    }
-
-    .modal-header .btn-close:hover {
-      opacity: 1;
     }
 
     .modal-title {
@@ -335,152 +359,27 @@
       background-color: var(--darker-bg);
     }
 
-    .form-control {
-      background-color: rgba(26, 42, 54, 0.7);
-      border: 1px solid var(--border-color);
-      color: var(--light-text);
-      border-radius: 6px;
-      padding: 10px 15px;
-      transition: all 0.3s ease;
-    }
-
-    .form-control:focus {
-      background-color: rgba(26, 42, 54, 0.9);
-      border-color: var(--accent-blue);
-      box-shadow: 0 0 0 0.2rem rgba(72, 149, 239, 0.25);
-      color: var(--lighter-text);
-    }
-
-    /* Password Input Group */
-    .password-input-group {
-      position: relative;
-    }
-
-    .toggle-password {
-      position: absolute;
-      right: 10px;
-      top: 50%;
-      transform: translateY(-50%);
-      cursor: pointer;
-      color: var(--light-text);
-      opacity: 0.7;
-    }
-
-    .toggle-password:hover {
-      opacity: 1;
-    }
-
-    .password-result {
-      margin-top: 15px;
-      padding: 10px;
-      border-radius: 6px;
-      background-color: rgba(26, 42, 54, 0.7);
-      border: 1px solid var(--border-color);
-    }
-
-    .password-text {
-      font-family: monospace;
-      font-size: 1rem;
-      word-break: break-all;
-      color: var(--lighter-text);
-    }
-
-    .copy-password-btn {
-      margin-top: 10px;
-      background: rgba(26, 42, 54, 0.7);
-      border: 1px solid var(--success-color);
-      color: var(--success-color);
-    }
-
-    .copy-password-btn:hover {
-      background: rgba(76, 201, 240, 0.2);
-      color: var(--lighter-text);
-      border-color: var(--success-color);
-    }
-
-    /* Responsive Adjustments */
+    /* Responsive adjustments */
     @media (max-width: 768px) {
-      body {
-        padding-top: 56px;
-      }
-
-      .container {
-        padding: 0 10px;
-      }
-
       .page-header h1 {
-        font-size: 1.3rem;
+        font-size: 2rem;
       }
 
-      .breadcrumb {
-        font-size: 0.75rem;
+      .btn-container {
+        flex-direction: column;
       }
 
-      .card-header {
-        padding: 10px 12px;
-        font-size: 0.9rem;
-      }
-
-      .table-responsive {
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-      }
-
-      .table td, .table th {
-        padding: 8px 6px;
-        font-size: 0.8rem;
-        white-space: nowrap;
-      }
-
-      .user-type-option label {
-        justify-content: flex-start;
-        padding: 4px 0;
-      }
-
-      .user-name {
-        font-size: 0.9rem;
-        font-weight: 700;
-      }
-
-      .user-email {
-        font-size: 0.8rem;
-        color: var(--accent-blue);
+      .btn-back {
+        width: 100%;
       }
     }
 
     @media (max-width: 576px) {
-      .table td, .table th {
-        font-size: 0.75rem;
-      }
-
-      .user-type-option label {
-        font-size: 0.75rem;
-      }
-
-      .user-type-option i {
-        font-size: 0.8rem;
-      }
-
       .page-header h1 {
-        font-size: 1.2rem;
+        font-size: 1.8rem;
       }
 
-      .card-header {
-        font-size: 0.85rem;
-      }
-
-      .delete-btn span,
-      .change-password-btn span {
-        display: none;
-      }
-      .delete-btn,
-      .change-password-btn {
-        padding: 0.5rem;
-        min-width: 42px;
-      }
-    }
-
-    @media (max-width: 480px) {
+      /* Mobile table styles */
       table {
         display: block;
         width: 100%;
@@ -497,19 +396,18 @@
 
       tr {
         display: block;
-        margin-bottom: 15px;
+        margin-bottom: 1rem;
         border: 1px solid var(--border-color);
         border-radius: 8px;
-        padding: 10px;
-        background: rgba(26, 42, 54, 0.7);
-        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        padding: 1rem;
+        background: rgba(15, 25, 35, 0.7);
       }
 
       td {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 8px 5px;
+        padding: 0.8rem;
         border: none;
         border-bottom: 1px solid var(--border-color);
         background: transparent;
@@ -517,116 +415,107 @@
 
       td:last-child {
         border-bottom: none;
+        padding-top: 1rem;
+        justify-content: center;
       }
 
       td::before {
         content: attr(data-label);
         font-weight: 600;
-        margin-right: 10px;
+        margin-right: 1rem;
         color: var(--light-text);
         flex: 1;
-        font-size: 0.8rem;
       }
 
       td > *:not(::before) {
         flex: 2;
         text-align: right;
-        font-size: 0.85rem;
       }
 
-      td[data-label="Nombre"] .user-name {
-        font-size: 1rem;
-        font-weight: 700;
-      }
-
-      td[data-label="Email"] .user-email {
-        font-size: 0.85rem;
-        color: var(--accent-blue);
-      }
-
-      td[data-label="Nombre"],
-      td[data-label="Email"] {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-
-      td[data-label="Nombre"]::before,
-      td[data-label="Email"]::before {
-        margin-bottom: 4px;
-        font-size: 0.7rem;
-        color: var(--light-text);
-        opacity: 0.7;
-      }
-
-      td[data-label="Nombre"] > *,
-      td[data-label="Email"] > * {
-        width: 100%;
-        text-align: left;
-      }
-
+      /* Actions column */
       td[data-label="Actions"] {
         display: flex;
-        justify-content: flex-end;
-        gap: 5px;
+        justify-content: center;
+        gap: 0.5rem;
+        padding-top: 1rem;
       }
 
       td[data-label="Actions"]::before {
         display: none;
       }
 
-      td[data-label="Actions"] > * {
-        flex: none;
-        width: auto;
+      /* Hide text in buttons on mobile, show only icons */
+      .btn-sm span {
+        display: none;
+      }
+
+      .btn-sm i {
+        margin-right: 0 !important;
+      }
+
+      .btn-action-group {
+        justify-content: center;
+        width: 100%;
       }
     }
   </style>
 </head>
+
 <body>
-
-
 <!-- Imagen -->
 <div class="bg-fast-load">
   <img
-          src="//img/upscalemedia-transformed.webp"
+          src="/img/upscalemedia-transformed.webp"
           srcset="
-      /img/upscalemedia-transformed.webp?width=600 600w,
-      /img/upscalemedia-transformed.webp?width=1200 1200w,
-      /img/upscalemedia-transformed.webp?width=1800 1800w
-    "
+          /img/upscalemedia-transformed.webp?width=600   600w,
+          /img/upscalemedia-transformed.webp?width=1200 1200w,
+          /img/upscalemedia-transformed.webp?width=1800 1800w
+        "
           sizes="100vw"
           alt=""
           decoding="async"
-  >
+  />
 </div>
-
 
 <!-- Page Content -->
 <div class="container">
   <!-- Page Heading -->
   <div class="page-header">
     <h1 class="mb-2">
-      <i class="fas fa-user-cog mr-2"></i>Permission Management
+      <i class="fas fa-user-cog mr-2"></i
+      ><span th:text="#{permission-management}">Permission Management</span>
     </h1>
-
-    <nav aria-label="breadcrumb">
-      <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a th:href="@{/adm}"><i class="fas fa-home mr-1"></i>Inicio</a></li>
-        <li class="breadcrumb-item active">Permission</li>
-      </ol>
-    </nav>
   </div>
 
   <!-- Mensajes de retroalimentación -->
-  <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+  <div
+          th:if="${successMessage}"
+          class="alert alert-success alert-dismissible fade show"
+          role="alert"
+  >
     <span th:text="${successMessage}"></span>
-    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <button
+            type="button"
+            class="close"
+            data-dismiss="alert"
+            aria-label="Close"
+    >
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
 
-  <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+  <div
+          th:if="${errorMessage}"
+          class="alert alert-danger alert-dismissible fade show"
+          role="alert"
+  >
     <span th:text="${errorMessage}"></span>
-    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <button
+            type="button"
+            class="close"
+            data-dismiss="alert"
+            aria-label="Close"
+    >
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
@@ -634,7 +523,8 @@
   <!-- Botones de acción -->
   <div class="btn-container">
     <a class="btn btn-back" th:href="@{/adm}">
-      <i class="fas fa-arrow-left"></i> Back to Menu
+      <i class="fas fa-arrow-left"></i>
+      <span th:text="#{back-to-menu}">Back to Menu</span>
     </a>
   </div>
 
@@ -642,46 +532,78 @@
 
   <!--usuarios -->
   <div class="card">
-    <div class="card-header d-flex justify-content-between align-items-center">
-      <h5 class="mb-0"><i class="fas fa-users mr-2"></i>Users</h5>
-      <span class="badge badge-light" th:text="${'Total: ' + #lists.size(usuarios)}"></span>
+    <div
+            class="card-header d-flex justify-content-between align-items-center"
+    >
+      <h5 class="mb-0">
+        <i class="fas fa-users mr-2"></i
+        ><span th:text="#{users}">Users</span>
+      </h5>
+      <span
+              class="badge badge-light"
+              th:text="#{total-users(${#lists.size(usuarios)})}"
+      >Total: 0</span
+      >
     </div>
     <div class="card-body">
       <div class="table-responsive">
         <table class="table table-hover">
           <thead>
           <tr>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Actions</th>
+            <th th:text="#{name}">Name</th>
+            <th th:text="#{email}">Email</th>
+            <th th:text="#{actions}">Actions</th>
           </tr>
           </thead>
           <tbody>
           <tr th:each="usuario, stat : ${usuarios}">
-            <td data-label="Nombre">
+            <td data-label="Nombre" th:data-label="#{name}">
               <div class="user-name-container">
                 <div class="user-name" th:text="${usuario.nombre}"></div>
-                <i class="fas fa-star supervisorplus-star"
-                   th:classappend="${usuario.tipo_usuario == 'SUPERVISORPLUS'} ? '' : 'd-none'"></i>
+                <i
+                        class="fas fa-star supervisorplus-star"
+                        th:classappend="${usuario.tipo_usuario == 'SUPERVISORPLUS'} ? '' : 'd-none'"
+                ></i>
               </div>
             </td>
-            <td data-label="Email">
-              <div class="user-email" th:text="${usuario.email} ?: 'Sin email'"></div>
+            <td data-label="Email" th:data-label="#{email}">
+              <div
+                      class="user-email"
+                      th:text="${usuario.email} ?: #{no-email}"
+              ></div>
             </td>
 
             <td data-label="Actions">
-              <button type="button" class="btn btn-sm change-password-btn mr-2"
+              <button
+                      type="button"
+                      class="btn btn-sm change-password-btn mr-2"
                       th:attr="data-id=${usuario.id}, data-name=${usuario.nombre}"
-                      th:if="${USUARIOS_EDIT_PASSWORD}">
-                <i class="fas fa-key"></i> <span class="d-none d-md-inline">Password</span>
+                      th:if="${USUARIOS_EDIT_PASSWORD}"
+              >
+                <i class="fas fa-key"></i>
+                <span class="d-none d-md-inline" th:text="#{password}"
+                >Password</span
+                >
               </button>
 
-              <form th:action="@{/usuario/delete}" method="post" th:id="${'delete-form-' + usuario.id}" style="display: inline;">
-                <input type="hidden" name="id" th:value="${usuario.id}">
-                <button type="button" class="btn btn-sm delete-btn"
+              <form
+                      th:action="@{/usuario/delete}"
+                      method="post"
+                      th:id="${'delete-form-' + usuario.id}"
+                      style="display: inline"
+              >
+                <input type="hidden" name="id" th:value="${usuario.id}" />
+
+                <button
+                        type="button"
+                        class="btn btn-sm delete-btn"
                         th:attr="data-id=${usuario.id}, data-name=${usuario.nombre}"
-                        th:if="${USUARIOS_DELETE}">
-                  <i class="fas fa-trash-alt"></i> <span class="d-none d-md-inline">Delete</span>
+                        th:if="${USUARIOS_DELETE}"
+                >
+                  <i class="fas fa-trash-alt"></i>
+                  <span class="d-none d-md-inline" th:text="#{delete}"
+                  >Delete</span
+                  >
                 </button>
               </form>
             </td>
@@ -694,48 +616,114 @@
 </div>
 
 <!-- Modal para cambiar contraseña -->
-<div class="modal fade" id="changePasswordModal" tabindex="-1" role="dialog" aria-labelledby="changePasswordModalLabel" aria-hidden="true">
+<div
+        class="modal fade"
+        id="changePasswordModal"
+        tabindex="-1"
+        role="dialog"
+        aria-labelledby="changePasswordModalLabel"
+        aria-hidden="true"
+>
   <div class="modal-dialog" role="document">
     <div class="modal-content">
-      <div class="modal-header bg-primary text-white">
-        <h5 class="modal-title" id="changePasswordModalLabel">Cambiar Contraseña</h5>
-        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+      <div class="modal-header">
+        <h5 class="modal-title" id="changePasswordModalLabel">
+          <span th:text="#{change-password}">Change Password</span>
+        </h5>
+        <button
+                type="button"
+                class="close"
+                data-dismiss="modal"
+                aria-label="Close"
+        >
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <form id="changePasswordForm" th:action="@{/usuario/changePassword}" method="post">
-        <input type="hidden" id="userId" name="id">
+      <form
+              id="changePasswordForm"
+              th:action="@{/usuario/changePassword}"
+              method="post"
+      >
+        <input type="hidden" id="userId" name="id" />
         <div class="modal-body">
           <div th:if="${newPassword}" class="password-result">
-            <h6>Nueva Contraseña Generada:</h6>
+            <h6 th:text="#{generated-password}">Generated Password:</h6>
             <div class="password-text" th:text="${newPassword}"></div>
-            <button type="button" class="btn btn-sm btn-outline-secondary copy-password-btn" onclick="copyPassword()">
-              <i class="fas fa-copy"></i> Copiar Contraseña
+            <button
+                    type="button"
+                    class="btn btn-sm btn-outline-secondary copy-password-btn"
+                    onclick="copyPassword()"
+            >
+              <i class="fas fa-copy"></i>
+              <span th:text="#{copy-password}">Copy Password</span>
             </button>
-            <small class="text-muted d-block mt-2">Guarde esta contraseña en un lugar seguro. No podrá verla nuevamente.</small>
+            <small
+                    th:text="password-warning"
+                    class="text-muted d-block mt-2"
+            >Save this password in a secure place. You won't be able to
+              see it again.</small
+            >
           </div>
 
           <div id="passwordFormFields">
             <div class="form-group">
-              <label for="newPassword">Nueva Contraseña</label>
+              <label for="newPassword" th:text="#{new-password}"
+              >Nueva Contraseña</label
+              >
               <div class="password-input-group">
-                <input type="password" class="form-control" id="newPassword" name="newPassword" required>
-                <i class="fas fa-eye toggle-password" onclick="togglePasswordVisibility('newPassword')"></i>
+                <input
+                        type="password"
+                        class="form-control"
+                        id="newPassword"
+                        name="newPassword"
+                        required
+                />
+                <i
+                        class="fas fa-eye toggle-password"
+                        onclick="togglePasswordVisibility('newPassword')"
+                ></i>
               </div>
-              <small class="form-text text-muted">Recomendamos usar una contraseña segura con mayúsculas, números y caracteres especiales.</small>
+              <small class="form-text text-muted" th:text="#{password-hint}"
+              >We recommend using a strong password with uppercase
+                letters, numbers and special characters.</small
+              >
             </div>
             <div class="form-group">
-              <label for="confirmPassword">Confirmar Contraseña</label>
+              <label th:text="#{confirm-password}" for="confirmPassword"
+              >Confirmar Contraseña</label
+              >
               <div class="password-input-group">
-                <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
-                <i class="fas fa-eye toggle-password" onclick="togglePasswordVisibility('confirmPassword')"></i>
+                <input
+                        type="password"
+                        class="form-control"
+                        id="confirmPassword"
+                        name="confirmPassword"
+                        required
+                />
+                <i
+                        class="fas fa-eye toggle-password"
+                        onclick="togglePasswordVisibility('confirmPassword')"
+                ></i>
               </div>
             </div>
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-          <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+          <button
+                  th:text="#{cancel}"
+                  type="button"
+                  class="btn btn-secondary"
+                  data-dismiss="modal"
+          >
+            Cancelar
+          </button>
+          <button
+                  th:text="#{save-changes}"
+                  type="submit"
+                  class="btn btn-primary"
+          >
+            Guardar Cambios
+          </button>
         </div>
       </form>
     </div>
@@ -750,57 +738,67 @@
 <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
 
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
+  document.addEventListener("DOMContentLoaded", function () {
     // Confirmación para eliminar usuario
-    document.querySelectorAll('.delete-btn').forEach(btn => {
-      btn.addEventListener('click', function(e) {
+    document.querySelectorAll(".delete-btn").forEach((btn) => {
+      btn.addEventListener("click", function (e) {
         e.preventDefault();
-        const userId = this.getAttribute('data-id');
-        const userName = this.getAttribute('data-name');
+        const userId = this.getAttribute("data-id");
+        const userName = this.getAttribute("data-name");
 
-        if (confirm(`¿Estás seguro de que deseas eliminar al usuario ${userName}? Esta acción no se puede deshacer.`)) {
-          const form = this.closest('form');
+        if (
+                confirm(
+                        `Are you sure you want to delete user ${userName}? This action cannot be undone.`
+                )
+        ) {
+          const form = this.closest("form");
           if (form) {
             form.submit();
           } else {
-            console.error('No se encontró el formulario de eliminación');
+            console.error("No se encontró el formulario de eliminación");
           }
         }
       });
     });
 
     // Manejar el modal de cambio de contraseña
-    document.querySelectorAll('.change-password-btn').forEach(btn => {
-      btn.addEventListener('click', function() {
-        const userId = this.getAttribute('data-id');
-        const userName = this.getAttribute('data-name');
+    document.querySelectorAll(".change-password-btn").forEach((btn) => {
+      btn.addEventListener("click", function () {
+        const userId = this.getAttribute("data-id");
+        const userName = this.getAttribute("data-name");
 
-        document.getElementById('userId').value = userId;
-        document.getElementById('changePasswordModalLabel').textContent = `Cambiar Contraseña - ${userName}`;
+        document.getElementById("userId").value = userId;
+        document.getElementById(
+                "changePasswordModalLabel"
+        ).textContent = `Change Password - ${userName}`;
 
-        $('#changePasswordModal').modal('show');
+        $("#changePasswordModal").modal("show");
       });
     });
 
     // Si hay una nueva contraseña en el modelo, mostramos el modal automáticamente
-    if (document.querySelector('.password-result')) {
-      $('#changePasswordModal').modal('show');
+    if (document.querySelector(".password-result")) {
+      $("#changePasswordModal").modal("show");
     }
   });
 
   // Función para copiar la contraseña al portapapeles
   function copyPassword() {
-    const passwordText = document.querySelector('.password-text').textContent;
-    navigator.clipboard.writeText(passwordText).then(() => {
-      const copyBtn = document.querySelector('.copy-password-btn');
-      const originalHtml = copyBtn.innerHTML;
-      copyBtn.innerHTML = '<i class="fas fa-check"></i> Copiado!';
-      setTimeout(() => {
-        copyBtn.innerHTML = originalHtml;
-      }, 2000);
-    }).catch(err => {
-      console.error('Error al copiar: ', err);
-    });
+    const passwordText =
+            document.querySelector(".password-text").textContent;
+    navigator.clipboard
+            .writeText(passwordText)
+            .then(() => {
+              const copyBtn = document.querySelector(".copy-password-btn");
+              const originalHtml = copyBtn.innerHTML;
+              copyBtn.innerHTML = '<i class="fas fa-check"></i> Copiado!';
+              setTimeout(() => {
+                copyBtn.innerHTML = originalHtml;
+              }, 2000);
+            })
+            .catch((err) => {
+              console.error("Error al copiar: ", err);
+            });
   }
 
   // Función para mostrar/ocultar contraseña
@@ -808,17 +806,16 @@
     const input = document.getElementById(inputId);
     const icon = document.querySelector(`#${inputId} + .toggle-password`);
 
-    if (input.type === 'password') {
-      input.type = 'text';
-      icon.classList.remove('fa-eye');
-      icon.classList.add('fa-eye-slash');
+    if (input.type === "password") {
+      input.type = "text";
+      icon.classList.remove("fa-eye");
+      icon.classList.add("fa-eye-slash");
     } else {
-      input.type = 'password';
-      icon.classList.remove('fa-eye-slash');
-      icon.classList.add('fa-eye');
+      input.type = "password";
+      icon.classList.remove("fa-eye-slash");
+      icon.classList.add("fa-eye");
     }
   }
 </script>
-
 </body>
 </html>

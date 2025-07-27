@@ -4,7 +4,51 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="Agenda de proyectos">
-    <title>Agenda de Proyectos</title>
+    <title th:text="#{projects-agenda}">Projects Agenda</title>
+
+    <!-- Traducciones -->
+    <script>
+        const translations = {
+            // FullCalendar specific translations
+            'currentLocale': '[[${#locale.language}]]', // Get the current locale from Thymeleaf
+            'weekTableButton': '[[#{calendar.button.weekTable}]]',
+            'todayButton': '[[#{calendar.button.today}]]',
+            'monthButton': '[[#{calendar.button.month}]]',
+            'dayButton': '[[#{calendar.button.day}]]',
+
+            // Other translations used in the script
+            'errorLoadingEvents': '[[#{calendar.error.loadingEvents}]]',
+            'newProjectFor': '[[#{calendar.newProjectFor}]]',
+            'projectsHeader': '[[#{calendar.table.projectsHeader}]]',
+            'allDayEvent': '[[#{calendar.event.allDay}]]',
+            'hideCalendarButton': '[[#{calendar.button.hideCalendar}]]', // Text for the toggle button
+            'showCalendarButton': '[[#{calendar.button.showCalendar}]]',  // Text for the toggle button (if you show it again)
+
+            // New translations for showAlbumDetailsById
+            'errorFetchingDetails': '[[#{album.error.fetchDetails}]]',
+            'statusCompleted': '[[#{album.status.completed}]]',
+            'statusCancelled': '[[#{album.status.cancelled}]]',
+            'statusPending': '[[#{album.status.pending}]]',
+            'hoursSuffix': '[[#{album.details.hoursSuffix}]]',
+            'markInProgress': '[[#{album.action.markInProgress}]]',
+            'markCompleted': '[[#{album.action.markCompleted}]]',
+            'markCancelled': '[[#{album.action.markCancelled}]]',
+            'errorGeneric': '[[#{error.generic}]]',
+            'errorLoadingProjectDetails': '[[#{album.error.loadDetailsAlert}]]',
+            'edit': '[[#{edit}]]',
+            'delete': '[[#{delete}]]',
+            'success': '[[#{success}]]',
+            'close': '[[#{close}]]',
+            
+            // Keys for loadProjectTeams (mapped to existing properties)
+            'loading_teams': '[[#{loading-teams}]]',
+            'error_loading_teams': '[[#{error-loading-teams}]]',
+            'no_description': '[[#{no-description}]]',
+            'team_members': '[[#{team-members}]]', // New, as it's "Team Members (X)"
+            'no_teams_found': '[[#{no-teams-found}]]',
+            'no_teams_assigned': '[[#{no-teams-assigned}]]'
+        };
+    </script>
 
     <!-- Bootstrap core CSS -->
     <link th:href="@{/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
@@ -25,11 +69,24 @@
           imagesizes="100vw">
     <!-- Custom styles -->
     <style>
+        :root {
+            --primary-blue: #2c5aa0;
+            --accent-blue: #3a7bd5;
+            --dark-bg: #0f1923;
+            --darker-bg: #0a121a;
+            --light-text: #e0e0e0;
+            --lighter-text: #ffffff;
+            --border-color: rgba(44, 90, 160, 0.3);
+            --success-color: #4cc9f0;
+            --danger-color: #ff4d4d;
+            --completed-color: #38b000;
+        }
 
-
+        /* Estructura principal */
         .bg-fast-load {
             position: fixed;
-            top: 0; left: 0;
+            top: 0;
+            left: 0;
             width: 100vw;
             height: 100vh;
             z-index: -1;
@@ -40,51 +97,52 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-        }
-        :root {
-            --primary-blue: #4361ee;
-            --accent-blue: #4895ef;
-            --secondary-blue: #3f37c9;
-            --dark-blue: #3a0ca3;
-            --dark-bg: #1a2a36;
-            --darker-bg: #142028;
-            --light-text: #e0e0e0;
-            --lighter-text: #ffffff;
-            --border-color: rgba(74, 144, 226, 0.2);
-            --success-color: #4cc9f0;
-            --warning-color: #ff9e00;
-            --danger-color: #ff4d4d;
-            --completed-color: #38b000;
-            --card-min-width: 250px;
+            opacity: 0.5;
         }
 
         body {
             font-family: 'Montserrat', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             color: var(--light-text);
-            background-color: var(--dark-bg);
-            background-size: 2000px;
+            background-color: rgba(0, 0, 0, 0.94);
+            background-size: cover;
             background-repeat: no-repeat;
             background-position: center;
             background-attachment: fixed;
-
+            min-height: 100vh;
         }
 
-     
-        .agenda-header-content {
-            position: relative;
-            z-index: 1;
-            padding: 0 1rem;
+        .main-content-container {
+            padding: 2rem 0 4rem;
+        }
+
+        /* Cabecera */
+        .agenda-header {
+            text-align: center;
+            margin-bottom: 3rem;
         }
 
         .agenda-title {
+            font-size: 2.5rem;
             font-weight: 700;
-            font-size: clamp(1.8rem, 5vw, 2.5rem);
-            margin-bottom: 0.5rem;
-            line-height: 1.2;
+            color: var(--lighter-text);
+            margin-bottom: 1rem;
+            position: relative;
+        }
+
+        .agenda-title:after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary-blue), var(--accent-blue));
+            border-radius: 3px;
         }
 
         .agenda-description {
-            font-size: clamp(0.95rem, 3vw, 1.1rem);
+            font-size: 1.1rem;
             opacity: 0.9;
             max-width: 700px;
             margin: 0 auto 1.5rem;
@@ -103,7 +161,7 @@
             position: relative;
             overflow: hidden;
             z-index: 1;
-            border: 1px solid transparent;
+            border: 1px solid var(--border-color);
             backdrop-filter: blur(5px);
         }
 
@@ -121,7 +179,7 @@
         }
 
         .btn-primary {
-            background: rgba(26, 42, 54, 0.7);
+            background: rgba(15, 25, 35, 0.7);
             border-color: var(--primary-blue);
             color: var(--light-text);
         }
@@ -138,7 +196,7 @@
         }
 
         .btn-secondary {
-            background: rgba(26, 42, 54, 0.7);
+            background: rgba(15, 25, 35, 0.7);
             border-color: #6c757d;
             color: var(--light-text);
         }
@@ -150,7 +208,7 @@
         }
 
         .btn-success {
-            background: rgba(26, 42, 54, 0.7);
+            background: rgba(15, 25, 35, 0.7);
             border-color: var(--completed-color);
             color: var(--completed-color);
         }
@@ -159,23 +217,6 @@
             background: rgba(56, 176, 0, 0.2);
             color: #a2ff7c;
             border-color: #a2ff7c;
-        }
-
-        .btn-warning {
-            background: rgba(26, 42, 54, 0.7);
-            border-color: var(--warning-color);
-            color: var(--warning-color);
-        }
-
-        .btn-warning:hover {
-            background: rgba(255, 158, 0, 0.2);
-            color: #ffcc80;
-            border-color: #ffcc80;
-        }
-
-        .btn-action i {
-            margin-right: 8px;
-            font-size: 0.9rem;
         }
 
         /* Main Content Layout */
@@ -204,7 +245,7 @@
 
         /* Calendar Container */
         .calendar-container {
-            background: rgba(26, 42, 54, 0.7);
+            background: rgba(15, 25, 35, 0.8);
             border: 1px solid var(--border-color);
             border-radius: 10px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
@@ -215,7 +256,7 @@
 
         /* List View Container */
         .list-container {
-            background: rgba(26, 42, 54, 0.7);
+            background: rgba(15, 25, 35, 0.8);
             border: 1px solid var(--border-color);
             border-radius: 10px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
@@ -260,7 +301,7 @@
             padding: 0.4rem 0.8rem;
             border: 1px solid var(--border-color);
             font-size: 0.9rem;
-            background-color: rgba(26, 42, 54, 0.7);
+            background-color: rgba(15, 25, 35, 0.7);
             color: var(--light-text);
             cursor: pointer;
         }
@@ -277,14 +318,14 @@
         }
 
         .search-box .input-group-text {
-            background-color: rgba(26, 42, 54, 0.7);
+            background-color: rgba(15, 25, 35, 0.7);
             border: 1px solid var(--border-color);
             border-right: none;
             color: var(--light-text);
         }
 
         .search-box .form-control {
-            background-color: rgba(26, 42, 54, 0.7);
+            background-color: rgba(15, 25, 35, 0.7);
             border: 1px solid var(--border-color);
             border-left: none;
             color: var(--light-text);
@@ -295,71 +336,9 @@
             opacity: 0.6;
         }
 
-        /* Custom FullCalendar styles */
-        .fc .fc-toolbar-title {
-            font-size: 1.4rem;
-            font-weight: 600;
-            color: var(--lighter-text);
-        }
-
-        .fc .fc-button {
-            background-color: rgba(26, 42, 54, 0.7);
-            border-color: var(--primary-blue);
-            color: var(--primary-blue);
-            font-weight: 500;
-            text-transform: capitalize;
-            transition: all 0.3s ease;
-        }
-
-        .fc .fc-button:hover {
-            background-color: rgba(74, 144, 226, 0.1);
-            border-color: var(--secondary-blue);
-            color: var(--accent-blue);
-        }
-
-        .fc .fc-button-primary:not(:disabled).fc-button-active {
-            background-color: var(--primary-blue);
-            border-color: var(--primary-blue);
-            color: white;
-        }
-
-        .fc .fc-daygrid-day-number {
-            color: var(--light-text);
-            font-weight: 500;
-        }
-
-        .fc .fc-daygrid-day.fc-day-today {
-            background-color: rgba(72, 149, 239, 0.2);
-        }
-
-        .fc .fc-daygrid-day.fc-day-today .fc-daygrid-day-number {
-            color: var(--accent-blue);
-            font-weight: 700;
-        }
-
-        .fc .fc-event {
-            border: none;
-            padding: 1px 3px;
-            font-size: 0.8rem;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            opacity: 0.9;
-        }
-
-        .fc .fc-event:hover {
-            opacity: 1;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-        }
-
-        /* Completed events style */
-        .fc .fc-event.completed {
-            text-decoration: line-through;
-            opacity: 0.8;
-        }
-
         /* Project Card Styles */
         .project-card {
-            background: rgba(26, 42, 54, 0.7);
+            background: rgba(15, 25, 35, 0.7);
             border: 1px solid var(--border-color);
             border-radius: 10px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
@@ -393,7 +372,7 @@
 
         .project-card-header {
             padding: 1rem 1.2rem;
-            background-color: rgba(67, 97, 238, 0.1);
+            background-color: rgba(44, 90, 160, 0.1);
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -443,11 +422,6 @@
             border-top: 1px solid var(--border-color);
         }
 
-        .btn-view-report i {
-            margin-right: 6px;
-            font-size: 0.85rem;
-        }
-
         /* Status Badge */
         .status-badge {
             display: inline-block;
@@ -459,7 +433,7 @@
         }
 
         .status-active {
-            background-color: rgba(67, 97, 238, 0.2);
+            background-color: rgba(44, 90, 160, 0.2);
             color: var(--primary-blue);
             border: 1px solid var(--primary-blue);
         }
@@ -540,7 +514,7 @@
         }
 
         .form-control, .form-select {
-            background-color: rgba(26, 42, 54, 0.7);
+            background-color: rgba(15, 25, 35, 0.7);
             border: 1px solid var(--border-color);
             color: var(--light-text);
             border-radius: 8px;
@@ -549,7 +523,7 @@
         }
 
         .form-control:focus, .form-select:focus {
-            background-color: rgba(26, 42, 54, 0.9);
+            background-color: rgba(15, 25, 35, 0.9);
             border-color: var(--accent-blue);
             box-shadow: 0 0 0 0.25rem rgba(72, 149, 239, 0.25);
             color: var(--lighter-text);
@@ -576,7 +550,7 @@
         }
 
         .toast-success {
-            background-color: rgba(26, 42, 54, 0.9);
+            background-color: rgba(15, 25, 35, 0.9);
             border-color: var(--success-color);
         }
 
@@ -704,7 +678,7 @@
         /* Project card status styles */
         .project-card.pendiente {
             border-left: 4px solid var(--primary-blue);
-            background-color: rgba(67, 97, 238, 0.1);
+            background-color: rgba(44, 90, 160, 0.1);
         }
 
         .project-card.completado {
@@ -719,7 +693,7 @@
 
         /* Status badges */
         .status-pending {
-            background-color: rgba(67, 97, 238, 0.2);
+            background-color: rgba(44, 90, 160, 0.2);
             color: var(--primary-blue);
             border: 1px solid var(--primary-blue);
         }
@@ -857,7 +831,7 @@
             padding: 0.75rem 1rem;
             margin-bottom: 0.5rem;
             border-radius: 6px;
-            background-color: rgba(26, 42, 54, 0.7);
+            background-color: rgba(15, 25, 35, 0.7);
             cursor: pointer;
             transition: background-color 0.2s ease, transform 0.15s ease;
             border: 1px solid var(--border-color);
@@ -895,7 +869,7 @@
             margin-bottom: 1rem;
             overflow: hidden;
             transition: transform 0.2s, box-shadow 0.2s;
-            background-color: rgba(26, 42, 54, 0.7);
+            background-color: rgba(15, 25, 35, 0.7);
         }
 
         .team-card:hover {
@@ -921,7 +895,7 @@
         .team-times .badge {
             font-weight: 500;
             padding: 0.35rem 0.6rem;
-            background-color: rgba(26, 42, 54, 0.7);
+            background-color: rgba(15, 25, 35, 0.7);
             border: 1px solid var(--border-color);
         }
 
@@ -951,7 +925,7 @@
         .member-item {
             display: flex;
             align-items: center;
-            background-color: rgba(26, 42, 54, 0.7);
+            background-color: rgba(15, 25, 35, 0.7);
             padding: 0.5rem 0.75rem;
             border-radius: 20px;
             font-size: 0.85rem;
@@ -1041,18 +1015,102 @@
             }
         }
 
-        @media (max-width: 768px) {
-            .calendar-scroll-wrapper {
-                overflow-x: auto;
-                -webkit-overflow-scrolling: touch;
-            }
-
-            #calendar {
-                min-width: 600px;
-            }
+        /* Custom FullCalendar styles */
+        .fc .fc-toolbar-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: var(--lighter-text);
         }
 
-        /* Agrega esto en la sección de estilos */
+        .fc .fc-button {
+            background-color: rgba(15, 25, 35, 0.7);
+            border-color: var(--primary-blue);
+            color: var(--primary-blue);
+            font-weight: 500;
+            text-transform: capitalize;
+            transition: all 0.3s ease;
+        }
+
+        .fc .fc-button:hover {
+            background-color: rgba(44, 90, 160, 0.1);
+            border-color: var(--primary-blue);
+            color: var(--accent-blue);
+        }
+
+        .fc .fc-button-primary:not(:disabled).fc-button-active {
+            background-color: var(--primary-blue);
+            border-color: var(--primary-blue);
+            color: white;
+        }
+
+        .fc .fc-daygrid-day-number {
+            color: var(--light-text);
+            font-weight: 500;
+        }
+
+        .fc .fc-daygrid-day.fc-day-today {
+            background-color: rgba(58, 123, 213, 0.2);
+        }
+
+        .fc .fc-daygrid-day.fc-day-today .fc-daygrid-day-number {
+            color: var(--accent-blue);
+            font-weight: 700;
+        }
+
+        .fc .fc-event {
+            border: none;
+            padding: 1px 3px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            opacity: 0.9;
+        }
+
+        .fc .fc-event:hover {
+            opacity: 1;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Completed events style */
+        .fc .fc-event.completed {
+            text-decoration: line-through;
+            opacity: 0.8;
+        }
+
+        /* Estilos para eventos compactos pero con más presencia */
+        .fc .fc-event {
+            padding: 4px 4px !important;
+            margin: 2px 1px !important;
+            min-height: 24px !important;
+            line-height: 1.4 !important;
+            font-size: 0.85rem !important;
+        }
+
+        .fc .fc-event .fc-event-main {
+            height: 100% !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+        }
+
+        /* Líneas internas */
+        .fc .fc-daygrid-day {
+            border: 1px solid rgba(44, 90, 160, 0.1) !important;
+        }
+
+        /* Contorno externo */
+        .fc .fc-scrollgrid {
+            border: 1px solid rgba(44, 90, 160, 0.1) !important;
+        }
+
+        /* Encabezado (días de la semana) */
+        .fc .fc-col-header-cell {
+            border: 1px solid rgba(44, 90, 160, 0.1) !important;
+            color: white;
+            background-color: var(--darker-bg);
+        }
+
+        /* Week Table View */
         .fc-week-table-view {
             width: 100%;
             overflow-x: auto;
@@ -1061,7 +1119,7 @@
         .fc-week-table {
             width: 100%;
             border-collapse: collapse;
-            background-color: rgba(26, 42, 54, 0.7);
+            background-color: rgba(15, 25, 35, 0.7);
             border-radius: 10px;
             overflow: hidden;
         }
@@ -1112,7 +1170,7 @@
         }
 
         .day-indicator.in-progress {
-            background-color: rgba(67, 97, 238, 0.2);
+            background-color: rgba(44, 90, 160, 0.2);
             color: var(--primary-blue);
             border: 2px solid var(--primary-blue);
         }
@@ -1141,6 +1199,11 @@
             border-left: 4px solid var(--danger-color);
         }
 
+        .fc-week-table tr:hover td {
+            background-color: rgba(44, 90, 160, 0.1);
+            cursor: pointer;
+        }
+
         /* Ajustes para pantallas más pequeñas */
         @media (max-width: 992px) {
             .fc-week-table th,
@@ -1164,53 +1227,6 @@
                 font-size: 0.8rem;
             }
         }
-
-        .fc-week-table tr:hover td {
-            background-color: rgba(74, 144, 226, 0.1);
-            cursor: pointer;
-        }
-
-        /* Líneas internas */
-        .fc .fc-daygrid-day {
-            border: 1px solid rgba(74, 144, 226, 0.1) !important;
-        }
-
-        /* Contorno externo */
-        /* Celdas de días */
-        .fc .fc-daygrid-day {
-            border: 1px solid rgba(74, 144, 226, 0.1) !important;
-        }
-
-        /* Contorno general del calendario */
-        .fc .fc-scrollgrid {
-            border: 1px solid rgba(74, 144, 226, 0.1) !important;
-        }
-
-        /* Última columna (derecha) */
-        .fc .fc-daygrid-day.fc-day-sun {
-            border-right: 1px solid rgba(74, 144, 226, 0.1) !important;
-        }
-
-        /* Última fila (abajo) */
-        .fc .fc-daygrid-body tr:last-child .fc-daygrid-day {
-            border-bottom: 1px solid rgba(74, 144, 226, 0.1) !important;
-        }
-
-        /* Encabezado (días de la semana) */
-        .fc .fc-col-header-cell {
-            border: 1px solid rgba(74, 144, 226, 0.1) !important;
-            color: white;
-            background-color: #192433;
-        }
-
-        /* Línea superior del encabezado */
-        .fc .fc-col-header {
-            border-top: 1px solid #ff0000 !important;
-        }
-
-
-
-
     </style>
 </head>
 <body>
@@ -1232,34 +1248,33 @@
 
 <!-- Success Notification -->
 <div id="successNotification" class="alert alert-success success-notification" role="alert" style="display: none;">
-    <div class="success-notification-content">
-        <i class="fas fa-check-circle success-icon"></i>
-        <div class="success-message">
-            <div class="success-title">Project created.</div>
-            <div class="success-detail">The album has been created successfully.</div>
-        </div>
-        <span class="success-close" onclick="hideSuccessNotification()">&times;</span>
+  <div class="success-notification-content">
+    <i class="fas fa-check-circle success-icon"></i>
+    <div class="success-message">
+      <div class="success-title" th:text="#{project-created}">Project created.</div>
+      <div class="success-detail" th:text="#{album-created-success}">The album has been created successfully.</div>
     </div>
+    <span class="success-close" onclick="hideSuccessNotification()">&times;</span>
+  </div>
 </div>
 
 <!-- Agenda Header -->
 <div class="agenda-header text-center">
-    <div class="container agenda-header-content">
-        <h1 class="agenda-title"><i class="fas fa-calendar-alt me-3"></i> Projects Agenda</h1>
-        <p class="agenda-description">Organize and manage all your projects</p>
-        <div class="button-group" th:if="${AGENDA_CREATE}">
-            <button type="button" class="btn btn-primary btn-rounded" id="btnOpenModal">
-                <i class="fas fa-plus"></i> New Project
-            </button>
-            <button type="button" class="btn btn-secondary btn-rounded" id="toggleCalendarBtn" hidden="true">
-                <i class="fas fa-calendar"></i> Show Calendar
-            </button>
-
-        </div>
-        <button type="button" class="btn btn-success btn-rounded" id="showCompletedBtn">
-            <i class="fas fa-check-circle"></i> View Completed
-        </button>
+  <div class="container agenda-header-content">
+    <h1 class="agenda-title"><i class="fas fa-calendar-alt me-3"></i> <span th:text="#{projects-agenda}">Projects Agenda</span></h1>
+    <p class="agenda-description" th:text="#{organize-manage-projects}">Organize and manage all your projects</p>
+    <div class="button-group" th:if="${AGENDA_CREATE}">
+      <button type="button" class="btn btn-primary btn-rounded" id="btnOpenModal">
+        <i class="fas fa-plus"></i> <span th:text="#{new-project}">New Project</span>
+      </button>
+      <button type="button" class="btn btn-secondary btn-rounded" id="toggleCalendarBtn" hidden="true">
+        <i class="fas fa-calendar"></i> <span th:text="#{show-calendar}">Show Calendar</span>
+      </button>
     </div>
+    <button type="button" class="btn btn-success btn-rounded" id="showCompletedBtn">
+      <i class="fas fa-check-circle"></i> <span th:text="#{view-completed}">View Completed</span>
+    </button>
+  </div>
 </div>
 
 <!-- Toast Notification -->
@@ -1298,69 +1313,67 @@
         <div class="list-section">
             <div class="list-container">
                 <div class="list-view-header">
-                    <h3 class="list-view-title"><i class="fa-solid fa-folder-open"></i> My Projects</h3>
-                    <div class="list-filter-controls">
-                        <span class="filter-label">Sort by:</span>
-                        <select id="sortProjects" class="filter-select">
-                            <option value="name-asc">Name (A-Z)</option>
-                            <option value="name-desc">Name (Z-A)</option>
-                        </select>
-                    </div>
+                <h3 class="list-view-title"><i class="fa-solid fa-folder-open"></i> <span th:text="#{my-projects}">My Projects</span></h3>
+                <div class="list-filter-controls">
+                    <span class="filter-label" th:text="#{sort-by}">Sort by:</span>
+                    <select id="sortProjects" class="filter-select">
+                    <option value="name-asc" th:text="#{name-asc}">Name (A-Z)</option>
+                    <option value="name-desc" th:text="#{name-desc}">Name (Z-A)</option>
+                    </select>
+                </div>
                 </div>
 
                 <!-- Search Box -->
                 <div class="search-box">
-                    <div class="input-group mb-3">
-                        <span class="input-group-text"><i class="fas fa-search"></i></span>
-                        <input type="text" class="form-control" id="projectSearch" placeholder="Search projects...">
-                    </div>
+                <div class="input-group mb-3">
+                    <span class="input-group-text"><i class="fas fa-search"></i></span>
+                    <input type="text" class="form-control" id="projectSearch" th:placeholder="#{search-projects}">
+                </div>
                 </div>
 
                 <div id="projectsContainer">
                     <!-- Active Projects Section -->
                     <div id="activeProjects">
-                        <h4 class="section-title mb-3"><i class="fa-regular fa-folder-open"></i></i> Active Projects</h4>
+                        <h4 class="section-title mb-3"><i class="fa-regular fa-folder-open"></i> <span th:text="#{active-projects}">Active Projects</span></h4>
                         <div class="projects-grid">
                             <!-- Active projects card (pending status) -->
                             <div class="project-card pendiente"
-                                 th:each="album : ${albumes}"
-                                 th:if="${album.estado} == 'pendiente'"
-                                 th:attr="data-id=${album.id}, data-status=${album.estado}">
-                                <div class="project-card-header">
-                                    <div class="project-card-content" onclick="showAlbumDetailsById(this.parentElement.parentElement.getAttribute('data-id'))">
-                                        <h4 class="project-card-title" th:text="${album.nombre}">
-                                            <span class="status-badge status-pending">Pending</span>
-                                        </h4>
-                                        <div class="project-card-date">
-                                            <i class="far fa-clock"></i>
-                                            <span th:if="${album.fechaInicio}" th:text="${#temporals.format(album.fechaInicio, 'dd/MM/yyyy')}">Date</span>
-                                            <span th:unless="${album.fechaInicio}">No date</span>
-                                        </div>
-                                    </div>
-                                    <div class="project-actions">
-                                        <button class="action-btn btn-edit"
-                                                th:if="${AGENDA_EDIT}"
-                                                onclick="editAlbum(event, this.closest('.project-card').getAttribute('data-id'))">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
-
-                                        <button class="action-btn btn-delete"
-                                                th:if="${AGENDA_DELETE}"
-                                                th:attr="data-id=${album.id}"
-                                                onclick="deleteAlbum(event, this.getAttribute('data-id'))">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </div>
-
+                                th:each="album : ${albumes}"
+                                th:if="${album.estado} == 'pendiente'"
+                                th:attr="data-id=${album.id}, data-status=${album.estado}">
+                            <div class="project-card-header">
+                                <div class="project-card-content" onclick="showAlbumDetailsById(this.parentElement.parentElement.getAttribute('data-id'))">
+                                <h4 class="project-card-title" th:text="${album.nombre}">
+                                    <span class="status-badge status-pending" th:text="#{pending}">Pending</span>
+                                </h4>
+                                <div class="project-card-date">
+                                    <i class="far fa-clock"></i>
+                                    <span th:if="${album.fechaInicio}" th:text="${#temporals.format(album.fechaInicio, 'dd/MM/yyyy')}">Date</span>
+                                    <span th:unless="${album.fechaInicio}" th:text="#{no-date}">No date</span>
                                 </div>
-                                <div class="project-card-body">
-                                    <p class="project-card-description" th:text="${album.descripcion} ?: 'No description available'">Project description</p>
-                                    <div class="project-card-footer">
-                                        <button class="btn btn-sm btn-outline-primary" onclick="showAlbumDetailsById(this.closest('.project-card').getAttribute('data-id'))">
-                                            <i class="fas fa-eye me-1"></i> View Details
-                                        </button>
-                                    </div>
                                 </div>
+                                <div class="project-actions">
+                                <button class="action-btn btn-edit"
+                                        th:if="${AGENDA_EDIT}"
+                                        onclick="editAlbum(event, this.closest('.project-card').getAttribute('data-id'))">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="action-btn btn-delete"
+                                        th:if="${AGENDA_DELETE}"
+                                        th:attr="data-id=${album.id}"
+                                        onclick="deleteAlbum(event, this.getAttribute('data-id'))">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                                </div>
+                            </div>
+                            <div class="project-card-body">
+                                <p class="project-card-description" th:text="${album.descripcion} ?: #{no-description-available}">Project description</p>
+                                <div class="project-card-footer">
+                                <button class="btn btn-sm btn-outline-primary" onclick="showAlbumDetailsById(this.closest('.project-card').getAttribute('data-id'))">
+                                    <i class="fas fa-eye me-1"></i> <span th:text="#{view-details}">View Details</span>
+                                </button>
+                                </div>
+                            </div>
                             </div>
                         </div>
                     </div>
@@ -1368,7 +1381,7 @@
                     <!-- Archived Projects Section -->
                     <div id="archivedProjects" style="display: none;">
                         <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h4 class="section-title mb-0"><i class="fas fa-archive me-2"></i> Archived Projects</h4>
+                            <h4 class="section-title mb-0"><i class="fas fa-archive me-2"></i> <span th:text="#{archived-projects}">Archived Projects</span></h4>
                             <!--                            <button class="btn btn-sm btn-outline-secondary" onclick="toggleArchivedProjects()">-->
                             <!--                                <i class="fas fa-times"></i> Hide-->
                             <!--                            </button>-->
@@ -1428,7 +1441,7 @@
                     <!-- Empty state -->
                     <div class="empty-state" th:if="${#lists.isEmpty(albumes)}">
                         <i class="fas fa-folder-open"></i>
-                        <h4>No projects created</h4>
+                        <h4 th:text="#{no-projects-created}">No projects created</h4>
                     </div>
                 </div>
             </div>
@@ -1438,97 +1451,96 @@
 
 
 <!-- Project creation modal -->
-<div class="modal fade" id="projectModal" tabindex="-1" aria-labelledby="projectModalLabel" aria-hidden="true">
+ <div class="modal fade" id="projectModal" tabindex="-1" aria-labelledby="projectModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="projectModalLabel">
-                    <i class="fas fa-plus-circle"></i> Create New Project
+                    <i class="fas fa-plus-circle"></i> <span th:text="#{new-project}">Create New Project</span>
                 </h5>
             </div>
             <form id="projectForm" th:action="@{/albumes/save}" method="post" enctype="multipart/form-data">
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-md-12 mb-3">
-                            <label for="nombre" class="form-label">Project Name *</label>
+                            <label for="nombre" class="form-label" th:text="#{project-name} + ' *'">Project Name *</label>
                             <input type="text" class="form-control" id="nombre" name="nombre"
-                                   placeholder="Name of your new project" required>
+                                   th:placeholder="#{name-of-your-new-project}" required>
                         </div>
                     </div>
 
                     <div class="mb-3">
-                        <label for="descripcion" class="form-label">Description</label>
+                        <label for="descripcion" class="form-label" th:text="#{description}">Description</label>
                         <textarea class="form-control" id="descripcion" name="descripcion" rows="4"
-                                  placeholder="Describe the content of this new project (optional)"></textarea>
+                                  th:placeholder="#{describe-project-content-optional}"></textarea>
                     </div>
 
-                    <!-- En el modal de creación de proyectos (projectModal) -->
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label for="fechaInicio" class="form-label">Start Date</label>
+                            <label for="fechaInicio" class="form-label" th:text="#{start-date}">Start Date</label>
                             <input type="date" class="form-control" id="fechaInicio" name="fechaInicio">
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label for="horaInicio" class="form-label">Start Time (optional)</label>
+                            <label for="horaInicio" class="form-label" th:text="#{start-time-optional}">Start Time (optional)</label>
                             <input type="time" class="form-control" id="horaInicio" name="horaInicio">
                         </div>
                     </div>
 
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label for="fechaFin" class="form-label">End Date</label>
+                            <label for="fechaFin" class="form-label" th:text="#{end-date}">End Date</label>
                             <input type="date" class="form-control" id="fechaFin" name="fechaFin">
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label for="horaFin" class="form-label">End Time (optional)</label>
+                            <label for="horaFin" class="form-label" th:text="#{end-time-optional}">End Time (optional)</label>
                             <input type="time" class="form-control" id="horaFin" name="horaFin">
-                            <small class="text-muted">If not specified, the project will last all day</small>
+                            <small class="text-muted" th:text="#{if-not-specified-all-day}">If not specified, the project will last all day</small>
                         </div>
                     </div>
 
                     <div>
-                        <label for="notas" class="form-label">Notes</label>
-                        <input type="text" class="form-control" id="notas" name="notas" placeholder="Additional notes">
+                        <label for="notas" class="form-label" th:text="#{notes}">Notes</label>
+                        <input type="text" class="form-control" id="notas" name="notas" th:placeholder="#{additional-notes}">
                     </div>
 
 
                     <div class="mb-3">
-                        <label for="ubicacion" class="form-label">Location</label>
-                        <input type="text" class="form-control" id="ubicacion" name="ubicacion" placeholder="Project address">
+                        <label for="ubicacion" class="form-label" th:text="#{location}">Location</label>
+                        <input type="text" class="form-control" id="ubicacion" name="ubicacion" th:placeholder="#{project-address}">
                     </div>
 
                     <div class="mb-3">
-                        <label for="contacto" class="form-label">Contact</label>
-                        <input type="text" class="form-control" id="contacto" name="contacto" placeholder="Project contact details">
+                        <label for="contacto" class="form-label" th:text="#{contact}">Contact</label>
+                        <input type="text" class="form-control" id="contacto" name="contacto" th:placeholder="#{project-contact-details}">
                     </div>
 
                     <div class="mb-3">
-                        <label for="claveAlarma" class="form-label">Alarm Code</label>
-                        <input type="text" class="form-control" id="claveAlarma" name="claveAlarma" placeholder="Alarm security code (if any)">
+                        <label for="claveAlarma" class="form-label" th:text="#{alarm-code}">Alarm Code</label>
+                        <input type="text" class="form-control" id="claveAlarma" name="claveAlarma" th:placeholder="#{alarm-security-code-if-any}">
                     </div>
 
                     <div class="mb-3">
-                        <label for="datosAdicionales" class="form-label">Additional Data</label>
+                        <label for="datosAdicionales" class="form-label" th:text="#{additional-data}">Additional Data</label>
                         <textarea class="form-control" id="datosAdicionales" name="datosAdicionales" rows="4"
-                                  placeholder="Any additional information about the project"></textarea>
+                                  th:placeholder="#{any-additional-information-about-project}"></textarea>
                     </div>
 
                     <div class="row" th:if="${userRole == 'EDGAR'}">
                         <div class="col-md-6 mb-3">
-                            <label for="horasPorProyecto" class="form-label">Hours per Project</label>
+                            <label for="horasPorProyecto" class="form-label" th:text="#{hours-per-project}">Hours per Project</label>
                             <input type="number" class="form-control" id="horasPorProyecto" name="horasPorProyecto" step="0.1"
-                                   placeholder="Total hours dedicated to the project">
+                                   th:placeholder="#{total-hours-dedicated-to-project}">
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label for="precioHora" class="form-label">Price per Hour</label>
+                            <label for="precioHora" class="form-label" th:text="#{price-per-hour}">Price per Hour</label>
                             <input type="number" class="form-control" id="precioHora" name="precioHora" step="0.01"
-                                   placeholder="Price per hour for the project">
+                                   th:placeholder="#{price-per-hour-for-project}">
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Save Project</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" th:text="#{close}">Close</button>
+                    <button type="submit" class="btn btn-primary" th:text="#{save-project}">Save Project</button>
                 </div>
             </form>
         </div>
@@ -1547,77 +1559,78 @@
             </div>
             <div class="modal-body detail-modal-body">
                 <div class="detail-section">
-                    <h5>Basic Information</h5>
+                    <h5 th:text="#{basic-information}">Basic Information</h5>
                     <div class="detail-row">
-                        <div class="detail-label">Name:</div>
+                    <div class="detail-label" th:text="#{project-name}">Name:</div>
                         <div class="detail-value" id="detail-nombre">-</div>
                     </div>
                     <div class="detail-row">
-                        <div class="detail-label">Description:</div>
+                        <div class="detail-label" th:text="#{description}">Description:</div>
                         <div class="detail-value" id="detail-descripcion">-</div>
                     </div>
                     <div class="detail-row">
-                        <div class="detail-label">Status:</div>
+                        <div class="detail-label" th:text="#{status}">Status:</div>
                         <div class="detail-value" id="detail-estado">-</div>
                     </div>
                 </div>
 
                 <div class="detail-section">
-                    <h5>Dates</h5>
+                    <h5 th:text="#{dates}">Dates</h5>
                     <div class="detail-row">
-                        <div class="detail-label">Start Date:</div>
+                        <div class="detail-label" th:text="#{start-date}">Start Date:</div>
                         <div class="detail-value" id="detail-fechaInicio">-</div>
                     </div>
                     <div class="detail-row">
-                        <div class="detail-label">Start Time:</div>
+                        <div class="detail-label" th:text="#{start-time}">Start Time:</div>
                         <div class="detail-value" id="detail-horaInicio">-</div>
                     </div>
                     <div class="detail-row">
-                        <div class="detail-label">End Date:</div>
+                        <div class="detail-label" th:text="#{end-date}">End Date:</div>
                         <div class="detail-value" id="detail-fechaFin">-</div>
                     </div>
                     <div class="detail-row">
-                        <div class="detail-label">End Time:</div>
+                        <div class="detail-label" th:text="#{end-time}">End Time:</div>
                         <div class="detail-value" id="detail-horaFin">-</div>
                     </div>
                 </div>
 
                 <div class="detail-section">
-                    <h5>Location and Contact</h5>
+                    <h5 th:text="#{location-contact}">Location and Contact</h5>
                     <div class="detail-row">
-                        <div class="detail-label">Location:</div>
+                        <div class="detail-label" th:text="#{location}">Location:</div>
                         <div class="detail-value" id="detail-ubicacion">-</div>
                     </div>
                     <div class="detail-row">
-                        <div class="detail-label">Contact:</div>
+                        <div class="detail-label" th:text="#{contact}">Contact:</div>
                         <div class="detail-value" id="detail-contacto">-</div>
                     </div>
                 </div>
 
                 <div class="detail-section">
-                    <h5>Additional Information</h5>
+                    <h5 th:text="#{additional-information}">Additional Information</h5>
                     <div class="detail-row">
-                        <div class="detail-label">Alarm Code:</div>
+                        <div class="detail-label" th:text="#{alarm-code}">Alarm Code:</div>
                         <div class="detail-value" id="detail-claveAlarma">-</div>
                     </div>
                     <div class="detail-row">
-                        <div class="detail-label">Notes:</div>
+                        <div class="detail-label" th:text="#{notes}">Notes:</div>
                         <div class="detail-value" id="detail-notas">-</div>
                     </div>
                     <div class="detail-row">
-                        <div class="detail-label">Additional Data:</div>
+                        <div class="detail-label" th:text="#{additional-data}">Additional Data:</div>
                         <div class="detail-value" id="detail-datosAdicionales">-</div>
                     </div>
                     <div class="detail-row admin-only" th:classappend="${userRole != 'EDGAR'} ? 'd-none' : ''">
-                        <div class="detail-label">Hours per Project:</div>
+                        <div class="detail-label" th:text="#{hours-per-project}">Hours per Project:</div>
                         <div class="detail-value" id="detail-horasPorProyecto">-</div>
                     </div>
                     <div class="detail-row admin-only" th:classappend="${userRole != 'EDGAR'} ? 'd-none' : ''">
-                        <div class="detail-label">Price per Hour:</div>
+                        <div class="detail-label" th:text="#{price-per-hour}">Price per Hour:</div>
                         <div class="detail-value" id="detail-precioHora">-</div>
                     </div>
                 </div>
             </div>
+
             <div class="modal-footer d-flex justify-content-between align-items-center flex-wrap">
                 <!-- Botones de cambio de estado -->
                 <div class="status-change-buttons mb-2 mb-sm-0" id="statusChangeButtons"
@@ -1629,9 +1642,9 @@
                 <div class="action-buttons text-end">
                     <button type="button" class="btn btn-success me-2" onclick="generatePdf()"
                             th:if="${AGENDA_PDF}">
-                        <i class="fas fa-file-pdf me-1"></i> Generate PDF
+                        <i class="fas fa-file-pdf me-1"></i> <span th:text="#{generate-pdf}">Generate PDF</span>
                     </button>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><span th:text="#{close}">Close</span></button>
                 </div>
             </div>
         </div>
@@ -1641,108 +1654,102 @@
 
 <!-- Delete confirmation modal -->
 <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header bg-danger text-white">
-                <h5 class="modal-title"><i class="fas fa-exclamation-triangle me-2"></i> Confirm Deletion</h5>
-            </div>
-            <div class="modal-body">
-                <p>Are you sure you want to delete this project? This action cannot be undone.</p>
-                <p class="fw-bold">All associated subprojects and photos will also be deleted.</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Delete</button>
-            </div>
-        </div>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header bg-danger text-white">
+        <h5 class="modal-title"><i class="fas fa-exclamation-triangle me-2"></i> <span th:text="#{confirm-delete-project}">Confirm Deletion</span></h5>
+      </div>
+      <div class="modal-body">
+        <p th:text="#{delete-project-confirmation}">Are you sure you want to delete this project? This action cannot be undone.</p>
+        <p class="fw-bold" th:text="#{delete-associated-content}">All associated subprojects and photos will also be deleted.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" th:text="#{cancel}">Cancel</button>
+        <button type="button" class="btn btn-danger" id="confirmDeleteBtn" th:text="#{delete}">Delete</button>
+      </div>
     </div>
+  </div>
 </div>
 
 <!-- Context Menu for Calendar Events -->
 <div id="contextMenu" class="context-menu">
-    <div class="context-menu-item" onclick="openDetailsFromContextMenu()" >
-        <i class="fas fa-eye"></i> View Details
-    </div>
+    <div class="context-menu-item" onclick="openDetailsFromContextMenu()">
+        <i class="fas fa-eye"></i> <span th:text="#{contextMenu.viewDetails}">View Details</span> </div>
 
-    <div class="context-menu-item" onclick="openNotesFromContextMenu()"
-         th:if="${AGENDA_NOTES}">
-        <i class="fas fa-edit"></i> View/Edit Notes
-    </div>
+    <div class="context-menu-item" onclick="openNotesFromContextMenu()" th:if="${AGENDA_NOTES}">
+        <i class="fas fa-edit"></i> <span th:text="#{contextMenu.viewEditNotes}">View/Edit Notes</span> </div>
 
-    <div class="context-menu-item" onclick="createTeamForProjectFromContextMenu()"
-         th:if="${AGENDA_TEAMS}">
-        <i class="fas fa-users"></i> View/Create Team
-    </div>
+    <div class="context-menu-item" onclick="createTeamForProjectFromContextMenu()" th:if="${AGENDA_TEAMS}">
+        <i class="fas fa-users"></i> <span th:text="#{contextMenu.viewCreateTeam}">View/Create Team</span> </div>
 </div>
 
 <!-- Create Team Modal -->
-<div class="modal fade" id="createTeamModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Team Management: ​ ​ <span id="current-project-name"></span></h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+ <div class="modal fade" id="createTeamModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" th:text="#{team-management}">Team Management:</h5> <span id="current-project-name"></span>
+      </div>
+
+      <!-- Nav tabs -->
+      <ul class="nav nav-tabs" id="teamManagementTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active" id="create-team-tab" data-bs-toggle="tab" data-bs-target="#create-team" type="button" role="tab" aria-controls="create-team" aria-selected="true">
+            <i class="fas fa-plus-circle me-2"></i> <span th:text="#{create-team}">Create Team</span>
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="view-teams-tab" data-bs-toggle="tab" data-bs-target="#view-teams" type="button" role="tab" aria-controls="view-teams" aria-selected="false">
+            <i class="fas fa-users me-2"></i> <span th:text="#{view-teams}">View Teams</span> (<span id="teams-count">0</span>)
+          </button>
+        </li>
+      </ul>
+
+      <!-- Tab panes -->
+      <div class="modal-body tab-content">
+        <!-- Create Team Tab -->
+        <div class="tab-pane fade show active" id="create-team" role="tabpanel" aria-labelledby="create-team-tab">
+          <div class="team-form">
+            <div class="mb-3">
+              <label for="team-name" class="form-label" th:text="#{team-name}">Team Name</label>
+              <input type="text" class="form-control mobile-form-control" id="team-name" th:placeholder="#{team-name-example}">
+            </div>
+            <div class="mb-3">
+              <label for="team-description" class="form-label" th:text="#{team-description}">Description (Optional)</label>
+              <textarea class="form-control mobile-form-control" id="team-description" rows="2"
+                        th:placeholder="#{team-description-example}"></textarea>
             </div>
 
-            <!-- Nav tabs -->
-            <ul class="nav nav-tabs" id="teamManagementTabs" role="tablist">
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link active" id="create-team-tab" data-bs-toggle="tab" data-bs-target="#create-team" type="button" role="tab" aria-controls="create-team" aria-selected="true">
-                        <i class="fas fa-plus-circle me-2"></i>Create Team
-                    </button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="view-teams-tab" data-bs-toggle="tab" data-bs-target="#view-teams" type="button" role="tab" aria-controls="view-teams" aria-selected="false">
-                        <i class="fas fa-users me-2"></i>View Teams (<span id="teams-count">0</span>)
-                    </button>
-                </li>
-            </ul>
+            <div class="mb-4">
+              <label class="form-label" th:text="#{team-members}">Team Members</label>
+              <small class="text-muted d-block mb-2" th:text="#{team-members-hint}">You can add team members by selecting them from the list below.</small>
 
-            <!-- Tab panes -->
-            <div class="modal-body tab-content">
-                <!-- Create Team Tab -->
-                <div class="tab-pane fade show active" id="create-team" role="tabpanel" aria-labelledby="create-team-tab">
-                    <div class="team-form">
-                        <div class="mb-3">
-                            <label for="team-name" class="form-label">Team Name</label>
-                            <input type="text" class="form-control mobile-form-control" id="team-name" placeholder="Example: Installation Team">
-                        </div>
-                        <div class="mb-3">
-                            <label for="team-description" class="form-label">Description (Optional)</label>
-                            <textarea class="form-control mobile-form-control" id="team-description" rows="2"
-                                      placeholder="Example: Team specialized in electrical installations"></textarea>
-                        </div>
-
-                        <div class="mb-4">
-                            <label class="form-label">Team Members </label>
-                            <small class="text-muted d-block mb-2">You can add team members by selecting them from the list below.</small>
-
-                            <div class="selection-list" id="available-employees">
-                                <!-- Los empleados se cargarán dinámicamente -->
-                            </div>
-                        </div>
-
-                        <div class="d-flex justify-content-between">
-                            <button type="button" class="btn btn-secondary mobile-btn touch-feedback" data-bs-dismiss="modal">Cancel</button>
-                            <button id="save-team-btn" class="btn btn-primary" disabled>
-                                <i class="fas fa-save me-2"></i>Save Team
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- View Teams Tab -->
-                <div class="tab-pane fade" id="view-teams" role="tabpanel" aria-labelledby="view-teams-tab">
-                    <div class="teams-list-container" id="project-teams-list">
-                        <div class="text-center py-5 loading-teams">
-                            <i class="fas fa-spinner fa-spin fa-2x text-muted"></i>
-                            <p class="mt-3">Loading teams...</p>
-                        </div>
-                    </div>
-                </div>
+              <div class="selection-list" id="available-employees">
+                <!-- Employees will be loaded dynamically -->
+              </div>
             </div>
+
+            <div class="d-flex justify-content-between">
+              <button type="button" class="btn btn-secondary mobile-btn touch-feedback" data-bs-dismiss="modal" th:text="#{cancel}">Cancel</button>
+              <button id="save-team-btn" class="btn btn-primary" disabled>
+                <i class="fas fa-save me-2"></i> <span th:text="#{save-team}">Save Team</span>
+              </button>
+            </div>
+          </div>
         </div>
+
+        <!-- View Teams Tab -->
+        <div class="tab-pane fade" id="view-teams" role="tabpanel" aria-labelledby="view-teams-tab">
+          <div class="teams-list-container" id="project-teams-list">
+            <div class="text-center py-5 loading-teams">
+              <i class="fas fa-spinner fa-spin fa-2x text-muted"></i>
+              <p class="mt-3" th:text="#{loading-teams}">Loading teams...</p>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
 </div>
 
 <!-- Confirmation Modal for Duplicate Members -->
@@ -1767,22 +1774,22 @@
 
 <!-- Notes Editor Modal -->
 <div class="modal fade" id="notesModal" tabindex="-1" aria-labelledby="notesModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="notesModalLabel">
-                    <i class="fas fa-sticky-note me-2"></i> Project Notes
-                </h5>
-            </div>
-            <div class="modal-body">
-                <textarea id="notesEditor" class="form-control" rows="10"></textarea>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary" onclick="saveNotes()">Save Notes</button>
-            </div>
-        </div>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="notesModalLabel">
+          <i class="fas fa-sticky-note me-2"></i> <span th:text="#{project-notes}">Project Notes</span>
+        </h5>
+      </div>
+      <div class="modal-body">
+        <textarea id="notesEditor" class="form-control" rows="10"></textarea>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" th:text="#{cancel}">Cancel</button>
+        <button type="button" class="btn btn-primary" onclick="saveNotes()" th:text="#{save-notes}">Save Notes</button>
+      </div>
     </div>
+  </div>
 </div>
 
 <!-- Modal de confirmación para eliminar -->
@@ -2094,87 +2101,79 @@
         albumDetailsModal.hide();
     }
 
-    // Inicializar el calendario
-    function initCalendar() {
-        const calendarEl = document.getElementById('calendar');
 
-        calendar = new FullCalendar.Calendar(calendarEl, {
-            initialView: 'dayGridMonth',
-            locale: 'en',
-            headerToolbar: {
-                left: 'prev,next today',
-                center: 'title',
-                right: 'dayGridMonth,weekTable,timeGridDay'
-            },
-            customButtons: {
-                weekTable: {
-                    text: 'Week',
-                    click: function() {
-                        calendar.changeView('weekTable');
-                    }
+// Inicializar el calendario
+function initCalendar() {
+    const calendarEl = document.getElementById('calendar');
+
+    calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
+        // FullCalendar automatically handles locale based on the `locale` property.
+        // We'll get this from a Thymeleaf variable.
+        locale: translations.currentLocale, // This will be 'en', 'es', etc.
+        headerToolbar: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'dayGridMonth,weekTable,timeGridDay'
+        },
+        customButtons: {
+            weekTable: {
+                // Use translation for custom button text
+                text: translations.weekTableButton,
+                click: function() {
+                    calendar.changeView('weekTable');
                 }
-            },
-            buttonText: {
-                today: 'Today',
-                month: 'Month',
-                day: 'Day',
-                weekTable: 'Week (Table)'
-            },
-            events: function(fetchInfo, successCallback, failureCallback) {
-                fetch('/albumes/calendar-events')
-                    .then(response => response.json())
-                    .then(data => {
-                        const events = data.map(album => {
-                            let eventColor;
-                            let className = '';
+            }
+        },
+        buttonText: {
+            // Use translations for FullCalendar's built-in button texts
+            today: translations.todayButton,
+            month: translations.monthButton,
+            day: translations.dayButton,
+            weekTable: translations.weekTableButton // Re-use for the button text within buttonText config
+        },
+        events: function(fetchInfo, successCallback, failureCallback) {
+            fetch('/albumes/calendar-events')
+                .then(response => response.json())
+                .then(data => {
+                    const events = data.map(album => {
+                        let eventColor;
+                        let className = '';
 
-                            switch(album.estado) {
-                                case 'completado':
-                                    eventColor = '#6c757d';
-                                    className = 'completed-event';
-                                    break;
-                                case 'anulado':
-                                    eventColor = '#f94144';
-                                    className = 'cancelled-event';
-                                    break;
-                                default:
-                                    eventColor = '#006fa6';
-                                    className = 'in-progress-event';
+                        switch(album.estado) {
+                            case 'completado':
+                                eventColor = '#6c757d';
+                                className = 'completed-event';
+                                break;
+                            case 'anulado':
+                                eventColor = '#f94144';
+                                className = 'cancelled-event';
+                                break;
+                            default:
+                                eventColor = '#006fa6';
+                                className = 'in-progress-event';
+                        }
+
+                        const event = {
+                            id: album.id,
+                            title: album.nombre, // Solo el nombre del proyecto
+                            start: album.fechaInicio,
+                            backgroundColor: eventColor,
+                            borderColor: eventColor,
+                            className: className,
+                            extendedProps: {
+                                status: album.estado
                             }
+                        };
 
-                            const event = {
-                                id: album.id,
-                                title: album.nombre,
-                                start: album.fechaInicio,
-                                backgroundColor: eventColor,
-                                borderColor: eventColor,
-                                className: className,
-                                extendedProps: {
-                                    description: album.descripcion,
-                                    location: album.ubicacion,
-                                    status: album.estado,
-                                    notes: album.notas,
-                                    horaFin: album.horaFin,
-                                    fechaFin: album.fechaFin || album.fechaInicio
-                                }
-                            };
+                        if (album.horaInicio) {
+                            const startDateTime = `${album.fechaInicio}T${album.horaInicio}`;
+                            event.start = startDateTime;
 
-                            if (album.horaInicio) {
-                                const startDateTime = `${album.fechaInicio}T${album.horaInicio}`;
-                                event.start = startDateTime;
-
-                                if (album.horaFin) {
-                                    const endDate = album.fechaFin ? album.fechaFin : album.fechaInicio;
-                                    event.end = `${endDate}T${album.horaFin}`;
-                                    event.allDay = false;
-                                } else {
-                                    event.allDay = true;
-                                    if (album.fechaFin) {
-                                        const endDate = new Date(album.fechaFin);
-                                        endDate.setDate(endDate.getDate() + 1);
-                                        event.end = endDate.toISOString().split('T')[0];
-                                    }
-                                }
+                            if (album.horaFin) {
+                                const endDate = album.fechaFin ? album.fechaFin : album.fechaInicio;
+                                event.end = `${endDate}T${album.horaFin}`;
+                                event.allDay = false;
                             } else {
                                 event.allDay = true;
                                 if (album.fechaFin) {
@@ -2183,431 +2182,398 @@
                                     event.end = endDate.toISOString().split('T')[0];
                                 }
                             }
+                        } else {
+                            event.allDay = true;
+                            if (album.fechaFin) {
+                                const endDate = new Date(album.fechaFin);
+                                endDate.setDate(endDate.getDate() + 1);
+                                event.end = endDate.toISOString().split('T')[0];
+                            }
+                        }
 
-                            return event;
-                        });
-
-                        successCallback(events);
-                    })
-                    .catch(error => {
-                        console.error('Error al cargar eventos:', error);
-                        failureCallback(error);
+                        return event;
                     });
-            },
-            eventClick: function(info) {
-                showContextMenu(info.jsEvent, info.event);
-                info.jsEvent.preventDefault();
-            },
-            dateClick: function(info) {
-                if (/*[[${AGENDA_CREATE}]]*/ true) {
-                    const fechaInicioInput = document.getElementById('fechaInicio');
-                    const horaInicioInput = document.getElementById('horaInicio');
-                    const horaFinInput = document.getElementById('horaFin');
-                    const fechaSeleccionada = info.dateStr;
 
-                    fechaInicioInput.value = fechaSeleccionada;
+                    successCallback(events);
+                })
+                .catch(error => {
+                    console.error(translations.errorLoadingEvents, error); // Translated error message
+                    failureCallback(error);
+                });
+        },
+        eventClick: function(info) {
+            showContextMenu(info.jsEvent, info.event);
+            info.jsEvent.preventDefault();
+        },
+        dateClick: function(info) {
+            // Check for Thymeleaf variable directly as it's a server-side permission check
+            if (/*[[${AGENDA_CREATE}]]*/ true) { // Make sure this Thymeleaf expression is actually defined
+                const fechaInicioInput = document.getElementById('fechaInicio');
+                const horaInicioInput = document.getElementById('horaInicio');
+                const horaFinInput = document.getElementById('horaFin');
+                const fechaSeleccionada = info.dateStr;
 
-                    if (info.view.type === 'timeGridDay' || info.view.type === 'timeGridWeek') {
-                        const now = new Date();
-                        const hours = now.getHours().toString().padStart(2, '0');
-                        const minutes = now.getMinutes().toString().padStart(2, '0');
-                        horaInicioInput.value = `${hours}:${minutes}`;
+                fechaInicioInput.value = fechaSeleccionada;
 
-                        const endTime = new Date(now.getTime() + 60 * 60 * 1000);
-                        const endHours = endTime.getHours().toString().padStart(2, '0');
-                        const endMinutes = endTime.getMinutes().toString().padStart(2, '0');
-                        horaFinInput.value = `${endHours}:${endMinutes}`;
-                    } else {
-                        horaInicioInput.value = '';
-                        horaFinInput.value = '';
-                    }
+                if (info.view.type === 'timeGridDay' || info.view.type === 'timeGridWeek') {
+                    const now = new Date();
+                    const hours = now.getHours().toString().padStart(2, '0');
+                    const minutes = now.getMinutes().toString().padStart(2, '0');
+                    horaInicioInput.value = `${hours}:${minutes}`;
 
-                    document.getElementById('fechaFin').value = '';
+                    const endTime = new Date(now.getTime() + 60 * 60 * 1000);
+                    const endHours = endTime.getHours().toString().padStart(2, '0');
+                    const endMinutes = endTime.getMinutes().toString().padStart(2, '0');
+                    horaFinInput.value = `${endHours}:${endMinutes}`;
+                } else {
+                    horaInicioInput.value = '';
+                    horaFinInput.value = '';
+                }
+
+                document.getElementById('fechaFin').value = '';
+                // Assuming projectModal is a Bootstrap Modal instance
+                if (typeof projectModal !== 'undefined' && projectModal) {
                     projectModal.show();
-
-                    document.getElementById('projectModalLabel').innerHTML =
-                        '<i class="fas fa-plus-circle"></i> Nuevo Proyecto para ' +
-                        info.date.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+                } else {
+                    console.warn("projectModal not found. Ensure it's initialized before initCalendar.");
                 }
-            },
-            views: {
-                dayGridMonth: {},
-                timeGridDay: {
-                    dayHeaderFormat: { weekday: 'long', day: 'numeric', month: 'short' },
-                    slotLabelFormat: {
-                        hour: '2-digit',
-                        minute: '2-digit',
-                        hour12: false
-                    },
-                    allDaySlot: false,
-                    expandRows: true,
-                    nowIndicator: true,
-                    slotMinTime: '00:00:00',
-                    slotMaxTime: '24:00:00',
-                    slotDuration: '00:30:00',
-                    eventTimeFormat: {
-                        hour: '2-digit',
-                        minute: '2-digit',
-                        hour12: false
-                    }
+
+
+                // Dynamically build the modal title using translations and locale-aware date formatting
+                const newProjectTitle = translations.newProjectFor + ' ' +
+                    info.date.toLocaleDateString(translations.currentLocale, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+                document.getElementById('projectModalLabel').innerHTML =
+                    '<i class="fas fa-plus-circle"></i> ' + newProjectTitle;
+            }
+        },
+        views: {
+            dayGridMonth: {},
+            timeGridDay: {
+                dayHeaderFormat: { weekday: 'long', day: 'numeric', month: 'short' },
+                slotLabelFormat: {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: false
                 },
-                weekTable: {
-                    type: 'basicWeek',
-                    duration: { weeks: 1 },
-                    content: function() {
-                        const container = document.createElement('div');
-                        container.className = 'fc-week-table-view';
+                allDaySlot: false,
+                expandRows: true,
+                nowIndicator: true,
+                slotMinTime: '00:00:00',
+                slotMaxTime: '24:00:00',
+                slotDuration: '00:30:00',
+                eventTimeFormat: {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: false
+                }
+            },
+            weekTable: {
+                type: 'basicWeek',
+                duration: { weeks: 1 },
+                content: function() {
+                    const container = document.createElement('div');
+                    container.className = 'fc-week-table-view';
 
-                        const events = calendar.getEvents();
-                        const start = calendar.view.activeStart;
-                        const daysOfWeek = [];
+                    const events = calendar.getEvents();
+                    const start = calendar.view.activeStart;
+                    const daysOfWeek = [];
 
-                        for (let i = 0; i < 7; i++) {
-                            const date = new Date(start);
-                            date.setDate(start.getDate() + i);
-                            daysOfWeek.push({
-                                label: date.toLocaleDateString('en-US', { weekday: 'short', day: 'numeric' }),
-                                dateStr: date.toISOString().split('T')[0],
-                                dateObj: new Date(date)
+                    for (let i = 0; i < 7; i++) {
+                        const date = new Date(start);
+                        date.setDate(start.getDate() + i);
+                        daysOfWeek.push({
+                            // Format date labels based on current locale
+                            label: date.toLocaleDateString(translations.currentLocale, { weekday: 'short', day: 'numeric' }),
+                            dateStr: date.toISOString().split('T')[0],
+                            dateObj: new Date(date)
+                        });
+                    }
+
+                    const viewStart = new Date(calendar.view.activeStart);
+                    viewStart.setHours(0, 0, 0, 0);
+
+                    const viewEnd = new Date(calendar.view.activeEnd);
+                    viewEnd.setHours(0, 0, 0, 0);
+                    viewEnd.setDate(viewEnd.getDate() - 1);
+
+                    const proyectosSemana = events.filter(event => {
+                        const eventStart = event.start ? new Date(event.start) : null;
+                        let eventEnd = event.end ? new Date(event.end) : eventStart;
+
+                        if (!eventStart) return false;
+
+                        const startDate = new Date(eventStart);
+                        startDate.setHours(0, 0, 0, 0);
+
+                        const endDate = eventEnd ? new Date(eventEnd) : startDate;
+                        endDate.setHours(23, 59, 59, 999);
+
+                        return (startDate <= viewEnd && endDate >= viewStart);
+                    });
+
+                    const table = document.createElement('table');
+                    table.className = 'fc-week-table';
+
+                    const thead = document.createElement('thead');
+                    const headerRow = document.createElement('tr');
+
+                    // Encabezado de proyecto - using translation
+                    const projectHeader = document.createElement('th');
+                    projectHeader.textContent = translations.projectsHeader;
+                    projectHeader.style.textAlign = 'left';
+                    projectHeader.style.paddingLeft = '16px';
+                    headerRow.appendChild(projectHeader);
+
+                    // Encabezados de días
+                    daysOfWeek.forEach(dia => {
+                        const th = document.createElement('th');
+                        th.textContent = dia.label;
+                        headerRow.appendChild(th);
+                    });
+
+                    thead.appendChild(headerRow);
+                    table.appendChild(thead);
+
+                    const tbody = document.createElement('tbody');
+
+                    const emptyRowsToShow = 5;
+                    const rowsToCreate = Math.max(emptyRowsToShow, proyectosSemana.length);
+
+                    for (let i = 0; i < rowsToCreate; i++) {
+                        const tr = document.createElement('tr');
+                        const proyecto = proyectosSemana[i];
+
+                        if (proyecto) {
+                            tr.addEventListener('click', function(e) {
+                                if (e.target.tagName !== 'TD' && e.target.tagName !== 'DIV' && e.target.tagName !== 'SPAN') {
+                                    return;
+                                }
+                                showContextMenu(e, proyecto);
+                                e.preventDefault();
                             });
                         }
 
-                        const viewStart = new Date(calendar.view.activeStart);
-                        viewStart.setHours(0, 0, 0, 0);
+                        // Celda del nombre del proyecto
+                        const tdProject = document.createElement('td');
+                        tdProject.className = 'project-name-cell';
 
-                        const viewEnd = new Date(calendar.view.activeEnd);
-                        viewEnd.setHours(0, 0, 0, 0);
-                        viewEnd.setDate(viewEnd.getDate() - 1);
+                        if (proyecto) {
+                            let statusClass = '';
+                            switch(proyecto.extendedProps.status) {
+                                case 'completado':
+                                    statusClass = 'completed';
+                                    break;
+                                case 'anulado':
+                                    statusClass = 'cancelled';
+                                    break;
+                                default:
+                                    statusClass = 'in-progress';
+                            }
+                            tdProject.classList.add(statusClass);
 
-                        const proyectosSemana = events.filter(event => {
-                            const eventStart = event.start ? new Date(event.start) : null;
-                            let eventEnd = event.end ? new Date(event.end) : eventStart;
+                            tdProject.textContent = proyecto.title;
+                        }
 
-                            // NO RESTAMOS UN DÍA AQUÍ
-                            if (!eventStart) return false;
+                        tr.appendChild(tdProject);
 
-                            const startDate = new Date(eventStart);
-                            startDate.setHours(0, 0, 0, 0);
-
-                            const endDate = eventEnd ? new Date(eventEnd) : startDate;
-                            endDate.setHours(23, 59, 59, 999);
-
-                            return (startDate <= viewEnd && endDate >= viewStart);
-                        });
-
-
-                        const table = document.createElement('table');
-                        table.className = 'fc-week-table';
-
-                        const thead = document.createElement('thead');
-                        const headerRow = document.createElement('tr');
-
-                        // Encabezado de proyecto
-                        const projectHeader = document.createElement('th');
-                        projectHeader.textContent = 'Projects';
-                        projectHeader.style.textAlign = 'left';
-                        projectHeader.style.paddingLeft = '16px';
-                        headerRow.appendChild(projectHeader);
-
-                        // Encabezados de días
+                        // Celdas de días
                         daysOfWeek.forEach(dia => {
-                            const th = document.createElement('th');
-                            th.textContent = dia.label;
-                            headerRow.appendChild(th);
+                            const td = document.createElement('td');
+                            td.className = 'project-day-cell';
+
+                            if (proyecto) {
+                                const eventStart = new Date(proyecto.start);
+                                eventStart.setHours(0, 0, 0, 0);
+
+                                let eventEnd = proyecto.end ? new Date(proyecto.end) : new Date(proyecto.start);
+                                if (proyecto.allDay && proyecto.end) {
+                                    eventEnd = new Date(eventEnd);
+                                    eventEnd.setDate(eventEnd.getDate() - 1);
+                                }
+                                eventEnd.setHours(23, 59, 59, 999);
+
+                                const currentDay = new Date(dia.dateObj);
+                                currentDay.setHours(0, 0, 0, 0);
+
+                                if (currentDay >= eventStart && currentDay <= eventEnd) {
+                                    let statusClass = '';
+                                    switch(proyecto.extendedProps.status) {
+                                        case 'completado':
+                                            statusClass = 'completed';
+                                            break;
+                                        case 'anulado':
+                                            statusClass = 'cancelled';
+                                            break;
+                                        default:
+                                            statusClass = 'in-progress';
+                                    }
+                                    td.classList.add(statusClass);
+
+                                    const indicator = document.createElement('div');
+                                    indicator.className = `day-indicator ${statusClass}`;
+
+                                    if (proyecto.extendedProps.status === 'completado') {
+                                        const icon = document.createElement('i');
+                                        icon.className = 'fas fa-check';
+                                        indicator.appendChild(icon);
+                                    } else if (proyecto.extendedProps.status === 'anulado') {
+                                        const icon = document.createElement('i');
+                                        icon.className = 'fas fa-times';
+                                        indicator.appendChild(icon);
+                                    } else {
+                                        indicator.textContent = currentDay.getDate();
+                                    }
+
+                                    td.appendChild(indicator);
+                                }
+                            }
+
+                            tr.appendChild(td);
                         });
 
-                        thead.appendChild(headerRow);
-                        table.appendChild(thead);
-
-                        const tbody = document.createElement('tbody');
-
-                        const emptyRowsToShow = 5;
-                        const rowsToCreate = Math.max(emptyRowsToShow, proyectosSemana.length);
-
-                        for (let i = 0; i < rowsToCreate; i++) {
-                            const tr = document.createElement('tr');
-                            const proyecto = proyectosSemana[i];
-
-                            if (proyecto) {
-                                tr.addEventListener('click', function(e) {
-                                    if (e.target.tagName !== 'TD' && e.target.tagName !== 'DIV' && e.target.tagName !== 'SPAN') {
-                                        return;
-                                    }
-                                    showContextMenu(e, proyecto);
-                                    e.preventDefault();
-                                });
-                            }
-
-                            // Celda del nombre del proyecto
-                            const tdProject = document.createElement('td');
-                            tdProject.className = 'project-name-cell';
-
-                            if (proyecto) {
-                                // Determinar clase según estado
-                                let statusClass = '';
-                                switch(proyecto.extendedProps.status) {
-                                    case 'completado':
-                                        statusClass = 'completed';
-                                        break;
-                                    case 'anulado':
-                                        statusClass = 'cancelled';
-                                        break;
-                                    default:
-                                        statusClass = 'in-progress';
-                                }
-                                tdProject.classList.add(statusClass);
-
-                                tdProject.textContent = proyecto.title;
-                            }
-
-                            tr.appendChild(tdProject);
-
-                            // Celdas de días
-                            daysOfWeek.forEach(dia => {
-                                const td = document.createElement('td');
-                                td.className = 'project-day-cell';
-
-                                if (proyecto) {
-                                    const eventStart = new Date(proyecto.start);
-                                    eventStart.setHours(0, 0, 0, 0);
-
-                                    let eventEnd = proyecto.end ? new Date(proyecto.end) : new Date(proyecto.start);
-                                    if (proyecto.allDay && proyecto.end) {
-                                        eventEnd = new Date(eventEnd);
-                                        eventEnd.setDate(eventEnd.getDate() - 1);
-                                    }
-                                    eventEnd.setHours(23, 59, 59, 999);
-
-                                    const currentDay = new Date(dia.dateObj);
-                                    currentDay.setHours(0, 0, 0, 0);
-
-                                    if (currentDay >= eventStart && currentDay <= eventEnd) {
-                                        // Aplicar clase según estado
-                                        let statusClass = '';
-                                        switch(proyecto.extendedProps.status) {
-                                            case 'completado':
-                                                statusClass = 'completed';
-                                                break;
-                                            case 'anulado':
-                                                statusClass = 'cancelled';
-                                                break;
-                                            default:
-                                                statusClass = 'in-progress';
-                                        }
-                                        td.classList.add(statusClass);
-
-                                        // Crear indicador circular
-                                        const indicator = document.createElement('div');
-                                        indicator.className = `day-indicator ${statusClass}`;
-
-                                        // Usar ícono FontAwesome para completado
-                                        if (proyecto.extendedProps.status === 'completado') {
-                                            const icon = document.createElement('i');
-                                            icon.className = 'fas fa-check';
-                                            indicator.appendChild(icon);
-                                        }
-                                        // Usar ícono FontAwesome para anulado
-                                        else if (proyecto.extendedProps.status === 'anulado') {
-                                            const icon = document.createElement('i');
-                                            icon.className = 'fas fa-times';
-                                            indicator.appendChild(icon);
-                                        }
-                                        // Número de día para en progreso
-                                        else {
-                                            indicator.textContent = currentDay.getDate();
-                                        }
-
-                                        td.appendChild(indicator);
-                                    }
-                                }
-
-                                tr.appendChild(td);
-                            });
-
-                            tbody.appendChild(tr);
-                        }
-
-                        table.appendChild(tbody);
-                        container.appendChild(table);
-
-                        return { domNodes: [container] };
-                    }
-                }
-            },
-            nowIndicator: true,
-            eventContent: function(arg) {
-                const eventEl = document.createElement('div');
-                eventEl.className = 'fc-event-content';
-                eventEl.style.whiteSpace = 'normal';
-                eventEl.style.padding = '4px 6px';
-                eventEl.style.borderRadius = '4px';
-
-                const isAllDay = arg.event.allDay ||
-                    (!arg.event.extendedProps.horaFin &&
-                        (!arg.event.end || !arg.event.end.includes('T')));
-
-                if (!isAllDay) {
-                    const timeEl = document.createElement('div');
-                    timeEl.className = 'fc-event-time';
-                    timeEl.style.fontSize = '0.85em';
-                    timeEl.style.marginBottom = '2px';
-                    timeEl.style.fontWeight = 'bold';
-
-                    const startTime = arg.event.start ?
-                        arg.event.start.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', hour12: false}) : '';
-
-                    let timeText = startTime;
-                    if (arg.event.end) {
-                        const endTime = arg.event.end.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', hour12: false});
-                        timeText = `${startTime} - ${endTime}`;
+                        tbody.appendChild(tr);
                     }
 
-                    timeEl.textContent = timeText;
-                    eventEl.appendChild(timeEl);
-                } else {
-                    const allDayEl = document.createElement('div');
-                    allDayEl.className = 'fc-event-time';
-                    allDayEl.style.fontSize = '0.85em';
-                    allDayEl.style.marginBottom = '2px';
-                    allDayEl.style.fontWeight = 'bold';
-                    allDayEl.textContent = 'Todo el día';
-                    eventEl.appendChild(allDayEl);
+                    table.appendChild(tbody);
+                    container.appendChild(table);
+
+                    return { domNodes: [container] };
                 }
+            }
+        },
+        nowIndicator: true,
+        eventContent: function(arg) {
+            const eventEl = document.createElement('div');
+            eventEl.className = 'fc-event-content';
+            eventEl.style.whiteSpace = 'nowrap';
+            eventEl.style.overflow = 'hidden';
+            eventEl.style.textOverflow = 'ellipsis';
 
-                const titleEl = document.createElement('div');
-                titleEl.className = 'fc-event-title';
-                titleEl.textContent = arg.event.title;
-                titleEl.style.fontWeight = 'bold';
-                titleEl.style.fontSize = '0.9em';
+            // Solo mostrar el título del proyecto
+            eventEl.textContent = arg.event.title;
 
-                if (arg.event.extendedProps.status === 'completed') {
-                    titleEl.style.textDecoration = 'line-through';
-                    titleEl.style.opacity = '0.8';
-                } else if (arg.event.extendedProps.status === 'cancelled') {
-                    titleEl.style.textDecoration = 'line-through';
-                }
+            return { domNodes: [eventEl] };
+        },
+        height: 'auto'
+    });
 
-                eventEl.appendChild(titleEl);
-
-                if (arg.event.extendedProps.location) {
-                    const locationEl = document.createElement('div');
-                    locationEl.className = 'fc-event-location';
-                    locationEl.style.fontSize = '0.8em';
-                    locationEl.style.marginTop = '2px';
-                    locationEl.textContent = arg.event.extendedProps.location;
-                    eventEl.appendChild(locationEl);
-                }
-
-                return { domNodes: [eventEl] };
-            },
-            height: 'auto'
-        });
-
-        calendar.render();
-        calendarVisible = true;
-        document.getElementById('calendarSection').classList.add('visible');
-        document.getElementById('toggleCalendarBtn').innerHTML = '<i class="fas fa-calendar-times"></i> Hide Calendar';
-    }
-
+    calendar.render();
+    calendarVisible = true;
+    document.getElementById('calendarSection').classList.add('visible');
+    // Using translation for the button text
+    document.getElementById('toggleCalendarBtn').innerHTML = `<i class="fas fa-calendar-times"></i> ${translations.hideCalendarButton}`;
+}
     // Mostrar detalles del álbum por ID
-    // Mostrar detalles del álbum por ID
-    function showAlbumDetailsById(albumId) {
-        currentAlbumId = albumId;
+function showAlbumDetailsById(albumId) {
+    currentAlbumId = albumId;
 
-        fetch(`/albumes/${albumId}/details`)
-            .then(response => {
-                if (!response.ok) throw new Error('Error al obtener los detalles');
-                return response.json();
-            })
-            .then(album => {
-                const formatDate = (dateString) => {
-                    if (!dateString) return '-';
-                    const date = new Date(dateString);
-                    date.setMinutes(date.getMinutes() + date.getTimezoneOffset());
-                    return date.toLocaleDateString();
-                };
+    fetch(`/albumes/${albumId}/details`)
+        .then(response => {
+            if (!response.ok) {
+                // Use a translated error message
+                throw new Error(translations.errorFetchingDetails);
+            }
+            return response.json();
+        })
+        .then(album => {
+            const formatDate = (dateString) => {
+                if (!dateString) return '-';
+                const date = new Date(dateString);
+                // Adjust for timezone offset if dates are coming without timezone info
+                date.setMinutes(date.getMinutes() + date.getTimezoneOffset());
+                // Use the global locale for date formatting
+                return date.toLocaleDateString(translations.currentLocale);
+            };
 
-                const estadoElement = document.getElementById('detail-estado');
-                estadoElement.textContent = album.estado === 'completado' ? 'Completed' :
-                    album.estado === 'anulado' ? 'Annulled' : 'Pending';
+            const estadoElement = document.getElementById('detail-estado');
+            // Use translated status names
+            estadoElement.textContent = album.estado === 'completado' ? translations.statusCompleted :
+                                       album.estado === 'anulado' ? translations.statusCancelled :
+                                       translations.statusPending;
 
-                // Aplicar clase según estado
-                estadoElement.className = 'detail-value'; // Reset classes
-                if (album.estado === 'completado') {
-                    estadoElement.classList.add('status-completed');
-                } else if (album.estado === 'anulado') {
-                    estadoElement.classList.add('status-cancelled');
-                } else {
-                    estadoElement.classList.add('status-pending');
+            // Aplicar clase según estado (classes remain programmatic, not translated)
+            estadoElement.className = 'detail-value'; // Reset classes
+            if (album.estado === 'completado') {
+                estadoElement.classList.add('status-completed');
+            } else if (album.estado === 'anulado') {
+                estadoElement.classList.add('status-cancelled');
+            } else {
+                estadoElement.classList.add('status-pending');
+            }
+
+            const formatTime = (timeString) => {
+                if (!timeString) return '-';
+                // Asumiendo que timeString viene en formato "HH:mm:ss" o similar
+                return timeString.substring(0, 5); // Tomamos solo HH:mm
+            };
+
+            document.getElementById('albumDetailsModalLabel').textContent = album.nombre;
+            document.getElementById('detail-nombre').textContent = album.nombre || '-';
+            document.getElementById('detail-descripcion').textContent = album.descripcion || '-';
+            document.getElementById('detail-fechaInicio').textContent = formatDate(album.fechaInicio);
+            document.getElementById('detail-horaInicio').textContent = formatTime(album.horaInicio);
+            document.getElementById('detail-horaFin').textContent = formatTime(album.horaFin);
+            document.getElementById('detail-fechaFin').textContent = formatDate(album.fechaFin);
+            document.getElementById('detail-ubicacion').textContent = album.ubicacion || '-';
+            document.getElementById('detail-contacto').textContent = album.contacto || '-';
+            document.getElementById('detail-claveAlarma').textContent = album.claveAlarma || '-';
+            document.getElementById('detail-notas').textContent = album.notas || '-';
+            document.getElementById('detail-datosAdicionales').textContent = album.datosAdicionales || '-';
+            // Concatenate translated 'hours' suffix
+            document.getElementById('detail-horasPorProyecto').textContent = album.horasPorProyecto ? `${album.horasPorProyecto} ${translations.hoursSuffix}` : '-';
+            document.getElementById('detail-precioHora').textContent = album.precioHora ? `$${album.precioHora.toFixed(2)}` : '-';
+
+            // Agregar botones para cambiar estado en el modal de detalles
+            const modalFooter = document.querySelector('#albumDetailsModal .modal-footer');
+
+            // Limpiar botones existentes
+            const existingStatusButtons = document.querySelectorAll('.status-change-btn');
+            existingStatusButtons.forEach(btn => btn.remove());
+
+            // Agregar botones solo si el usuario tiene permiso (Thymeleaf variable for JS)
+            if (typeof hasStatusPermission !== 'undefined' && hasStatusPermission) {
+
+                if (album.estado !== 'pendiente') {
+                    const pendingBtn = document.createElement('button');
+                    pendingBtn.className = 'btn status-change-btn me-2';
+                    pendingBtn.style.backgroundColor = '#66ccff'; // Consider making this a CSS class or variable
+                    // Use translated button text
+                    pendingBtn.innerHTML = `<i class="fas fa-clock"></i> ${translations.markInProgress}`;
+                    pendingBtn.onclick = () => changeStatusFromModal('pendiente');
+                    modalFooter.prepend(pendingBtn);
                 }
 
-                const formatTime = (timeString) => {
-                    if (!timeString) return '-';
-                    // Asumiendo que timeString viene en formato "HH:mm:ss" o similar
-                    return timeString.substring(0, 5); // Tomamos solo HH:mm
-                };
-
-                document.getElementById('albumDetailsModalLabel').textContent = album.nombre;
-                document.getElementById('detail-nombre').textContent = album.nombre || '-';
-                document.getElementById('detail-descripcion').textContent = album.descripcion || '-';
-                // Eliminar la línea que sobrescribe el estado aquí
-                document.getElementById('detail-fechaInicio').textContent = formatDate(album.fechaInicio);
-                document.getElementById('detail-horaInicio').textContent = formatTime(album.horaInicio);
-                document.getElementById('detail-horaFin').textContent = formatTime(album.horaFin);
-                document.getElementById('detail-fechaFin').textContent = formatDate(album.fechaFin);
-                document.getElementById('detail-ubicacion').textContent = album.ubicacion || '-';
-                document.getElementById('detail-contacto').textContent = album.contacto || '-';
-                document.getElementById('detail-claveAlarma').textContent = album.claveAlarma || '-';
-                document.getElementById('detail-notas').textContent = album.notas || '-';
-                document.getElementById('detail-datosAdicionales').textContent = album.datosAdicionales || '-';
-                document.getElementById('detail-horasPorProyecto').textContent = album.horasPorProyecto ? `${album.horasPorProyecto} horas` : '-';
-                document.getElementById('detail-precioHora').textContent = album.precioHora ? `$${album.precioHora.toFixed(2)}` : '-';
-
-                // Agregar botones para cambiar estado en el modal de detalles
-                const modalFooter = document.querySelector('#albumDetailsModal .modal-footer');
-
-                // Limpiar botones existentes
-                const existingStatusButtons = document.querySelectorAll('.status-change-btn');
-                existingStatusButtons.forEach(btn => btn.remove());
-
-                // Agregar botones solo si el usuario tiene permiso
-                if (typeof hasStatusPermission !== 'undefined' && hasStatusPermission) {
-
-                    if (album.estado !== 'pendiente') {
-                        const pendingBtn = document.createElement('button');
-                        pendingBtn.className = 'btn status-change-btn me-2';
-                        pendingBtn.style.backgroundColor = '#66ccff';
-                        pendingBtn.innerHTML = '<i class="fas fa-clock"></i> Marcar como En curso';
-                        pendingBtn.onclick = () => changeStatusFromModal('pendiente');
-                        modalFooter.prepend(pendingBtn);
-                    }
-
-                    if (album.estado !== 'completado') {
-                        const completeBtn = document.createElement('button');
-                        completeBtn.className = 'btn btn-secondary status-change-btn me-2';
-                        completeBtn.innerHTML = '<i class="fas fa-check"></i> Marcar como Completado';
-                        completeBtn.onclick = () => changeStatusFromModal('completado');
-                        modalFooter.prepend(completeBtn);
-                    }
-
-                    if (album.estado !== 'anulado') {
-                        const cancelBtn = document.createElement('button');
-                        cancelBtn.className = 'btn btn-danger status-change-btn me-2';
-                        cancelBtn.innerHTML = '<i class="fas fa-times"></i> Marcar como Anulado';
-                        cancelBtn.onclick = () => changeStatusFromModal('anulado');
-                        modalFooter.prepend(cancelBtn);
-                    }
-
+                if (album.estado !== 'completado') {
+                    const completeBtn = document.createElement('button');
+                    completeBtn.className = 'btn btn-secondary status-change-btn me-2';
+                    // Use translated button text
+                    completeBtn.innerHTML = `<i class="fas fa-check"></i> ${translations.markCompleted}`;
+                    completeBtn.onclick = () => changeStatusFromModal('completado');
+                    modalFooter.prepend(completeBtn);
                 }
 
+                if (album.estado !== 'anulado') {
+                    const cancelBtn = document.createElement('button');
+                    cancelBtn.className = 'btn btn-danger status-change-btn me-2';
+                    // Use translated button text
+                    cancelBtn.innerHTML = `<i class="fas fa-times"></i> ${translations.markCancelled}`;
+                    cancelBtn.onclick = () => changeStatusFromModal('anulado');
+                    modalFooter.prepend(cancelBtn);
+                }
+            }
 
+            // Assuming albumDetailsModal is a Bootstrap Modal instance
+            if (typeof albumDetailsModal !== 'undefined' && albumDetailsModal) {
                 albumDetailsModal.show();
-            })
-            .catch(error => {
-                console.error("Error:", error);
-                alert("Error al cargar los detalles del proyecto");
-            });
-    }
+            } else {
+                console.warn("albumDetailsModal not found. Ensure it's initialized.");
+            }
+        })
+        .catch(error => {
+            console.error(translations.errorGeneric, error); // Use translated generic error
+            alert(translations.errorLoadingProjectDetails); // Use translated alert message
+        });
+}
 
 
     // Función para editar el álbum
@@ -3097,127 +3063,132 @@
         }
     }
 
-    // Función para cargar los equipos del proyecto (actualizada)
-    function loadProjectTeams(projectId) {
-        const teamsListContainer = document.getElementById('project-teams-list');
-        teamsListContainer.innerHTML = `
-        <div class="text-center py-5 loading-teams">
-            <i class="fas fa-spinner fa-spin fa-2x text-muted"></i>
-            <p class="mt-3">Loading teams...</p>
-        </div>`;
+// Función para cargar los equipos del proyecto (actualizada)
+function loadProjectTeams(projectId) {
+    const teamsListContainer = document.getElementById('project-teams-list');
+    teamsListContainer.innerHTML = `
+    <div class="text-center py-5 loading-teams">
+        <i class="fas fa-spinner fa-spin fa-2x text-muted"></i>
+        <p class="mt-3">${translations.loading_teams}</p>
+    </div>`; // Using existing: "Loading teams..."
 
-        fetch(`/equipo/por-proyecto/${projectId}`)
-            .then(response => {
-                if (!response.ok) throw new Error('Error al obtener equipos');
-                return response.json();
-            })
-            .then(teams => {
-                projectTeams = teams; // Guardar los equipos para verificación de duplicados
-                const teamsListContainer = document.getElementById('project-teams-list');
+    fetch(`/equipo/por-proyecto/${projectId}`)
+        .then(response => {
+            if (!response.ok) {
+                // Using existing: "Error loading teams information"
+                throw new Error(translations.error_loading_teams);
+            }
+            return response.json();
+        })
+        .then(teams => {
+            projectTeams = teams; // Guardar los equipos para verificación de duplicados
+            const teamsListContainer = document.getElementById('project-teams-list');
 
-                if (teams && teams.length > 0) {
-                    let html = '';
+            if (teams && teams.length > 0) {
+                let html = '';
 
-                    // Actualizar contador de equipos
-                    document.getElementById('teams-count').textContent = teams.length;
+                // Actualizar contador de equipos
+                document.getElementById('teams-count').textContent = teams.length;
 
-                    // Primero identificar miembros duplicados
-                    duplicateMembers = {};
-                    const memberCount = {};
+                // Primero identificar miembros duplicados
+                duplicateMembers = {};
+                const memberCount = {};
 
-                    teams.forEach(team => {
-                        team.miembros.forEach(member => {
-                            if (!memberCount[member.id]) {
-                                memberCount[member.id] = 0;
-                            }
-                            memberCount[member.id]++;
-                        });
-                    });
-
-                    // Marcar los miembros que aparecen más de una vez
-                    for (const memberId in memberCount) {
-                        if (memberCount[memberId] > 1) {
-                            duplicateMembers[memberId] = true;
+                teams.forEach(team => {
+                    team.miembros.forEach(member => {
+                        if (!memberCount[member.id]) {
+                            memberCount[member.id] = 0;
                         }
-                    }
+                        memberCount[member.id]++;
+                    });
+                });
 
-                    teams.forEach(team => {
-                        html += `
-                        <div class="team-card mb-3" data-team-id="${team.id}">
-                            <div class="team-card-header">
-                                <h5>${team.nombre}</h5>
-                                <div class="team-actions">
-                                    <button class="btn btn-sm btn-outline-primary edit-team-btn" data-team-id="${team.id}">
-                                        <i class="fas fa-edit me-1"></i> Edit
-                                    </button>
-                                    <button class="btn btn-sm btn-outline-danger delete-team-btn" data-team-id="${team.id}">
-                                        <i class="fas fa-trash-alt me-1"></i> Delete
-                                    </button>
-                                </div>
+                // Marcar los miembros que aparecen más de una vez
+                for (const memberId in memberCount) {
+                    if (memberCount[memberId] > 1) {
+                        duplicateMembers[memberId] = true;
+                    }
+                }
+
+                teams.forEach(team => {
+                    html += `
+                    <div class="team-card mb-3" data-team-id="${team.id}">
+                        <div class="team-card-header">
+                            <h5>${team.nombre}</h5>
+                            <div class="team-actions">
+                                <button class="btn btn-sm btn-outline-primary edit-team-btn" data-team-id="${team.id}">
+                                    <i class="fas fa-edit me-1"></i> ${translations.edit}
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger delete-team-btn" data-team-id="${team.id}">
+                                    <i class="fas fa-trash-alt me-1"></i> ${translations.delete}
+                                </button>
                             </div>
-                            <div class="team-card-body">
-                                <p class="team-description">${team.descripcion || 'No description available'}</p>
-                                <div class="team-members">
-                                    <h6>Members (${team.miembros.length})</h6>
-                                    <div class="members-list">
-                                        ${team.miembros.map(member => `
-                                            <div class="member-item">
-                                                <div class="member-avatar">
-                                                    ${member.nombre.charAt(0)}${member.apellido ? member.apellido.charAt(0) : ''}
-                                                </div>
-                                                <div class="member-info">
-                                                    <div class="member-name ${duplicateMembers[member.id] ? 'duplicate-member' : ''}">
-                                                        ${member.nombre} ${member.apellido || ''}
-                                                    </div>
-                                                    <div class="member-role">${member.rol}</div>
-                                                </div>
+                        </div>
+                        <div class="team-card-body">
+                            <p class="team-description">${team.descripcion || translations.no_description}</p>
+                            <div class="team-members">
+                                <h6>${translations.team_members} (${team.miembros.length})</h6>
+                                <div class="members-list">
+                                    ${team.miembros.map(member => `
+                                        <div class="member-item">
+                                            <div class="member-avatar">
+                                                ${member.nombre.charAt(0)}${member.apellido ? member.apellido.charAt(0) : ''}
                                             </div>
-                                        `).join('')}
-                                    </div>
+                                            <div class="member-info">
+                                                <div class="member-name ${duplicateMembers[member.id] ? 'duplicate-member' : ''}">
+                                                    ${member.nombre} ${member.apellido || ''}
+                                                </div>
+                                                <div class="member-role">${member.rol}</div>
+                                            </div>
+                                        </div>
+                                    `).join('')}
                                 </div>
                             </div>
                         </div>
-                    `;
-                    });
-
-                    teamsListContainer.innerHTML = html;
-
-                    // Agregar event listeners para los botones
-                    document.querySelectorAll('.delete-team-btn').forEach(btn => {
-                        btn.addEventListener('click', function() {
-                            const teamId = this.getAttribute('data-team-id');
-                            deleteTeam(teamId);
-                        });
-                    });
-
-                    document.querySelectorAll('.edit-team-btn').forEach(btn => {
-                        btn.addEventListener('click', function() {
-                            const teamId = this.getAttribute('data-team-id');
-                            editTeam(teamId);
-                        });
-                    });
-                } else {
-                    teamsListContainer.innerHTML = `
-                    <div class="text-center py-5 no-teams">
-                        <i class="fas fa-users-slash fa-3x text-muted"></i>
-                        <h5 class="mt-3">No teams found</h5>
-                        <p class="text-muted">This project doesn't have any teams assigned yet.</p>
                     </div>
                 `;
-                    document.getElementById('teams-count').textContent = '0';
-                }
-            })
-            .catch(error => {
-                console.error('Error loading teams:', error);
+                });
+
+                teamsListContainer.innerHTML = html;
+
+                // Agregar event listeners para los botones
+                document.querySelectorAll('.delete-team-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const teamId = this.getAttribute('data-team-id');
+                        // Make sure deleteTeam function is defined and handles confirmation with translations
+                        deleteTeam(teamId);
+                    });
+                });
+
+                document.querySelectorAll('.edit-team-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const teamId = this.getAttribute('data-team-id');
+                        // Make sure editTeam function is defined
+                        editTeam(teamId);
+                    });
+                });
+            } else {
                 teamsListContainer.innerHTML = `
-                <div class="text-center py-5 error-loading">
-                    <i class="fas fa-exclamation-triangle fa-3x text-danger"></i>
-                    <h5 class="mt-3">Error loading teams</h5>
-                    <p class="text-muted">${error.message}</p>
+                <div class="text-center py-5 no-teams">
+                    <i class="fas fa-users-slash fa-3x text-muted"></i>
+                    <h5 class="mt-3">${translations.no_teams_found}</h5>
+                    <p class="text-muted">${translations.no_teams_assigned}</p>
                 </div>
             `;
-            });
-    }
+                document.getElementById('teams-count').textContent = '0';
+            }
+        })
+        .catch(error => {
+            console.error(translations.error_loading_teams, error); // Using existing
+            teamsListContainer.innerHTML = `
+            <div class="text-center py-5 error-loading">
+                <i class="fas fa-exclamation-triangle fa-3x text-danger"></i>
+                <h5 class="mt-3">${translations.error_loading_teams}</h5>
+                <p class="text-muted">${error.message}</p>
+            </div>
+        `;
+        });
+}
 
     // Función para editar un equipo
     function editTeam(teamId) {

@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" >
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="Bio/vizion Project Management System">
-  <meta name="author" content="Bio/vizion">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta name="description" content="Bio/vizion Project Management System" />
+  <meta name="author" content="Bio/vizion" />
 
   <title>Bio/vizion Dashboard</title>
 
@@ -15,9 +15,10 @@
   <!-- Google Fonts - Montserrat -->
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
 
+  <link href="https://flagcdn.com/w40/{código}.png" rel="stylesheet">
+
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-  <!-- Preload -->
   <!-- Preload -->
   <link rel="preload"
         as="image"
@@ -25,15 +26,33 @@
         imagesrcset="/img/admrescale.webp?width=600 600w, /img/admrescale.webp?width=1200 1200w, /img/admrescale.webp?width=1800 1800w"
         imagesizes="100vw">
 
-
-
-
   <style>
+    :root {
+      --primary-blue: #2c5aa0;
+      --accent-blue: #3a7bd5;
+      --dark-bg: #0f1923;
+      --darker-bg: #0a121a;
+      --light-text: #e0e0e0;
+      --lighter-text: #ffffff;
+      --border-color: rgba(44, 90, 160, 0.3);
+      --card-bg: rgba(15, 25, 35, 0.85);
+    }
 
+    body {
+      font-family: 'Montserrat', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: var(--light-text);
+      background-color: rgba(0, 0, 0, 0.94);
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center;
+      background-attachment: fixed;
+      min-height: 100vh;
+    }
 
     .bg-fast-load {
       position: fixed;
-      top: 0; left: 0;
+      top: 0;
+      left: 0;
       width: 100vw;
       height: 100vh;
       z-index: -1;
@@ -44,51 +63,41 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
-    }
-    :root {
-      --primary-blue: #4a90e2;
-      --accent-blue: #5aa8ff;
-      --dark-bg: #1a2a36;
-      --darker-bg: #142028;
-      --light-text: #e0e0e0;
-      --lighter-text: #ffffff;
-      --border-color: rgba(74, 144, 226, 0.2);
+      opacity: 0.5;
     }
 
-    body {
-      font-family: 'Montserrat', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      color: var(--light-text);
-      background-color: var(--dark-bg);
-      background-size: cover;
-      background-repeat: no-repeat;
-      background-position: center;
-      background-attachment: fixed;
-
+    .main-container {
+      padding-top: 2rem;
+      padding-bottom: 4rem;
     }
-
-
 
     /* Header styles */
     .hero-section {
       text-align: center;
-      margin-bottom: 3rem;
+      margin-bottom: 4rem;
       position: relative;
       z-index: 1;
     }
 
+    .logo-container img {
+      height: 60px;
+      filter: brightness(0) invert(1);
+    }
+
     .hero-title {
-      font-size: 2.5rem;
+      font-size: 4rem;
       font-weight: 700;
       color: var(--lighter-text);
-      margin-bottom: 1rem;
+      margin-bottom: 1.5rem;
       position: relative;
       display: inline-block;
+      letter-spacing: 1px;
     }
 
     .hero-title:after {
       content: '';
       position: absolute;
-      bottom: -10px;
+      bottom: -14px;
       left: 50%;
       transform: translateX(-50%);
       width: 80px;
@@ -98,11 +107,12 @@
     }
 
     .hero-subtitle {
-      font-size: 1.1rem;
-      color: #b0b0b0;
-      max-width: 600px;
-      margin: 0 auto 2rem;
-      line-height: 1.6;
+      font-size: 1.5rem;
+      color: rgba(255, 255, 255, 0.75);
+      max-width: 700px;
+      margin: 0 auto 2.5rem;
+      line-height: 1.8;
+      font-weight: 300;
     }
 
     /* Action buttons */
@@ -110,8 +120,8 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 1.5rem;
-      max-width: 500px;
+      gap: 1.2rem;
+      max-width: 600px;
       margin: 0 auto;
       position: relative;
       z-index: 1;
@@ -123,22 +133,22 @@
       align-items: center;
       justify-content: center;
       width: 100%;
-      padding: 1.5rem 2rem;
-      font-size: 1.1rem;
-      font-weight: 600;
-      border-radius: 8px;
+      padding: 1.3rem 2rem;
+      font-size: 0.95rem;
+      font-weight: 500;
+      border-radius: 6px;
       border: none;
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
       overflow: hidden;
       z-index: 1;
-      text-transform: uppercase;
       letter-spacing: 0.5px;
-      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
-      background: rgba(26, 42, 54, 0.7);
-      backdrop-filter: blur(5px);
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      background: var(--card-bg);
+      backdrop-filter: blur(8px);
       border: 1px solid var(--border-color);
       color: var(--light-text);
+      text-align: center;
     }
 
     .btn-mega::before {
@@ -159,33 +169,38 @@
     }
 
     .btn-mega:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 15px 30px rgba(74, 144, 226, 0.3);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(58, 123, 213, 0.2);
       color: var(--lighter-text);
       border-color: transparent;
     }
 
     .btn-mega:active {
-      transform: translateY(1px);
+      transform: translateY(0);
     }
 
     .btn-icon {
-      margin-right: 12px;
-      font-size: 1.3rem;
+      margin-right: 10px;
+      font-size: 1.1rem;
     }
 
     /* Split button container */
     .split-button-container {
       width: 100%;
       display: flex;
-      gap: 10px;
+      gap: 12px;
       position: relative;
       z-index: 1;
     }
 
     .split-button-container .btn-mega {
       flex: 1;
-      padding: 1.5rem 0.5rem;
+      padding: 1.3rem 0.5rem;
+    }
+
+    .user-info i {
+      margin-right: 8px;
+      color: var(--accent-blue);
     }
 
     /* Animation */
@@ -208,108 +223,248 @@
 
     /* Accent line */
     .accent-line {
-    padding: 50px;
+      padding: 30px;
     }
 
-    @keyframes gradient {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
+    /* Navbar styling - Versión discreta */
+    .navbar-mega-style {
+      background: rgba(15, 25, 35, 0.5);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid rgba(44, 90, 160, 0.1);
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      padding: 0.5rem 1rem;
+      position: sticky;
+      top: 0;
+      width: 100%;
+      z-index: 1000;
+      transition: all 0.3s ease;
+    }
+
+    .navbar-mega-style .navbar-brand {
+      color: var(--lighter-text);
+      font-weight: 600;
+      font-size: 1.2rem;
+      margin-right: 1.5rem;
+    }
+
+    .navbar-mega-style .nav-link {
+      color: var(--light-text);
+      font-weight: 500;
+      padding: 0.5rem 0.8rem;
+      font-size: 0.9rem;
+      transition: all 0.2s ease;
+    }
+
+    .navbar-mega-style .nav-link:hover {
+      color: var(--accent-blue);
+      text-decoration: none;
+    }
+
+    .navbar-mega-style .navbar-toggler {
+      border-color: var(--border-color);
+      padding: 0.25rem 0.5rem;
+    }
+
+    .navbar-mega-style .navbar-toggler-icon {
+      background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3e%3cpath stroke='rgba%28224, 224, 224, 0.8%29' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+      width: 1.2em;
+      height: 1.2em;
+    }
+
+    /* Dropdown specific styles */
+    .navbar-mega-style .dropdown-menu {
+      background-color: var(--darker-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+      padding: 0.5rem 0;
+      margin-top: 8px;
+      min-width: 120px;
+    }
+
+    .navbar-mega-style .dropdown-item {
+      color: var(--light-text);
+      padding: 0.5rem 1rem;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: background-color 0.2s ease, color 0.2s ease;
+      display: flex;
+      align-items: center;
+    }
+
+    .navbar-mega-style .dropdown-item:hover,
+    .navbar-mega-style .dropdown-item:focus {
+      background-color: var(--primary-blue);
+      color: var(--lighter-text);
+    }
+
+    .navbar-mega-style .dropdown-item .fas,
+    .navbar-mega-style .dropdown-item .fa-solid {
+      margin-right: 8px;
+      font-size: 0.9rem;
     }
 
     /* Responsive adjustments */
     @media (max-width: 768px) {
       .hero-title {
-        font-size: 2rem;
+        font-size: 2.4rem;
       }
 
       .hero-subtitle {
-        font-size: 1rem;
+        font-size: 1.1rem;
       }
 
       .btn-mega {
-        padding: 1.2rem 1.5rem;
-        font-size: 1rem;
+        padding: 1.1rem 1.5rem;
+        font-size: 0.9rem;
       }
 
       .split-button-container {
         flex-direction: column;
         gap: 1rem;
       }
+
+      .navbar-mega-style {
+        background: rgba(15, 25, 35, 0.8);
+      }
     }
   </style>
 </head>
 <body>
+<nav class="navbar navbar-expand-lg navbar-dark navbar-mega-style">
+  <div class="container">
+    <a class="navbar-brand" href="#">Biovac</a>
+    <button
+            class="navbar-toggler"
+            type="button"
+            data-toggle="collapse"
+            data-target="#navbarNav"
+            aria-controls="navbarNav"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item dropdown">
+          <a
+                  class="nav-link dropdown-toggle"
+                  href="#"
+                  id="languageDropdown"
+                  role="button"
+                  data-toggle="dropdown"
+                  aria-haspopup="true"
+                  aria-expanded="false"
+          >
+            <i class="fas fa-globe mr-1"></i>
+            <span th:text="#{language}">Language</span>
+          </a>
+          <div class="dropdown-menu dropdown-menu-right" aria-labelledby="languageDropdown">
+            <a class="dropdown-item" href="?lang=en">
+              <img src="https://flagcdn.com/w40/us.png" width="20" class="mr-2" alt="English"> English
+            </a>
+            <a class="dropdown-item" href="?lang=es">
+              <img src="https://flagcdn.com/w40/sv.png" width="20" class="mr-2" alt="Español"> Español
+            </a>
+            <a class="dropdown-item" href="?lang=fr">
+              <img src="https://flagcdn.com/w40/fr.png" width="20" class="mr-2" alt="Français"> Français
+            </a>
+          </div>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" th:href="@{/cerrar}"
+          ><i class="fa-solid fa-right-from-bracket mr-1"></i>
+            <span th:text="#{log-out}">Log Out</span></a
+          >
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
 
-<!-- Imagen -->
-<!-- Imagen -->
 <div class="bg-fast-load">
   <img
           src="/img/admrescale.webp"
           srcset="
-     /img/admrescale.webp?width=600 600w,
-      /img/admrescale.webp?width=1200 1200w,
-      /img/admrescale.webp?width=1800 1800w
-    "
+        /img/admrescale.webp?width=600 600w,
+        /img/admrescale.webp?width=1200 1200w,
+        /img/admrescale.webp?width=1800 1800w
+      "
           sizes="100vw"
           alt=""
           decoding="async"
-  >
+  />
 </div>
 
 <div th:replace="permiso/permissions-panel :: panelPermisos"></div>
 
-<!-- Main Content -->
 <div class="main-container">
   <div class="container">
     <div class="accent-line animated"></div>
 
     <div class="hero-section animated">
       <h1 class="hero-title">
-        Biovac<br>
-        Project Management
+        Edgar<br />
+        <span th:text="#{title}">Project Management</span>
       </h1>
-      <p class="hero-subtitle">Secure access to all project management tools</p>
+      <p class="hero-subtitle" th:text="#{hero-subtitle}">
+        Secure access to all project management tools
+      </p>
     </div>
-
 
     <div class="action-buttons">
       <a th:href="@{/albumes/create}" class="btn-mega animated delay-1" th:if="${AGENDA_ACCESS}">
         <i class="fas fa-plus-circle btn-icon"></i>
-        New Project / Nuevo Proyecto
+        <span th:text="#{new-project}">New Project</span>
       </a>
-      <a th:href="@{/home}" class="btn-mega animated delay-1" th:if="${PROYECTOS_ACCESS}">
+      <a
+              th:href="@{/home}"
+              class="btn-mega animated delay-1"
+              th:if="${PROYECTOS_ACCESS}"
+      >
         <i class="fas fa-folder-open btn-icon"></i>
-        Ongoing Projects / Proyecto en Curso
+        <span th:text="#{ongoing-projects}">Ongoing Projects</span>
       </a>
-      <a th:href="@{admin/reports}" class="btn-mega animated delay-1" th:if="${REPORTES_ACCESS}">
+      <a
+              th:href="@{admin/reports}"
+              class="btn-mega animated delay-1"
+              th:if="${REPORTES_ACCESS}"
+      >
         <i class="fas fa-clipboard btn-icon"></i>
-        Manage Reports
+        <span th:text="#{manage-reports}">Manage Reports</span>
       </a>
+
       <a th:href="@{/expediente}" class="btn-mega animated delay-1" th:if="${EXPEDIENTE_ACCESS}">
         <i class="fas fa-folder-open btn-icon"></i>
-        REPRÉSENTANTS
+        <span th:text="#{representatives}">Representatives</span>
       </a>
+
       <div class="split-button-container animated delay-2">
-        <a th:href="@{usuario/vpsSecurity2024-}" class="btn-mega" th:if="${USUARIOS_CREATE}">
+        <a
+                th:href="@{usuario/vpsSecurity2024-}"
+                class="btn-mega"
+                th:if="${USUARIOS_CREATE}"
+        >
           <i class="fas fa-user-plus btn-icon"></i>
-          New User
+          <span th:text="#{new-user}">New User</span>
         </a>
-        <a th:href="@{/usuario/show}" class="btn-mega" th:if="${USUARIOS_ACCESS}">
+        <a
+                th:href="@{/usuario/show}"
+                class="btn-mega"
+                th:if="${USUARIOS_ACCESS}"
+        >
           <i class="fas fa-users-gear btn-icon"></i>
-          Manage Users
+          <span th:text="#{manage-users}">Manage Users</span>
         </a>
       </div>
     </div>
   </div>
 </div>
 
-<!-- Footer -->
 <div th:include="adm/template_admin.html::footer"></div>
 
-<!-- Bootstrap core JavaScript -->
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
 </body>
 </html>

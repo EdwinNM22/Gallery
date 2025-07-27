@@ -11,8 +11,11 @@ public interface FormService {
     Form save(Form form);
     Form update(Integer id, Form newForm);
     void delete(Integer id);
+    
+    // Add this method to the interface
+    boolean existsById(Integer id);
     List<Form> findByUsuarioId(Integer usuarioId);
-    List<Form> findByUsuarioIdAndExpedienteId(Integer usuarioId, Integer expedienteId);
+    List<Form> findByUsuarioIdAndExpedienteIdAndFuturo(Integer usuarioId, Integer expedienteId, Boolean futuro);
 
-    List<Form> findByExpedienteId(Integer expedienteId);
+    List<Form> findByExpedienteIdAndFuturo(Integer expedienteId, Boolean futuro);
 }

@@ -9,7 +9,6 @@ import java.util.List;
 @Repository
 public interface FormRepository extends JpaRepository<Form, Integer> {
     List<Form> findByUsuario_Id(Integer usuarioId);
-    List<Form> findByUsuario_IdAndExpediente_Id(Integer usuarioId, Integer expedienteId);
-    List<Form> findByExpediente_Id(Integer expedienteId);
-
+    List<Form> findByUsuario_IdAndExpediente_IdAndFuturo(Integer usuarioId, Integer expedienteId, Boolean futuro);
+    List<Form> findByExpediente_IdAndFuturo(Integer expedienteId, Boolean futuro);
 }

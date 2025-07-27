@@ -37,27 +37,27 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Enhanced delete confirmation
-    const deleteButtons = document.querySelectorAll('button[onclick*="confirm"]');
-    deleteButtons.forEach(function(button) {
-        button.addEventListener('click', function(e) {
-            const confirmed = confirm('Are you sure you want to delete this form? This action cannot be undone.');
-            if (!confirmed) {
-                e.preventDefault();
-                return false;
-            }
+    // const deleteButtons = document.querySelectorAll('button[onclick*="confirm"]');
+    // deleteButtons.forEach(function(button) {
+    //     button.addEventListener('click', function(e) {
+    //         const confirmed = confirm('Are you sure you want to delete this form? This action cannot be undone.');
+    //         if (!confirmed) {
+    //             e.preventDefault();
+    //             return false;
+    //         }
 
-            // Show loading state
-            const originalText = this.innerHTML;
-            this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Deleting...';
-            this.disabled = true;
+    //         // Show loading state
+    //         const originalText = this.innerHTML;
+    //         this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Deleting...';
+    //         this.disabled = true;
 
-            // Re-enable after a delay (in case of error)
-            setTimeout(() => {
-                this.innerHTML = originalText;
-                this.disabled = false;
-            }, 3000);
-        });
-    });
+    //         // Re-enable after a delay (in case of error)
+    //         setTimeout(() => {
+    //             this.innerHTML = originalText;
+    //             this.disabled = false;
+    //         }, 3000);
+    //     });
+    // });
 
     // Add keyboard navigation for table
     let currentRowIndex = -1;

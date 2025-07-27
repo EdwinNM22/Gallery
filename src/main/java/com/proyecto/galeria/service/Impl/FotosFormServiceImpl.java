@@ -49,4 +49,15 @@ public class FotosFormServiceImpl implements FotosFormService {
     public List<FotosForm> findByFormId(Integer formId) {
         return fotosFormRepository.findByForm_Id(formId);
     }
+
+    @Override
+    public void deleteById(Integer id) {
+        fotosFormRepository.deleteById(id);
+    }
+    
+    @Override
+    public void deleteByFormId(Integer formId) {
+        List<FotosForm> fotos = fotosFormRepository.findByForm_Id(formId);
+        fotosFormRepository.deleteAll(fotos);
+    }
 }

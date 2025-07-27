@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="Bio/vizion Project Management System">
+  <meta name="author" content="Bio/vizion">
+
+  <title th:text="#{edit-form-title}">Bio/vizion - Modifier le Formulaire</title>
+
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="/css/form.css" rel="stylesheet">
+  <link href="/css/view-form.css" rel="stylesheet">
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+  <link rel="preload"
+        as="image"
+        href="/img/admrescale.webp?width=1200"
+        imagesrcset="/img/admrescale.webp?width=600 600w, /img/admrescale.webp?width=1200 1200w, /img/admrescale.webp?width=1800 1800w"
+        imagesizes="100vw">
+</head>
+<body>
+
+<div class="bg-fast-load">
+  <img
+          src="/img/admrescale.webp"
+          srcset="
+     /img/admrescale.webp?width=600 600w,
+      /img/admrescale.webp?width=1200 1200w,
+      /img/admrescale.webp?width=1800 1800w
+    "
+          sizes="100vw"
+          alt=""
+          decoding="async"
+  >
+</div>
+
+<div class="main-container">
+  <div class="container">
+    <div class="hero-section animated">
+      <h1 class="hero-title" th:text="#{edit-form-heading}">
+        Modifier le Formulaire – Conduits de Ventilation
+      </h1>
+    </div>
+
+    <div th:if="${success}" class="alert alert-success animated delay-1" role="alert">
+      <i class="fas fa-check-circle"></i>
+      <span th:text="${message}">Message de réussite</span>
+    </div>
+
+    <div th:if="${error}" class="alert alert-danger animated delay-1" role="alert">
+      <i class="fas fa-exclamation-circle"></i>
+      <span th:text="${message}">Message d'erreur</span>
+    </div>
+
+    <div class="btn-container">
+      <a class="btn btn-back" th:href="@{/adm}">
+        <i class="fas fa-arrow-left"></i> <span th:text="#{back-to-home}">Back to Home</span>
+      </a>
+    </div>
+
+    <form th:action="@{'/form/' + ${form.id} + '/edit'}" th:object="${form}" method="post" class="form-container animated delay-1" id="mainForm">
+      <input type="hidden" name="futuro" value="true" />
+
+      <div class="form-section">
+        <h3><i class="fas fa-info-circle"></i> <span th:text="#{general-information}">Informations Générales</span></h3>
+
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label class="form-label" th:text="#{client-name}">Nom du client <span class="required">*</span></label>
+              <input type="text" class="form-control" th:field="*{nombreCliente}" required>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label class="form-label" th:text="#{evaluation-date}">Date de l'évaluation <span class="required">*</span></label>
+              <input type="date" class="form-control" th:field="*{fechaEvaluacion}" required>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group">
+              <label class="form-label" th:text="#{evaluator-name}">Nom de l'évaluateur <span class="required">*</span></label>
+              <input type="text" class="form-control" th:field="*{nombreEvaluador}" required>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label class="form-label" th:text="#{on-site-contact-person}">Personne contact sur place</label>
+              <input type="text" class="form-control" th:field="*{personaContacto}">
+            </div>
+          </div>
+        </div>
+
+        <div class="row" id="fechaUltimoMantenimientoRow" th:style="${form.mantenimientoHistoria} ? 'display: block;' : 'display: none;'">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label class="form-label" th:text="#{last-date}">Dernière date</label>
+              <input type="date" class="form-control" th:field="*{fechaUltimoMantenimiento}">
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-12">
+            <div class="form-group">
+              <label class="form-label" th:text="#{address}">Adresse</label>
+              <textarea class="form-control" th:field="*{direccion}" rows="3" th:placeholder="#{enter-address-here}"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <input type="hidden" th:field="*{usuario.id}" />
+        <input type="hidden" th:field="*{expediente.id}" />
+      </div>
+
+      <div class="text-center">
+        <button type="submit" class="btn btn-submit btn-lg" id="submitBtn">
+          <i class="fas fa-save"></i> <span th:text="#{save-changes}">Enregistrer les modifications</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="/js/form.js"></script>
+
+<script>
+// JavaScript for maintenance history checkbox functionality
+$(document).ready(function() {
+    $('#mantenimientoHistoriaCheckbox').change(function() {
+        if (this.checked) {
+            $('#fechaUltimoMantenimientoRow').show();
+        } else {
+            $('#fechaUltimoMantenimientoRow').hide();
+        }
+    });
+});
+</script>
+
+</body>
+</html>

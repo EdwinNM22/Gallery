@@ -3,22 +3,19 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="Galería en línea de fotos">
-  <meta name="author" content="GalleryOnline">
+  <meta name="description" content="Bio/vizion Project Management System">
+  <meta name="author" content="Bio/vizion">
 
-  <title>Mis Proyectos - Galería Online</title>
+  <title th:text="#{my-projects-title}">Projects - Bio/vizion Dashboard</title>
 
-  <!-- Bootstrap 4 CSS -->
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-
+  <!-- Bootstrap core CSS -->
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
   <!-- Font Awesome -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <!-- Google Fonts - Montserrat -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
 
   <!-- Preload -->
   <link rel="preload"
@@ -27,12 +24,35 @@
         imagesrcset="/img/aver.webp?width=600 600w, /img/aver.webp?width=1200 1200w, /img/aver.webp?width=1800 1800w"
         imagesizes="100vw">
 
-
-  <!-- Custom styles -->
   <style>
+    :root {
+      --primary-blue: #2c5aa0;
+      --accent-blue: #3a7bd5;
+      --dark-bg: #0f1923;
+      --darker-bg: #0a121a;
+      --light-text: #e0e0e0;
+      --lighter-text: #ffffff;
+      --border-color: rgba(44, 90, 160, 0.3);
+      --card-bg: rgba(15, 25, 35, 0.85);
+      --success-color: #4cc9f0;
+      --danger-color: #ff4d4d;
+    }
+
+    body {
+      font-family: 'Montserrat', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: var(--light-text);
+      background-color: rgba(0, 0, 0, 0.94);
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center;
+      background-attachment: fixed;
+      min-height: 100vh;
+    }
+
     .bg-fast-load {
       position: fixed;
-      top: 0; left: 0;
+      top: 0;
+      left: 0;
       width: 100vw;
       height: 100vh;
       z-index: -1;
@@ -43,81 +63,162 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
+      opacity: 0.5;
     }
 
-    :root {
-      --primary-blue: #4a90e2;
-      --accent-blue: #5aa8ff;
-      --dark-bg: #1a2a36;
-      --darker-bg: #142028;
-      --light-text: #e0e0e0;
-      --lighter-text: #ffffff;
-      --border-color: rgba(74, 144, 226, 0.2);
-      --success-color: #4cc9f0;
-      --danger-color: #ff4d4d;
-    }
-    body {
-      font-family: 'Montserrat', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      color: var(--light-text);
-      background-color: var(--dark-bg);
-      background-size: cover;
-      background-repeat: no-repeat;
-      background-position: center;
-      background-attachment: fixed;
-
+    .main-container {
+      padding-top: 2rem;
+      padding-bottom: 4rem;
     }
 
-    @keyframes scroll {
-      0% { transform: translateY(0); }
-      100% { transform: translateY(-100%); }
+    /* Header styles */
+    .hero-section {
+      text-align: center;
+      margin-bottom: 4rem;
+      position: relative;
+      z-index: 1;
     }
 
-    /* Modern Header */
-    .modern-header {
-
-      padding: 2rem 0;
-    }
-
-    .modern-header h1 {
-      font-weight: 700;
+    .hero-title {
       font-size: 2.8rem;
-      margin-bottom: 1rem;
+      font-weight: 700;
+      color: var(--lighter-text);
+      margin-bottom: 1.5rem;
       position: relative;
       display: inline-block;
+      letter-spacing: 1px;
     }
 
-    .modern-header h1:after {
+    .hero-title:after {
       content: '';
       position: absolute;
-      bottom: -10px;
+      bottom: -14px;
       left: 50%;
       transform: translateX(-50%);
       width: 80px;
       height: 3px;
       background: linear-gradient(90deg, var(--primary-blue), var(--accent-blue));
       border-radius: 3px;
-
     }
 
-    .modern-header p {
-      font-size: 1.2rem;
-      opacity: 0.9;
+    .hero-subtitle {
+      font-size: 1.5rem;
+      color: rgba(255, 255, 255, 0.75);
       max-width: 700px;
-      margin: 0 auto;
+      margin: 0 auto 2.5rem;
+      line-height: 1.8;
+      font-weight: 300;
+    }
+
+    /* Action buttons */
+    .action-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 1.2rem;
+      margin-bottom: 3rem;
+    }
+
+    .btn-mega {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.3rem 2rem;
+      font-size: 0.95rem;
+      font-weight: 500;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      overflow: hidden;
+      z-index: 1;
+      letter-spacing: 0.5px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      background: var(--card-bg);
+      backdrop-filter: blur(8px);
+      border: 1px solid var(--border-color);
+      color: var(--light-text);
+      text-align: center;
+    }
+
+    /* Añade estos estilos para los botones pequeños */
+    .btn-mega.btn-sm {
+      padding: 0.8rem 1.2rem;
+      font-size: 0.85rem;
+    }
+
+    /* Estilo para botón de peligro */
+    .btn-mega.btn-danger {
+      background: rgba(255, 77, 77, 0.1);
+      border-color: rgba(255, 77, 77, 0.3);
+    }
+
+    .btn-mega.btn-danger::before {
+      background: linear-gradient(45deg, #ff4d4d, #cc0000);
+    }
+
+    .btn-mega.btn-danger:hover {
+      box-shadow: 0 6px 12px rgba(255, 77, 77, 0.2);
+    }
+
+    /* Ajustes para el footer de la tarjeta */
+    .project-card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 1rem;
+      margin-top: auto;
+    }
+
+    .project-card-footer > div {
+      display: flex;
+      gap: 0.8rem;
+    }
+
+    .btn-mega::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(45deg, var(--primary-blue), var(--accent-blue));
+      z-index: -1;
+      transition: opacity 0.3s ease;
+      opacity: 0;
+    }
+
+    .btn-mega:hover::before {
+      opacity: 1;
+    }
+
+    .btn-mega:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(58, 123, 213, 0.2);
+      color: var(--lighter-text);
+      border-color: transparent;
+    }
+
+    .btn-mega:active {
+      transform: translateY(0);
+    }
+
+    .btn-icon {
+      margin-right: 10px;
+      font-size: 1.1rem;
     }
 
     /* Projects Grid */
     .projects-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
       gap: 2rem;
-      padding: 0 2rem;
       margin-bottom: 4rem;
     }
 
     /* Project Card */
     .project-card {
-      background: rgba(26, 42, 54, 0.7);
+      background: var(--card-bg);
       border-radius: 8px;
       overflow: hidden;
       box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
@@ -132,7 +233,7 @@
 
     .project-card:hover {
       transform: translateY(-5px);
-      box-shadow: 0 15px 30px rgba(74, 144, 226, 0.2);
+      box-shadow: 0 15px 30px rgba(58, 123, 213, 0.2);
       border-color: var(--primary-blue);
     }
 
@@ -177,87 +278,6 @@
       margin-top: auto;
     }
 
-    /* Modern Button */
-    .btn-modern {
-      position: relative;
-      background: rgba(26, 42, 54, 0.7);
-      color: var(--light-text);
-      border: 1px solid var(--border-color);
-      padding: 0.6rem 1.5rem;
-      border-radius: 50px;
-      font-weight: 500;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-      backdrop-filter: blur(5px);
-      overflow: hidden;
-      z-index: 1;
-    }
-
-    .btn-modern::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(45deg, var(--primary-blue), var(--accent-blue));
-      z-index: -1;
-      transition: opacity 0.3s ease;
-      opacity: 0;
-    }
-
-    .btn-modern:hover::before {
-      opacity: 1;
-    }
-
-    .btn-modern:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 15px rgba(74, 144, 226, 0.3);
-      color: var(--lighter-text);
-      border-color: transparent;
-    }
-
-    .btn-modern i {
-      margin-right: 8px;
-    }
-
-    /* Back Button */
-    .btn-back {
-      background: rgba(26, 42, 54, 0.7);
-      color: var(--primary-blue);
-      border: 1px solid var(--primary-blue);
-      padding: 0.6rem 1.5rem;
-      border-radius: 50px;
-      font-weight: 500;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      transition: all 0.3s ease;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-      margin-right: 15px;
-      backdrop-filter: blur(5px);
-    }
-
-    .btn-back:hover {
-      background: rgba(74, 144, 226, 0.2);
-      color: var(--accent-blue);
-      border-color: var(--accent-blue);
-      text-decoration: none;
-    }
-
-    .btn-back i {
-      margin-right: 8px;
-    }
-
-    .button-group {
-      display: flex;
-      justify-content: center;
-      margin: 2rem 0;
-    }
-
     /* Empty State */
     .empty-state {
       text-align: center;
@@ -287,26 +307,10 @@
       opacity: 0.7;
     }
 
-    /* Danger Button */
-    .btn-modern.btn-danger {
-      background: rgba(26, 42, 54, 0.7);
-      border: 1px solid rgba(255, 77, 77, 0.3);
-    }
-
-    .btn-modern.btn-danger::before {
-      background: linear-gradient(45deg, #ff4d4d, #cc0000);
-    }
-
-    .completed-projects-section {
-      margin-top: 3rem;
-      padding-top: 2rem;
-      border-top: 1px solid var(--border-color);
-      display: none;
-    }
-
+    /* Status badges */
     .status-badge {
       display: inline-block;
-      padding: 0.25rem 0.5rem;
+      padding: 0.25rem 0.75rem;
       border-radius: 50px;
       font-size: 0.75rem;
       font-weight: 600;
@@ -314,7 +318,7 @@
     }
 
     .status-active {
-      background-color: rgba(74, 144, 226, 0.2);
+      background-color: rgba(44, 90, 160, 0.3);
       color: var(--accent-blue);
     }
 
@@ -325,8 +329,7 @@
 
     .project-card.completed {
       opacity: 0.8;
-      background: rgba(20, 32, 40, 0.7);
-      filter: grayscale(30%);
+      background: rgba(10, 18, 26, 0.7);
     }
 
     .project-card.completed h2 {
@@ -339,6 +342,7 @@
       opacity: 0.6;
     }
 
+    /* Toggle buttons */
     .toggle-completed-btn {
       background: none;
       border: none;
@@ -351,33 +355,35 @@
     .toggle-completed-section-btn {
       display: block;
       margin: 0 auto 2rem;
-      background: none;
+      background: rgba(10, 18, 26, 0.7);
       border: 1px solid var(--success-color);
       color: var(--success-color);
-      padding: 0.5rem 1.5rem;
-      border-radius: 50px;
+      padding: 0.7rem 1.8rem;
+      border-radius: 6px;
       cursor: pointer;
       transition: all 0.3s ease;
       backdrop-filter: blur(5px);
-      background: rgba(20, 32, 40, 0.5);
+      font-weight: 500;
     }
 
     .toggle-completed-section-btn:hover {
       background: rgba(76, 201, 240, 0.1);
+      transform: translateY(-2px);
     }
 
     .toggle-completed-section-btn i {
       margin-right: 8px;
     }
 
+    /* View teams icon */
     .view-teams-icon {
       position: absolute;
       top: 15px;
       right: 15px;
       color: var(--primary-blue);
-      background: rgba(26, 42, 54, 0.9);
-      width: 30px;
-      height: 30px;
+      background: rgba(15, 25, 35, 0.9);
+      width: 32px;
+      height: 32px;
       border-radius: 50%;
       display: flex;
       align-items: center;
@@ -394,6 +400,7 @@
       color: var(--accent-blue);
     }
 
+    /* Modal styles */
     .teams-modal {
       max-width: 400px;
     }
@@ -438,96 +445,70 @@
     }
 
     .team-member-avatar {
-      width: 25px;
-      height: 25px;
+      width: 28px;
+      height: 28px;
       border-radius: 50%;
-      background-color: rgba(74, 144, 226, 0.2);
+      background-color: rgba(44, 90, 160, 0.3);
       display: flex;
       align-items: center;
       justify-content: center;
       margin-right: 10px;
-      font-size: 0.7rem;
+      font-size: 0.8rem;
       font-weight: bold;
       color: var(--primary-blue);
     }
 
-    /* Modal Footer */
-    .modal-footer {
-      background-color: var(--dark-bg);
-      border-top: 1px solid var(--border-color);
+    /* Animation */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
-    /* Toast Notification */
-    .toast-container {
-      z-index: 9999;
+    .animated {
+      animation: fadeIn 0.6s ease-out forwards;
     }
 
-    .toast {
-      background-color: var(--dark-bg);
-      color: var(--light-text);
-      border: 1px solid var(--border-color);
+    .delay-1 {
+      animation-delay: 0.2s;
     }
 
-    .toast-header {
-      background-color: var(--darker-bg);
-      color: var(--lighter-text);
-      border-bottom: 1px solid var(--border-color);
+    .delay-2 {
+      animation-delay: 0.4s;
     }
 
     /* Accent line */
     .accent-line {
-      height: 4px;
-      width: 100%;
-      max-width: 500px;
-      margin: 0 auto 2.5rem;
-      background: linear-gradient(90deg, var(--primary-blue), var(--accent-blue));
-      border-radius: 2px;
-      animation: gradient 3s ease infinite;
-      background-size: 200% 200%;
+      padding: 30px;
     }
 
-    @keyframes gradient {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-
-    /* Responsive Adjustments */
+    /* Responsive adjustments */
     @media (max-width: 768px) {
-      .modern-header {
-        padding: 3rem 0;
-      }
-
-      .modern-header h1 {
+      .hero-title {
         font-size: 2.2rem;
       }
 
-      .modern-header p {
-        font-size: 1rem;
+      .hero-subtitle {
+        font-size: 1.1rem;
+      }
+
+      .action-buttons {
+        flex-direction: column;
+        align-items: center;
       }
 
       .projects-grid {
         grid-template-columns: 1fr;
-        padding: 0 1rem;
       }
 
-      .button-group {
-        flex-direction: column;
-        align-items: center;
-        gap: 10px;
-      }
-
-      .btn-back, .btn-modern {
-        width: 100%;
-        justify-content: center;
-        margin-right: 0;
+      .project-card {
+        max-width: 100%;
       }
     }
   </style>
 </head>
 <body>
 
-<!-- Imagen -->
+<!-- Background Image -->
 <div class="bg-fast-load">
   <img
           src="/img/aver.webp"
@@ -542,150 +523,156 @@
   >
 </div>
 
-<!-- Modern Header -->
-<header class="modern-header text-center">
-  <div class="container">
-    <h1>Projects</h1>
-    <p>Select the assigned project.</p>
-  </div>
-  <div class="container">
-    <div class="button-group">
-      <a th:if="${AGENDA_ACCESS && AGENDA_CREATE }"
-         th:href="@{/albumes/create}" class="btn-modern">
-        <i class="fas fa-plus"></i> Create Project
-      </a>
+<!-- Main Content -->
+<div class="main-container">
+  <div class="container-fluid px-5">
+    <!-- Header Section -->
+    <div class="hero-section animated">
+      <h1 class="hero-title" th:text="#{projects}">Projects</h1>
+      <p class="hero-subtitle" th:text="#{select-assigned-project}">Select the assigned project to view details and manage tasks</p>
 
-      <a th:href="@{/adm}" class="btn-modern ml-2">
-        <i class="fas fa-bars"></i> Menu
-      </a>
-    </div>
-  </div>
-</header>
-
-
-<div th:replace="permiso/permissions-panel :: panelPermisos"></div>
-
-<!-- Projects Grid -->
-<div th:if="${not #lists.isEmpty(albumes)}">
-  <!-- Pending Projects -->
-  <div class="projects-grid">
-    <div th:each="album : ${albumes}"
-         th:if="${album.estado == 'pendiente'}"
-         th:attr="data-id=${album.id}"
-         class="project-card">
-      <div th:if="${PROYECTOS_VIEW_TEAMS}"
-           class="view-teams-icon"
-           th:attr="data-album-id=${album.id}"
-           onclick="showTeamsModal(this)">
-        <i class="fas fa-users"></i>
-      </div>
-
-      <div class="project-card-content">
-        <h2 th:text="${album.nombre}">
-          Project Name
-          <span class="status-badge status-active">Pending</span>
-        </h2>
-        <p th:text="${album.descripcion} ?: 'Sin descripción'">Project Description.</p>
-        <div class="project-card-footer">
-          <div>
-            <a th:href="@{/albumes/{id}(id=${album.id})}" class="btn-modern">
-              <i class="fas fa-eye"></i> Enter/Entrar
-            </a>
-          </div>
-          <div>
-            <a th:href="@{/albumes/delete/{id}(id=${album.id})}" class="btn-modern btn-danger"
-               onclick="return confirm('¿Estás seguro de que quieres eliminar este álbum? Esta acción no se puede deshacer.');"
-               th:if="${PROYECTOS_DELETE}">
-              <i class="fas fa-trash"></i> Delete
-            </a>
-          </div>
-        </div>
+      <div class="action-buttons animated delay-1">
+        <a th:if="${AGENDA_ACCESS && AGENDA_CREATE}"
+           th:href="@{/albumes/create}" class="btn-mega">
+          <i class="fas fa-plus-circle btn-icon"></i>
+          <span th:text="#{create-project}">Create Project</span>
+        </a>
+        <a th:href="@{/adm}" class="btn-mega">
+          <i class="fas fa-bars btn-icon"></i>
+          <span th:text="#{menu}">Main Menu</span>
+        </a>
       </div>
     </div>
-  </div>
 
-  <!-- Completed Projects Section Toggle Button -->
-  <button class="toggle-completed-section-btn" onclick="toggleCompletedProjects()">
-    <i class="fas fa-chevron-down"></i> Show Completed Projects
-  </button>
+    <div th:replace="permiso/permissions-panel :: panelPermisos"></div>
 
-  <!-- Completed Projects -->
-  <div class="completed-projects-section" style="display: none;">
-    <h2 class="text-center mb-4"><i class="fas fa-check-circle mr-2"></i> Completed Projects</h2>
-    <div class="projects-grid">
-      <div th:each="album : ${albumes}"
-           th:if="${album.estado == 'completado'}"
-           th:attr="data-id=${album.id}"
-           class="project-card completed">
-        <div th:if="${PROYECTOS_VIEW_TEAMS}"
-             class="view-teams-icon"
-             th:attr="data-album-id=${album.id}"
-             onclick="showTeamsModal(this)">
-          <i class="fas fa-users"></i>
-        </div>
+    <!-- Projects Grid -->
+    <div th:if="${not #lists.isEmpty(albumes)}">
+      <!-- Pending Projects -->
+      <div class="projects-grid">
+        <div th:each="album : ${albumes}"
+             th:if="${album.estado == 'pendiente'}"
+             th:attr="data-id=${album.id}"
+             class="project-card animated delay-1">
+          <div th:if="${PROYECTOS_VIEW_TEAMS}"
+               class="view-teams-icon"
+               th:attr="data-album-id=${album.id}"
+               onclick="showTeamsModal(this)">
+            <i class="fas fa-users"></i>
+          </div>
 
-        <div class="project-card-content">
-          <h2 th:text="${album.nombre}">
-            Project Name
-            <span class="status-badge status-completed">Completed</span>
-          </h2>
-          <p th:text="${album.descripcion} ?: 'Sin descripción'">Project Description.</p>
-          <div class="project-card-footer">
-            <div>
-              <a th:href="@{/albumes/{id}(id=${album.id})}" class="btn-modern">
-                <i class="fas fa-eye"></i> Enter/Entrar
-              </a>
-            </div>
-            <div>
-              <a th:href="@{/albumes/delete/{id}(id=${album.id})}" class="btn-modern btn-danger"
-                 onclick="return confirm('¿Estás seguro de que quieres eliminar este álbum? Esta acción no se puede deshacer.');"
-                 th:if="${PROYECTOS_DELETE}">
-                <i class="fas fa-trash"></i> Delete
-              </a>
+          <div class="project-card-content">
+            <h2 th:text="${album.nombre}">
+              Project Name
+              <span class="status-badge status-active" th:text="#{pending}">Pending</span>
+            </h2>
+            <p th:text="${album.descripcion} ?: #{no-description}">Project Description.</p>
+            <div class="project-card-footer">
+              <div>
+                <a th:href="@{/albumes/{id}(id=${album.id})}" class="btn-mega btn-sm">
+                  <i class="fas fa-eye btn-icon"></i>
+                  <span th:text="#{enter}">View</span>
+                </a>
+              </div>
+              <div>
+                <a th:href="@{/albumes/delete/{id}(id=${album.id})}" class="btn-mega btn-sm btn-danger"
+                   onclick="return confirm('¿Estás seguro de que quieres eliminar este álbum? Esta acción no se puede deshacer.');"
+                   th:if="${PROYECTOS_DELETE}">
+                  <i class="fas fa-trash btn-icon"></i>
+                  <span th:text="#{delete}">Delete</span>
+                </a>
+              </div>
             </div>
           </div>
         </div>
       </div>
+
+      <!-- Completed Projects Section Toggle Button -->
+      <button class="toggle-completed-section-btn animated delay-2" onclick="toggleCompletedProjects()">
+        <i class="fas fa-chevron-down"></i>
+        <span th:text="#{show-complete-projects}">Show Completed Projects</span>
+      </button>
+
+      <!-- Completed Projects -->
+      <div class="completed-projects-section" style="display: none;">
+        <h2 class="text-center mb-4"><i class="fas fa-check-circle mr-2"></i> <span th:text="#{complete-projects}">Completed Projects</span></h2>
+        <div class="projects-grid">
+          <div th:each="album : ${albumes}"
+               th:if="${album.estado == 'completado'}"
+               th:attr="data-id=${album.id}"
+               class="project-card completed">
+            <div th:if="${PROYECTOS_VIEW_TEAMS}"
+                 class="view-teams-icon"
+                 th:attr="data-album-id=${album.id}"
+                 onclick="showTeamsModal(this)">
+              <i class="fas fa-users"></i>
+            </div>
+
+            <div class="project-card-content">
+              <h2 th:text="${album.nombre}">
+                Project Name
+                <span class="status-badge status-completed" th:text="#{completed}">Completed</span>
+              </h2>
+              <p th:text="${album.descripcion} ?: #{no-description}">Project Description.</p>
+              <div class="project-card-footer">
+                <div>
+                  <a th:href="@{/albumes/{id}(id=${album.id})}" class="btn-mega btn-sm">
+                    <i class="fas fa-eye btn-icon"></i>
+                    <span th:text="#{enter}">View</span>
+                  </a>
+                </div>
+                <div>
+                  <a th:href="@{/albumes/delete/{id}(id=${album.id})}" class="btn-mega btn-sm btn-danger"
+                     onclick="return confirm('¿Estás seguro de que quieres eliminar este álbum? Esta acción no se puede deshacer.');"
+                     th:if="${PROYECTOS_DELETE}">
+                    <i class="fas fa-trash btn-icon"></i>
+                    <span th:text="#{delete}">Delete</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty state -->
+    <div th:if="${#lists.isEmpty(albumes)}" class="empty-state animated">
+      <i class="fas fa-folder-open"></i>
+      <h3 th:text="#{no-projects-created}">No projects created</h3>
+      <p th:if="${isAdmin}" th:text="#{start-by-creating}">Start by creating your first project</p>
+      <p th:unless="${isAdmin}" th:text="#{no-assigned-projects}">You don't have any assigned projects</p>
+      <a th:if="${AGENDA_ACCESS && AGENDA_CREATE}"
+         th:href="@{/albumes/create}" class="btn-mega">
+        <i class="fas fa-plus-circle btn-icon"></i>
+        <span th:text="#{create-project}">Create Project</span>
+      </a>
     </div>
   </div>
 </div>
-
-<!-- Empty state -->
-<div th:if="${#lists.isEmpty(albumes)}" class="empty-state">
-  <i class="fas fa-folder-open"></i>
-  <h3>No projects created</h3>
-  <p th:if="${isAdmin}">Start by creating your first project</p>
-  <p th:unless="${isAdmin}">You don't have any assigned projects</p>
-</div>
-
 
 <!-- Footer -->
 <div th:include="usuario/template_usuario.html::footer"></div>
 
-<!-- jQuery -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-<!-- Popper.js -->
-<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
-
-<!-- Bootstrap 4 JavaScript -->
+<!-- Bootstrap core JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
-<!-- Modal corregido para mostrar equipos -->
+<!-- Modal for showing teams -->
 <div class="modal fade" id="teamsModal" tabindex="-1" role="dialog" aria-labelledby="teamsModalLabel" aria-hidden="true">
   <div class="modal-dialog teams-modal" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="teamsModalLabel">Teams Assigned</h5>
+        <h5 class="modal-title" id="teamsModalLabel" th:text="#{teams-assigned}">Teams Assigned</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body" id="teamsModalBody">
-        <!-- Los equipos se cargarán aquí dinámicamente -->
+        <!-- Teams will be loaded here dynamically -->
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" th:text="#{close}">Close</button>
       </div>
     </div>
   </div>
@@ -695,13 +682,13 @@
 <div class="toast-container position-fixed top-0 right-0 p-3">
   <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
     <div class="toast-header">
-      <strong class="mr-auto">Notification</strong>
+      <strong class="mr-auto" th:text="#{notification}">Notification</strong>
       <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
         <span aria-hidden="true">&times;</span>
       </button>
     </div>
     <div class="toast-body">
-      <span id="toastMessage">Operation completed successfully</span>
+      <span id="toastMessage" th:text="#{operation-success}">Operation completed successfully</span>
     </div>
   </div>
 </div>
@@ -743,14 +730,9 @@
                 modalBody.innerHTML = `
             <div class="text-center py-3">
               <i class="fas fa-users-slash fa-3x text-muted mb-3"></i>
-              <p>No teams assigned to this project</p>
+              <p th:text="#{no-teams-assigned}">No teams assigned to this project</p>
             </div>
           `;
-              }
-
-              const createTeamBtn = document.querySelector('#teamsModal .btn-primary');
-              if (createTeamBtn) {
-                createTeamBtn.href = `/equipo/asignacion?proyectoId=${albumId}`;
               }
 
               $('#teamsModal').modal('show');
@@ -760,7 +742,7 @@
               document.getElementById('teamsModalBody').innerHTML = `
           <div class="text-center py-3">
             <i class="fas fa-exclamation-triangle fa-3x text-danger mb-3"></i>
-            <p>Error loading teams information</p>
+            <p th:text="#{error-loading-teams}">Error loading teams information</p>
             <p><small>${error.message}</small></p>
           </div>
         `;
@@ -788,6 +770,13 @@
   $(document).ready(function() {
     // Initialize tooltips if needed
     $('[data-toggle="tooltip"]').tooltip();
+
+    // Check if there's a toast message in URL parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    const toastMessage = urlParams.get('toast');
+    if (toastMessage) {
+      showToast(toastMessage);
+    }
   });
 </script>
 

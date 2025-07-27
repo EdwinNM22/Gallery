@@ -3,28 +3,18 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="Editar proyecto">
-    <title>Edit Project</title>
+    <meta name="description" th:content="#{edit-project}"> <title th:text="#{edit-project}">Edit Project</title> <link th:href="@{/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
 
-    <!-- Bootstrap core CSS -->
-    <link th:href="@{/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
-
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-    <!-- Preload -->
     <link rel="preload"
           as="image"
           href="/img/admrescale.webp?width=1200"
           imagesrcset="/img/admrescale.webp?width=600 600w, /img/admrescale.webp?width=1200 1200w, /img/admrescale.webp?width=1800 1800w"
           imagesizes="100vw">
-    <!-- Custom styles -->
     <style>
-
-
         .bg-fast-load {
             position: fixed;
             top: 0; left: 0;
@@ -64,7 +54,6 @@
 
         /* Header Styles */
         .edit-header {
-
             color: var(--lighter-text);
             padding: 2rem 0;
             margin-bottom: 1.5rem;
@@ -263,14 +252,13 @@
     </style>
 </head>
 <body>
-<!-- Imagen -->
 <div class="bg-fast-load">
     <img
             src="/img/admrescale.webp"
             srcset="
      /img/admrescale.webp?width=600 600w,
-      /img/admrescale.webp?width=1200 1200w,
-      /img/admrescale.webp?width=1800 1800w
+     /img/admrescale.webp?width=1200 1200w,
+     /img/admrescale.webp?width=1800 1800w
     "
             sizes="100vw"
             alt=""
@@ -279,15 +267,13 @@
 </div>
 
 
-<!-- Edit Header -->
 <div class="edit-header text-center">
     <div class="container edit-header-content">
-        <h1 class="edit-title"><i class="fas fa-edit me-3"></i> Edit Project</h1>
-        <p class="edit-description">Update your project information</p>
+        <h1 class="edit-title"><i class="fas fa-edit me-3"></i> <span th:text="#{edit-project}">Edit Project</span></h1>
+        <p class="edit-description" th:text="#{update-project-info}">Update your project information</p>
     </div>
 </div>
 
-<!-- Main Content -->
 <div class="container">
     <div class="form-container">
         <form class="form-horizontal" th:action="@{/albumes/update}" method="post" th:object="${album}">
@@ -295,43 +281,43 @@
 
             <div class="row mb-4">
                 <div class="col-md-12">
-                    <h3><i class="fas fa-info-circle text-primary me-2"></i> Basic Information</h3>
+                    <h3><i class="fas fa-info-circle text-primary me-2"></i> <span th:text="#{basic-information}">Basic Information</span></h3>
                     <hr>
                 </div>
 
                 <div class="col-md-12 mb-3">
-                    <label for="nombre" class="form-label">Project Name *</label>
+                    <label for="nombre" class="form-label" th:text="#{project-name-required}">Project Name *</label>
                     <input type="text" class="form-control" id="nombre" name="nombre"
-                           placeholder="Your project name" required th:value="*{nombre}">
+                           th:placeholder="#{your-project-name}" required th:value="*{nombre}">
                 </div>
 
                 <div class="col-md-12 mb-3">
-                    <label for="descripcion" class="form-label">Description</label>
+                    <label for="descripcion" class="form-label" th:text="#{description}">Description</label>
                     <textarea class="form-control" id="descripcion" name="descripcion" rows="4"
-                              placeholder="Describe the content of this project" th:text="*{descripcion}"></textarea>
+                              th:placeholder="#{describe-project-content}" th:text="*{descripcion}"></textarea>
                 </div>
 
                 <div class="col-md-12 mb-3">
-                    <label for="notas" class="form-label">Notes</label>
+                    <label for="notas" class="form-label" th:text="#{notes}">Notes</label>
                     <textarea class="form-control" id="notas" name="notas" rows="4"
-                              placeholder="Additional notes about this project" th:text="*{notas}"></textarea>
+                              th:placeholder="#{additional-notes-about-project}" th:text="*{notas}"></textarea>
                 </div>
             </div>
 
             <div class="row mb-4">
                 <div class="col-md-12">
-                    <h3><i class="fas fa-calendar-alt text-primary me-2"></i> Dates</h3>
+                    <h3><i class="fas fa-calendar-alt text-primary me-2"></i> <span th:text="#{dates}">Dates</span></h3>
                     <hr>
                 </div>
 
                 <div class="col-md-6 mb-3">
-                    <label for="fechaInicio" class="form-label">Start Date</label>
+                    <label for="fechaInicio" class="form-label" th:text="#{start-date}">Start Date</label>
                     <input type="date" class="form-control" id="fechaInicio" name="fechaInicio"
                            th:value="*{fechaInicio != null ? #temporals.format(fechaInicio, 'yyyy-MM-dd') : ''}">
                 </div>
 
                 <div class="col-md-6 mb-3">
-                    <label for="fechaFin" class="form-label">End Date</label>
+                    <label for="fechaFin" class="form-label" th:text="#{end-date}">End Date</label>
                     <input type="date" class="form-control" id="fechaFin" name="fechaFin"
                            th:value="*{fechaFin != null ? #temporals.format(fechaFin, 'yyyy-MM-dd') : ''}">
                 </div>
@@ -339,69 +325,68 @@
 
             <div class="row mb-4">
                 <div class="col-md-12">
-                    <h3><i class="fas fa-map-marker-alt text-primary me-2"></i> Location and Contact</h3>
+                    <h3><i class="fas fa-map-marker-alt text-primary me-2"></i> <span th:text="#{location-contact}">Location and Contact</span></h3>
                     <hr>
                 </div>
 
                 <div class="col-md-6 mb-3">
-                    <label for="ubicacion" class="form-label">Location</label>
+                    <label for="ubicacion" class="form-label" th:text="#{location}">Location</label>
                     <input type="text" class="form-control" id="ubicacion" name="ubicacion"
-                           placeholder="Project address" th:value="*{ubicacion}">
+                           th:placeholder="#{project-address}" th:value="*{ubicacion}">
                 </div>
 
                 <div class="col-md-6 mb-3">
-                    <label for="contacto" class="form-label">Contact</label>
+                    <label for="contacto" class="form-label" th:text="#{contact}">Contact</label>
                     <input type="text" class="form-control" id="contacto" name="contacto"
-                           placeholder="Project contact details" th:value="*{contacto}">
+                           th:placeholder="#{project-contact-details}" th:value="*{contacto}">
                 </div>
             </div>
 
             <div class="row mb-4">
                 <div class="col-md-12">
-                    <h3><i class="fas fa-lock text-primary me-2"></i> Security</h3>
+                    <h3><i class="fas fa-lock text-primary me-2"></i> <span th:text="#{security}">Security</span></h3>
                     <hr>
                 </div>
 
                 <div class="col-md-12 mb-3">
-                    <label for="claveAlarma" class="form-label">Alarm Code</label>
+                    <label for="claveAlarma" class="form-label" th:text="#{alarm-code}">Alarm Code</label>
                     <input type="text" class="form-control" id="claveAlarma" name="claveAlarma"
-                           placeholder="Alarm security code" th:value="*{claveAlarma}">
+                           th:placeholder="#{alarm-security-code-if-any}" th:value="*{claveAlarma}">
                 </div>
             </div>
 
             <div class="row mb-4">
                 <div class="col-md-12">
-                    <h3><i class="fas fa-file-alt text-primary me-2"></i> Additional Information</h3>
+                    <h3><i class="fas fa-file-alt text-primary me-2"></i> <span th:text="#{additional-information}">Additional Information</span></h3>
                     <hr>
                 </div>
 
                 <div class="col-md-12 mb-3">
-                    <label for="datosAdicionales" class="form-label">Additional Data</label>
+                    <label for="datosAdicionales" class="form-label" th:text="#{additional-data}">Additional Data</label>
                     <textarea class="form-control" id="datosAdicionales" name="datosAdicionales" rows="4"
-                              placeholder="Any additional information about the project" th:text="*{datosAdicionales}"></textarea>
+                              th:placeholder="#{any-additional-information-about-project}" th:text="*{datosAdicionales}"></textarea>
                 </div>
 
                 <div class="col-md-6 mb-3" th:if="${isEdgar}">
-                    <label for="horasPorProyecto" class="form-label">Project Hours</label>
+                    <label for="horasPorProyecto" class="form-label" th:text="#{hours-per-project}">Project Hours</label>
                     <input type="number" class="form-control" id="horasPorProyecto" name="horasPorProyecto" step="0.1"
-                           placeholder="Total hours dedicated to the project" th:value="*{horasPorProyecto}">
+                           th:placeholder="#{total-hours-dedicated-to-project}" th:value="*{horasPorProyecto}">
                 </div>
 
                 <div class="col-md-6 mb-3" th:if="${isEdgar}">
-                    <label for="precioHora" class="form-label">Hourly Rate</label>
+                    <label for="precioHora" class="form-label" th:text="#{price-per-hour}">Hourly Rate</label>
                     <input type="number" class="form-control" id="precioHora" name="precioHora" step="0.01"
-                           placeholder="Hourly rate for the project" th:value="*{precioHora}">
+                           th:placeholder="#{price-per-hour-for-project}" th:value="*{precioHora}">
                 </div>
-
             </div>
 
             <div class="d-flex justify-content-between">
                 <div>
                     <a th:href="@{/albumes/create}" class="btn btn-secondary me-2">
-                        <i class="fas fa-times me-1"></i> Cancel
+                        <i class="fas fa-times me-1"></i> <span th:text="#{cancel}">Cancel</span>
                     </a>
                     <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-save me-1"></i> Save Changes
+                        <i class="fas fa-save me-1"></i> <span th:text="#{save-changes}">Save Changes</span>
                     </button>
                 </div>
             </div>
@@ -410,14 +395,16 @@
 </div>
 
 
-<!-- Footer -->
 <div th:replace="adm/template_admin.html :: footer"></div>
 
-<!-- JavaScript -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
+    // Make sure the `translations` object is available from your main layout or another script
+    // If this script is in the same file as the translations object, it's fine.
+    // Otherwise, ensure the translations object is defined before this script runs.
+
     // Function to confirm album deletion
     function confirmDeleteAlbum(albumId) {
         const confirmModal = new bootstrap.Modal(document.getElementById('confirmDeleteModal'));
@@ -441,7 +428,10 @@
         const successMessage = urlParams.get('success');
 
         if (successMessage) {
-            showToast(successMessage);
+            // We need to map the successMessage key to its actual translated text
+            // Assuming your success messages from the backend match keys in the translations object.
+            const translatedMessage = translations[successMessage] || successMessage; // Fallback to key if not found
+            showToast(translatedMessage);
         }
     });
 
@@ -462,8 +452,8 @@
 
             toast.innerHTML = `
                 <div class="toast-header">
-                    <strong class="me-auto">Success</strong>
-                    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                    <strong class="me-auto">${translations.success}</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="${translations.close}"></button>
                 </div>
                 <div class="toast-body">
                     <i class="fas fa-check-circle me-2"></i>

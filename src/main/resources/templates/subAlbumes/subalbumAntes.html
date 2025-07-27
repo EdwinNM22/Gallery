@@ -3,19 +3,19 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="Galería en línea de fotos">
-  <meta name="author" content="GalleryOnline">
+  <meta name="description" content="Bio/vizion Project Management System">
+  <meta name="author" content="Bio/vizion">
+
+  <title th:text="#{my-projects-title}">Photos - Bio/vizion Dashboard</title>
 
   <!-- Bootstrap core CSS -->
-  <link th:href="@{/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
-  <script th:src="@{/vendor/jquery/jquery.min.js}"></script> <!-- Si usas jQuery -->
-  <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
-
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
   <!-- Font Awesome -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <!-- Google Fonts - Montserrat -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
   <!-- Preload -->
   <link rel="preload"
@@ -24,25 +24,35 @@
         imagesrcset="/img/album.webp?width=600 600w, /img/album.webp?width=1200 1200w, /img/album.webp?width=1800 1800w"
         imagesizes="100vw">
 
-
-  <!-- Custom styles -->
   <style>
     :root {
-      --primary-blue: #4361ee;
-      --accent-blue: #4895ef;
-      --dark-bg: #1a2a36;
-      --darker-bg: #142028;
+      --primary-blue: #2c5aa0;
+      --accent-blue: #3a7bd5;
+      --dark-bg: #0f1923;
+      --darker-bg: #0a121a;
       --light-text: #e0e0e0;
       --lighter-text: #ffffff;
-      --border-color: rgba(74, 144, 226, 0.2);
+      --border-color: rgba(44, 90, 160, 0.3);
+      --card-bg: rgba(15, 25, 35, 0.85);
       --success-color: #4cc9f0;
       --danger-color: #ff4d4d;
-      --card-min-width: 250px;
+    }
+
+    body {
+      font-family: 'Montserrat', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: var(--light-text);
+      background-color: rgba(0, 0, 0, 0.94);
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center;
+      background-attachment: fixed;
+      min-height: 100vh;
     }
 
     .bg-fast-load {
       position: fixed;
-      top: 0; left: 0;
+      top: 0;
+      left: 0;
       width: 100vw;
       height: 100vh;
       z-index: -1;
@@ -53,66 +63,118 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
+      opacity: 0.5;
     }
 
-
-
-    body {
-      font-family: 'Montserrat', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      color: var(--light-text);
-      background-color: var(--dark-bg);
-      background-size: cover;
-      background-repeat: no-repeat;
-      background-position: center;
-      background-attachment: fixed;
-
-    }
-    /* Project Header */
-    .project-header {
-
-      padding: 2rem 0;
+    .main-container {
+      padding-top: 2rem;
+      padding-bottom: 4rem;
     }
 
-
-
-    .project-header-content {
+    /* Header styles */
+    .hero-section {
+      text-align: center;
+      margin-bottom: 4rem;
       position: relative;
       z-index: 1;
-      padding: 0 1rem;
     }
 
-    .project-title {
+    .hero-title {
+      font-size: 2.8rem;
       font-weight: 700;
-      font-size: clamp(1.8rem, 5vw, 2.5rem);
-      margin-bottom: 0.5rem;
-      line-height: 1.2;
       color: var(--lighter-text);
+      margin-bottom: 1.5rem;
+      position: relative;
+      display: inline-block;
+      letter-spacing: 1px;
     }
 
-    .project-description {
-      font-size: clamp(0.95rem, 3vw, 1.1rem);
-      opacity: 0.9;
+    .hero-title:after {
+      content: '';
+      position: absolute;
+      bottom: -14px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 3px;
+      background: linear-gradient(90deg, var(--primary-blue), var(--accent-blue));
+      border-radius: 3px;
+    }
+
+    .hero-subtitle {
+      font-size: 1.5rem;
+      color: rgba(255, 255, 255, 0.75);
       max-width: 700px;
-      margin: 0 auto 1.5rem;
-      color: var(--light-text);
+      margin: 0 auto 2.5rem;
+      line-height: 1.8;
+      font-weight: 300;
     }
 
-    /* Buttons */
-    .btn-rounded {
-      border-radius: 50px !important;
-      padding: 0.6rem 1.2rem !important;
+    /* Action buttons */
+    .action-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 1.2rem;
+      margin-bottom: 3rem;
+    }
+
+    .btn-mega {
+      position: relative;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      font-weight: 600;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-      position: relative;
+      padding: 1.3rem 2rem;
+      font-size: 0.95rem;
+      font-weight: 500;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
       overflow: hidden;
       z-index: 1;
+      letter-spacing: 0.5px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      background: var(--card-bg);
+      backdrop-filter: blur(8px);
+      border: 1px solid var(--border-color);
+      color: var(--light-text);
+      text-align: center;
     }
 
-    .btn-rounded::before {
+    /* Button sizes */
+    .btn-mega.btn-sm {
+      padding: 0.8rem 1.2rem;
+      font-size: 0.85rem;
+    }
+
+    /* Button variants */
+    .btn-mega.btn-danger {
+      background: rgba(255, 77, 77, 0.1);
+      border-color: rgba(255, 77, 77, 0.3);
+    }
+
+    .btn-mega.btn-danger::before {
+      background: linear-gradient(45deg, #ff4d4d, #cc0000);
+    }
+
+    .btn-mega.btn-danger:hover {
+      box-shadow: 0 6px 12px rgba(255, 77, 77, 0.2);
+    }
+
+    .btn-mega.btn-success {
+      background: rgba(76, 201, 240, 0.1);
+      border-color: rgba(76, 201, 240, 0.3);
+    }
+
+    .btn-mega.btn-success::before {
+      background: linear-gradient(45deg, var(--success-color), #20c997);
+    }
+
+    .btn-mega.btn-success:hover {
+      box-shadow: 0 6px 12px rgba(76, 201, 240, 0.2);
+    }
+
+    .btn-mega::before {
       content: '';
       position: absolute;
       top: 0;
@@ -125,64 +187,24 @@
       opacity: 0;
     }
 
-    .btn-primary {
-      background: rgba(26, 42, 54, 0.7);
-      border: 1px solid var(--border-color);
-      color: var(--light-text);
-      backdrop-filter: blur(5px);
-    }
-
-    .btn-primary:hover::before {
+    .btn-mega:hover::before {
       opacity: 1;
     }
 
-    .btn-primary:hover {
+    .btn-mega:hover {
       transform: translateY(-2px);
-      box-shadow: 0 6px 15px rgba(74, 144, 226, 0.3);
+      box-shadow: 0 6px 12px rgba(58, 123, 213, 0.2);
       color: var(--lighter-text);
       border-color: transparent;
     }
 
-    .btn-action i {
-      margin-right: 8px;
-      font-size: 0.9rem;
+    .btn-mega:active {
+      transform: translateY(0);
     }
 
-    /* Back Button */
-    .btn-back {
-      background: rgba(26, 42, 54, 0.7);
-      color: var(--primary-blue);
-      border: 1px solid var(--primary-blue);
-      padding: 0.7rem 1.5rem;
-      border-radius: 50px;
-      font-weight: 600;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-      margin-right: 0.8rem;
-      font-size: 0.95rem;
-      backdrop-filter: blur(5px);
-    }
-
-    .btn-back:hover {
-      background: rgba(74, 144, 226, 0.2);
-      color: var(--accent-blue);
-      border-color: var(--accent-blue);
-    }
-
-    .btn-back i {
-      margin-right: 8px;
-      font-size: 0.9rem;
-    }
-
-    .button-group {
-      display: flex;
-      justify-content: center;
-      margin: 1.5rem 0;
-      flex-wrap: wrap;
-      gap: 0.8rem;
+    .btn-icon {
+      margin-right: 10px;
+      font-size: 1.1rem;
     }
 
     /* Photo Grid */
@@ -190,16 +212,16 @@
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
       gap: 1.5rem;
-      padding: 0 1rem;
+      padding: 0 1.5rem;
       margin-bottom: 2rem;
     }
 
     /* Photo Card */
     .photo-card {
-      background: rgba(26, 42, 54, 0.7);
-      border-radius: 10px;
+      background: var(--card-bg);
+      border-radius: 8px;
       overflow: hidden;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
       transition: all 0.3s ease;
       position: relative;
       border: 1px solid var(--border-color);
@@ -208,7 +230,7 @@
 
     .photo-card:hover {
       transform: translateY(-5px);
-      box-shadow: 0 8px 20px rgba(74, 144, 226, 0.2);
+      box-shadow: 0 15px 30px rgba(58, 123, 213, 0.2);
       border-color: var(--primary-blue);
     }
 
@@ -218,8 +240,13 @@
       top: 0;
       left: 0;
       width: 100%;
-      height: 4px;
+      height: 5px;
       background: linear-gradient(90deg, var(--primary-blue), var(--accent-blue));
+    }
+
+    .photo-card.selected {
+      border: 2px solid var(--success-color);
+      box-shadow: 0 0 0 3px rgba(76, 201, 240, 0.3);
     }
 
     .photo-img-container {
@@ -277,148 +304,6 @@
       margin-top: 1rem;
     }
 
-    .btn-view {
-      background: linear-gradient(45deg, var(--primary-blue), var(--accent-blue));
-      color: white;
-      border: none;
-      padding: 0.5rem 1rem;
-      border-radius: 50px;
-      font-weight: 500;
-      text-decoration: none;
-      transition: all 0.3s ease;
-      font-size: 0.85rem;
-    }
-
-    .btn-view:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 10px rgba(74, 144, 226, 0.3);
-      color: white;
-    }
-
-    /* Modal Styles */
-    .photo-modal .modal-content {
-      border-radius: 10px;
-      border: none;
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-      background-color: var(--darker-bg);
-      color: var(--light-text);
-    }
-
-    .photo-modal .modal-header {
-      background: linear-gradient(90deg, var(--primary-blue), var(--accent-blue));
-      color: var(--lighter-text);
-      border-radius: 10px 10px 0 0;
-      border: none;
-      padding: 1.2rem;
-    }
-
-    .photo-modal .modal-title {
-      font-size: 1.2rem;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-    }
-
-    .photo-modal .modal-title i {
-      margin-right: 8px;
-      font-size: 1.1rem;
-    }
-
-    .photo-modal .modal-body {
-      padding: 0;
-      background-color: var(--dark-bg);
-    }
-
-    .photo-modal .modal-footer {
-      border-top: 1px solid var(--border-color);
-      padding: 1rem 1.5rem;
-      background-color: var(--darker-bg);
-    }
-
-    .photo-modal img {
-      width: 100%;
-      height: auto;
-      max-height: 70vh;
-      object-fit: contain;
-    }
-
-    /* Empty State */
-    .empty-state {
-      text-align: center;
-      padding: 3rem 1rem;
-    }
-
-    .empty-state i {
-      font-size: 3.5rem;
-      margin-bottom: 1.5rem;
-      color: var(--primary-blue);
-      opacity: 0.7;
-    }
-
-    .empty-state h3 {
-      font-size: 1.5rem;
-      margin-bottom: 1.5rem;
-      color: var(--lighter-text);
-    }
-
-    .empty-state p {
-      color: var(--light-text);
-      opacity: 0.8;
-    }
-
-    /* Download/Delete Buttons */
-    .btn-download-all {
-      background: linear-gradient(45deg, #28a745, #20c997);
-      color: white;
-      border: none;
-      padding: 0.6rem 1.2rem;
-      border-radius: 50px;
-      font-weight: 500;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      transition: all 0.3s ease;
-      font-size: 0.85rem;
-    }
-
-    .btn-download-all:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 10px rgba(40, 167, 69, 0.3);
-      color: white;
-    }
-
-    .btn-download-all i {
-      margin-right: 8px;
-    }
-
-    .btn-delete-single {
-
-      background: rgba(26, 42, 54, 0.7);
-      border: 1px solid rgba(255, 77, 77, 0.3);
-      color: white;
-      padding: 0.6rem 2.2rem;
-      border-radius: 50px;
-      font-weight: 5000;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      transition: all 0.3s ease;
-      font-size: 0.85rem;
-    }
-
-
-    .btn-delete-single:hover {
-      background: #ff4d4d;
-      border-color: #ff4d4d;
-      color: white;
-      transform: translateY(-2px);
-      box-shadow: 0 4px 10px rgba(255, 77, 77, 0.3);
-    }
-
-    .btn-delete-single i {
-      margin-right: 8px;
-    }
-
     /* Photo Checkbox */
     .photo-checkbox {
       position: absolute;
@@ -428,10 +313,29 @@
       width: 20px;
       height: 20px;
       cursor: pointer;
+      accent-color: var(--primary-blue);
     }
 
-    .photo-card.selected {
-      box-shadow: 0 0 0 3px var(--accent-blue);
+    /* Download actions */
+    .download-actions {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 2rem;
+      gap: 1rem;
+    }
+
+    .download-actions > div {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
+    }
+
+    #selectedCount {
+      color: var(--light-text);
+      opacity: 0.8;
+      font-size: 0.9rem;
     }
 
     /* Loading and Notifications */
@@ -452,7 +356,7 @@
     .download-loading-content {
       background: var(--darker-bg);
       padding: 2rem;
-      border-radius: 10px;
+      border-radius: 8px;
       text-align: center;
       max-width: 400px;
       border: 1px solid var(--border-color);
@@ -461,7 +365,7 @@
     .download-loading-spinner {
       width: 50px;
       height: 50px;
-      border: 5px solid rgba(74, 144, 226, 0.2);
+      border: 5px solid rgba(44, 90, 160, 0.2);
       border-top: 5px solid var(--primary-blue);
       border-radius: 50%;
       animation: spin 1s linear infinite;
@@ -489,51 +393,197 @@
       border: 1px solid var(--border-color);
     }
 
-    .download-notification.error {
-      background: var(--danger-color) !important;
-    }
-
     .download-notification i {
       margin-right: 10px;
     }
 
-    /* Responsive Adjustments */
-    @media (max-width: 768px) {
-      .project-header {
-        padding: 2rem 0;
-      }
+    /* Modal styles */
+    .photo-modal .modal-content {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(8px);
+    }
 
+    .photo-modal .modal-header {
+      background: linear-gradient(90deg, var(--primary-blue), var(--accent-blue));
+      color: white;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .photo-modal .modal-body {
+      padding: 0;
+      background-color: var(--dark-bg);
+    }
+
+    .photo-modal .modal-footer {
+      border-top: 1px solid var(--border-color);
+      padding: 1rem 1.5rem;
+      background-color: var(--darker-bg);
+    }
+
+    .photo-modal img {
+      width: 100%;
+      height: auto;
+      max-height: 70vh;
+      object-fit: contain;
+    }
+
+    /* Upload Modal */
+    .upload-modal .modal-content {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(8px);
+    }
+
+    .upload-modal .modal-header {
+      background: linear-gradient(90deg, var(--primary-blue), var(--accent-blue));
+      color: white;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .upload-modal .modal-body {
+      background-color: var(--dark-bg);
+    }
+
+    .upload-modal .modal-footer {
+      border-top: 1px solid var(--border-color);
+      background-color: var(--darker-bg);
+    }
+
+    .upload-modal .form-control {
+      background: var(--darker-bg);
+      border: 1px solid var(--border-color);
+      color: var(--light-text);
+    }
+
+    .upload-modal .form-control:focus {
+      background: var(--darker-bg);
+      color: var(--light-text);
+      border-color: var(--accent-blue);
+      box-shadow: 0 0 0 0.2rem rgba(44, 90, 160, 0.25);
+    }
+
+    .upload-modal .custom-file-label {
+      background: var(--darker-bg);
+      border: 1px solid var(--border-color);
+      color: var(--light-text);
+    }
+
+    .upload-modal .custom-file-input:focus ~ .custom-file-label {
+      border-color: var(--accent-blue);
+      box-shadow: 0 0 0 0.2rem rgba(44, 90, 160, 0.25);
+    }
+
+    /* Progress bar */
+    .upload-progress-wrapper {
+      background: var(--darker-bg);
+      padding: 1rem;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      margin-bottom: 1rem;
+    }
+
+    .progress {
+      background-color: var(--dark-bg);
+      height: 8px;
+      border-radius: 4px;
+    }
+
+    .progress-bar-fill {
+      background-color: var(--primary-blue);
+      border-radius: 4px;
+    }
+
+    .progress-status, .progress-percent, .file-counter {
+      color: var(--light-text);
+      font-size: 0.85rem;
+    }
+
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 4rem 0;
+      max-width: 600px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    .empty-state i {
+      font-size: 5rem;
+      color: var(--primary-blue);
+      margin-bottom: 1.5rem;
+      opacity: 0.5;
+    }
+
+    .empty-state h3 {
+      font-size: 1.8rem;
+      margin-bottom: 1rem;
+      color: var(--lighter-text);
+    }
+
+    .empty-state p {
+      color: var(--light-text);
+      margin-bottom: 2rem;
+      opacity: 0.7;
+    }
+
+    /* Confirmation Modal */
+    .confirmation-modal .modal-content {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(8px);
+    }
+
+    .confirmation-modal .modal-header {
+      background: linear-gradient(90deg, var(--primary-blue), var(--accent-blue));
+      color: white;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .confirmation-modal .modal-body {
+      background-color: var(--dark-bg);
+      color: var(--light-text);
+    }
+
+    .confirmation-modal .modal-footer {
+      border-top: 1px solid var(--border-color);
+      background-color: var(--darker-bg);
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
       .photo-grid {
         grid-template-columns: 1fr;
       }
 
-      .button-group {
+      .hero-title {
+        font-size: 2.2rem;
+      }
+
+      .hero-subtitle {
+        font-size: 1.1rem;
+      }
+
+      .action-buttons {
         flex-direction: column;
-        align-items: stretch;
-      }
-
-      .btn-back {
-        width: 100%;
-        justify-content: center;
-        margin-right: 0;
-      }
-    }
-
-    @media (min-width: 992px) {
-      :root {
-        --card-min-width: 300px;
-      }
-
-      .photo-grid {
-        padding: 0 1.5rem;
+        align-items: center;
       }
     }
   </style>
 </head>
-<body>}
+<body>
 
-
-<!-- Imagen -->
+<!-- Background Image -->
 <div class="bg-fast-load">
   <img
           src="/img/album.webp"
@@ -548,80 +598,87 @@
   >
 </div>
 
-<!-- Navigation -->
+<!-- Main Content -->
+<div class="main-container">
+  <div class="container-fluid px-5">
+    <!-- Header Section -->
+    <div class="hero-section">
+      <h1 class="hero-title" th:text="#{photos}">Photos</h1>
+      <p class="hero-subtitle" th:text="#{add-photo-description}">Add a new photo to the folders</p>
 
-<!-- Gallery Header -->
-<div class="project-header text-center">
-  <div class="container project-header-content">
-    <p class="project-description">Add a new photo to the folders</p>
-    <div class="button-group">
-      <button type="button" class="btn-back" onclick="window.history.back()">
-        <i class="fas fa-arrow-left"></i> Back
-      </button>
+      <div class="action-buttons">
+        <button type="button" class="btn-mega" onclick="window.history.back()">
+          <i class="fas fa-arrow-left btn-icon"></i> <span th:text="#{back}">Back</span>
+        </button>
 
-      <button class="btn-back" data-toggle="modal" data-target="#subirFotoModal">
-        <i class="fas fa-plus-circle mr-2"></i> Add photo
-      </button>
+        <button class="btn-mega" data-toggle="modal" data-target="#subirFotoModal">
+          <i class="fas fa-plus-circle btn-icon"></i> <span th:text="#{add-photo}">Add photo</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Download actions -->
+    <div class="download-actions">
+      <div>
+        <button class="btn-mega btn-success" id="downloadAllBtn">
+          <i class="fas fa-download btn-icon"></i> <span th:text="#{download-all}">Download All</span>
+        </button>
+        <button class="btn-mega btn-success download-selected" id="downloadSelectedBtn" disabled>
+          <i class="fas fa-download btn-icon"></i> <span th:text="#{download-selected}">Download Selected</span>
+        </button>
+        <button class="btn-mega btn-danger" id="deleteSelectedBtn" disabled th:if="${canEdit}">
+          <i class="fas fa-trash-alt btn-icon"></i> <span th:text="#{delete-selected}">Delete Selected</span>
+        </button>
+      </div>
+      <span id="selectedCount" th:text="#{selected-count(0)}">0 selected</span>
+    </div>
+
+    <!-- Photo Gallery -->
+    <div th:if="${not #lists.isEmpty(fotoAntes)}" class="photo-grid">
+      <div th:each="fotoAntes : ${fotoAntes}" class="photo-card">
+        <input type="checkbox" class="photo-checkbox" th:data-id="${fotoAntes.id}" th:data-url="@{/images/{img}(img=${fotoAntes.imagen})}" th:data-name="${fotoAntes.nombre}">
+        <div class="photo-img-container">
+          <div th:if="${#strings.endsWith(fotoAntes.imagen, '.mp4') or #strings.endsWith(fotoAntes.imagen, '.avi') or #strings.endsWith(fotoAntes.imagen, '.mov') or #strings.endsWith(fotoAntes.imagen, '.mkv')}">
+            <video class="photo-img" controls>
+              <source th:src="@{/images/{img}(img=${fotoAntes.imagen})}" type="video/mp4">
+              <span th:text="#{browser-no-support-video}">Your browser does not support videos.</span>
+            </video>
+          </div>
+          <div th:unless="${#strings.endsWith(fotoAntes.imagen, '.mp4') or #strings.endsWith(fotoAntes.imagen, '.avi') or #strings.endsWith(fotoAntes.imagen, '.mov') or #strings.endsWith(fotoAntes.imagen, '.mkv')}">
+            <img class="photo-img" th:src="@{/images/{img}(img=${fotoAntes.imagen})}" alt="Foto del álbum">
+          </div>
+
+          <div class="photo-overlay">
+            <h5 class="photo-title" th:text="${fotoAntes.nombre}">Photo name</h5>
+            <h8 class="photo-uploader" th:text="#{uploaded-by(${fotoAntes.usuario.nombre})}">Uploaded by: User</h8>
+            <p class="photo-description" th:text="#{date-colon(${#dates.format(fotoAntes.fecha, 'dd/MM/yyyy HH:mm')})}">
+              Date: 01/01/2023 12:00
+            </p>
+          </div>
+        </div>
+        <div class="photo-content">
+          <div class="photo-actions">
+            <a href="javascript:void(0)" class="btn-mega btn-sm" data-toggle="modal" th:data-target="'#photoModal' + ${fotoAntes.id}">
+              <i class="fas fa-expand btn-icon"></i> <span th:text="#{enlarge}">Enlarge</span>
+            </a>
+            <a href="javascript:void(0)" class="btn-mega btn-sm btn-danger" th:data-id="${fotoAntes.id}" th:if="${canEdit}">
+              <i class="fas fa-trash-alt btn-icon"></i> <span th:text="#{delete}">Delete</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div th:if="${#lists.isEmpty(fotoAntes)}" class="empty-state">
+      <i class="far fa-images"></i>
+      <h3 th:text="#{no-photos-in-project}">There are no photos in this project</h3>
+      <p th:text="#{start-by-adding}">Start by adding photos to view them here</p>
     </div>
   </div>
 </div>
 
-<!-- Photo Gallery -->
-<div class="container" style="margin-bottom: 1rem;">
-  <!-- Add download buttons above the gallery -->
-  <div class="download-actions">
-    <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; width: 100%;">
-      <button class="btn-download-all" id="downloadAllBtn">
-        <i class="fas fa-download"></i> Download All
-      </button>
-      <button class="btn-download-all download-selected" id="downloadSelectedBtn" disabled>
-        <i class="fas fa-download"></i> Download Selected
-      </button>
-      <button class="btn-download-all btn-delete" id="deleteSelectedBtn" disabled th:if="${canEdit}">
-        <i class="fas fa-trash-alt"></i> Delete Selected
-      </button>
-    </div>
-    <span id="selectedCount" style="margin-top: 10px; display: block; text-align: center;">0 selected</span>
-  </div>
-</div>
-
-<div th:if="${not #lists.isEmpty(fotoAntes)}" class="photo-grid">
-  <div th:each="fotoAntes : ${fotoAntes}" class="photo-card">
-    <input type="checkbox" class="photo-checkbox" th:data-id="${fotoAntes.id}" th:data-url="@{/images/{img}(img=${fotoAntes.imagen})}" th:data-name="${fotoAntes.nombre}">
-    <div class="photo-img-container">
-      <div th:if="${#strings.endsWith(fotoAntes.imagen, '.mp4') or #strings.endsWith(fotoAntes.imagen, '.avi') or #strings.endsWith(fotoAntes.imagen, '.mov') or #strings.endsWith(fotoAntes.imagen, '.mkv')}">
-        <video class="photo-img" controls>
-          <source th:src="@{/images/{img}(img=${fotoAntes.imagen})}" type="video/mp4">
-          Your browser does not support videos.
-        </video>
-      </div>
-      <div th:unless="${#strings.endsWith(fotoAntes.imagen, '.mp4') or #strings.endsWith(fotoAntes.imagen, '.avi') or #strings.endsWith(fotoAntes.imagen, '.mov') or #strings.endsWith(fotoAntes.imagen, '.mkv')}">
-        <img class="photo-img" th:src="@{/images/{img}(img=${fotoAntes.imagen})}" alt="Foto del álbum">
-      </div>
-
-      <div class="photo-overlay">
-        <h5 class="photo-title" th:text="${fotoAntes.nombre}">Photo name</h5>
-        <h8 class="photo-uploader" th:text="'Uploaded by: ' + ${fotoAntes.usuario.nombre}"></h8>
-        <p class="photo-description"
-           th:text="'Date: ' + ${#dates.format(fotoAntes.fecha, 'dd/MM/yyyy HH:mm')}">
-          Fecha de subida
-        </p>
-      </div>
-    </div>
-    <div class="photo-content">
-      <div class="photo-actions">
-        <a href="javascript:void(0)" class="btn-view" data-toggle="modal" th:data-target="'#photoModal' + ${fotoAntes.id}">
-          <i class="fas fa-expand mr-2"></i> Enlarge
-        </a>
-        <a href="javascript:void(0)" class="btn-delete-single" th:data-id="${fotoAntes.id}" th:if="${canEdit}">
-          <i class="fas fa-trash-alt mr-2"></i> Delete
-        </a>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Download loading overlay -->
+<!-- Loading and Notifications -->
 <div class="download-loading" id="downloadLoading">
   <div class="download-loading-content">
     <div class="download-loading-spinner"></div>
@@ -630,7 +687,6 @@
   </div>
 </div>
 
-<!-- Delete loading overlay -->
 <div class="download-loading" id="deleteLoading">
   <div class="download-loading-content">
     <div class="download-loading-spinner"></div>
@@ -639,97 +695,77 @@
   </div>
 </div>
 
-<!-- Download notification -->
 <div class="download-notification" id="downloadNotification">
   <i class="fas fa-check-circle"></i>
   <span id="downloadNotificationText">Download complete!</span>
 </div>
 
-<!-- Delete notification -->
 <div class="download-notification" id="deleteNotification">
   <i class="fas fa-check-circle"></i>
   <span id="deleteNotificationText">Delete complete!</span>
 </div>
 
-<!-- Confirmation Modal -->
-<div class="modal fade" id="confirmDownloadModal" tabindex="-1" role="dialog" aria-hidden="true">
+<!-- Confirmation Modals -->
+<div class="modal fade confirmation-modal" id="confirmDownloadModal" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Confirm Download</h5>
+        <h5 class="modal-title" th:text="#{confirm-download}">Confirm Download</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body" id="confirmDownloadText">
-        Are you sure you want to download these files?
+        <!-- Will be filled by JavaScript -->
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-        <button type="button" class="btn btn-primary" id="confirmDownloadBtn">Download</button>
+        <button type="button" class="btn-mega" data-dismiss="modal" th:text="#{cancel}">Cancel</button>
+        <button type="button" class="btn-mega btn-success" id="confirmDownloadBtn" th:text="#{download}">Download</button>
       </div>
     </div>
   </div>
 </div>
 
-<!-- Delete Confirmation Modal -->
-<div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal fade confirmation-modal" id="confirmDeleteModal" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Confirm Delete</h5>
+        <h5 class="modal-title" th:text="#{confirm-delete}">Confirm Delete</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body" id="confirmDeleteText">
-        Are you sure you want to delete these files? This action cannot be undone.
+        <!-- Will be filled by JavaScript -->
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-        <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Delete</button>
+        <button type="button" class="btn-mega" data-dismiss="modal" th:text="#{cancel}">Cancel</button>
+        <button type="button" class="btn-mega btn-danger" id="confirmDeleteBtn" th:text="#{delete}">Delete</button>
       </div>
     </div>
   </div>
 </div>
 
-<!-- Empty State -->
-<div th:if="${#lists.isEmpty(fotoAntes)}" class="empty-state">
-  <i class="far fa-images"></i>
-  <h3>There are no photos in this project</h3>
-  <p>Start by adding photos to view them here</p>
-</div>
-
-<!-- Back Button -->
-<div class="text-center">
-  <button type="button" class="btn-back" onclick="window.history.back()">
-    <i class="fas fa-arrow-left"></i> Back to home
-  </button>
-</div>
-
-<!-- Modal para subir foto -->
-<div class="modal fade" id="subirFotoModal" tabindex="-1" role="dialog" aria-labelledby="subirFotoModalLabel" aria-hidden="true">
+<!-- Upload Photo Modal -->
+<div class="modal fade upload-modal" id="subirFotoModal" tabindex="-1" role="dialog" aria-labelledby="subirFotoModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
       <form id="uploadForm" th:action="@{/fotos/save}" method="post" enctype="multipart/form-data">
-        <div class="modal-header bg-primary text-white">
-          <h5 class="modal-title" id="subirFotoModalLabel"><i class="fas fa-camera"></i> Upload new photo or video</h5>
-          <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+        <div class="modal-header">
+          <h5 class="modal-title" id="subirFotoModalLabel"><i class="fas fa-camera btn-icon"></i> <span th:text="#{upload-new-media}">Upload new photo or video</span></h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
         <div class="modal-body">
-          <!-- Mensaje de éxito -->
           <div id="successMessage" class="alert alert-success d-none">
-            <i class="fas fa-check-circle"></i> Photo uploaded successfully!
+            <i class="fas fa-check-circle"></i> <span th:text="#{photo-uploaded-success}">Photo uploaded successfully!</span>
           </div>
 
-          <!-- Mensaje de error de formato -->
           <div id="formatError" class="alert alert-danger d-none">
             <i class="fas fa-exclamation-circle"></i> <span id="formatErrorMessage"></span>
           </div>
 
-          <!-- Barra de progreso -->
           <div class="upload-progress-wrapper d-none mb-3">
             <div class="d-flex justify-content-between mb-1">
               <span class="progress-status small">Uploading files...</span>
@@ -737,7 +773,7 @@
             </div>
             <div class="progress" style="height: 8px;">
               <div class="progress-bar progress-bar-fill progress-bar-striped progress-bar-animated"
-                   role="progressbar" style="width: 0%; background-color: #4e73df;"></div>
+                   role="progressbar" style="width: 0%;"></div>
             </div>
             <div class="text-right mt-1">
               <small class="text-muted file-counter">File <span class="current-file-num">1</span> of <span class="total-files">0</span></small>
@@ -745,27 +781,26 @@
           </div>
 
           <div class="form-group">
-            <label for="nombre" class="font-weight-bold">Multimedia names</label>
-            <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Name for the photo" required>
+            <label for="nombre" class="font-weight-bold" th:text="#{multimedia-names}">Multimedia names</label>
+            <input type="text" class="form-control" id="nombre" name="nombre" th:placeholder="#{name-for-photo}" required>
           </div>
 
           <input type="hidden" name="subalbum" th:value="${subAlbum.id}" />
           <input type="hidden" id="hora" name="hora" value="">
 
-          <!-- File input -->
           <div class="form-group">
-            <label for="img" class="font-weight-bold">Select Image or Video</label>
+            <label for="img" class="font-weight-bold" th:text="#{select-image-video}">Select Image or Video</label>
             <div class="custom-file">
               <input type="file" class="custom-file-input" id="img" name="img" accept="image/*,video/*,.heic,.heif" multiple required>
-              <label class="custom-file-label" for="img">Choose file(s)</label>
+              <label class="custom-file-label" for="img" th:text="#{choose-files}">Choose file(s)</label>
             </div>
-            <small class="form-text text-muted">You can select multiple files at once</small>
+            <small class="form-text text-muted" th:text="#{you-can-select-multiple}">You can select multiple files at once</small>
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-          <button type="submit" class="btn btn-primary" id="submitBtn">
-            <span class="btn-text">Upload</span>
+          <button type="button" class="btn-mega" data-dismiss="modal" th:text="#{cancel}">Cancel</button>
+          <button type="submit" class="btn-mega" id="submitBtn">
+            <span class="btn-text" th:text="#{upload}">Upload</span>
             <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
           </button>
         </div>
@@ -787,11 +822,10 @@
           </button>
         </div>
         <div class="modal-body">
-          <!-- Verifica si el archivo es un video o una imagen -->
           <div th:if="${#strings.endsWith(fotoAntes.imagen, '.mp4') or #strings.endsWith(fotoAntes.imagen, '.avi') or #strings.endsWith(fotoAntes.imagen, '.mov') or #strings.endsWith(fotoAntes.imagen, '.mkv')}">
             <video class="img-fluid video-content" id="videoModal" controls>
               <source th:src="@{/images/{img}(img=${fotoAntes.imagen})}" type="video/mp4">
-              Your browser does not support videos.
+              <span th:text="#{browser-no-support-video}">Your browser does not support videos.</span>
             </video>
           </div>
           <div th:unless="${#strings.endsWith(fotoAntes.imagen, '.mp4') or #strings.endsWith(fotoAntes.imagen, '.avi') or #strings.endsWith(fotoAntes.imagen, '.mov') or #strings.endsWith(fotoAntes.imagen, '.mkv')}">
@@ -799,12 +833,16 @@
           </div>
         </div>
         <div class="modal-footer">
-          <p class="photo-uploader" th:text="'Uploaded by: ' + ${fotoAntes.usuario.nombre}"></p>
+          <p class="photo-uploader" th:text="#{uploaded-by(${fotoAntes.usuario.nombre})}">Uploaded by: User</p>
         </div>
       </div>
     </div>
   </div>
 </div>
+
+<!-- Bootstrap core JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
 <script>
   $(document).ready(function() {
@@ -1157,50 +1195,69 @@
         });
 
         if (photos.length > 0) {
-          // Show confirmation modal
-          $('#confirmDownloadText').html(`You are about to download <strong>${photos.length}</strong> file${photos.length > 1 ? 's' : ''}.<br>Do you want to continue?`);
-          $('#confirmDownloadBtn').off('click').on('click', function() {
-            $('#confirmDownloadModal').modal('hide');
-            downloadMultipleFiles(photos);
-          });
-          $('#confirmDownloadModal').modal('show');
+            // Use translation for confirmation text, passing count and using a ternary for plural 's'
+            $('#confirmDownloadText').html(
+                translations.confirm_download_text
+                    .replace('{0}', `<strong>${photos.length}</strong>`)
+                    .replace('{1}', photos.length > 1 ? 's' : '') // 's' for plural, empty for singular
+            );
+            $('#confirmDownloadBtn').off('click').on('click', function() {
+                $('#confirmDownloadModal').modal('hide');
+                downloadMultipleFiles(photos);
+            });
+            $('#confirmDownloadModal').modal('show');
         } else {
-          // Show notification when no files are available
-          showNotification('No files available to download', 'error');
+            // Use translation for "No files available to download"
+            showNotification(translations.no_files_available, 'error');
         }
       });
 
       // Download selected photos
       $('#downloadSelectedBtn').on('click', function() {
         if (selectedPhotos.length > 0) {
-          // Show confirmation modal
-          $('#confirmDownloadText').html(`You are about to download <strong>${selectedPhotos.length}</strong> selected file${selectedPhotos.length > 1 ? 's' : ''}.<br>Do you want to continue?`);
-          $('#confirmDownloadBtn').off('click').on('click', function() {
-            $('#confirmDownloadModal').modal('hide');
-            downloadMultipleFiles(selectedPhotos);
-          });
-          $('#confirmDownloadModal').modal('show');
+            // Use translation for confirmation text, passing count and using a ternary for plural 's'
+            $('#confirmDownloadText').html(
+                translations.confirm_download_text
+                    .replace('{0}', `<strong>${selectedPhotos.length}</strong>`)
+                    .replace('{1}', selectedPhotos.length > 1 ? 's' : '') // 's' for plural, empty for singular
+            );
+            $('#confirmDownloadBtn').off('click').on('click', function() {
+                $('#confirmDownloadModal').modal('hide');
+                downloadMultipleFiles(selectedPhotos);
+            });
+            $('#confirmDownloadModal').modal('show');
         } else {
-          // Show notification when no files are selected
-          showNotification('Please select at least one file to download', 'error');
+            // Use translation for "Please select at least one file to download"
+            showNotification(
+                translations.select_at_least_one.replace('{0}', translations.download),
+                'error'
+            );
         }
       });
 
       // Delete selected photos
       $('#deleteSelectedBtn').on('click', function() {
-        if (selectedPhotos.length > 0) {
-          // Show confirmation modal
-          $('#confirmDeleteText').html(`You are about to delete <strong>${selectedPhotos.length}</strong> selected file${selectedPhotos.length > 1 ? 's' : ''}.<br>This action cannot be undone.`);
-          $('#confirmDeleteBtn').off('click').on('click', function() {
-            $('#confirmDeleteModal').modal('hide');
-            const photoIds = selectedPhotos.map(photo => photo.id);
-            deleteMultiplePhotos(photoIds);
-          });
-          $('#confirmDeleteModal').modal('show');
-        } else {
-          // Show notification when no files are selected
-          showNotification('Please select at least one file to delete', 'error', true);
-        }
+          if (selectedPhotos.length > 0) {
+              // Use translation for confirmation text, passing count and using a ternary for plural 's'
+              $('#confirmDeleteText').html(
+                  translations.confirm_delete_text
+                      .replace('{0}', `<strong>${selectedPhotos.length}</strong>`)
+                      .replace('{1}', selectedPhotos.length > 1 ? 's' : '') // 's' for plural, empty for singular
+              );
+              $('#confirmDeleteBtn').off('click').on('click', function() {
+                  $('#confirmDeleteModal').modal('hide');
+                  const photoIds = selectedPhotos.map(photo => photo.id);
+                  deleteMultiplePhotos(photoIds);
+              });
+              $('#confirmDeleteModal').modal('show');
+          } else {
+              // Use translation for "Please select at least one file to delete"
+              showNotification(
+                  translations.select_at_least_one.replace('{0}', translations.delete),
+                  'error',
+                  true
+              );
+          }
       });
 
       // Handle single photo delete
@@ -1209,10 +1266,18 @@
         const photoId = $(this).data('id');
 
         // Show confirmation modal
-        $('#confirmDeleteText').html(`You are about to delete this file.<br>This action cannot be undone.`);
+        $('#confirmDeleteText').html(
+            translations.confirm_delete_text
+                .replace('{0}', '') // No specific file count here
+                .replace('{1}', '') // No 's' for plural here
+                .replace('You are about to delete ', '') // Remove this part
+                + translations.this_file_cannot_be_undone // New specific string
+        );
+
+
         $('#confirmDeleteBtn').off('click').on('click', function() {
-          $('#confirmDeleteModal').modal('hide');
-          deleteSinglePhoto(photoId);
+            $('#confirmDeleteModal').modal('hide');
+            deleteSinglePhoto(photoId);
         });
         $('#confirmDeleteModal').modal('show');
       });

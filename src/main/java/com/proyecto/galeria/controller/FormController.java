@@ -12,9 +12,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.io.IOException;
-import java.security.Principal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -23,12 +22,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-
+import javax.transaction.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Controller
 @RequestMapping("/form")
 public class FormController {
+    private static final Logger logger = LoggerFactory.getLogger(FormController.class);
 
     @Autowired
     private FormService formService;
@@ -85,9 +88,9 @@ public class FormController {
                     usuario.getPermisos().stream().anyMatch(p -> "EXPEDIENTE_VIEW_ALL".equals(p.getCodigo()));
 
             if (puedeVerTodos) {
-                forms = formService.findByExpedienteId(expedienteId);
+                forms = formService.findByExpedienteIdAndFuturo(expedienteId, false);
             } else {
-                forms = formService.findByUsuarioIdAndExpedienteId(idUsuario, expedienteId);
+                forms = formService.findByUsuarioIdAndExpedienteIdAndFuturo(idUsuario, expedienteId, false);
             }
 
             model.addAttribute("forms", forms);
@@ -113,15 +116,13 @@ public class FormController {
         return "form/ManageForms.html";
     }
 
-
-
-
     @PostMapping("/submit")
     public String submitForm(@ModelAttribute Form form,
                              @RequestParam(value = "fotos", required = false) MultipartFile[] fotos,
                              @RequestParam Map<String, String> descripcionesMap,
                              @RequestParam(value = "expedienteId", required = false) Integer expedienteId,
                              HttpSession session,
+                             HttpServletRequest request,
                              Model model) {
         try {
             Integer idUsuario = (Integer) session.getAttribute("idusuario");
@@ -158,6 +159,8 @@ public class FormController {
             model.addAttribute("message", "Formulario enviado exitosamente con " +
                     (fotos != null ? fotos.length : 0) + " foto(s)");
 
+            String referer = request.getHeader("Referer");
+            return "redirect:" + referer;
         } catch (Exception e) {
             System.err.println("Error submitting form: " + e.getMessage());
             e.printStackTrace();
@@ -167,10 +170,6 @@ public class FormController {
 
         return "form/Form.html";
     }
-
-
-
-
 
     @GetMapping("/{id}")
     public String getFormById(@PathVariable Integer id, Model model) {
@@ -273,16 +272,6 @@ public class FormController {
         }
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteForm(@PathVariable Integer id) {
-        try {
-            formService.delete(id);
-            return ResponseEntity.noContent().build();
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().build();
-        }
-    }
-
     @GetMapping("/{id}/photos")
     public ResponseEntity<List<FotosForm>> getFormPhotos(@PathVariable Integer id) {
         try {
@@ -336,6 +325,8 @@ public class FormController {
                              @ModelAttribute Form newForm,
                              @RequestParam(name = "fotoIds", required = false) List<Long> fotoIds,
                              @RequestParam(name = "fotosDescripcion", required = false) List<String> fotosDescripcion,
+                             @RequestParam(value = "editarComoFuturo", required = false) String editarComoFuturo,
+                             HttpServletRequest request,
                              Model model) {
         try {
             Form original = formService.findById(id).orElseThrow(() -> new Exception("Form not found"));
@@ -384,7 +375,8 @@ public class FormController {
             original.setLimpiezaCompleta(newForm.getLimpiezaCompleta());
             original.setInstalarPuertasAcceso(newForm.getInstalarPuertasAcceso());
             original.setReemplazoFiltros(newForm.getReemplazoFiltros());
-            original.setProductosRecomendados(newForm.getProductosRecomendados());
+            original.setProductosRecomendados(newForm.getProductosRecomendados());            
+            original.setFuturo(newForm.getFuturo());
 
             // Actualizar descripciones de fotos
             if (fotoIds != null && fotosDescripcion != null && fotoIds.size() == fotosDescripcion.size()) {
@@ -399,10 +391,75 @@ public class FormController {
             }
 
             formService.save(original);
-            return "redirect:/form/" + id + "/edit";
+
+            String referer = request.getHeader("Referer");
+            return "redirect:" + referer;
         } catch (Exception e) {
             model.addAttribute("errorMessage", "Error updating form: " + e.getMessage());
             return "form/EditForm.html";
+        }
+    }
+
+    @PostMapping("/{id}/delete")
+    @Transactional
+    public String deleteForm(@PathVariable Integer id, 
+                            HttpServletRequest request,
+                            RedirectAttributes redirectAttributes) {
+        logger.info("DELETE REQUEST - Attempting to delete form with ID: {}", id);
+        
+        try {
+            // Check if form exists
+            boolean exists = formService.existsById(id);
+            logger.info("Form exists check: {}", exists);
+            
+            if (!exists) {
+                logger.warn("Form with ID {} not found", id);
+                redirectAttributes.addFlashAttribute("errorMessage", "Form not found");
+                return getRedirectUrl(request);
+            }
+            
+            // First, get associated photos
+            List<FotosForm> fotos = fotosFormService.findByFormId(id);
+            logger.info("Found {} photos associated with form ID {}", fotos.size(), id);
+            
+            // Delete physical files
+            for (FotosForm foto : fotos) {
+                String imagePath = "/opt/Gallery/form/" + foto.getImagen();
+                logger.info("Attempting to delete image file: {}", imagePath);
+                try {
+                    boolean deleted = java.nio.file.Files.deleteIfExists(java.nio.file.Paths.get(imagePath));
+                    logger.info("Image file deleted: {}", deleted);
+                } catch (Exception e) {
+                    logger.error("Error deleting image file {}: {}", imagePath, e.getMessage());
+                }
+            }
+            
+            // Delete photos from database
+            logger.info("Deleting photos from database for form ID: {}", id);
+            fotosFormService.deleteByFormId(id);
+            
+            // Delete the form
+            logger.info("Deleting form with ID: {}", id);
+            formService.delete(id);
+            
+            logger.info("Form {} deleted successfully", id);
+            redirectAttributes.addFlashAttribute("successMessage", "Form deleted successfully");
+            
+        } catch (Exception e) {
+            logger.error("Error deleting form with ID {}: {}", id, e.getMessage(), e);
+            redirectAttributes.addFlashAttribute("errorMessage", "Error deleting form: " + e.getMessage());
+        }
+        
+        return getRedirectUrl(request);
+    }
+    
+    private String getRedirectUrl(HttpServletRequest request) {
+        String referer = request.getHeader("Referer");
+        logger.info("Referer URL: {}", referer);
+        if (referer != null && !referer.isEmpty()) {
+            return "redirect:" + referer;
+        } else {
+            return "redirect:/form/manage";
         }
     }
 }

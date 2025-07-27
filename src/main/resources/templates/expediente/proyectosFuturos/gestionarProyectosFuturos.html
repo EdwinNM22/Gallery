@@ -116,7 +116,7 @@
       font-weight: 600;
     }
 
-    /* Table styles - MANTENIENDO EL ESTILO ORIGINAL PARA DESKTOP */
+    /* Table styles - MANTENIENDO ESTILO ORIGINAL PARA DESKTOP */
     .table {
       color: var(--light-text);
       margin-bottom: 0;
@@ -278,7 +278,7 @@
       color: var(--light-text);
     }
 
-    /* SOLO CAMBIOS PARA MOBILE - el desktop queda exactamente igual */
+    /* SOLO CAMBIOS RESPONSIVE PARA MÓVIL */
     @media (max-width: 768px) {
       .page-header h1 {
         font-size: 2rem;
@@ -406,7 +406,7 @@
 <div class="container">
   <div class="page-header">
     <h1 class="mb-2">
-      <i class="fas fa-clipboard-list"></i> <span th:text="#{completed-projects}">Proyectos Completados</span>
+      <i class="fas fa-clipboard-list"></i> <span th:text="#{manage-future-projects}">Gestion de Proyectos Futuros</span>
     </h1>
   </div>
 
@@ -428,7 +428,7 @@
       <i class="fas fa-arrow-left"></i> <span th:text="#{back-to-selection}">Back to Selection</span>
     </a>
 
-    <a class="btn btn-back" th:href="@{'/form?expedienteId=' + ${expedienteId}}" th:if="${EXPEDIENTE_FORM_CREATE}">
+    <a class="btn btn-back" th:href="@{'/expediente/create-future-project?expedienteId=' + ${expedienteId}}" th:if="${EXPEDIENTE_FORM_CREATE}">
       <i class="fas fa-plus"></i> <span th:text="#{create-new}">Create new</span>
     </a>
   </div>
@@ -457,18 +457,18 @@
             <td data-label="Building Type" th:text="${f.tipoEdificio}"></td>
             <td data-label="Evaluator" th:text="${f.nombreEvaluador}"></td>
             <td data-label="Actions">
-              <a class="btn btn-sm btn-primary" th:href="@{'/form/' + ${f.id}}" th:title="#{view}">
+              <a class="btn btn-sm btn-primary" th:href="@{'/form/' + ${f.id} + '/edit'}" th:title="#{finish-project}"
+                 th:if="${EXPEDIENTE_FORM_EDIT}">
+                <i class="fa-solid fa-flag-checkered"></i>
+                <span class="d-none d-md-inline" th:text="#{finish-project}">Finish</span>
+              </a>
+
+              <a class="btn btn-sm btn-primary" th:href="@{'/expediente/view-future-project/' + ${f.id}}" th:title="#{view}">
                 <i class="fas fa-eye"></i>
                 <span class="d-none d-md-inline" th:text="#{view}">View</span>
               </a>
 
-              <a class="btn btn-sm btn-success ms-1" th:href="@{'/form/' + ${f.id} + '/pdf'}" th:title="#{download-pdf}"
-                 th:if="${EXPEDIENTE_FORM_PDF}">
-                <i class="fas fa-download"></i>
-                <span class="d-none d-md-inline" th:text="#{pdf}">PDF</span>
-              </a>
-
-              <a class="btn btn-sm btn-warning ms-1" th:href="@{'/form/' + ${f.id} + '/edit'}" th:title="#{edit}"
+              <a class="btn btn-sm btn-warning ms-1" th:href="@{'/expediente/edit-future-project/' + ${f.id}}" th:title="#{edit}"
                  th:if="${EXPEDIENTE_FORM_EDIT}">
                 <i class="fas fa-pen"></i>
                 <span class="d-none d-md-inline" th:text="#{edit}">Edit</span>

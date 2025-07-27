@@ -139,6 +139,9 @@ public class Form {
     @Lob
     private String productosRecomendados;
 
+    @Column(name = "futuro")
+    private Boolean futuro;
+
     @ManyToOne
     @JoinColumn(name = "usuario_id")
     private usuario usuario;

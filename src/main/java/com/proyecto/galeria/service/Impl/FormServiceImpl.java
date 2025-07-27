@@ -34,6 +34,8 @@ public class FormServiceImpl implements FormService {
     public Form update(Integer id, Form newForm) {
         Form form = formRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Form not found with id: " + id));
+        // Fix: set the ID on newForm and return the saved form
+        newForm.setId(id);
         return formRepository.save(newForm);
     }
 
@@ -44,19 +46,25 @@ public class FormServiceImpl implements FormService {
         formRepository.deleteById(existing.getId());
     }
 
+    // Add this method implementation
+    @Override
+    public boolean existsById(Integer id) {
+        return formRepository.existsById(id);
+    }
+
     @Override
     public List<Form> findByUsuarioId(Integer usuarioId) {
         return formRepository.findByUsuario_Id(usuarioId);
     }
 
     @Override
-    public List<Form> findByUsuarioIdAndExpedienteId(Integer usuarioId, Integer expedienteId) {
-        return formRepository.findByUsuario_IdAndExpediente_Id(usuarioId, expedienteId);
+    public List<Form> findByUsuarioIdAndExpedienteIdAndFuturo(Integer usuarioId, Integer expedienteId, Boolean futuro) {
+        return formRepository.findByUsuario_IdAndExpediente_IdAndFuturo(usuarioId, expedienteId, futuro);
     }
 
     @Override
-    public List<Form> findByExpedienteId(Integer expedienteId) {
-        return formRepository.findByExpediente_Id(expedienteId);
+    public List<Form> findByExpedienteIdAndFuturo(Integer expedienteId, Boolean futuro) {
+        return formRepository.findByExpediente_IdAndFuturo(expedienteId, futuro);
     }
 
 
