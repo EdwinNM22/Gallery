@@ -70,12 +70,11 @@
         </div>
 
         <div class="btn-container">
-          <a class="btn btn-back" th:href="@{/adm}">
+          <a class="btn btn-back" href="javascript:history.back()">
             <i class="fas fa-arrow-left"></i>
             <span th:text="#{back-to-home}">Back to Home</span>
           </a>
         </div>
-
         <form
           th:action="@{'/form/' + ${form.id} + '/edit'}"
           th:object="${form}"

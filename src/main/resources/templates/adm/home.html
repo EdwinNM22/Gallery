@@ -436,7 +436,8 @@
         <span th:text="#{manage-reports}">Manage Reports</span>
       </a>
 
-      <a th:href="@{/expediente}" class="btn-mega animated delay-1">
+
+      <a th:href="@{/expediente}"  th:if="${EXPEDIENTE_ACCESS}" class="btn-mega animated delay-1" >
         <i class="fa-solid fa-wallet btn-icon"></i>
         <span th:text="#{representatives}">Representatives</span>
       </a>

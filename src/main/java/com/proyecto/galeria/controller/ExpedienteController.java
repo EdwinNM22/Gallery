@@ -45,10 +45,10 @@ public class ExpedienteController {
         Optional<usuario> optionalUsuario = usuarioService.findById(idUsuario);
 
         // Control de permisos
-        // if (optionalUsuario.isEmpty() || optionalUsuario.get().getPermisos().stream()
-        // .noneMatch(p -> "EXPEDIENTE_ACCESS".equals(p.getCodigo()))) {
-        // return "redirect:/NoAccess/Access";
-        // }
+         if (optionalUsuario.isEmpty() || optionalUsuario.get().getPermisos().stream()
+         .noneMatch(p -> "EXPEDIENTE_ACCESS".equals(p.getCodigo()))) {
+         return "redirect:/NoAccess/Access";
+         }
 
         usuario usuario = optionalUsuario.get();
 

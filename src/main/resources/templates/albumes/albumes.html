@@ -1064,16 +1064,21 @@
             }
         })
             .then(response => {
-                if (response.ok) {
-                    window.location.href = `/albumes/${albumId}?success=Fragment+deleted+successfully`;
+                if (!response.ok) throw new Error("Request failed");
+                return response.json();
+            })
+            .then(data => {
+                if (data.status === "success") {
+                    window.location.href = `/albumes/${albumId}?success=${encodeURIComponent('Fragment deleted successfully')}`;
                 } else {
-                    window.location.href = `/albumes/${albumId}?error=Error+deleting+fragment`;
+                    window.location.href = `/albumes/${albumId}?error=${encodeURIComponent('Error deleting fragment')}`;
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                window.location.href = `/albumes/${albumId}?error=Error+deleting+fragment`;
+                window.location.href = `/albumes/${albumId}?error=${encodeURIComponent('Error deleting fragment')}`;
             });
+
     }
 </script>
 </body>

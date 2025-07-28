@@ -354,46 +354,42 @@ public class AlbumController {
     }
 
     @PostMapping("/deleteFragment/{fragmentId}")
-    public String deleteFragment(
+    @ResponseBody
+    public ResponseEntity<?> deleteFragment(
             @PathVariable String fragmentId,
-            @RequestParam Integer albumId,
-            HttpServletRequest request) {
+            @RequestParam Integer albumId) {
 
         try {
             if ("main".equals(fragmentId)) {
-                return "redirect:/albumes/" + albumId + "?error=Cannot+delete+main+fragment";
+                return ResponseEntity
+                        .badRequest()
+                        .body("Cannot delete main fragment");
             }
 
             List<SubAlbum> subAlbumes = subAlbumService.findByAlbumId(albumId);
             for (SubAlbum subAlbum : subAlbumes) {
                 if (subAlbum.getNombre().startsWith(fragmentId + " - ")) {
-                    // Eliminar fotos asociadas
                     for (foto foto : subAlbum.getFotos()) {
                         if (!foto.getImagen().equals("default.jpg")) {
                             upload.deleteImage(foto.getImagen());
                         }
                         fotoService.delete(foto.getId());
                     }
-                    // Eliminar subálbum
                     subAlbumService.delete(subAlbum.getId());
                 }
             }
 
-            // Verificar si es una petición AJAX
-            if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
-                return "Fragment deleted successfully";
-            } else {
-                return "redirect:/albumes/" + albumId + "?success=Fragment+deleted+successfully";
-            }
+            // Devuelve un JSON con estado OK
+            return ResponseEntity.ok(Map.of("status", "success"));
+
         } catch (Exception e) {
             e.printStackTrace();
-            if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
-                return "Error deleting fragment";
-            } else {
-                return "redirect:/albumes/" + albumId + "?error=Error+deleting+fragment";
-            }
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error deleting fragment");
         }
     }
+
 
     @GetMapping("/edit/{id}")
     public String edit(@PathVariable Integer id, Model model, HttpSession session) {
