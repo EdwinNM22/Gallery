@@ -68,15 +68,6 @@
         </div>
 
         <div
-          th:if="${success}"
-          class="alert alert-success animated delay-1"
-          role="alert"
-        >
-          <i class="fas fa-check-circle"></i>
-          <span th:text="${message}">Message de réussite</span>
-        </div>
-
-        <div
           th:if="${error}"
           class="alert alert-danger animated delay-1"
           role="alert"
@@ -231,51 +222,16 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="/js/form.js"></script>
 
-    <script>
+    <script th:inline="javascript">
+      // JavaScript for maintenance history checkbox functionality
       $(document).ready(function () {
-        // Handle form submission
-        $("#mainForm").on("submit", function (e) {
-          e.preventDefault(); // Prevent the default form submission
-
-          var formData = new FormData(this);
-          var expedienteId = $('input[name="expedienteId"]').val();
-
-          $.ajax({
-            url: $(this).attr("action"),
-            type: "POST",
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: function (response) {
-              // Show success alert
-              alert(
-                translations.formCreatedSuccess ||
-                  "Form submitted successfully!"
-              );
-
-              location.reload();
-            },
-            error: function (xhr, status, error) {
-              // Show error alert
-              alert(
-                "Error submitting form: " +
-                  ((xhr.responseJSON && xhr.responseJSON.message) ||
-                    "Unknown error")
-              );
-            },
-          });
-        });
-
-        // Existing checkbox toggle logic
-        $("#mantenimientoHistoriaCheckbox").change(function () {
-          if ($(this).is(":checked")) {
-            $("#fechaUltimoMantenimientoRow").show();
-          } else {
-            $("#fechaUltimoMantenimientoRow").hide();
-            $('input[name="fechaUltimoMantenimiento"]').val("");
-          }
-        });
+        /*<![CDATA[*/
+        if (/*[[${success}]]*/) {
+            alert(translations.formCreatedSuccess);
+        }
+        /*]]>*/
       });
+    </script>
     </script>
   </body>
 </html>

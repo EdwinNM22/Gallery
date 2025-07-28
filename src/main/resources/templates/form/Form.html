@@ -9,6 +9,13 @@
     <meta name="description" content="Bio/vizion Project Management System" />
     <meta name="author" content="Bio/vizion" />
 
+    <!-- Traducciones -->
+    <script>
+      const translations = {
+        formCreatedSuccess: "[[#{form-created-success}]]",
+      };
+    </script>
+
     <title th:text="#{evaluation-form-title}">
       Bio/vizion - Fiche d'Évaluation – Conduits de Ventilation
     </title>
@@ -58,15 +65,6 @@
           <h1 class="hero-title" th:text="#{evaluation-form-title-full}">
             Fiche d'Évaluation – Conduits de Ventilation
           </h1>
-        </div>
-
-        <div
-          th:if="${success}"
-          class="alert alert-success animated delay-1"
-          role="alert"
-        >
-          <i class="fas fa-check-circle"></i>
-          <span th:text="${message}">Message de réussite</span>
         </div>
 
         <div
@@ -817,5 +815,16 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="/js/form.js"></script>
+
+    <script th:inline="javascript">
+      // JavaScript for maintenance history checkbox functionality
+      $(document).ready(function () {
+        /*<![CDATA[*/
+        if (/*[[${success}]]*/) {
+            alert(translations.formCreatedSuccess);
+        }
+        /*]]>*/
+      });
+    </script>
   </body>
 </html>

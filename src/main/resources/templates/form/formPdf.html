@@ -1,215 +1,436 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" lang="es">
-<head>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:th="http://www.thymeleaf.org"
+  lang="es"
+>
+  <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <style type="text/css">
-        @page {
-            size: A4;
-            margin: 1cm 1.5cm;
-        }
-        body {
-            font-family: 'Arial Unicode MS', sans-serif;
-            line-height: 1.5;
-            color: #333333;
-            margin: 0;
-            padding: 20px 0;
-            background-color: #ffffff;
-        }
-        .container {
-            width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        .header {
-            text-align: center;
-            margin-bottom: 20px;
-            border-bottom: 1px solid #eaeaea;
-            padding-bottom: 15px;
-        }
-        .title {
-            font-size: 24px;
-            font-weight: bold;
-            color: #2c3e50;
-            margin-bottom: 8px;
-        }
-        .section {
-            margin-bottom: 1.5em;
-        }
-        .section-title {
-            font-size: 18px;
-            color: #3498db;
-            font-weight: bold;
-            margin-bottom: 0.5em;
-            border-left: 3px solid #3498db;
-            padding-left: 8px;
-        }
-        .field-row {
-            margin-bottom: 0.5em;
-            font-size: 14px;
-        }
-        .label {
-            font-weight: bold;
-            color: #333;
-        }
-        .value {
-            margin-left: 4px;
-            color: #444;
-        }
-        .fotos-section {
-            background: #f8fafc;
-            border: 1px solid #eaeaea;
-            border-radius: 8px;
-            padding: 12px;
-            margin-bottom: 1.5em;
-        }
-        .photo-row {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            margin-top: 10px;
-            align-items: center; /* opcional, para centrar */
-        }
+      @page {
+        size: A4;
+        margin: 1cm 1.5cm;
+      }
+      body {
+        font-family: "Arial Unicode MS", sans-serif;
+        line-height: 1.5;
+        color: #333333;
+        margin: 0;
+        padding: 20px 0;
+        background-color: #ffffff;
+      }
+      .container {
+        width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      .header {
+        text-align: center;
+        margin-bottom: 20px;
+        border-bottom: 1px solid #eaeaea;
+        padding-bottom: 15px;
+      }
+      .title {
+        font-size: 24px;
+        font-weight: bold;
+        color: #2c3e50;
+        margin-bottom: 8px;
+      }
+      .section {
+        margin-bottom: 1.5em;
+      }
+      .section-title {
+        font-size: 18px;
+        color: #3498db;
+        font-weight: bold;
+        margin-bottom: 0.5em;
+        border-left: 3px solid #3498db;
+        padding-left: 8px;
+      }
+      .field-row {
+        margin-bottom: 0.5em;
+        font-size: 14px;
+      }
+      .label {
+        font-weight: bold;
+        color: #333;
+      }
+      .value {
+        margin-left: 4px;
+        color: #444;
+      }
+      .fotos-section {
+        background: #f8fafc;
+        border: 1px solid #eaeaea;
+        border-radius: 8px;
+        padding: 12px;
+        margin-bottom: 1.5em;
+      }
+      .photo-row {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        margin-top: 10px;
+        align-items: center; /* opcional, para centrar */
+      }
 
-        .photo-row img {
-            width: 300px;  /* tamaño más grande */
-            height: auto;  /* mantiene proporción */
-            border-radius: 8px;
-            border: 1px solid #bbb;
-            background: #fff;
-        }
-        .readonly-checkbox {
-            font-weight: bold;
-            color: #28a745;
-        }
-        .readonly-checkbox.no {
-            color: #dc3545;
-        }
-        .footer {
-            margin-top: 30px;
-            text-align: center;
-            font-size: 11px;
-            color: #95a5a6;
-            border-top: 1px solid #eaeaea;
-            padding-top: 15px;
-        }
+      .photo-row img {
+        width: 300px; /* tamaño más grande */
+        height: auto; /* mantiene proporción */
+        border-radius: 8px;
+        border: 1px solid #bbb;
+        background: #fff;
+      }
+      .readonly-checkbox {
+        font-weight: bold;
+        color: #28a745;
+      }
+      .readonly-checkbox.no {
+        color: #dc3545;
+      }
+      .footer {
+        margin-top: 30px;
+        text-align: center;
+        font-size: 11px;
+        color: #95a5a6;
+        border-top: 1px solid #eaeaea;
+        padding-top: 15px;
+      }
     </style>
     <title th:text="${titulo}">Formulaire PDF</title>
-</head>
-<body>
-<div class="container">
-    <div class="header">
-        <div class="title" th:text="${titulo}">Formulaire</div>
-    </div>
-    <div class="section">
-        <div class="section-title">Informations Générales</div>
-        <div class="field-row"><span class="label">Nom du client :</span> <span class="value" th:text="${form.nombreCliente}"></span></div>
-        <div class="field-row"><span class="label">Type de Bâtiment :</span> <span class="value" th:text="${form.tipoEdificio}"></span></div>
-        <div class="field-row"><span class="label">Date de l’évaluation :</span> <span class="value" th:text="${#temporals.format(form.fechaEvaluacion, 'dd/MM/yyyy')}"></span></div>
-        <div class="field-row"><span class="label">Nom de l’évaluateur :</span> <span class="value" th:text="${form.nombreEvaluador}"></span></div>
-        <div class="field-row"><span class="label">Personne contact sur place :</span> <span class="value" th:text="${form.personaContacto}"></span></div>
-        <div class="field-row"><span class="label">Historique d’entretien connu :</span>
-            <span th:if="${form.mantenimientoHistoria}" class="readonly-checkbox">Oui</span>
-            <span th:unless="${form.mantenimientoHistoria}" class="readonly-checkbox no">Non</span>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <div class="title" th:text="#{evaluation-form-title-full}"></div>
+      </div>
+      <div class="section">
+        <div class="section-title" th:text="#{general-information}"></div>
+        <div class="field-row">
+          <span class="label" th:text="#{client-name} + ' :'"></span>
+          <span class="value" th:text="${form.nombreCliente}"></span>
         </div>
-        <div class="field-row" th:if="${form.mantenimientoHistoria}"><span class="label">Dernière date :</span> <span class="value" th:text="${#temporals.format(form.fechaUltimoMantenimiento, 'dd/MM/yyyy')}"></span></div>
-        <div class="field-row"><span class="label">Adresse :</span> <span class="value" th:text="${form.direccion}"></span></div>
-    </div>
-    <div class="section">
-        <div class="section-title">Système de Ventilation</div>
-        <div class="field-row"><span class="label">Type de système :</span> <span class="value" th:text="${form.tipoSistema}"></span></div>
-        <div class="field-row"><span class="label">Accessibilité :</span> <span class="value" th:text="${form.accesibilidad}"></span></div>
-        <div class="field-row"><span class="label">Portes d’accès existantes :</span> <span class="value" th:text="${form.puertasAccesoExistentes}"></span></div>
-        <div class="field-row"><span class="label">Portes d’accès à ajouter :</span> <span class="value" th:text="${form.puertasAccesoAAnadir}"></span></div>
-        <div class="field-row"><span class="label">Conduits visibles ?</span>
-            <span th:if="${form.conductosVisibles}" class="readonly-checkbox">Oui</span>
-            <span th:unless="${form.conductosVisibles}" class="readonly-checkbox no">Non</span>
+        <div class="field-row">
+          <span class="label" th:text="#{building-type} + ' :'"></span>
+          <span class="value" th:text="${form.tipoEdificio}"></span>
         </div>
-        <div class="field-row"><span class="label">Type de matériau :</span> <span class="value" th:text="${form.tipoMaterial}"></span></div>
-    </div>
-    <div class="section">
-        <div class="section-title">État des Conduits</div>
-        <div class="field-row"><span class="label">Accumulation de poussière ?</span>
-            <span th:if="${form.acumulacionPolvillo}" class="readonly-checkbox">Oui</span>
-            <span th:unless="${form.acumulacionPolvillo}" class="readonly-checkbox no">Non</span>
-            <span class="value" th:text="${form.acumulacionPolvilloComentario}"></span>
+        <div class="field-row">
+          <span class="label" th:text="#{evaluation-date} + ' :'"></span>
+          <span
+            class="value"
+            th:text="${#temporals.format(form.fechaEvaluacion, 'dd/MM/yyyy')}"
+          ></span>
         </div>
-        <div class="field-row"><span class="label">Débris visibles ?</span>
-            <span th:if="${form.escombrosVisibles}" class="readonly-checkbox">Oui</span>
-            <span th:unless="${form.escombrosVisibles}" class="readonly-checkbox no">Non</span>
-            <span class="value" th:text="${form.escombrosVisiblesComentario}"></span>
+        <div class="field-row">
+          <span class="label" th:text="#{evaluator-name} + ' :'"></span>
+          <span class="value" th:text="${form.nombreEvaluador}"></span>
         </div>
-        <div class="field-row"><span class="label">Moisissure ?</span>
-            <span th:if="${form.moho}" class="readonly-checkbox">Oui</span>
-            <span th:unless="${form.moho}" class="readonly-checkbox no">Non</span>
-            <span class="value" th:text="${form.mohoComentario}"></span>
+        <div class="field-row">
+          <span class="label" th:text="#{on-site-contact-person} + ' :'"></span>
+          <span class="value" th:text="${form.personaContacto}"></span>
         </div>
-        <div class="field-row"><span class="label">Présence de rongeurs/insectes ?</span>
-            <span th:if="${form.roedoresInsectos}" class="readonly-checkbox">Oui</span>
-            <span th:unless="${form.roedoresInsectos}" class="readonly-checkbox no">Non</span>
-            <span class="value" th:text="${form.roedoresInsectosComentario}"></span>
+        <div class="field-row">
+          <span
+            class="label"
+            th:text="#{known-maintenance-history} + ' :'"
+          ></span>
+          <span
+            th:if="${form.mantenimientoHistoria}"
+            class="readonly-checkbox"
+            th:text="#{yes}"
+          ></span>
+          <span
+            th:unless="${form.mantenimientoHistoria}"
+            class="readonly-checkbox no"
+            th:text="#{no}"
+          ></span>
         </div>
-        <div class="field-row"><span class="label">Graisse (Si hotte) ?</span>
-            <span th:if="${form.grasaHotte}" class="readonly-checkbox">Oui</span>
-            <span th:unless="${form.grasaHotte}" class="readonly-checkbox no">Non</span>
-            <span class="value" th:text="${form.grasaHotteComentario}"></span>
+        <div class="field-row" th:if="${form.mantenimientoHistoria}">
+          <span class="label" th:text="#{last-date} + ' :'"></span>
+          <span
+            class="value"
+            th:text="${#temporals.format(form.fechaUltimoMantenimiento, 'dd/MM/yyyy')}"
+          ></span>
         </div>
-        <div class="field-row"><span class="label">Odeurs suspectes ?</span>
-            <span th:if="${form.oloresSospechosos}" class="readonly-checkbox">Oui</span>
-            <span th:unless="${form.oloresSospechosos}" class="readonly-checkbox no">Non</span>
-            <span class="value" th:text="${form.oloresSospechososComentario}"></span>
+        <div class="field-row">
+          <span class="label" th:text="#{address} + ' :'"></span>
+          <span class="value" th:text="${form.direccion}"></span>
         </div>
-    </div>
-    <div class="section">
-        <div class="section-title">État des Équipements Connexes</div>
-        <div class="field-row"><span class="label">Grilles / Bouches :</span> <span class="value" th:text="${form.estadoRejillas}"></span></div>
-        <div class="field-row"><span class="label">État du moteur :</span> <span class="value" th:text="${form.estadoMotor}"></span></div>
-        <div class="field-row"><span class="label">État des filtres :</span> <span class="value" th:text="${form.estadoFiltros}"></span></div>
-    </div>
-    <div class="section">
-        <div class="section-title">Mesures et Dimensions</div>
-        <div class="field-row"><span class="label">Nombre de conduits principaux :</span> <span class="value" th:text="${form.cantidadConductos}"></span></div>
-        <div class="field-row"><span class="label">Longueur estimée :</span> <span class="value" th:text="${form.longitudEstimacion}"></span></div>
-        <div class="field-row"><span class="label">Nombre de coudes/transitions :</span> <span class="value" th:text="${form.cantidadCodos}"></span></div>
-        <div class="field-row"><span class="label">Nombre de sorties/pièces desservies :</span> <span class="value" th:text="${form.cantidadSalidas}"></span></div>
-        <div class="field-row"><span class="label">Hauteur de travail :</span> <span class="value" th:text="${form.alturaTrabajo}"></span></div>
-    </div>
-    <div class="section">
-        <div class="section-title">Observations générales</div>
-        <div class="field-row"><span class="value" th:text="${form.observaciones}"></span></div>
-    </div>
-    <div class="section fotos-section">
-        <div class="section-title">Photos</div>
-        <div class="photo-row" th:each="foto : ${fotos}" style="display: flex; align-items: center; margin-bottom: 20px;">
-            <div style="flex: 2; padding-right: 20px;">
-                <img th:src="'data:image/jpeg;base64,' + ${foto.imagenBase64}" alt="Foto" style="max-width: 100%; height: auto;" />
-            </div>
-            <div style="flex: 1;">
-                <p th:text="${foto.descripcion}" style="font-size: 16px; color: #333;"></p>
-            </div>
+      </div>
+      <div class="section">
+        <div class="section-title" th:text="#{ventilation-system}"></div>
+        <div class="field-row">
+          <span class="label" th:text="#{system-type} + ' :'"></span>
+          <span class="value" th:text="${form.tipoSistema}"></span>
+        </div>
+        <div class="field-row">
+          <span class="label" th:text="#{accessibility} + ' :'"></span>
+          <span class="value" th:text="${form.accesibilidad}"></span>
+        </div>
+        <div class="field-row">
+          <span class="label" th:text="#{existing-access-doors} + ' :'"></span>
+          <span class="value" th:text="${form.puertasAccesoExistentes}"></span>
+        </div>
+        <div class="field-row">
+          <span class="label" th:text="#{to-add} + ' :'"></span>
+          <span class="value" th:text="${form.puertasAccesoAAnadir}"></span>
+        </div>
+        <div class="field-row">
+          <span class="label" th:text="#{visible-ducts} + '?'"></span>
+          <span
+            th:if="${form.conductosVisibles}"
+            class="readonly-checkbox"
+            th:text="#{yes}"
+          ></span>
+          <span
+            th:unless="${form.conductosVisibles}"
+            class="readonly-checkbox no"
+            th:text="#{no}"
+          ></span>
+        </div>
+        <div class="field-row">
+          <span class="label" th:text="#{materials} + ' :'"></span>
+          <span class="value" th:text="${form.tipoMaterial}"></span>
+        </div>
+      </div>
+      <div class="section">
+        <div class="section-title" th:text="#{duct-condition}"></div>
+        <div class="field-row">
+          <span class="label" th:text="#{dust-accumulation} + '?'"></span>
+          <span
+            th:if="${form.acumulacionPolvillo}"
+            class="readonly-checkbox"
+            th:text="#{yes}"
+          ></span>
+          <span
+            th:unless="${form.acumulacionPolvillo}"
+            class="readonly-checkbox no"
+            th:text="#{no}"
+          ></span>
+          <span
+            class="value"
+            th:text="${form.acumulacionPolvilloComentario}"
+          ></span>
+        </div>
+        <div class="field-row">
+          <span class="label" th:text="#{visible-debris} + '?'"></span>
+          <span
+            th:if="${form.escombrosVisibles}"
+            class="readonly-checkbox"
+            th:text="#{yes}"
+          ></span>
+          <span
+            th:unless="${form.escombrosVisibles}"
+            class="readonly-checkbox no"
+            th:text="#{no}"
+          ></span>
+          <span
+            class="value"
+            th:text="${form.escombrosVisiblesComentario}"
+          ></span>
+        </div>
+        <div class="field-row">
+          <span class="label" th:text="#{mold} + '?'"></span>
+          <span
+            th:if="${form.moho}"
+            class="readonly-checkbox"
+            th:text="#{yes}"
+          ></span>
+          <span
+            th:unless="${form.moho}"
+            class="readonly-checkbox no"
+            th:text="#{no}"
+          ></span>
+          <span class="value" th:text="${form.mohoComentario}"></span>
+        </div>
+        <div class="field-row">
+          <span
+            class="label"
+            th:text="#{rodents-insects-presence} + '?'"
+          ></span>
+          <span
+            th:if="${form.roedoresInsectos}"
+            class="readonly-checkbox"
+            th:text="#{yes}"
+          ></span>
+          <span
+            th:unless="${form.roedoresInsectos}"
+            class="readonly-checkbox no"
+            th:text="#{no}"
+          ></span>
+          <span
+            class="value"
+            th:text="${form.roedoresInsectosComentario}"
+          ></span>
+        </div>
+        <div class="field-row">
+          <span class="label" th:text="#{grease-if-hood} + '?'"></span>
+          <span
+            th:if="${form.grasaHotte}"
+            class="readonly-checkbox"
+            th:text="#{yes}"
+          ></span>
+          <span
+            th:unless="${form.grasaHotte}"
+            class="readonly-checkbox no"
+            th:text="#{no}"
+          ></span>
+          <span class="value" th:text="${form.grasaHotteComentario}"></span>
+        </div>
+        <div class="field-row">
+          <span class="label" th:text="#{suspicious-odors} + '?'"></span>
+          <span
+            th:if="${form.oloresSospechosos}"
+            class="readonly-checkbox"
+            th:text="#{yes}"
+          ></span>
+          <span
+            th:unless="${form.oloresSospechosos}"
+            class="readonly-checkbox no"
+            th:text="#{no}"
+          ></span>
+          <span
+            class="value"
+            th:text="${form.oloresSospechososComentario}"
+          ></span>
+        </div>
+      </div>
+      <div class="section">
+        <div class="section-title" th:text="#{related-equipment-status}"></div>
+        <div class="field-row">
+          <span class="label" th:text="#{grilles-vents} + ' :'"></span>
+          <span class="value" th:text="${form.estadoRejillas}"></span>
+        </div>
+        <div class="field-row">
+          <span class="label" th:text="#{motor-fan} + ' :'"></span>
+          <span class="value" th:text="${form.estadoMotor}"></span>
+        </div>
+        <div class="field-row">
+          <span class="label" th:text="#{filters} + ' :'"></span>
+          <span class="value" th:text="${form.estadoFiltros}"></span>
+        </div>
+      </div>
+      <div class="section">
+        <div class="section-title" th:text="#{measurements-dimensions}"></div>
+        <div class="field-row">
+          <span class="label" th:text="#{number-main-ducts} + ' :'"></span>
+          <span class="value" th:text="${form.cantidadConductos}"></span>
+        </div>
+        <div class="field-row">
+          <span class="label" th:text="#{estimated-length} + ' :'"></span>
+          <span class="value" th:text="${form.longitudEstimacion}"></span>
+        </div>
+        <div class="field-row">
+          <span
+            class="label"
+            th:text="#{number-elbows-transitions} + ' :'"
+          ></span>
+          <span class="value" th:text="${form.cantidadCodos}"></span>
+        </div>
+        <div class="field-row">
+          <span
+            class="label"
+            th:text="#{number-outlets-rooms-served} + ' :'"
+          ></span>
+          <span class="value" th:text="${form.cantidadSalidas}"></span>
+        </div>
+        <div class="field-row">
+          <span class="label" th:text="#{working-height} + ' :'"></span>
+          <span class="value" th:text="${form.alturaTrabajo}"></span>
+        </div>
+      </div>
+      <div class="section">
+        <div class="section-title" th:text="#{general-observations}"></div>
+        <div class="field-row">
+          <span class="value" th:text="${form.observaciones}"></span>
+        </div>
+      </div>
+      <div class="section fotos-section">
+        <div class="section-title" th:text="#{photos}"></div>
+        <div
+          class="photo-row"
+          th:each="foto : ${fotos}"
+          style="display: flex; align-items: center; margin-bottom: 20px"
+        >
+          <div style="flex: 2; padding-right: 20px">
+            <img
+              th:src="'data:image/jpeg;base64,' + ${foto.imagenBase64}"
+              alt="Foto"
+              style="max-width: 100%; height: auto"
+            />
+          </div>
+          <div style="flex: 1">
+            <p
+              th:text="${foto.descripcion}"
+              style="font-size: 16px; color: #333"
+            ></p>
+          </div>
         </div>
 
-        <div th:if="${#lists.isEmpty(fotos)}" style="color:#888; font-size:13px; margin-top:10px;">Aucune photo jointe.</div>
-    </div>
-    <div class="section">
-        <div class="section-title">Recommandations</div>
-        <div class="field-row"><span class="label">Nettoyage complet ?</span>
-            <span th:if="${form.limpiezaCompleta}" class="readonly-checkbox">Oui</span>
-            <span th:unless="${form.limpiezaCompleta}" class="readonly-checkbox no">Non</span>
+        <div
+          th:if="${#lists.isEmpty(fotos)}"
+          style="color: #888; font-size: 13px; margin-top: 10px"
+          th:text="#{no-photos-in-project}"
+        ></div>
+      </div>
+      <div class="section">
+        <div class="section-title" th:text="#{recommendations}"></div>
+        <div class="field-row">
+          <span class="label" th:text="#{complete-cleaning} + '?'"></span>
+          <span
+            th:if="${form.limpiezaCompleta}"
+            class="readonly-checkbox"
+            th:text="#{yes}"
+          ></span>
+          <span
+            th:unless="${form.limpiezaCompleta}"
+            class="readonly-checkbox no"
+            th:text="#{no}"
+          ></span>
         </div>
-        <div class="field-row"><span class="label">Installation de portes d’accès supplémentaires ?</span>
-            <span th:if="${form.instalarPuertasAcceso}" class="readonly-checkbox">Oui</span>
-            <span th:unless="${form.instalarPuertasAcceso}" class="readonly-checkbox no">Non</span>
+        <div class="field-row">
+          <span
+            class="label"
+            th:text="#{install-additional-access-doors} + '?'"
+          ></span>
+          <span
+            th:if="${form.instalarPuertasAcceso}"
+            class="readonly-checkbox"
+            th:text="#{yes}"
+          ></span>
+          <span
+            th:unless="${form.instalarPuertasAcceso}"
+            class="readonly-checkbox no"
+            th:text="#{no}"
+          ></span>
         </div>
-        <div class="field-row"><span class="label">Remplacement de filtres ?</span>
-            <span th:if="${form.reemplazoFiltros}" class="readonly-checkbox">Oui</span>
-            <span th:unless="${form.reemplazoFiltros}" class="readonly-checkbox no">Non</span>
+        <div class="field-row">
+          <span class="label" th:text="#{filter-replacement} + '?'"></span>
+          <span
+            th:if="${form.reemplazoFiltros}"
+            class="readonly-checkbox"
+            th:text="#{yes}"
+          ></span>
+          <span
+            th:unless="${form.reemplazoFiltros}"
+            class="readonly-checkbox no"
+            th:text="#{no}"
+          ></span>
         </div>
-        <div class="field-row"><span class="label">Produits recommandés :</span> <span class="value" th:text="${form.productosRecomendados}"></span></div>
+        <div class="field-row">
+          <span class="label" th:text="#{recommended-products} + ' :'"></span>
+          <span class="value" th:text="${form.productosRecomendados}"></span>
+        </div>
+      </div>
+      <div class="footer">
+        <div>
+          ©
+          <span
+            th:text="${#temporals.format(#temporals.createNow(), 'yyyy')}"
+          ></span>
+          vizion-ProjectManager. <span th:text="#{all-rights-reserved}"></span>
+        </div>
+      </div>
     </div>
-    <div class="footer">
-        <div>© <span th:text="${#temporals.format(#temporals.createNow(), 'yyyy')}">2023</span> vizion-ProjectManager. Tous droits réservés.</div>
-    </div>
-</div>
-</body>
+  </body>
 </html>

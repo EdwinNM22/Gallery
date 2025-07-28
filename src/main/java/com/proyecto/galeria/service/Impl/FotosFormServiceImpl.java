@@ -22,6 +22,11 @@ public class FotosFormServiceImpl implements FotosFormService {
     }
 
     @Override
+    public List<FotosForm> findAllById(List<Integer> ids) {
+        return fotosFormRepository.findAllById(ids);
+    }
+
+    @Override
     public Optional<FotosForm> findById(Integer id) {
         return fotosFormRepository.findById(id);
     }

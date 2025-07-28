@@ -1,6 +1,5 @@
 package com.proyecto.galeria.controller;
 
-
 import com.proyecto.galeria.model.Permiso;
 import com.proyecto.galeria.model.reporte;
 import com.proyecto.galeria.model.usuario;
@@ -9,6 +8,7 @@ import com.proyecto.galeria.service.PermisoService;
 import com.proyecto.galeria.service.ReporteService;
 import com.proyecto.galeria.service.ReportePdfService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,19 +16,24 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-
 @Controller
 @RequestMapping("/admin/reports")
 public class AdminReportController {
-
-    @Autowired private ReporteService   reporteService;
-    @Autowired private ReportePdfService reportePdfService;
-    @Autowired private IUsuarioService usuarioService;
-    @Autowired private PermisoService permisoService;
+    @Autowired
+    private MessageSource messageSource;
+    @Autowired
+    private ReporteService reporteService;
+    @Autowired
+    private ReportePdfService reportePdfService;
+    @Autowired
+    private IUsuarioService usuarioService;
+    @Autowired
+    private PermisoService permisoService;
 
     /* ------------- list view ------------- */
     @GetMapping("")
@@ -46,10 +51,7 @@ public class AdminReportController {
         String userRole = optionalUsuario.map(usuario::getTipo_usuario).orElse("USUARIO");
         model.addAttribute("userRole", userRole);
 
-
-
-
-        //Validar acceso a la vista
+        // Validar acceso a la vista
         Integer idUsuario = (Integer) session.getAttribute("idusuario");
         Optional<usuario> userOpt = usuarioService.findById(idUsuario);
 
@@ -72,14 +74,12 @@ public class AdminReportController {
             model.addAttribute("REPORTES_DELETE", permisos.contains("REPORTES_DELETE"));
             model.addAttribute("REPORTES_PDF", permisos.contains("REPORTE_PDF"));
 
-
         }, () -> {
             model.addAttribute("REPORTES_EDIT", false);
             model.addAttribute("REPORTES_DELETE", false);
             model.addAttribute("REPORTE_PDF", false);
 
         });
-
 
         return "adm/reports";
     }
@@ -88,7 +88,7 @@ public class AdminReportController {
     @PostMapping("/{id}")
     @ResponseBody
     public String update(@PathVariable Integer id,
-                         @RequestParam String contenido) {
+            @RequestParam String contenido) {
 
         reporteService.update(id, contenido);
         return "OK";
@@ -96,10 +96,14 @@ public class AdminReportController {
 
     /* ------------- download single ------- */
     @GetMapping("/{id}/pdf")
-    public ResponseEntity<byte[]> singlePdf(@PathVariable Integer id) throws Exception {
+    public ResponseEntity<byte[]> singlePdf(@PathVariable Integer id, Locale currentLocale) throws Exception {
+        // Now, currentLocale will automatically be the locale stored in the session
+        // (or the default English if no 'lang' parameter ever set it explicitly in a
+        // previous request).
+        String projectReportText = messageSource.getMessage("project-report", null, currentLocale);
 
         reporte r = reporteService.findSent(id).orElseThrow();
-        byte[] bytes = reportePdfService.buildPdf(List.of(r), "Project report – " +
+        byte[] bytes = reportePdfService.buildPdf(List.of(r), projectReportText + " – " +
                 r.getAlbum().getNombre());
 
         String fname = safeFileName(r.getAlbum().getNombre()) + "_report_" + id + ".pdf";

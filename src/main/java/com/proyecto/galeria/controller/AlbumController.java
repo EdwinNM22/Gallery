@@ -48,7 +48,6 @@ public class AlbumController {
     @Autowired
     private Uploadfoto upload;
 
-
     @Autowired
     private TemplateEngine templateEngine;
 
@@ -57,16 +56,12 @@ public class AlbumController {
     @Autowired
     private PermisoService permisoService;
 
-
-
     @GetMapping("")
     public String home(Model model) {
         List<album> albumes = albumService.findAll();
         model.addAttribute("albums", albumes);
         List<SubAlbum> subAlbumes = subAlbumService.findAll();
         model.addAttribute("subAlbumes", subAlbumes);
-
-
 
         if (!albumes.isEmpty()) {
             album ultimo = albumes.get(albumes.size() - 1);
@@ -91,7 +86,6 @@ public class AlbumController {
         Optional<usuario> optionalUsuario = usuarioService.findById(userId);
         String userRole = optionalUsuario.map(usuario::getTipo_usuario).orElse("USUARIO");
 
-
         // Pasar atributos a la vista
         model.addAttribute("albumes", albumService.findAll());
         model.addAttribute("subalbum", subAlbumService.findAll());
@@ -99,7 +93,7 @@ public class AlbumController {
         model.addAttribute("permisosAgrupados", permisoService.getPermisosAgrupadosPorVista());
         model.addAttribute("usuarios", usuarioService.findAll());
 
-        //Validar acceso a la vista
+        // Validar acceso a la vista
         Integer idUsuario = (Integer) session.getAttribute("idusuario");
         Optional<usuario> userOpt = usuarioService.findById(idUsuario);
 
@@ -107,7 +101,6 @@ public class AlbumController {
                 .noneMatch(p -> "AGENDA_ACCESS".equals(p.getCodigo()))) {
             return "redirect:/NoAccess/Access";
         }
-
 
         usuarioService.findById(idUsuario).ifPresentOrElse(user -> {
             user.getPermisos().size(); // Forzar carga
@@ -140,8 +133,6 @@ public class AlbumController {
 
         return "albumes/create";
     }
-
-
 
     @PostMapping("/save")
     public ResponseEntity<String> save(
@@ -191,15 +182,16 @@ public class AlbumController {
             }
         }
 
-
         // Establecer notas
         album.setNotas(notas);
 
         album.setUsuario(u);
         album savedAlbum = albumService.save(album);
 
-        SubAlbum subAlbumAntes = new SubAlbum(null, "Antes", "Upload the photos of the initial state of the project.", "Antes", savedAlbum, u);
-        SubAlbum subAlbumDespues = new SubAlbum(null, "Después", "Upload the photos of the final state of the project.", "Despues", savedAlbum, u);
+        SubAlbum subAlbumAntes = new SubAlbum(null, "Antes", "Upload the photos of the initial state of the project.",
+                "Antes", savedAlbum, u);
+        SubAlbum subAlbumDespues = new SubAlbum(null, "Después", "Upload the photos of the final state of the project.",
+                "Despues", savedAlbum, u);
 
         subAlbumService.save(subAlbumAntes);
         subAlbumService.save(subAlbumDespues);
@@ -210,10 +202,7 @@ public class AlbumController {
     @GetMapping("/{id}")
     public String viewAlbum(@PathVariable Integer id, Model model, HttpSession session) {
 
-
-
-
-        //Validar acceso a la vista
+        // Validar acceso a la vista
         Integer idUsuario = (Integer) session.getAttribute("idusuario");
         usuarioService.findById(idUsuario).ifPresentOrElse(user -> {
             user.getPermisos().size(); // Forzar carga
@@ -221,7 +210,6 @@ public class AlbumController {
             model.addAttribute("usuarioLogueado", user);
             model.addAttribute("usuarios", usuarioService.findAll());
             model.addAttribute("permisosAgrupados", permisoService.getPermisosAgrupadosPorVista());
-
 
             // Permisos individuales
             Set<String> permisos = user.getPermisos().stream()
@@ -241,15 +229,12 @@ public class AlbumController {
 
         });
 
-
-
         // para dar permisos a edgar
         Integer userId = Integer.parseInt(session.getAttribute("idusuario").toString());
         // Buscar el usuario y obtener su rol
         Optional<usuario> optionalUsuario = usuarioService.findById(userId);
         String userRole = optionalUsuario.map(usuario::getTipo_usuario).orElse("USUARIO");
         model.addAttribute("userRole", userRole);
-
 
         Optional<album> optionalAlbum = albumService.get(id);
         if (optionalAlbum.isPresent()) {
@@ -419,7 +404,7 @@ public class AlbumController {
 
         boolean isEdgar = optionalUsuario.map(user -> "EDGAR".equals(user.getTipo_usuario()))
                 .orElse(false);
-        model.addAttribute("isEdgar", isEdgar);  // Pasar solo si es EDGAR
+        model.addAttribute("isEdgar", isEdgar); // Pasar solo si es EDGAR
 
         LOGGER.info("search album: {}", optionalAlbum);
         if (optionalAlbum.isPresent()) {
@@ -430,15 +415,12 @@ public class AlbumController {
         }
     }
 
-
-
     @PostMapping("/update")
     public String update(album album, Model model, HttpSession session) {
         LOGGER.info("Updating album: {}", album);
         albumService.update(album);
         return "redirect:/albumes/create";
     }
-
 
     @GetMapping("/delete/{id}")
     public String delete(@PathVariable Integer id, HttpServletRequest request) {
@@ -467,7 +449,6 @@ public class AlbumController {
         // Si no hay referencia, redirige a /albumes por defecto
         return "redirect:" + (referer != null ? referer : "/albumes");
     }
-
 
     @GetMapping("/{id}/details")
     @ResponseBody
@@ -529,7 +510,6 @@ public class AlbumController {
         return ResponseEntity.ok(events);
     }
 
-
     @PostMapping("/change-status/{id}")
     public ResponseEntity<String> changeAlbumStatus(
             @PathVariable Integer id,
@@ -560,7 +540,9 @@ public class AlbumController {
     }
 
     @GetMapping("/{id}/pdf")
-    public ResponseEntity<InputStreamResource> generatePdf(@PathVariable Integer id) {
+    public ResponseEntity<InputStreamResource> generatePdf(@PathVariable Integer id, Locale currentLocale) { // Inject
+                                                                                                             // Locale
+                                                                                                             // here
         try {
             Optional<album> optionalAlbum = albumService.get(id);
             if (optionalAlbum.isEmpty()) {
@@ -570,8 +552,11 @@ public class AlbumController {
             album album = optionalAlbum.get();
 
             // Configurar el contexto de Thymeleaf
-            Context context = new Context();
+            Context context = new Context(currentLocale); // Pass the currentLocale here
             context.setVariable("album", album);
+            // If you have a MessageSource bean, you can also add it to the context
+            // context.setVariable("messageSource", messageSource); // Example, assuming
+            // 'messageSource' is injected
 
             // Procesar la plantilla HTML
             String htmlContent = templateEngine.process("pdf/detallePDF", context);
@@ -600,7 +585,7 @@ public class AlbumController {
                     .body(new InputStreamResource(inputStream));
 
         } catch (Exception e) {
-
+            e.printStackTrace(); // Log the exception for debugging
             return ResponseEntity.internalServerError().build();
         }
     }
@@ -622,7 +607,6 @@ public class AlbumController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-
 
     @GetMapping("/{id}/notes")
     @ResponseBody

@@ -6,6 +6,7 @@ import com.proyecto.galeria.model.FotosForm;
 import com.proyecto.galeria.model.usuario;
 import com.proyecto.galeria.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
@@ -35,6 +36,9 @@ public class FormController {
     private static final Logger logger = LoggerFactory.getLogger(FormController.class);
 
     @Autowired
+    private MessageSource messageSource;
+
+    @Autowired
     private FormService formService;
 
     @Autowired
@@ -56,6 +60,7 @@ public class FormController {
 
     @GetMapping
     public String showFormPage(@RequestParam(required = false) Integer expedienteId,
+            @RequestParam(value = "success", required = false) String success,
             HttpSession session, Model model) {
         Integer idUsuario = (Integer) session.getAttribute("idusuario");
         if (idUsuario != null) {
@@ -63,6 +68,10 @@ public class FormController {
             if (user != null) {
                 model.addAttribute("nombreEvaluador", user.getNombre());
             }
+        }
+
+        if (success != null) {
+            model.addAttribute("success", true);
         }
 
         model.addAttribute("expedienteId", expedienteId);
@@ -184,9 +193,10 @@ public class FormController {
     @PostMapping("/submit")
     public String submitForm(@ModelAttribute Form form,
             @RequestParam(value = "expedienteId", required = false) Integer expedienteId,
-            @RequestParam("fotos") MultipartFile[] fotos,
+            @RequestParam(value = "fotos", required = false) MultipartFile[] fotos,
             @RequestParam(value = "photoDescriptions", required = false) String[] descriptions,
-            HttpSession session) throws IOException {
+            @RequestParam("futuro") boolean futuro,
+            HttpSession session, Model model) throws IOException {
         try {
             // --- Encontrar Usuario
             Integer idUsuario = (Integer) session.getAttribute("idusuario");
@@ -229,10 +239,13 @@ public class FormController {
             }
 
         } catch (Exception e) {
-
+            model.addAttribute("error", "Error updating form: " + e.getMessage());
+            return "form/EditForm.html";
         }
 
-        return "form/Form.html";
+        if (futuro)
+            return "redirect:/expediente/create-future-project?expedienteId=" + expedienteId + "&success";
+        return "redirect:/form/?expedienteId=" + expedienteId + "&success";
     }
 
     @GetMapping("/{id}")
@@ -274,7 +287,8 @@ public class FormController {
     }
 
     @GetMapping("/{id}/pdf")
-    public ResponseEntity<byte[]> downloadFormPdf(@PathVariable Integer id) {
+    public ResponseEntity<byte[]> downloadFormPdf(@PathVariable Integer id, Locale currentLocale) { // Inject Locale
+                                                                                                    // here
         try {
             Form form = formService.findById(id).orElse(null);
             if (form == null) {
@@ -282,24 +296,33 @@ public class FormController {
             }
             List<FotosForm> fotos = fotosFormService.findByFormId(id);
             // Prepare Base64 images for PDF
-            List<java.util.Map<String, String>> fotosBase64 = new java.util.ArrayList<>();
+            List<Map<String, String>> fotosBase64 = new java.util.ArrayList<>();
             for (FotosForm foto : fotos) {
                 String filename = foto.getImagen();
                 String imagePath = "/opt/Gallery/form/" + filename;
                 try {
                     byte[] imageBytes = java.nio.file.Files.readAllBytes(java.nio.file.Paths.get(imagePath));
-                    String base64Image = java.util.Base64.getEncoder().encodeToString(imageBytes);
-                    java.util.Map<String, String> fotoMap = new java.util.HashMap<>();
+                    String base64Image = Base64.getEncoder().encodeToString(imageBytes);
+                    Map<String, String> fotoMap = new HashMap<>();
                     fotoMap.put("imagenBase64", base64Image);
-                    fotoMap.put("descripcion", foto.getDescripcion()); // <-- agrega la descripcion
+                    fotoMap.put("descripcion", foto.getDescripcion());
                     fotosBase64.add(fotoMap);
                 } catch (Exception ex) {
-                    // skip image if error
+                    System.err.println("Error loading image " + imagePath + ": " + ex.getMessage());
+                    // Skip image if error, or handle more robustly
                 }
             }
 
-            String title = "Formulaire – " + form.getNombreCliente();
-            byte[] pdf = formPdfService.buildPdf(form, fotosBase64, title);
+            String formTitleKey = "evaluation-form-title-full"; // Or 'evaluation-form-title' if you prefer that one for
+                                                                // the PDF title
+            String localizedFormTitle = messageSource.getMessage(formTitleKey, null, currentLocale);
+
+            String titleForPdf = localizedFormTitle + " – " + form.getNombreCliente();
+
+            // Pass the currentLocale to your PDF generation service
+            byte[] pdf = formPdfService.buildPdf(form, fotosBase64, titleForPdf, currentLocale); // <-- Pass
+                                                                                                 // currentLocale here
+
             String fname = safeFileName(form.getNombreCliente()) + "_form_" + id + ".pdf";
             return ResponseEntity.ok()
                     .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fname + "\"")
@@ -397,17 +420,15 @@ public class FormController {
             @RequestParam(value = "existingPhotoIds", required = false) Integer[] existingPhotoIds,
             @RequestParam(value = "existingPhotoDescriptions", required = false) String[] existingPhotoDescriptions,
             @RequestParam(value = "fotosToDelete", required = false) String photosToDelete,
+            @RequestParam("futuro") boolean futuro,
             Model model,
-            RedirectAttributes redirectAttributes) throws IOException {
+            RedirectAttributes redirectAttributes,
+            HttpServletRequest request) throws IOException {
         try {
-            System.out.println("New photos: " + newPhotos);
-            System.out.println("New Photo Descrips: " + newPhotoDescriptions);
-            System.out.println("Existing Photo Ids: " + existingPhotoIds);
-            System.out.println("Existing Photo Desc :" + existingPhotoDescriptions);
-            System.out.println("Photos to delete:" + photosToDelete);
+            ;
 
             // 1. Apply Form Changes
-            Form updatedForm = formService.update(id, form);
+            formService.update(id, form);
 
             // 2. Delete Selected Photos
             if (photosToDelete != null && !photosToDelete.isEmpty()) {
@@ -416,6 +437,21 @@ public class FormController {
                         .filter(s -> !s.isEmpty())
                         .map(Integer::parseInt)
                         .collect(Collectors.toList());
+
+                List<FotosForm> fotosToDeleteFromDisk = fotosFormService.findAllById(idsToDelete);
+
+                for (FotosForm foto : fotosToDeleteFromDisk) {
+                    String imagePath = "/opt/Gallery/form/" + foto.getImagen();
+                    try {
+                        logger.info("Attempting to delete image file during edit: {}", imagePath);
+                        boolean deleted = java.nio.file.Files.deleteIfExists(java.nio.file.Paths.get(imagePath));
+                        logger.info("Image file deleted during edit: {}", deleted);
+                    } catch (Exception e) {
+                        logger.error("Error deleting image file {} during edit: {}", imagePath, e.getMessage());
+                    }
+                }
+
+                // Now delete from the database
                 fotosFormService.deleteByIds(idsToDelete);
             }
 
@@ -454,6 +490,8 @@ public class FormController {
             return "form/EditForm.html";
         }
 
+        if (futuro)
+            return "redirect:/expediente/edit-future-project/" + id + "?success";
         return "redirect:/form/" + id + "/edit?success";
     }
 

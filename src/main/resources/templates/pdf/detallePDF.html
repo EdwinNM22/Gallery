@@ -1,157 +1,239 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="http://www.thymeleaf.org">
-<head>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-  <title>Project Details</title>
-  <style type="text/css">
-    body {
-      font-family: Arial, sans-serif;
-      line-height: 1.6;
-      color: #333;
-      padding: 20px;
-    }
-    .header {
-      text-align: center;
-      margin-bottom: 30px;
-      border-bottom: 2px solid #4361ee;
-      padding-bottom: 10px;
-    }
-    .header h1 {
-      color: #4361ee;
-      margin-bottom: 5px;
-    }
-    .header .status {
-      display: inline-block;
-      padding: 3px 10px;
-      border-radius: 20px;
-      font-size: 14px;
-      font-weight: bold;
-      margin-top: 5px;
-    }
-    .status-pendiente {
-      background-color: #e0e6ff;
-      color: #4361ee;
-    }
-    .status-completado {
-      background-color: #e6ffe0;
-      color: #38b000;
-    }
-    .status-anulado {
-      background-color: #ffe0e0;
-      color: #f94144;
-    }
-    .section {
-      margin-bottom: 20px;
-    }
-    .section h2 {
-      color: #4361ee;
-      font-size: 18px;
-      border-bottom: 1px solid #eee;
-      padding-bottom: 5px;
-      margin-bottom: 10px;
-    }
-    .detail-row {
-      margin-bottom: 8px;
-      overflow: hidden;
-    }
-    .detail-label {
-      font-weight: bold;
-      float: left;
-      width: 180px;
-    }
-    .detail-value {
-      margin-left: 180px;
-    }
-    .footer {
-      text-align: center;
-      margin-top: 30px;
-      font-size: 12px;
-      color: #777;
-      border-top: 1px solid #eee;
-      padding-top: 10px;
-    }
-    .empty-value {
-      color: #999;
-      font-style: italic;
-    }
-  </style>
-</head>
-<body>
-<div class="header">
-  <h1 th:text="${album.nombre}">Project Name</h1>
-  <div th:classappend="'status status-' + ${album.estado}"
-       th:text="${album.estado}">Status</div>
-</div>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title th:text="#{project-details}">Project Details</title>
+    <style type="text/css">
+      body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        color: #333;
+        padding: 20px;
+      }
+      .header {
+        text-align: center;
+        margin-bottom: 30px;
+        border-bottom: 2px solid #4361ee;
+        padding-bottom: 10px;
+      }
+      .header h1 {
+        color: #4361ee;
+        margin-bottom: 5px;
+      }
+      .header .status {
+        display: inline-block;
+        padding: 3px 10px;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: bold;
+        margin-top: 5px;
+      }
+      .status-pendiente {
+        background-color: #e0e6ff;
+        color: #4361ee;
+      }
+      .status-completado {
+        background-color: #e6ffe0;
+        color: #38b000;
+      }
+      .status-anulado {
+        background-color: #ffe0e0;
+        color: #f94144;
+      }
+      .section {
+        margin-bottom: 20px;
+      }
+      .section h2 {
+        color: #4361ee;
+        font-size: 18px;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 5px;
+        margin-bottom: 10px;
+      }
+      .detail-row {
+        margin-bottom: 8px;
+        overflow: hidden;
+      }
+      .detail-label {
+        font-weight: bold;
+        float: left;
+        width: 180px;
+      }
+      .detail-value {
+        margin-left: 180px;
+      }
+      .footer {
+        text-align: center;
+        margin-top: 30px;
+        font-size: 12px;
+        color: #777;
+        border-top: 1px solid #eee;
+        padding-top: 10px;
+      }
+      .empty-value {
+        color: #999;
+        font-style: italic;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <h1 th:text="${album.nombre}">Project Name</h1>
+      <div
+        th:classappend="'status status-' + ${album.estado}"
+        th:text="#{'status.' + ${album.estado}}"
+      >
+        Status
+      </div>
+    </div>
 
-<div class="section">
-  <h2>Basic Information</h2>
-  <div class="detail-row">
-    <div class="detail-label">Description:</div>
-    <div class="detail-value" th:class="${#strings.isEmpty(album.descripcion)} ? 'empty-value'"
-         th:text="${#strings.isEmpty(album.descripcion)} ? 'Not provided' : ${album.descripcion}">-</div>
-  </div>
-</div>
+    <div class="section">
+      <h2 th:text="#{basic-information}">Basic Information</h2>
+      <div class="detail-row">
+        <div class="detail-label" th:text="#{description} + ':'">
+          Description:
+        </div>
+        <div
+          class="detail-value"
+          th:class="${#strings.isEmpty(album.descripcion)} ? 'empty-value'"
+          th:text="${#strings.isEmpty(album.descripcion)} ? #{no-description-available} : ${album.descripcion}"
+        >
+          -
+        </div>
+      </div>
+    </div>
 
-<div class="section">
-  <h2>Project Dates</h2>
-  <div class="detail-row">
-    <div class="detail-label">Start Date:</div>
-    <div class="detail-value" th:if="${album.fechaInicio}"
-         th:text="${#temporals.format(album.fechaInicio, 'dd/MM/yyyy')}">-</div>
-    <div class="detail-value empty-value" th:unless="${album.fechaInicio}">Not specified</div>
-  </div>
-  <div class="detail-row">
-    <div class="detail-label">Start Time:</div>
-    <div class="detail-value" th:if="${album.horaInicio}"
-         th:text="${#strings.substring(album.horaInicio.toString(), 0, 5)}">-</div>
-    <div class="detail-value empty-value" th:unless="${album.horaInicio}">Not specified</div>
-  </div>
-  <div class="detail-row">
-    <div class="detail-label">End Date:</div>
-    <div class="detail-value" th:if="${album.fechaFin}"
-         th:text="${#temporals.format(album.fechaFin, 'dd/MM/yyyy')}">-</div>
-    <div class="detail-value empty-value" th:unless="${album.fechaFin}">Not specified</div>
-  </div>
-</div>
+    <div class="section">
+      <h2 th:text="#{dates}">Project Dates</h2>
+      <div class="detail-row">
+        <div class="detail-label" th:text="#{start-date} + ':'">
+          Start Date:
+        </div>
+        <div
+          class="detail-value"
+          th:if="${album.fechaInicio}"
+          th:text="${#temporals.format(album.fechaInicio, 'dd/MM/yyyy')}"
+        >
+          -
+        </div>
+        <div
+          class="detail-value empty-value"
+          th:unless="${album.fechaInicio}"
+          th:text="#{no-date}"
+        >
+          Not specified
+        </div>
+      </div>
+      <div class="detail-row">
+        <div class="detail-label" th:text="#{start-time} + ':'">
+          Start Time:
+        </div>
+        <div
+          class="detail-value"
+          th:if="${album.horaInicio}"
+          th:text="${#strings.substring(album.horaInicio.toString(), 0, 5)}"
+        >
+          -
+        </div>
+        <div
+          class="detail-value empty-value"
+          th:unless="${album.horaInicio}"
+          th:text="#{no-date}"
+        >
+          Not specified
+        </div>
+      </div>
+      <div class="detail-row">
+        <div class="detail-label" th:text="#{end-date} + ':'">End Date:</div>
+        <div
+          class="detail-value"
+          th:if="${album.fechaFin}"
+          th:text="${#temporals.format(album.fechaFin, 'dd/MM/yyyy')}"
+        >
+          -
+        </div>
+        <div
+          class="detail-value empty-value"
+          th:unless="${album.fechaFin}"
+          th:text="#{no-date}"
+        >
+          Not specified
+        </div>
+      </div>
+    </div>
 
-<div class="section">
-  <h2>Location and Contact</h2>
-  <div class="detail-row">
-    <div class="detail-label">Location:</div>
-    <div class="detail-value" th:class="${#strings.isEmpty(album.ubicacion)} ? 'empty-value'"
-         th:text="${#strings.isEmpty(album.ubicacion)} ? 'Not provided' : ${album.ubicacion}">-</div>
-  </div>
-  <div class="detail-row">
-    <div class="detail-label">Contact Person:</div>
-    <div class="detail-value" th:class="${#strings.isEmpty(album.contacto)} ? 'empty-value'"
-         th:text="${#strings.isEmpty(album.contacto)} ? 'Not provided' : ${album.contacto}">-</div>
-  </div>
-</div>
+    <div class="section">
+      <h2 th:text="#{location-contact}">Location and Contact</h2>
+      <div class="detail-row">
+        <div class="detail-label" th:text="#{location} + ':'">Location:</div>
+        <div
+          class="detail-value"
+          th:class="${#strings.isEmpty(album.ubicacion)} ? 'empty-value'"
+          th:text="${#strings.isEmpty(album.ubicacion)} ? #{not-provided} : ${album.ubicacion}"
+        >
+          -
+        </div>
+      </div>
+      <div class="detail-row">
+        <div class="detail-label" th:text="#{contact} + ':'">
+          Contact Person:
+        </div>
+        <div
+          class="detail-value"
+          th:class="${#strings.isEmpty(album.contacto)} ? 'empty-value'"
+          th:text="${#strings.isEmpty(album.contacto)} ? #{not-provided} : ${album.contacto}"
+        >
+          -
+        </div>
+      </div>
+    </div>
 
-<div class="section">
-  <h2>Additional Information</h2>
-  <div class="detail-row">
-    <div class="detail-label">Alarm Code:</div>
-    <div class="detail-value" th:class="${#strings.isEmpty(album.claveAlarma)} ? 'empty-value'"
-         th:text="${#strings.isEmpty(album.claveAlarma)} ? 'Not provided' : ${album.claveAlarma}">-</div>
-  </div>
-  <div class="detail-row">
-    <div class="detail-label">Notes:</div>
-    <div class="detail-value" th:class="${#strings.isEmpty(album.notas)} ? 'empty-value'"
-         th:text="${#strings.isEmpty(album.notas)} ? 'No notes' : ${album.notas}">-</div>
-  </div>
-  <div class="detail-row">
-    <div class="detail-label">Additional Data:</div>
-    <div class="detail-value" th:class="${#strings.isEmpty(album.datosAdicionales)} ? 'empty-value'"
-         th:text="${#strings.isEmpty(album.datosAdicionales)} ? 'No additional data' : ${album.datosAdicionales}">-</div>
-  </div>
-</div>
+    <div class="section">
+      <h2 th:text="#{additional-information}">Additional Information</h2>
+      <div class="detail-row">
+        <div class="detail-label" th:text="#{alarm-code} + ':'">
+          Alarm Code:
+        </div>
+        <div
+          class="detail-value"
+          th:class="${#strings.isEmpty(album.claveAlarma)} ? 'empty-value'"
+          th:text="${#strings.isEmpty(album.claveAlarma)} ? #{not-provided} : ${album.claveAlarma}"
+        >
+          -
+        </div>
+      </div>
+      <div class="detail-row">
+        <div class="detail-label" th:text="#{notes} + ':'">Notes:</div>
+        <div
+          class="detail-value"
+          th:class="${#strings.isEmpty(album.notas)} ? 'empty-value'"
+          th:text="${#strings.isEmpty(album.notas)} ? #{no-notes} : ${album.notas}"
+        >
+          -
+        </div>
+      </div>
+      <div class="detail-row">
+        <div class="detail-label" th:text="#{additional-data} + ':'">
+          Additional Data:
+        </div>
+        <div
+          class="detail-value"
+          th:class="${#strings.isEmpty(album.datosAdicionales)} ? 'empty-value'"
+          th:text="${#strings.isEmpty(album.datosAdicionales)} ? #{no-additional-data} : ${album.datosAdicionales}"
+        >
+          -
+        </div>
+      </div>
+    </div>
 
-<div class="footer">
-  Generated on <span th:text="${#temporals.format(#temporals.createNow(), 'dd/MM/yyyy HH:mm')}"></span> |
-  Project Management System
-</div>
-</body>
+    <div class="footer">
+      <span
+        th:text="#{generated-on} + ' ' + ${#temporals.format(#temporals.createNow(), 'dd/MM/yyyy HH:mm')}"
+      ></span>
+      |
+      <span th:text="#{project-management-system}"
+        >Project Management System</span
+      >
+    </div>
+  </body>
 </html>

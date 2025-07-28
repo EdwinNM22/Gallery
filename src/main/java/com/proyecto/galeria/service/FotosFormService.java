@@ -8,6 +8,8 @@ import java.util.Optional;
 public interface FotosFormService {
     List<FotosForm> findAll();
 
+    List<FotosForm> findAllById(List<Integer> ids);
+
     Optional<FotosForm> findById(Integer id);
 
     FotosForm save(FotosForm fotosForm);
