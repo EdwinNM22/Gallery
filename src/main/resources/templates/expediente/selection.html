@@ -101,7 +101,9 @@
               <i class="fas fa-chevron-right"></i>
             </button>
           </div>
-          <div id="calendar"></div>
+          <div class="calendar-wrapper">
+            <div id="calendar"></div>
+          </div>
         </div>
       </div>
     </div>
@@ -124,6 +126,9 @@
     headerNavigationEnabled: true,
     timeRangeSelectHandling: "Enabled",
     selectMode: "Day",
+    heightSpec: "Fixed",
+    height: 600,
+    width: "100%",
     onTimeRangeSelected: async (args) => {
       const clickedDate = args.start.toString("yyyy-MM-dd");
       window.location.href = `/expediente/create-future-project?expedienteId=${expedienteId}&fecha_evaluacion=${clickedDate}`;
@@ -137,9 +142,9 @@
     eventResizeHandling: "Disabled",
     timeRangeDoubleClickHandling: "Disabled",
     eventRightClickHandling: "Disabled",
-    eventHeight: 25,  // Altura fija para los eventos
-    cellHeight: 120,   // Altura de celda para mejor espaciado
-    eventStackingLineHeight: 24  // Altura de línea para eventos apilados
+    eventHeight: 25,
+    cellHeight: 120,
+    eventStackingLineHeight: 24
   });
 
   // Procesar los eventos para aplicar estilos y dividir eventos de varios días

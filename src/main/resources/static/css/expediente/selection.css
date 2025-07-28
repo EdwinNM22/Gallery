@@ -21,8 +21,6 @@ body {
     min-height: 100vh;
 }
 
-
-
 /* Estructura principal */
 .bg-fast-load {
     position: fixed;
@@ -133,8 +131,8 @@ body {
     background: rgba(15, 25, 35, 0.8);
     border: 1px solid var(--border-color);
     border-radius: 10px;
-    padding: 1.5rem;
     backdrop-filter: blur(5px);
+
 }
 
 /* Tarjetas de proyectos */
@@ -193,12 +191,60 @@ body {
     box-shadow: 0 6px 12px rgba(58, 123, 213, 0.3);
 }
 
-/* Calendario */
+/* Estilos para el calendario responsive */
 .calendar-container {
     background: rgba(15, 25, 35, 0.8);
     border: 1px solid var(--border-color);
     border-radius: 10px;
     padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: auto;
+}
+
+.calendar-wrapper {
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    margin: 0 -1.5rem -1.5rem;
+    padding: 0 1.5rem 1.5rem;
+}
+
+#calendar {
+    min-width: 800px;
+    width: 100%;
+    height: 600px;
+}
+
+.calendar-controls {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.btn-control {
+    background: rgba(15, 25, 35, 0.8);
+    border: 1px solid var(--border-color);
+    color: var(--light-text);
+    padding: 0.6rem 1.2rem;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-control:hover {
+    background: var(--primary-blue);
+    color: var(--lighter-text);
+    transform: translateY(-2px);
+}
+
+.btn-control.active {
+    background: var(--accent-blue);
+    color: var(--lighter-text);
 }
 
 /* Calendar Events (cards) */
@@ -269,76 +315,6 @@ body {
     opacity: 0.9;
 }
 
-/* Responsive adjustments */
-@media (max-width: 768px) {
-    .calendar_cell_inner {
-        min-height: 80px;
-        padding: 0.3rem;
-    }
-
-    .calendar_event_inner {
-        padding: 0.6rem;
-    }
-
-    .calendar_event_inner .event-title {
-        font-size: 0.8rem;
-    }
-
-    .calendar_event_inner .event-time {
-        font-size: 0.7rem;
-    }
-}
-
-
-.calendar-controls {
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-}
-
-.btn-control {
-    background: rgba(15, 25, 35, 0.8);
-    border: 1px solid var(--border-color);
-    color: var(--light-text);
-    padding: 0.6rem 1.2rem;
-    border-radius: 6px;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.btn-control:hover {
-    background: var(--primary-blue);
-    color: var(--lighter-text);
-    transform: translateY(-2px);
-}
-
-.btn-control.active {
-    background: var(--accent-blue);
-    color: var(--lighter-text);
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-    .hero-title {
-        font-size: 2rem;
-    }
-
-    .projects-buttons {
-        flex-direction: column;
-    }
-
-    .album-card {
-        width: 100%;
-    }
-
-    .calendar-controls {
-        flex-wrap: wrap;
-    }
-}
-
 /* Estilos para las tarjetas de eventos en DayPilot */
 .daypilot-event-badge {
     padding: 4px 8px !important;
@@ -400,4 +376,54 @@ body {
     height: 2px;
     background-color: rgba(255, 255, 255, 0.5);
     border-radius: 1px;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+    .calendar-wrapper {
+        overflow-x: auto;
+        margin: 0 -1rem -1rem;
+        padding: 0 1rem 1rem;
+    }
+
+    #calendar {
+        min-width: 700px;
+        height: 500px;
+    }
+}
+
+@media (max-width: 768px) {
+    .hero-title {
+        font-size: 2rem;
+    }
+
+    .projects-buttons {
+        flex-direction: column;
+    }
+
+    .album-card {
+        width: 100%;
+    }
+
+    #calendar {
+        min-width: 600px;
+        height: 450px;
+    }
+
+    .calendar-controls {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .btn-control {
+        padding: 0.5rem 0.8rem;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 576px) {
+    #calendar {
+        min-width: 550px;
+        height: 400px;
+    }
 }
