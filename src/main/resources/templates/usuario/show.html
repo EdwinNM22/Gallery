@@ -489,6 +489,23 @@
       font-size: 1rem;
     }
 
+    @media (max-width: 576px) {
+      .btn-sm {
+        width: 100%;
+        justify-content: center;
+        padding: 1rem 1rem !important;     /* Aumenta la altura */
+        font-size: 1.1rem;
+        min-height: 48px;                  /* Altura mínima clara */
+      }
+
+      .btn-action-group {
+        flex-direction: column;
+        gap: 0.75rem;
+        align-items: stretch;
+      }
+    }
+
+
   </style>
 </head>
 
