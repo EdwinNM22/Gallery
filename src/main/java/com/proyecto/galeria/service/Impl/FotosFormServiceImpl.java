@@ -5,6 +5,7 @@ import com.proyecto.galeria.repository.FotosFormRepository;
 import com.proyecto.galeria.service.FotosFormService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -42,6 +43,7 @@ public class FotosFormServiceImpl implements FotosFormService {
     public void delete(Integer id) {
         FotosForm existing = fotosFormRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("FotosForm not found with id: " + id));
+
         fotosFormRepository.deleteById(existing.getId());
     }
 
@@ -54,10 +56,16 @@ public class FotosFormServiceImpl implements FotosFormService {
     public void deleteById(Integer id) {
         fotosFormRepository.deleteById(id);
     }
-    
+
     @Override
     public void deleteByFormId(Integer formId) {
         List<FotosForm> fotos = fotosFormRepository.findByForm_Id(formId);
         fotosFormRepository.deleteAll(fotos);
+    }
+
+    @Transactional
+    @Override
+    public void deleteByIds(List<Integer> ids) {
+        fotosFormRepository.deleteAllById(ids);
     }
 }

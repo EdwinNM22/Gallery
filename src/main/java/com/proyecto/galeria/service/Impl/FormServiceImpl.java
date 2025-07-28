@@ -3,6 +3,8 @@ package com.proyecto.galeria.service.Impl;
 import com.proyecto.galeria.model.Form;
 import com.proyecto.galeria.repository.FormRepository;
 import com.proyecto.galeria.service.FormService;
+
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,12 +33,13 @@ public class FormServiceImpl implements FormService {
     }
 
     @Override
-    public Form update(Integer id, Form newForm) {
-        Form form = formRepository.findById(id)
+    public Form update(Integer id, Form newFormData) { // This is your current BeanUtils method
+        Form existingForm = formRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Form not found with id: " + id));
-        // Fix: set the ID on newForm and return the saved form
-        newForm.setId(id);
-        return formRepository.save(newForm);
+
+        BeanUtils.copyProperties(newFormData, existingForm, "id");
+
+        return formRepository.save(existingForm);
     }
 
     @Override
@@ -66,6 +69,5 @@ public class FormServiceImpl implements FormService {
     public List<Form> findByExpedienteIdAndFuturo(Integer expedienteId, Boolean futuro) {
         return formRepository.findByExpediente_IdAndFuturo(expedienteId, futuro);
     }
-
 
 }

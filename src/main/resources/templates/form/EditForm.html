@@ -1,464 +1,892 @@
 <!DOCTYPE html>
 <html lang="fr" xmlns:th="http://www.thymeleaf.org">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="Bio/vizion Project Management System">
-  <meta name="author" content="Bio/vizion">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <meta name="description" content="Bio/vizion Project Management System" />
+    <meta name="author" content="Bio/vizion" />
 
-  <title th:text="#{edit-form-title}">Bio/vizion - Modifier le Formulaire</title>
+    <!-- Traducciones -->
+    <script>
+      const translations = {
+        formUpdatedSuccess: "[[#{form-updated-success}]]",
+      };
+    </script>
 
-  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link href="/css/form.css" rel="stylesheet">
-  <link href="/css/view-form.css" rel="stylesheet">
+    <title th:text="#{edit-form-title}">
+      Bio/vizion - Modifier le Formulaire
+    </title>
 
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link href="/css/form.css" rel="stylesheet" />
+    <link href="/css/view-form.css" rel="stylesheet" />
+    <link href="/css/edit-form.css" rel="stylesheet" />
 
-  <link rel="preload"
-        as="image"
-        href="/img/admrescale.webp?width=1200"
-        imagesrcset="/img/admrescale.webp?width=600 600w, /img/admrescale.webp?width=1200 1200w, /img/admrescale.webp?width=1800 1800w"
-        imagesizes="100vw">
-</head>
-<body>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-<div class="bg-fast-load">
-  <img
-          src="/img/admrescale.webp"
-          srcset="
-     /img/admrescale.webp?width=600 600w,
-      /img/admrescale.webp?width=1200 1200w,
-      /img/admrescale.webp?width=1800 1800w
-    "
-          sizes="100vw"
-          alt=""
-          decoding="async"
-  >
-</div>
-
-<div class="main-container">
-  <div class="container">
-    <div class="hero-section animated">
-      <h1 class="hero-title" th:text="#{edit-form-heading}">
-        Modifier le Formulaire – Conduits de Ventilation
-      </h1>
+    <link
+      rel="preload"
+      as="image"
+      href="/img/admrescale.webp?width=1200"
+      imagesrcset="/img/admrescale.webp?width=600 600w, /img/admrescale.webp?width=1200 1200w, /img/admrescale.webp?width=1800 1800w"
+      imagesizes="100vw"
+    />
+  </head>
+  <body>
+    <div class="bg-fast-load">
+      <img
+        src="/img/admrescale.webp"
+        srcset="
+          /img/admrescale.webp?width=600   600w,
+          /img/admrescale.webp?width=1200 1200w,
+          /img/admrescale.webp?width=1800 1800w
+        "
+        sizes="100vw"
+        alt=""
+        decoding="async"
+      />
     </div>
 
-    <div th:if="${success}" class="alert alert-success animated delay-1" role="alert">
-      <i class="fas fa-check-circle"></i>
-      <span th:text="${message}">Message de réussite</span>
-    </div>
-
-    <div th:if="${error}" class="alert alert-danger animated delay-1" role="alert">
-      <i class="fas fa-exclamation-circle"></i>
-      <span th:text="${message}">Message d'erreur</span>
-    </div>
-
-    <div class="btn-container">
-      <a class="btn btn-back" th:href="@{/adm}">
-        <i class="fas fa-arrow-left"></i> <span th:text="#{back-to-home}">Back to Home</span>
-      </a>
-    </div>
-
-    <form th:action="@{'/form/' + ${form.id} + '/edit'}" th:object="${form}" method="post" class="form-container animated delay-1" id="mainForm">
-      <input type="hidden" name="futuro" value="false" />
-
-      <div class="form-section">
-        <h3><i class="fas fa-info-circle"></i> <span th:text="#{general-information}">Informations Générales</span></h3>
-
-        <div class="row">
-          <div class="col-md-6">
-            <div class="form-group">
-              <label class="form-label" th:text="#{client-name}">Nom du client <span class="required">*</span></label>
-              <input type="text" class="form-control" th:field="*{nombreCliente}" required>
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="form-group">
-              <label class="form-label" th:text="#{building-type}">Type de Bâtiment</label>
-              <select class="form-select" th:field="*{tipoEdificio}">
-                <option value="" th:text="#{select}">Sélectionner...</option>
-                <option value="Résidentiel" th:text="#{residential}">Résidentiel</option>
-                <option value="Commercial" th:text="#{commercial}">Commercial</option>
-                <option value="Industriel" th:text="#{industrial}">Industriel</option>
-              </select>
-            </div>
-          </div>
+    <div class="main-container">
+      <div class="container">
+        <div class="hero-section animated">
+          <h1 class="hero-title" th:text="#{edit-form-heading}">
+            Modifier le Formulaire – Conduits de Ventilation
+          </h1>
         </div>
 
-        <div class="row">
-          <div class="col-md-6">
-            <div class="form-group">
-              <label class="form-label" th:text="#{evaluation-date}">Date de l'évaluation <span class="required">*</span></label>
-              <input type="date" class="form-control" th:field="*{fechaEvaluacion}" required>
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="form-group">
-              <label class="form-label" th:text="#{evaluator-name}">Nom de l'évaluateur <span class="required">*</span></label>
-              <input type="text" class="form-control" th:field="*{nombreEvaluador}" required>
-            </div>
-          </div>
+        <div class="btn-container">
+          <a class="btn btn-back" th:href="@{/adm}">
+            <i class="fas fa-arrow-left"></i>
+            <span th:text="#{back-to-home}">Back to Home</span>
+          </a>
         </div>
 
-        <div class="row">
-          <div class="col-md-6">
-            <div class="form-group">
-              <label class="form-label" th:text="#{on-site-contact-person}">Personne contact sur place</label>
-              <input type="text" class="form-control" th:field="*{personaContacto}">
+        <form
+          th:action="@{'/form/' + ${form.id} + '/edit'}"
+          th:object="${form}"
+          method="post"
+          enctype="multipart/form-data"
+          class="form-container animated delay-1"
+          id="mainForm"
+        >
+          <input type="hidden" name="futuro" value="false" />
+          <input
+            type="hidden"
+            name="fotosToDelete"
+            id="fotosToDelete"
+            value=""
+          />
+
+          <div class="form-section">
+            <h3>
+              <i class="fas fa-info-circle"></i>
+              <span th:text="#{general-information}"
+                >Informations Générales</span
+              >
+            </h3>
+
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label class="form-label" th:text="#{client-name}"
+                    >Nom du client <span class="required">*</span></label
+                  >
+                  <input
+                    type="text"
+                    class="form-control"
+                    th:field="*{nombreCliente}"
+                    required
+                  />
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label class="form-label" th:text="#{building-type}"
+                    >Type de Bâtiment</label
+                  >
+                  <select class="form-select" th:field="*{tipoEdificio}">
+                    <option value="" th:text="#{select}">
+                      Sélectionner...
+                    </option>
+                    <option value="Résidentiel" th:text="#{residential}">
+                      Résidentiel
+                    </option>
+                    <option value="Commercial" th:text="#{commercial}">
+                      Commercial
+                    </option>
+                    <option value="Industriel" th:text="#{industrial}">
+                      Industriel
+                    </option>
+                  </select>
+                </div>
+              </div>
             </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label class="form-label" th:text="#{evaluation-date}"
+                    >Date de l'évaluation <span class="required">*</span></label
+                  >
+                  <input
+                    type="date"
+                    class="form-control"
+                    th:field="*{fechaEvaluacion}"
+                    required
+                  />
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label class="form-label" th:text="#{evaluator-name}"
+                    >Nom de l'évaluateur <span class="required">*</span></label
+                  >
+                  <input
+                    type="text"
+                    class="form-control"
+                    th:field="*{nombreEvaluador}"
+                    required
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label class="form-label" th:text="#{on-site-contact-person}"
+                    >Personne contact sur place</label
+                  >
+                  <input
+                    type="text"
+                    class="form-control"
+                    th:field="*{personaContacto}"
+                  />
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label
+                    class="form-label"
+                    th:text="#{known-maintenance-history}"
+                    >Historique d'entretien connu</label
+                  >
+                  <div class="form-check">
+                    <input
+                      class="form-check-input"
+                      type="checkbox"
+                      th:field="*{mantenimientoHistoria}"
+                      id="mantenimientoHistoriaCheckbox"
+                      value="true"
+                    />
+                    <label
+                      class="form-check-label"
+                      for="mantenimientoHistoriaCheckbox"
+                      th:text="#{yes}"
+                      >Oui</label
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div
+              class="row"
+              id="fechaUltimoMantenimientoRow"
+              th:style="${form.mantenimientoHistoria} ? 'display: block;' : 'display: none;'"
+            >
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label class="form-label" th:text="#{last-date}"
+                    >Dernière date</label
+                  >
+                  <input
+                    type="date"
+                    class="form-control"
+                    th:field="*{fechaUltimoMantenimiento}"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-12">
+                <div class="form-group">
+                  <label class="form-label" th:text="#{address}">Adresse</label>
+                  <textarea
+                    class="form-control"
+                    th:field="*{direccion}"
+                    rows="3"
+                    th:placeholder="#{enter-address-here}"
+                  ></textarea>
+                </div>
+              </div>
+            </div>
+
+            <input type="hidden" th:field="*{usuario.id}" />
+            <input type="hidden" th:field="*{expediente.id}" />
           </div>
-          <div class="col-md-6">
-            <div class="form-group">
-              <label class="form-label" th:text="#{known-maintenance-history}">Historique d'entretien connu</label>
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" th:field="*{mantenimientoHistoria}" id="mantenimientoHistoriaCheckbox" value="true">
-                <label class="form-check-label" for="mantenimientoHistoriaCheckbox" th:text="#{yes}">Oui</label>
+
+          <div class="form-section">
+            <h3>
+              <i class="fas fa-cogs"></i>
+              <span th:text="#{ventilation-system}"
+                >Système de Ventilation</span
+              >
+            </h3>
+
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label class="form-label" th:text="#{system-type}"
+                    >Type de système</label
+                  >
+                  <select class="form-select" th:field="*{tipoSistema}">
+                    <option value="" th:text="#{select}">
+                      Sélectionner...
+                    </option>
+                    <option
+                      value="Résidentiel"
+                      th:text="#{residential-vrc-furnace}"
+                    >
+                      Résidentiel (VRC, fournaise)
+                    </option>
+                    <option value="Salle de bain" th:text="#{bathroom}">
+                      Salle de bain
+                    </option>
+                    <option value="Cuisine" th:text="#{kitchen}">
+                      Cuisine
+                    </option>
+                    <option
+                      value="Hotte commerciale"
+                      th:text="#{commercial-hood}"
+                    >
+                      Hotte commerciale
+                    </option>
+                    <option value="Industriel" th:text="#{industrial}">
+                      Industriel
+                    </option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label class="form-label" th:text="#{accessibility}"
+                    >Accessibilité</label
+                  >
+                  <select class="form-select" th:field="*{accesibilidad}">
+                    <option value="" th:text="#{select}">
+                      Sélectionner...
+                    </option>
+                    <option value="Facile" th:text="#{easy}">Facile</option>
+                    <option value="Moyenne" th:text="#{medium}">Moyenne</option>
+                    <option value="Difficile" th:text="#{difficult}">
+                      Difficile
+                    </option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label class="form-label" th:text="#{existing-access-doors}"
+                    >Portes d'accès existantes</label
+                  >
+                  <input
+                    type="text"
+                    class="form-control"
+                    th:field="*{puertasAccesoExistentes}"
+                  />
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label class="form-label" th:text="#{to-add}"
+                    >À ajouter</label
+                  >
+                  <input
+                    type="text"
+                    class="form-control"
+                    th:field="*{puertasAccesoAAnadir}"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label class="form-label" th:text="#{visible-ducts}"
+                    >Conduits visibles?</label
+                  >
+                  <div class="form-check">
+                    <input
+                      class="form-check-input"
+                      type="checkbox"
+                      th:field="*{conductosVisibles}"
+                      value="true"
+                    />
+                    <label class="form-check-label" th:text="#{yes}">Oui</label>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label class="form-label" th:text="#{materials}"
+                    >Matériaux</label
+                  >
+                  <select class="form-select" th:field="*{tipoMaterial}">
+                    <option value="" th:text="#{select}">
+                      Sélectionner...
+                    </option>
+                    <option value="Galvanisé" th:text="#{galvanized}">
+                      Galvanisé
+                    </option>
+                    <option value="Aluminium" th:text="#{aluminum}">
+                      Aluminium
+                    </option>
+                    <option value="Plastique" th:text="#{plastic}">
+                      Plastique
+                    </option>
+                    <option value="Flexible" th:text="#{flexible}">
+                      Flexible
+                    </option>
+                  </select>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <div class="row" id="fechaUltimoMantenimientoRow" th:style="${form.mantenimientoHistoria} ? 'display: block;' : 'display: none;'">
-          <div class="col-md-6">
-            <div class="form-group">
-              <label class="form-label" th:text="#{last-date}">Dernière date</label>
-              <input type="date" class="form-control" th:field="*{fechaUltimoMantenimiento}">
+          <div class="form-section">
+            <h3>
+              <i class="fas fa-search"></i>
+              <span th:text="#{duct-condition}">État des Conduits</span>
+            </h3>
+
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label class="form-label" th:text="#{dust-accumulation}"
+                    >Accumulation de poussière</label
+                  >
+                  <div class="form-check">
+                    <input
+                      class="form-check-input"
+                      type="checkbox"
+                      th:field="*{acumulacionPolvillo}"
+                      value="true"
+                    />
+                    <label class="form-check-label" th:text="#{yes}">Oui</label>
+                  </div>
+                  <textarea
+                    class="form-control mt-2"
+                    th:field="*{acumulacionPolvilloComentario}"
+                    th:placeholder="#{comments-dust-accumulation}"
+                    rows="3"
+                  ></textarea>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label class="form-label" th:text="#{visible-debris}"
+                    >Débris visibles</label
+                  >
+                  <div class="form-check">
+                    <input
+                      class="form-check-input"
+                      type="checkbox"
+                      th:field="*{escombrosVisibles}"
+                      value="true"
+                    />
+                    <label class="form-check-label" th:text="#{yes}">Oui</label>
+                  </div>
+                  <textarea
+                    class="form-control mt-2"
+                    th:field="*{escombrosVisiblesComentario}"
+                    th:placeholder="#{comments-debris}"
+                    rows="3"
+                  ></textarea>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
 
-        <div class="row">
-          <div class="col-md-12">
-            <div class="form-group">
-              <label class="form-label" th:text="#{address}">Adresse</label>
-              <textarea class="form-control" th:field="*{direccion}" rows="3" th:placeholder="#{enter-address-here}"></textarea>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label class="form-label" th:text="#{mold}">Moisissure</label>
+                  <div class="form-check">
+                    <input
+                      class="form-check-input"
+                      type="checkbox"
+                      th:field="*{moho}"
+                      value="true"
+                    />
+                    <label class="form-check-label" th:text="#{yes}">Oui</label>
+                  </div>
+                  <textarea
+                    class="form-control mt-2"
+                    th:field="*{mohoComentario}"
+                    th:placeholder="#{comments-mold}"
+                    rows="3"
+                  ></textarea>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label
+                    class="form-label"
+                    th:text="#{rodents-insects-presence}"
+                    >Présence de rongeurs/insectes</label
+                  >
+                  <div class="form-check">
+                    <input
+                      class="form-check-input"
+                      type="checkbox"
+                      th:field="*{roedoresInsectos}"
+                      value="true"
+                    />
+                    <label class="form-check-label" th:text="#{yes}">Oui</label>
+                  </div>
+                  <textarea
+                    class="form-control mt-2"
+                    th:field="*{roedoresInsectosComentario}"
+                    th:placeholder="#{comments-rodents-insects}"
+                    rows="3"
+                  ></textarea>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
 
-        <input type="hidden" th:field="*{usuario.id}" />
-        <input type="hidden" th:field="*{expediente.id}" />
-      </div>
-
-      <div class="form-section">
-        <h3><i class="fas fa-cogs"></i> <span th:text="#{ventilation-system}">Système de Ventilation</span></h3>
-
-        <div class="row">
-          <div class="col-md-6">
-            <div class="form-group">
-              <label class="form-label" th:text="#{system-type}">Type de système</label>
-              <select class="form-select" th:field="*{tipoSistema}">
-                <option value="" th:text="#{select}">Sélectionner...</option>
-                <option value="Résidentiel" th:text="#{residential-vrc-furnace}">Résidentiel (VRC, fournaise)</option>
-                <option value="Salle de bain" th:text="#{bathroom}">Salle de bain</option>
-                <option value="Cuisine" th:text="#{kitchen}">Cuisine</option>
-                <option value="Hotte commerciale" th:text="#{commercial-hood}">Hotte commerciale</option>
-                <option value="Industriel" th:text="#{industrial}">Industriel</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="col-md-6">
-            <div class="form-group">
-              <label class="form-label" th:text="#{accessibility}">Accessibilité</label>
-              <select class="form-select" th:field="*{accesibilidad}">
-                <option value="" th:text="#{select}">Sélectionner...</option>
-                <option value="Facile" th:text="#{easy}">Facile</option>
-                <option value="Moyenne" th:text="#{medium}">Moyenne</option>
-                <option value="Difficile" th:text="#{difficult}">Difficile</option>
-              </select>
-            </div>
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="col-md-6">
-            <div class="form-group">
-              <label class="form-label" th:text="#{existing-access-doors}">Portes d'accès existantes</label>
-              <input type="text" class="form-control" th:field="*{puertasAccesoExistentes}">
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="form-group">
-              <label class="form-label" th:text="#{to-add}">À ajouter</label>
-              <input type="text" class="form-control" th:field="*{puertasAccesoAAnadir}">
-            </div>
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="col-md-6">
-            <div class="form-group">
-              <label class="form-label" th:text="#{visible-ducts}">Conduits visibles?</label>
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" th:field="*{conductosVisibles}" value="true">
-                <label class="form-check-label" th:text="#{yes}">Oui</label>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label class="form-label" th:text="#{grease-if-hood}"
+                    >Graisse (Si hotte)</label
+                  >
+                  <div class="form-check">
+                    <input
+                      class="form-check-input"
+                      type="checkbox"
+                      th:field="*{grasaHotte}"
+                      value="true"
+                    />
+                    <label class="form-check-label" th:text="#{yes}">Oui</label>
+                  </div>
+                  <textarea
+                    class="form-control mt-2"
+                    th:field="*{grasaHotteComentario}"
+                    th:placeholder="#{comments-grease}"
+                    rows="3"
+                  ></textarea>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label class="form-label" th:text="#{suspicious-odors}"
+                    >Odeurs suspectes</label
+                  >
+                  <div class="form-check">
+                    <input
+                      class="form-check-input"
+                      type="checkbox"
+                      th:field="*{oloresSospechosos}"
+                      value="true"
+                    />
+                    <label class="form-check-label" th:text="#{yes}">Oui</label>
+                  </div>
+                  <textarea
+                    class="form-control mt-2"
+                    th:field="*{oloresSospechososComentario}"
+                    th:placeholder="#{comments-odors}"
+                    rows="3"
+                  ></textarea>
+                </div>
               </div>
             </div>
           </div>
-          <div class="col-md-6">
-            <div class="form-group">
-              <label class="form-label" th:text="#{materials}">Matériaux</label>
-              <select class="form-select" th:field="*{tipoMaterial}">
-                <option value="" th:text="#{select}">Sélectionner...</option>
-                <option value="Galvanisé" th:text="#{galvanized}">Galvanisé</option>
-                <option value="Aluminium" th:text="#{aluminum}">Aluminium</option>
-                <option value="Plastique" th:text="#{plastic}">Plastique</option>
-                <option value="Flexible" th:text="#{flexible}">Flexible</option>
-              </select>
-            </div>
-          </div>
-        </div>
-      </div>
 
-      <div class="form-section">
-        <h3><i class="fas fa-search"></i> <span th:text="#{duct-condition}">État des Conduits</span></h3>
+          <div class="form-section">
+            <h3>
+              <i class="fas fa-tools"></i>
+              <span th:text="#{related-equipment-status}"
+                >État des Équipements Connexes</span
+              >
+            </h3>
 
-        <div class="row">
-          <div class="col-md-6">
-            <div class="form-group">
-              <label class="form-label" th:text="#{dust-accumulation}">Accumulation de poussière</label>
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" th:field="*{acumulacionPolvillo}" value="true">
-                <label class="form-check-label" th:text="#{yes}">Oui</label>
-              </div>
-              <textarea class="form-control mt-2" th:field="*{acumulacionPolvilloComentario}" th:placeholder="#{comments-dust-accumulation}" rows="3"></textarea>
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="form-group">
-              <label class="form-label" th:text="#{visible-debris}">Débris visibles</label>
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" th:field="*{escombrosVisibles}" value="true">
-                <label class="form-check-label" th:text="#{yes}">Oui</label>
-              </div>
-              <textarea class="form-control mt-2" th:field="*{escombrosVisiblesComentario}" th:placeholder="#{comments-debris}" rows="3"></textarea>
-            </div>
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="col-md-6">
-            <div class="form-group">
-              <label class="form-label" th:text="#{mold}">Moisissure</label>
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" th:field="*{moho}" value="true">
-                <label class="form-check-label" th:text="#{yes}">Oui</label>
-              </div>
-              <textarea class="form-control mt-2" th:field="*{mohoComentario}" th:placeholder="#{comments-mold}" rows="3"></textarea>
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="form-group">
-              <label class="form-label" th:text="#{rodents-insects-presence}">Présence de rongeurs/insectes</label>
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" th:field="*{roedoresInsectos}" value="true">
-                <label class="form-check-label" th:text="#{yes}">Oui</label>
-              </div>
-              <textarea class="form-control mt-2" th:field="*{roedoresInsectosComentario}" th:placeholder="#{comments-rodents-insects}" rows="3"></textarea>
-            </div>
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="col-md-6">
-            <div class="form-group">
-              <label class="form-label" th:text="#{grease-if-hood}">Graisse (Si hotte)</label>
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" th:field="*{grasaHotte}" value="true">
-                <label class="form-check-label" th:text="#{yes}">Oui</label>
-              </div>
-              <textarea class="form-control mt-2" th:field="*{grasaHotteComentario}" th:placeholder="#{comments-grease}" rows="3"></textarea>
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="form-group">
-              <label class="form-label" th:text="#{suspicious-odors}">Odeurs suspectes</label>
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" th:field="*{oloresSospechosos}" value="true">
-                <label class="form-check-label" th:text="#{yes}">Oui</label>
-              </div>
-              <textarea class="form-control mt-2" th:field="*{oloresSospechososComentario}" th:placeholder="#{comments-odors}" rows="3"></textarea>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="form-section">
-        <h3><i class="fas fa-tools"></i> <span th:text="#{related-equipment-status}">État des Équipements Connexes</span></h3>
-
-        <div class="row">
-          <div class="col-md-4">
-            <div class="form-group">
-              <label class="form-label" th:text="#{grilles-vents}">Grilles / Bouches</label>
-              <select class="form-select" th:field="*{estadoRejillas}">
-                <option value="" th:text="#{select}">Sélectionner...</option>
-                <option value="Propres" th:text="#{clean}">Propres</option>
-                <option value="Encrassées" th:text="#{fouled}">Encrassées</option>
-                <option value="Endommagées" th:text="#{damaged}">Endommagées</option>
-              </select>
-            </div>
-          </div>
-          <div class="col-md-4">
-            <div class="form-group">
-              <label class="form-label" th:text="#{motor-fan}">Moteur/Ventilateur</label>
-              <select class="form-select" th:field="*{estadoMotor}">
-                <option value="" th:text="#{select}">Sélectionner...</option>
-                <option value="Fonctionnel" th:text="#{functional}">Fonctionnel</option>
-                <option value="Bruit anormal" th:text="#{abnormal-noise}">Bruit anormal</option>
-                <option value="Sale" th:text="#{dirty}">Sale</option>
-              </select>
-            </div>
-          </div>
-          <div class="col-md-4">
-            <div class="form-group">
-              <label class="form-label" th:text="#{filters}">Filtres</label>
-              <select class="form-select" th:field="*{estadoFiltros}">
-                <option value="" th:text="#{select}">Sélectionner...</option>
-                <option value="Présents" th:text="#{present}">Présents</option>
-                <option value="À remplacer" th:text="#{to-replace}">À remplacer</option>
-                <option value="Manquants" th:text="#{missing}">Manquants</option>
-              </select>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="form-section">
-        <h3><i class="fas fa-ruler"></i> <span th:text="#{measurements-dimensions}">Mesures et Dimensions</span></h3>
-
-        <div class="row">
-          <div class="col-md-3">
-            <div class="form-group">
-              <label class="form-label" th:text="#{number-main-ducts}">Nombre de conduits principaux</label>
-              <input type="number" class="form-control" th:field="*{cantidadConductos}" min="0">
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="form-group">
-              <label class="form-label" th:text="#{estimated-length}">Longueur estimée</label>
-              <input type="text" class="form-control" th:field="*{longitudEstimacion}" th:placeholder="#{example-length}">
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="form-group">
-              <label class="form-label" th:text="#{number-elbows-transitions}">Nombre de coudes/transitions</label>
-              <input type="number" class="form-control" th:field="*{cantidadCodos}" min="0">
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="form-group">
-              <label class="form-label" th:text="#{number-outlets-rooms-served}">Nombre de sorties/pièces desservies</label>
-              <input type="number" class="form-control" th:field="*{cantidadSalidas}" min="0">
-            </div>
-          </div>
-
-          <div class="col-md-6">
-            <div class="form-group">
-              <label class="form-label" th:text="#{working-height}">Hauteur de travail</label>
-              <select class="form-select" th:field="*{alturaTrabajo}">
-                <option value="" th:text="#{select}">Sélectionner...</option>
-                <option value="Sol" th:text="#{ground}">Sol</option>
-                <option value="Escabeau" th:text="#{stepladder}">Escabeau</option>
-                <option value="Échelle" th:text="#{ladder}">Échelle</option>
-                <option value="Nacelle" th:text="#{lift}">Nacelle</option>
-              </select>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="form-section">
-        <h3><i class="fas fa-clipboard-list"></i> <span th:text="#{photos-remarks}">Photos et Remarques</span></h3>
-
-        <div class="form-group">
-          <label class="form-label" th:text="#{general-observations}">Observations générales</label>
-          <textarea class="form-control" th:field="*{observaciones}" rows="4" th:placeholder="#{additional-evaluation-observations}"></textarea>
-        </div>
-
-        <div class="form-section">
-          <h3><i class="fas fa-camera"></i> <span th:text="#{photos}">Photos</span></h3>
-          <div id="gallery-row">
-            <div class="row" th:each="foto, iterStat : ${fotos}" style="margin-bottom: 20px;">
+            <div class="row">
               <div class="col-md-4">
-                <img th:src="'data:image/jpeg;base64,' + ${foto.imagenBase64}" class="img-fluid rounded" alt="Foto" />
+                <div class="form-group">
+                  <label class="form-label" th:text="#{grilles-vents}"
+                    >Grilles / Bouches</label
+                  >
+                  <select class="form-select" th:field="*{estadoRejillas}">
+                    <option value="" th:text="#{select}">
+                      Sélectionner...
+                    </option>
+                    <option value="Propres" th:text="#{clean}">Propres</option>
+                    <option value="Encrassées" th:text="#{fouled}">
+                      Encrassées
+                    </option>
+                    <option value="Endommagées" th:text="#{damaged}">
+                      Endommagées
+                    </option>
+                  </select>
+                </div>
               </div>
-              <div class="col-md-8 d-flex align-items-center">
-                <input type="hidden" th:name="'fotoIds[' + ${iterStat.index} + ']'" th:value="${foto.id}" />
-                <textarea class="form-control" rows="3" th:name="'fotosDescripcion[' + ${iterStat.index} + ']'" th:text="${foto.descripcion}"></textarea>
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label class="form-label" th:text="#{motor-fan}"
+                    >Moteur/Ventilateur</label
+                  >
+                  <select class="form-select" th:field="*{estadoMotor}">
+                    <option value="" th:text="#{select}">
+                      Sélectionner...
+                    </option>
+                    <option value="Fonctionnel" th:text="#{functional}">
+                      Fonctionnel
+                    </option>
+                    <option value="Bruit anormal" th:text="#{abnormal-noise}">
+                      Bruit anormal
+                    </option>
+                    <option value="Sale" th:text="#{dirty}">Sale</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label class="form-label" th:text="#{filters}">Filtres</label>
+                  <select class="form-select" th:field="*{estadoFiltros}">
+                    <option value="" th:text="#{select}">
+                      Sélectionner...
+                    </option>
+                    <option value="Présents" th:text="#{present}">
+                      Présents
+                    </option>
+                    <option value="À remplacer" th:text="#{to-replace}">
+                      À remplacer
+                    </option>
+                    <option value="Manquants" th:text="#{missing}">
+                      Manquants
+                    </option>
+                  </select>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </div>
 
-      <div class="form-section">
-        <h3><i class="fas fa-camera"></i> <span th:text="#{recommendations}">Recommandations</span></h3>
+          <div class="form-section">
+            <h3>
+              <i class="fas fa-ruler"></i>
+              <span th:text="#{measurements-dimensions}"
+                >Mesures et Dimensions</span
+              >
+            </h3>
 
-        <div class="row">
-          <div class="col-md-4">
+            <div class="row">
+              <div class="col-md-3">
+                <div class="form-group">
+                  <label class="form-label" th:text="#{number-main-ducts}"
+                    >Nombre de conduits principaux</label
+                  >
+                  <input
+                    type="number"
+                    class="form-control"
+                    th:field="*{cantidadConductos}"
+                    min="0"
+                  />
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="form-group">
+                  <label class="form-label" th:text="#{estimated-length}"
+                    >Longueur estimée</label
+                  >
+                  <input
+                    type="text"
+                    class="form-control"
+                    th:field="*{longitudEstimacion}"
+                    th:placeholder="#{example-length}"
+                  />
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="form-group">
+                  <label
+                    class="form-label"
+                    th:text="#{number-elbows-transitions}"
+                    >Nombre de coudes/transitions</label
+                  >
+                  <input
+                    type="number"
+                    class="form-control"
+                    th:field="*{cantidadCodos}"
+                    min="0"
+                  />
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="form-group">
+                  <label
+                    class="form-label"
+                    th:text="#{number-outlets-rooms-served}"
+                    >Nombre de sorties/pièces desservies</label
+                  >
+                  <input
+                    type="number"
+                    class="form-control"
+                    th:field="*{cantidadSalidas}"
+                    min="0"
+                  />
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label class="form-label" th:text="#{working-height}"
+                    >Hauteur de travail</label
+                  >
+                  <select class="form-select" th:field="*{alturaTrabajo}">
+                    <option value="" th:text="#{select}">
+                      Sélectionner...
+                    </option>
+                    <option value="Sol" th:text="#{ground}">Sol</option>
+                    <option value="Escabeau" th:text="#{stepladder}">
+                      Escabeau
+                    </option>
+                    <option value="Échelle" th:text="#{ladder}">Échelle</option>
+                    <option value="Nacelle" th:text="#{lift}">Nacelle</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <h3>
+              <i class="fas fa-clipboard-list"></i>
+              <span th:text="#{photos-remarks}">Photos et Remarques</span>
+            </h3>
+
             <div class="form-group">
-              <label class="form-label" th:text="#{complete-cleaning}">Nettoyage complet?</label>
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" th:field="*{limpiezaCompleta}" value="true">
-                <label class="form-check-label" th:text="#{yes}">Oui</label>
+              <label class="form-label" th:text="#{general-observations}"
+                >Observations générales</label
+              >
+              <textarea
+                class="form-control"
+                th:field="*{observaciones}"
+                rows="4"
+                th:placeholder="#{additional-evaluation-observations}"
+              ></textarea>
+            </div>
+
+            <div class="file-upload-area" id="fileUploadArea">
+              <i
+                class="fas fa-cloud-upload-alt fa-3x mb-3"
+                style="color: var(--primary-blue)"
+              ></i>
+              <h5 th:text="#{drag-click-select-images}">
+                Faites glisser ou cliquez ici pour sélectionner les images.
+              </h5>
+              <div
+                class="progress mt-3"
+                id="uploadProgress"
+                style="display: none"
+              >
+                <div
+                  class="progress-bar progress-bar-striped progress-bar-animated"
+                  role="progressbar"
+                  style="width: 0%"
+                ></div>
+              </div>
+              <input
+                type="file"
+                id="fileInput"
+                name="fotos"
+                multiple
+                accept="image/*"
+                style="display: none"
+              />
+            </div>
+
+            <div class="file-preview" id="filePreview"></div>
+
+            <div class="form-section">
+              <h3>
+                <i class="fas fa-camera"></i>
+                <span th:text="#{photos}">Photos</span>
+              </h3>
+              <div id="gallery-row">
+                <div
+                  class="row"
+                  th:each="foto, iterStat : ${fotos}"
+                  style="margin-bottom: 20px"
+                >
+                  <div class="col-md-4 position-relative">
+                    <img
+                      th:src="'data:image/jpeg;base64,' + ${foto.imagenBase64}"
+                      class="img-fluid rounded"
+                      alt="Existing photo"
+                    />
+                    <div class="photo-actions">
+                      <button
+                        type="button"
+                        class="btn btn-danger btn-sm photo-remove-btn"
+                        th:attr="data-photo-id=${foto.id}"
+                      >
+                        <i class="fas fa-trash"></i>
+                      </button>
+                      <button
+                        type="button"
+                        class="btn btn-secondary btn-sm photo-undo-btn"
+                        style="display: none"
+                        th:attr="data-photo-id=${foto.id}"
+                      >
+                        <i class="fas fa-undo"></i>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="col-md-8 d-flex align-items-center">
+                    <input
+                      type="hidden"
+                      name="existingPhotoIds"
+                      th:value="${foto.id}"
+                    />
+                    <textarea
+                      class="form-control"
+                      rows="3"
+                      name="existingPhotoDescriptions"
+                      th:text="${foto.descripcion}"
+                    ></textarea>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-          <div class="col-md-4">
+
+          <div class="form-section">
+            <h3>
+              <i class="fas fa-camera"></i>
+              <span th:text="#{recommendations}">Recommandations</span>
+            </h3>
+
+            <div class="row">
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label class="form-label" th:text="#{complete-cleaning}"
+                    >Nettoyage complet?</label
+                  >
+                  <div class="form-check">
+                    <input
+                      class="form-check-input"
+                      type="checkbox"
+                      th:field="*{limpiezaCompleta}"
+                      value="true"
+                    />
+                    <label class="form-check-label" th:text="#{yes}">Oui</label>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label
+                    class="form-label"
+                    th:text="#{install-additional-access-doors}"
+                    >Installation de portes d'accès supplémentaires?</label
+                  >
+                  <div class="form-check">
+                    <input
+                      class="form-check-input"
+                      type="checkbox"
+                      th:field="*{instalarPuertasAcceso}"
+                      value="true"
+                    />
+                    <label class="form-check-label" th:text="#{yes}">Oui</label>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label class="form-label" th:text="#{filter-replacement}"
+                    >Remplacement de filtres?</label
+                  >
+                  <div class="form-check">
+                    <input
+                      class="form-check-input"
+                      type="checkbox"
+                      th:field="*{reemplazoFiltros}"
+                      value="true"
+                    />
+                    <label class="form-check-label" th:text="#{yes}">Oui</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <div class="form-group">
-              <label class="form-label" th:text="#{install-additional-access-doors}">Installation de portes d'accès supplémentaires?</label>
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" th:field="*{instalarPuertasAcceso}" value="true">
-                <label class="form-check-label" th:text="#{yes}">Oui</label>
-              </div>
+              <label class="form-label" th:text="#{recommended-products}"
+                >Produits recommandés</label
+              >
+              <textarea
+                class="form-control"
+                th:field="*{productosRecomendados}"
+                rows="3"
+                th:placeholder="#{list-recommended-maintenance-products}"
+              ></textarea>
             </div>
           </div>
-          <div class="col-md-4">
-            <div class="form-group">
-              <label class="form-label" th:text="#{filter-replacement}">Remplacement de filtres?</label>
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" th:field="*{reemplazoFiltros}" value="true">
-                <label class="form-check-label" th:text="#{yes}">Oui</label>
-              </div>
-            </div>
+
+          <div class="text-center">
+            <button type="submit" class="btn btn-submit btn-lg" id="submitBtn">
+              <i class="fas fa-save"></i>
+              <span th:text="#{save-changes}"
+                >Enregistrer les modifications</span
+              >
+            </button>
           </div>
-        </div>
-
-        <div class="form-group">
-          <label class="form-label" th:text="#{recommended-products}">Produits recommandés</label>
-          <textarea class="form-control" th:field="*{productosRecomendados}" rows="3" th:placeholder="#{list-recommended-maintenance-products}"></textarea>
-        </div>
+        </form>
       </div>
+    </div>
 
-      <div class="text-center">
-        <button type="submit" class="btn btn-submit btn-lg" id="submitBtn">
-          <i class="fas fa-save"></i> <span th:text="#{save-changes}">Enregistrer les modifications</span>
-        </button>
-      </div>
-    </form>
-  </div>
-</div>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="/js/form.js"></script>
+    <script src="/js/edit-form.js"></script>
 
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-<script src="/js/form.js"></script>
+    <script th:inline="javascript">
+      // JavaScript for maintenance history checkbox functionality
+      $(document).ready(function () {
+        $("#mantenimientoHistoriaCheckbox").change(function () {
+          if (this.checked) {
+            $("#fechaUltimoMantenimientoRow").show();
+          } else {
+            $("#fechaUltimoMantenimientoRow").hide();
+          }
+        });
+      });
 
-<script>
-// JavaScript for maintenance history checkbox functionality
-$(document).ready(function() {
-    $('#mantenimientoHistoriaCheckbox').change(function() {
-        if (this.checked) {
-            $('#fechaUltimoMantenimientoRow').show();
-        } else {
-            $('#fechaUltimoMantenimientoRow').hide();
-        }
-    });
-});
-</script>
-
-</body>
+      /*<![CDATA[*/
+      if (/*[[${success}]]*/) {
+          alert(translations.formUpdatedSuccess);
+      }
+      /*]]>*/
+    </script>
+  </body>
 </html>

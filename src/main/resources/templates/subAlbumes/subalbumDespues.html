@@ -6,6 +6,18 @@
     <meta name="description" content="Bio/vizion Project Management System">
     <meta name="author" content="Bio/vizion">
 
+    <script>
+        const translations = {
+            'confirm_download_text': '[[#{confirm-download-text}]]',
+            'confirm_delete_text': '[[#{confirm-delete-text}]]',
+            'no_files_available': '[[#{no-files-available}]]',
+            'select_at_least_one': '[[#{select-at-least-one}]]',
+            'download': '[[#{download}]]', // Reusing the 'download' button text
+            'delete': '[[#{delete}]]',     // Reusing the 'delete' button text
+            'this_file_cannot_be_undone': '[[#{confirm-delete-single-file}]]' // New key for single file delete text
+        };
+    </script>
+
     <title th:text="#{my-projects-title}">Photos - Bio/vizion Dashboard</title>
 
     <!-- Bootstrap core CSS -->

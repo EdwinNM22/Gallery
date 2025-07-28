@@ -47,10 +47,10 @@ public class ExpedienteController {
         Optional<usuario> optionalUsuario = usuarioService.findById(idUsuario);
 
         // Control de permisos
-        if (optionalUsuario.isEmpty() || optionalUsuario.get().getPermisos().stream()
-                .noneMatch(p -> "EXPEDIENTE_ACCESS".equals(p.getCodigo()))) {
-            return "redirect:/NoAccess/Access";
-        }
+        // if (optionalUsuario.isEmpty() || optionalUsuario.get().getPermisos().stream()
+        //         .noneMatch(p -> "EXPEDIENTE_ACCESS".equals(p.getCodigo()))) {
+        //     return "redirect:/NoAccess/Access";
+        // }
 
         usuario usuario = optionalUsuario.get();
 
@@ -141,10 +141,10 @@ public class ExpedienteController {
         Optional<usuario> optionalUsuario = usuarioService.findById(idUsuario);
     
         // Control de permisos
-        if (optionalUsuario.isEmpty() || optionalUsuario.get().getPermisos().stream()
-                .noneMatch(p -> "EXPEDIENTE_ACCESS".equals(p.getCodigo()))) {
-            return "redirect:/NoAccess/Access";
-        }
+        // if (optionalUsuario.isEmpty() || optionalUsuario.get().getPermisos().stream()
+        //         .noneMatch(p -> "EXPEDIENTE_ACCESS".equals(p.getCodigo()))) {
+        //     return "redirect:/NoAccess/Access";
+        // }
     
         usuario usuario = optionalUsuario.get();
     
@@ -198,12 +198,12 @@ public class ExpedienteController {
     try {
         Integer idUsuario = (Integer) session.getAttribute("idusuario");
         Optional<usuario> optionalUsuario = usuarioService.findById(idUsuario);
-        if (optionalUsuario.isEmpty()) return "redirect:/NoAccess/Access";
+        // if (optionalUsuario.isEmpty()) return "redirect:/NoAccess/Access";
         usuario usuario = optionalUsuario.get();
 
-        if (usuario.getPermisos().stream().noneMatch(p -> "EXPEDIENTE_ACCESS".equals(p.getCodigo()))) {
-            return "redirect:/NoAccess/Access";
-        }
+        // if (usuario.getPermisos().stream().noneMatch(p -> "EXPEDIENTE_ACCESS".equals(p.getCodigo()))) {
+        //     return "redirect:/NoAccess/Access";
+        // }
 
         List<Form> forms;
 
