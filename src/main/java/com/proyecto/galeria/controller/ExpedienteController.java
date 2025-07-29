@@ -58,6 +58,33 @@ public class ExpedienteController {
                         ? expedienteService.findAll()
                         : expedienteService.findByUsuario(usuario);
 
+        // Get future projects for this expediente
+        List<Form> futureForms = formService.findByFuturo(true);
+        List<Form> completeForms = formService.findByFuturo(false);
+
+        List<Map<String, String>> events = futureForms.stream()
+                .filter(f -> f.getFechaEvaluacion() != null)
+                .map(f -> Map.of(
+                        "id", f.getId().toString(),
+                        "start", f.getFechaEvaluacion().toString(),
+                        "end", f.getFechaEvaluacion().toString(),
+                        "nombreCliente", f.getNombreCliente(),
+                        "expedienteId", f.getExpediente().getId().toString()))
+                .collect(Collectors.toList());
+
+        List<Map<String, String>> eventsComplete = completeForms.stream()
+                .filter(f -> f.getFechaEvaluacion() != null)
+                .map(f -> Map.of(
+                        "id", f.getId().toString(),
+                        "start", f.getFechaEvaluacion().toString(),
+                        "end", f.getFechaEvaluacion().toString(),
+                        "nombreCliente", f.getNombreCliente(),
+                        "expedienteId", f.getExpediente().getId().toString()))
+                .collect(Collectors.toList());
+
+        model.addAttribute("events", events);
+        model.addAttribute("eventsComplete", eventsComplete);
+
         model.addAttribute("expedientes", expedientes);
         model.addAttribute("expediente", new Expediente());
         model.addAttribute("usuarios", usuarioService.findAll());
@@ -155,8 +182,8 @@ public class ExpedienteController {
                         "id", f.getId().toString(),
                         "start", f.getFechaEvaluacion().toString(),
                         "end", f.getFechaEvaluacion().toString(),
-                        "nombreCliente", f.getNombreCliente() // assuming getter exists
-                ))
+                        "nombreCliente", f.getNombreCliente(),
+                        "expedienteId", f.getExpediente().getId().toString()))
                 .collect(Collectors.toList());
 
         List<Map<String, String>> eventsComplete = completeForms.stream()
@@ -165,8 +192,8 @@ public class ExpedienteController {
                         "id", f.getId().toString(),
                         "start", f.getFechaEvaluacion().toString(),
                         "end", f.getFechaEvaluacion().toString(),
-                        "nombreCliente", f.getNombreCliente() // assuming getter exists
-                ))
+                        "nombreCliente", f.getNombreCliente(),
+                        "expedienteId", f.getExpediente().getId().toString()))
                 .collect(Collectors.toList());
 
         model.addAttribute("events", events);

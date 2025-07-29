@@ -70,4 +70,9 @@ public class FormServiceImpl implements FormService {
         return formRepository.findByExpediente_IdAndFuturo(expedienteId, futuro);
     }
 
+    @Override
+    public List<Form> findByFuturo(Boolean futuro) {
+        return formRepository.findByFuturo(futuro);
+    }
+
 }

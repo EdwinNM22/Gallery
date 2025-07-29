@@ -135,134 +135,28 @@
     </div>
 
     <script src="/js/daypilot/daypilot-all.min.js"></script>
+
     <script th:inline="javascript">
-      // --- Funcion para procesar eventos ---
-      function processEventData(events, cssClass = "daypilot-event-badge in-progress") {
-        const results = [];
-
-        events.forEach((ev) => {
-          const startDate = new Date(ev.start);
-          let endDate = ev.end ? new Date(ev.end) : new Date(ev.start);
-          endDate.setDate(endDate.getDate() + 1);
-
-          if (startDate.toDateString() !== endDate.toDateString()) {
-            const currentDate = new Date(startDate);
-
-            while (currentDate < endDate) {
-              const eventDate = new Date(currentDate);
-              const eventEndDate = new Date(currentDate);
-              eventEndDate.setDate(eventEndDate.getDate() + 1);
-
-              results.push({
-                id: `${ev.id}-${eventDate.toISOString().split('T')[0]}`,
-                start: eventDate,
-                end: eventEndDate,
-                text: ev.nombreCliente,
-                barVisible: false,
-                backColor: "transparent",
-                borderColor: "transparent",
-                moveDisabled: true,
-                resizeDisabled: true,
-                cssClass: cssClass,
-                tags: {
-                  nombreCliente: ev.nombreCliente,
-                  originalEventId: ev.id,
-                  estado: cssClass.includes('complete') ? 'complete' : 'in-progress',
-                }
-              });
-
-              currentDate.setDate(currentDate.getDate() + 1);
-            }
-          } else {
-            results.push({
-              id: ev.id,
-              start: ev.start,
-              end: ev.end,
-              text: ev.nombreCliente,
-              barVisible: false,
-              backColor: "transparent",
-              borderColor: "transparent",
-              moveDisabled: true,
-              resizeDisabled: true,
-              cssClass: cssClass,
-              tags: {
-                nombreCliente: ev.nombreCliente,
-                originalEventId: ev.id,
-                estado: cssClass.includes('complete') ? 'complete' : 'in-progress',
-              }
-            });
-          }
-        });
-
-        return results;
-      }
-
-      // --- Calendario ---
-
       /*<![CDATA[*/
-      var expedienteId = [[${expedienteId}]];
-      const proyectosNombresFechas = /*[[${events}]]*/ [];
-      const proyectosNombresFechasCompletos = /*[[${eventsComplete}]]*/ [];
-
-      // Configuración del calendario con los estilos personalizados
-      const dp = new DayPilot.Month("calendar", {
-        theme: "calendar",
-        showWeekends: true,
-        headerDateFormat: "MMMM yyyy",
-        eventArrangement: "SideBySideStack",
-        headerClickHandling: "Enabled",
-        headerNavigationEnabled: true,
-        timeRangeSelectHandling: "Enabled",
-        selectMode: "Day",
-        heightSpec: "Fixed",
-        height: 600,
-        width: "100%",
-        onTimeRangeSelected: async (args) => {
-          const clickedDate = args.start.toString("yyyy-MM-dd");
-          window.location.href = `/expediente/create-future-project?expedienteId=${expedienteId}&fecha_evaluacion=${clickedDate}`;
-        },
-        eventClickHandling: "Enabled",
-        onEventClick: async (args) => {
-          const eventId = args.e.data.tags.originalEventId;
-          const isComplete = args.e.data.tags.estado === 'complete';
-
-          const redirectUrl = isComplete ? `/form/${eventId}` : `/expediente/view-future-project/${eventId}`
-
-          window.location.href = redirectUrl;
-        },
-        eventMoveHandling: "Disabled",
-        eventResizeHandling: "Disabled",
-        timeRangeDoubleClickHandling: "Disabled",
-        eventRightClickHandling: "Disabled",
-        eventHeight: 25,
-        cellHeight: 120,
-        eventStackingLineHeight: 24
-      });
-
-      const processedEvents = [
-      ...processEventData(proyectosNombresFechas, "daypilot-event-badge in-progress"),
-      ...processEventData(proyectosNombresFechasCompletos, "daypilot-event-badge completed")
-      ];
-
-      dp.events.list = processedEvents;
-      dp.init();
-
-      // Controles de navegación
-      document.getElementById("prev-month").addEventListener("click", () => {
-        dp.startDate = dp.startDate.addMonths(-1);
-        dp.update();
-      });
-
-      document.getElementById("today").addEventListener("click", () => {
-        dp.startDate = new DayPilot.Date();
-        dp.update();
-      });
-
-      document.getElementById("next-month").addEventListener("click", () => {
-        dp.startDate = dp.startDate.addMonths(1);
-        dp.update();
-      });
+      window.__calendarData = {
+        expedienteId: [[${expedienteId}]],
+        events: /*[[${events}]]*/ [],
+        eventsComplete: /*[[${eventsComplete}]]*/ []
+      };
       /*]]>*/
+    </script>
+
+    <script type="module">
+      import { initializeCalendar } from "/js/calendar.js";
+
+      const { expedienteId, events, eventsComplete } = window.__calendarData;
+
+      initializeCalendar({
+        elementId: "calendar",
+        expedienteId,
+        eventsInProgress: events,
+        eventsComplete: eventsComplete,
+      });
     </script>
   </body>
 </html>

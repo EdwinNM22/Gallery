@@ -246,13 +246,6 @@ body {
   color: var(--lighter-text);
 }
 
-/* Calendar Events (cards) */
-.calendar_event_inner {
-}
-
-.calendar_event_inner:hover {
-}
-
 /* Calendar Cells (day squares) */
 .calendar_cell_inner {
   background: rgba(15, 25, 35, 0.7);
