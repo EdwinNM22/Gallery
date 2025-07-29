@@ -1,20 +1,43 @@
 <div th:fragment="panelPermisos">
   <!-- Botón flotante mejorado -->
   <div class="floating-permissions-container" th:if="${userRole == 'EDGAR'}">
-    <button type="button" class="btn-floating-permissions" data-toggle="modal" data-target="#permissionsModal" title="Gestionar Permisos">
+    <button
+      type="button"
+      class="btn-floating-permissions"
+      data-toggle="modal"
+      data-target="#permissionsModal"
+      title="Gestionar Permisos"
+    >
       <i class="fas fa-user-shield"></i>
-      <span class="btn-floating-text">Permisos</span>
+      <span class="btn-floating-text" th:text="#{permissions-title}"
+        >Permissions</span
+      >
     </button>
   </div>
 
-  <div class="modal fade" id="permissionsModal" tabindex="-1" role="dialog" aria-labelledby="permissionsModalLabel" aria-hidden="true">
+  <div
+    class="modal fade"
+    id="permissionsModal"
+    tabindex="-1"
+    role="dialog"
+    aria-labelledby="permissionsModalLabel"
+    aria-hidden="true"
+  >
     <div class="modal-dialog modal-xl" role="document">
       <div class="modal-content">
         <div class="modal-header bg-gradient-primary text-white">
           <h5 class="modal-title font-weight-bold" id="permissionsModalLabel">
-            <i class="fas fa-user-cog mr-2"></i>Permit Management
+            <i class="fas fa-user-cog mr-2"></i
+            ><span th:text="#{permissions-management}"
+              >Permissions Management</span
+            >
           </h5>
-          <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+          <button
+            type="button"
+            class="close text-white"
+            data-dismiss="modal"
+            aria-label="Close"
+          >
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
@@ -25,16 +48,26 @@
             <div class="col-12">
               <div class="card shadow-sm">
                 <div class="card-header bg-primary text-white py-2 py-md-3">
-                  <h6 class="mb-0"><i class="fas fa-users mr-1 mr-md-2"></i>Users</h6>
+                  <h6 class="mb-0">
+                    <i class="fas fa-users mr-1 mr-md-2"></i
+                    ><span th:text="#{users-title}">Users</span>
+                  </h6>
                 </div>
                 <div class="card-body p-2 p-md-3">
                   <div class="row">
                     <div class="col-md-4 mb-2 mb-md-3">
                       <div class="input-group">
                         <div class="input-group-prepend">
-                          <span class="input-group-text bg-light"><i class="fas fa-search"></i></span>
+                          <span class="input-group-text bg-light"
+                            ><i class="fas fa-search"></i
+                          ></span>
                         </div>
-                        <input type="text" class="form-control" id="userSearchInput" placeholder="Search by name...">
+                        <input
+                          type="text"
+                          class="form-control"
+                          id="userSearchInput"
+                          th:placeholder="#{search-by-name}"
+                        />
                       </div>
                     </div>
                   </div>
@@ -42,15 +75,31 @@
                   <div class="row mt-2 mt-md-3">
                     <div class="col-12">
                       <!-- Hidden input to store selected user ID -->
-                      <input type="hidden" id="selectedUserId" name="selectedUserId" />
+                      <input
+                        type="hidden"
+                        id="selectedUserId"
+                        name="selectedUserId"
+                      />
 
                       <div class="users-container" id="usersContainer">
-                        <div th:each="user : ${usuarios}" class="user-card"
-                             th:attr="data-user-id=${user.id}">
-                          <div class="user-avatar" th:text="${#strings.substring(user.nombre, 0, 1) }"></div>
+                        <div
+                          th:each="user : ${usuarios}"
+                          class="user-card"
+                          th:attr="data-user-id=${user.id}"
+                        >
+                          <div
+                            class="user-avatar"
+                            th:text="${#strings.substring(user.nombre, 0, 1) }"
+                          ></div>
                           <div class="user-info">
-                            <h6 class="user-name mb-0" th:text="${user.nombre}"></h6>
-                            <small class="user-email text-muted" th:text="${user.email}"></small>
+                            <h6
+                              class="user-name mb-0"
+                              th:text="${user.nombre}"
+                            ></h6>
+                            <small
+                              class="user-email text-muted"
+                              th:text="${user.email}"
+                            ></small>
                           </div>
                           <div class="user-select">
                             <i class="fas fa-check-circle"></i>
@@ -68,13 +117,19 @@
             <div class="col-12 col-md-10 col-lg-8 mx-auto">
               <div class="input-group">
                 <div class="input-group-prepend">
-                  <span class="input-group-text bg-light"><i class="fas fa-user"></i></span>
+                  <span class="input-group-text bg-light"
+                    ><i class="fas fa-user"></i
+                  ></span>
                 </div>
                 <select class="form-control select2-style" id="userSelect">
-                  <option value="">-- Select a user --</option>
-                  <option th:each="user : ${usuarios}"
-                          th:value="${user.id}"
-                          th:text="${user.nombre +   ' (' + user.email + ')'}"></option>
+                  <option value="" th:text="#{select-user-placeholder}">
+                    -- Select a user --
+                  </option>
+                  <option
+                    th:each="user : ${usuarios}"
+                    th:value="${user.id}"
+                    th:text="${user.nombre +   ' (' + user.email + ')'}"
+                  ></option>
                 </select>
               </div>
             </div>
@@ -83,12 +138,25 @@
           <div class="row">
             <div class="col-12">
               <div class="horizontal-scroll-container mb-3 mb-md-4">
-                <ul class="nav nav-pills justify-content-start justify-content-md-center flex-nowrap flex-md-wrap" id="permisosTabs" role="tablist">
-                  <li class="nav-item mx-1 mb-2" th:each="vista : ${permisosAgrupados.keySet()}">
-                    <a class="nav-link shadow-sm" th:classappend="${#strings.equals(vista, 'AGENDA')} ? 'active' : ''"
-                       th:id="${'tab-' + vista}" data-toggle="pill"
-                       th:href="${'#pane-' + vista}" role="tab">
-                      <i class="fas fa-folder-open mr-1 mr-md-2"></i><span th:text="${vista}"></span>
+                <ul
+                  class="nav nav-pills justify-content-start justify-content-md-center flex-nowrap flex-md-wrap"
+                  id="permisosTabs"
+                  role="tablist"
+                >
+                  <li
+                    class="nav-item mx-1 mb-2"
+                    th:each="vista : ${permisosAgrupados.keySet()}"
+                  >
+                    <a
+                      class="nav-link shadow-sm"
+                      th:classappend="${#strings.equals(vista, 'AGENDA')} ? 'active' : ''"
+                      th:id="${'tab-' + vista}"
+                      data-toggle="pill"
+                      th:href="${'#pane-' + vista}"
+                      role="tab"
+                    >
+                      <i class="fas fa-folder-open mr-1 mr-md-2"></i
+                      ><span th:text="${vista}"></span>
                     </a>
                   </li>
                 </ul>
@@ -98,38 +166,65 @@
 
           <div class="row mb-3">
             <div class="col-12 text-center">
-              <div class="d-flex flex-column flex-md-row justify-content-center">
-                <button id="selectAllPermsBtn" class="btn btn-info btn-rounded shadow-sm px-3 px-md-4 py-1 py-md-2 mb-2 mb-md-0 mr-md-2">
-                  <i class="fas fa-check-circle mr-1 mr-md-2"></i>Add all
+              <div
+                class="d-flex flex-column flex-md-row justify-content-center"
+              >
+                <button
+                  id="selectAllPermsBtn"
+                  class="btn btn-info btn-rounded shadow-sm px-3 px-md-4 py-1 py-md-2 mb-2 mb-md-0 mr-md-2"
+                >
+                  <i class="fas fa-check-circle mr-1 mr-md-2"></i
+                  ><span th:text="#{add-all}">Select All</span>
                 </button>
-                <button id="deselectAllPermsBtn" class="btn btn-warning btn-rounded shadow-sm px-3 px-md-4 py-1 py-md-2 mb-2 mb-md-0 mr-md-2">
-                  <i class="fas fa-times-circle mr-1 mr-md-2"></i>remove all
+                <button
+                  id="deselectAllPermsBtn"
+                  class="btn btn-warning btn-rounded shadow-sm px-3 px-md-4 py-1 py-md-2 mb-2 mb-md-0 mr-md-2"
+                >
+                  <i class="fas fa-times-circle mr-1 mr-md-2"></i
+                  ><span th:text="#{remove-all}">Deselect All</span>
                 </button>
               </div>
             </div>
           </div>
 
           <div class="tab-content" id="permisosTabContent">
-            <div th:each="vista : ${permisosAgrupados.keySet()}"
-                 th:id="${'pane-' + vista}" class="tab-pane fade"
-                 th:classappend="${#strings.equals(vista, 'AGENDA')} ? 'show active' : ''" role="tabpanel">
-
+            <div
+              th:each="vista : ${permisosAgrupados.keySet()}"
+              th:id="${'pane-' + vista}"
+              class="tab-pane fade"
+              th:classappend="${#strings.equals(vista, 'AGENDA')} ? 'show active' : ''"
+              role="tabpanel"
+            >
               <div class="row">
                 <div class="col-12 col-md-6 mb-3 mb-md-4">
                   <div class="card shadow-sm h-100">
                     <div class="card-header bg-primary text-white py-2 py-md-3">
-                      <h6 class="mb-0"><i class="fas fa-door-open mr-1 mr-md-2"></i>Access</h6>
+                      <h6 class="mb-0">
+                        <i class="fas fa-door-open mr-1 mr-md-2"></i
+                        ><span th:text="#{access-title}">Access</span>
+                      </h6>
                     </div>
                     <div class="card-body p-2 p-md-3">
-                      <div th:each="permiso : ${permisosAgrupados.get(vista)}"
-                           th:if="${#strings.equals(permiso.tipoPermiso, 'ACCESS')}">
+                      <div
+                        th:each="permiso : ${permisosAgrupados.get(vista)}"
+                        th:if="${#strings.equals(permiso.tipoPermiso, 'ACCESS')}"
+                      >
                         <div class="custom-control custom-switch mb-2 mb-md-3">
-                          <input type="checkbox" class="custom-control-input permisoCheckbox"
-                                 th:id="'perm_' + ${permiso.id}"
-                                 th:value="${permiso.id}">
-                          <label class="custom-control-label d-block" th:for="'perm_' + ${permiso.id}"
-                                 th:text="${permiso.nombre}"></label>
-                          <small class="text-muted ml-4 d-block" th:text="${permiso.descripcion}"></small>
+                          <input
+                            type="checkbox"
+                            class="custom-control-input permisoCheckbox"
+                            th:id="'perm_' + ${permiso.id}"
+                            th:value="${permiso.id}"
+                          />
+                          <label
+                            class="custom-control-label d-block"
+                            th:for="'perm_' + ${permiso.id}"
+                            th:text="${permiso.nombre}"
+                          ></label>
+                          <small
+                            class="text-muted ml-4 d-block"
+                            th:text="${permiso.descripcion}"
+                          ></small>
                         </div>
                       </div>
                     </div>
@@ -139,18 +234,32 @@
                 <div class="col-12 col-md-6 mb-3 mb-md-0">
                   <div class="card shadow-sm h-100">
                     <div class="card-header bg-success text-white py-2 py-md-3">
-                      <h6 class="mb-0"><i class="fas fa-tasks mr-1 mr-md-2"></i>Actions</h6>
+                      <h6 class="mb-0">
+                        <i class="fas fa-tasks mr-1 mr-md-2"></i
+                        ><span th:text="#{actions-title}">Actions</span>
+                      </h6>
                     </div>
                     <div class="card-body p-2 p-md-3">
-                      <div th:each="permiso : ${permisosAgrupados.get(vista)}"
-                           th:if="${!#strings.equals(permiso.tipoPermiso, 'ACCESS')}">
+                      <div
+                        th:each="permiso : ${permisosAgrupados.get(vista)}"
+                        th:if="${!#strings.equals(permiso.tipoPermiso, 'ACCESS')}"
+                      >
                         <div class="custom-control custom-switch mb-2 mb-md-3">
-                          <input type="checkbox" class="custom-control-input permisoCheckbox"
-                                 th:id="'perm_' + ${permiso.id}"
-                                 th:value="${permiso.id}">
-                          <label class="custom-control-label d-block" th:for="'perm_' + ${permiso.id}"
-                                 th:text="${permiso.nombre}"></label>
-                          <small class="text-muted ml-4 d-block" th:text="${permiso.descripcion}"></small>
+                          <input
+                            type="checkbox"
+                            class="custom-control-input permisoCheckbox"
+                            th:id="'perm_' + ${permiso.id}"
+                            th:value="${permiso.id}"
+                          />
+                          <label
+                            class="custom-control-label d-block"
+                            th:for="'perm_' + ${permiso.id}"
+                            th:text="${permiso.nombre}"
+                          ></label>
+                          <small
+                            class="text-muted ml-4 d-block"
+                            th:text="${permiso.descripcion}"
+                          ></small>
                         </div>
                       </div>
                     </div>
@@ -163,16 +272,25 @@
           <!-- Solo botón de guardar abajo -->
           <div class="row mt-3">
             <div class="col-12 text-center">
-              <button id="savePermChangesBtn" class="btn btn-primary btn-rounded shadow-sm px-4 px-md-5 py-1 py-md-2">
-                <i class="fas fa-save mr-1 mr-md-2"></i>Save Changes
+              <button
+                id="savePermChangesBtn"
+                class="btn btn-primary btn-rounded shadow-sm px-4 px-md-5 py-1 py-md-2"
+              >
+                <i class="fas fa-save mr-1 mr-md-2"></i
+                ><span th:text="#{save-changes}">Save Changes</span>
               </button>
             </div>
           </div>
         </div>
 
         <div class="modal-footer bg-light py-2 py-md-3">
-          <button type="button" class="btn btn-outline-secondary btn-rounded px-3 px-md-4 py-1 py-md-2" data-dismiss="modal">
-            <i class="fas fa-times mr-1 mr-md-2"></i>Close
+          <button
+            type="button"
+            class="btn btn-outline-secondary btn-rounded px-3 px-md-4 py-1 py-md-2"
+            data-dismiss="modal"
+          >
+            <i class="fas fa-times mr-1 mr-md-2"></i
+            ><span th:text="#{close}">Close</span>
           </button>
         </div>
       </div>
@@ -206,7 +324,11 @@
     }
 
     #permissionsModal .modal-header {
-      background: linear-gradient(135deg, var(--secondary-blue) 0%, var(--dark-blue) 100%);
+      background: linear-gradient(
+        135deg,
+        var(--secondary-blue) 0%,
+        var(--dark-blue) 100%
+      );
       color: var(--lighter-text);
       border-bottom: 1px solid var(--border-color);
       padding: 1rem 1.5rem;
@@ -257,7 +379,11 @@
     }
 
     #permissionsModal .card-header {
-      background: linear-gradient(90deg, var(--darker-bg), var(--dark-bg)) !important;
+      background: linear-gradient(
+        90deg,
+        var(--darker-bg),
+        var(--dark-bg)
+      ) !important;
       color: var(--lighter-text) !important;
       font-weight: 500;
       border-bottom: 1px solid var(--border-color);
@@ -422,7 +548,7 @@
     }
 
     #permissionsModal .user-card.selected::after {
-      content: '';
+      content: "";
       position: absolute;
       top: 0;
       right: 0;
@@ -486,7 +612,11 @@
     }
 
     #permissionsModal .nav-pills .nav-link.active {
-      background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%) !important;
+      background: linear-gradient(
+        135deg,
+        var(--primary-blue) 0%,
+        var(--secondary-blue) 100%
+      ) !important;
       color: var(--lighter-text) !important;
       box-shadow: 0 4px 12px rgba(67, 97, 238, 0.4);
       border: 1px solid var(--accent-blue);
@@ -734,22 +864,32 @@
   </style>
 
   <script>
+    const permissionTranslations = {
+      no_user_selected: "[[#{no-user-selected}]]",
+      permissions_updated: "[[#{permissions-updated}]]",
+      no_description: "[[#{no-description}]]",
+      error_updating_permissions: "[[#{error-updating-permissions}]]",
+      user_permissions_load_error: "[[#{user-permissions-load-error}]]",
+    };
+  </script>
+
+  <script>
     $(document).ready(function () {
       // Manejar selección de usuario desde el panel
-      $('.user-card').click(function() {
-        const userId = $(this).data('user-id');
-        $('.user-card').removeClass('selected');
-        $(this).addClass('selected');
-        $('#selectedUserId').val(userId);
-        $('#userSelect').val(userId).trigger('change');
+      $(".user-card").click(function () {
+        const userId = $(this).data("user-id");
+        $(".user-card").removeClass("selected");
+        $(this).addClass("selected");
+        $("#selectedUserId").val(userId);
+        $("#userSelect").val(userId).trigger("change");
       });
 
       // Búsqueda de usuarios
-      $('#userSearchInput').on('input', function() {
+      $("#userSearchInput").on("input", function () {
         const searchTerm = $(this).val().toLowerCase();
-        $('.user-card').each(function() {
-          const userName = $(this).find('.user-name').text().toLowerCase();
-          const userEmail = $(this).find('.user-email').text().toLowerCase();
+        $(".user-card").each(function () {
+          const userName = $(this).find(".user-name").text().toLowerCase();
+          const userEmail = $(this).find(".user-email").text().toLowerCase();
           if (userName.includes(searchTerm) || userEmail.includes(searchTerm)) {
             $(this).show();
           } else {
@@ -758,81 +898,87 @@
         });
       });
 
-      $('#userSelect').change(function () {
+      $("#userSelect").change(function () {
         const userId = $(this).val();
-        $('.permisoCheckbox').prop('checked', false);
-        $('.user-card').removeClass('selected');
+        $(".permisoCheckbox").prop("checked", false);
+        $(".user-card").removeClass("selected");
 
         if (userId) {
           // Resaltar usuario seleccionado en el panel
-          $(`.user-card[data-user-id="${userId}"]`).addClass('selected');
-          $('#selectedUserId').val(userId);
+          $(`.user-card[data-user-id="${userId}"]`).addClass("selected");
+          $("#selectedUserId").val(userId);
 
           fetch(`/permiso/users/${userId}/permissions`)
-                  .then(response => response.json())
-                  .then(permissions => {
-                    permissions.forEach(perm => {
-                      $(`.permisoCheckbox[value="${perm.id}"]`).prop('checked', true);
-                    });
-                  })
-                  .catch(error => {
-                    console.error('Error al cargar permisos:', error);
-                    alert('Error al cargar los permisos del usuario.');
-                  });
+            .then((response) => response.json())
+            .then((permissions) => {
+              permissions.forEach((perm) => {
+                $(`.permisoCheckbox[value="${perm.id}"]`).prop("checked", true);
+              });
+            })
+            .catch((error) => {
+              console.error("Error al cargar permisos:", error);
+              alert(permissionTranslations.user_permissions_load_error, error);
+            });
         }
       });
 
-      $('#savePermChangesBtn').click(function () {
-        const userId = $('#selectedUserId').val();
+      $("#savePermChangesBtn").click(function () {
+        const userId = $("#selectedUserId").val();
         if (!userId) {
-          alert('Debe seleccionar un usuario.');
+          alert(permissionTranslations.no_user_selected);
           return;
         }
 
-        const selectedPerms = $('.permisoCheckbox:checked').map(function () {
-          return $(this).val();
-        }).get();
+        const selectedPerms = $(".permisoCheckbox:checked")
+          .map(function () {
+            return $(this).val();
+          })
+          .get();
 
         fetch(`/permiso/users/${userId}/permissions/update`, {
-          method: 'POST',
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json'
+            "Content-Type": "application/json",
           },
-          body: JSON.stringify(selectedPerms)
+          body: JSON.stringify(selectedPerms),
         })
-                .then(response => {
-                  if (response.ok) {
-                    alert('Permisos actualizados correctamente.');
-                  } else {
-                    throw new Error('Error al actualizar permisos.');
-                  }
-                })
-                .catch(error => {
-                  console.error('Error:', error);
-                  alert('Error al actualizar permisos: ' + error.message);
-                });
+          .then((response) => {
+            if (response.ok) {
+              alert(permissionTranslations.permissions_updated);
+            } else {
+              throw new Error(
+                permissionTranslations.error_updating_permissions
+              );
+            }
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+            alert(
+              permissionTranslations.error_updating_permissions + error.message
+            );
+          });
       });
 
-      $('#selectAllPermsBtn').click(function() {
-        if (!$('#selectedUserId').val()) {
-          alert('Debe seleccionar un usuario primero.');
+      $("#selectAllPermsBtn").click(function () {
+        if (!$("#selectedUserId").val()) {
+          alert(permissionTranslations.no_user_selected);
           return;
         }
-        $('.permisoCheckbox').prop('checked', true);
+        $(".permisoCheckbox").prop("checked", true);
       });
 
-      $('#deselectAllPermsBtn').click(function() {
-        if (!$('#selectedUserId').val()) {
-          alert('Debe seleccionar un usuario primero.');
+      $("#deselectAllPermsBtn").click(function () {
+        if (!$("#selectedUserId").val()) {
+          alert(permissionTranslations.no_user_selected);
           return;
         }
-        $('.permisoCheckbox').prop('checked', false);
+        $(".permisoCheckbox").prop("checked", false);
       });
 
       // Efecto de onda para el botón flotante
-      $('.btn-floating-permissions').on('click', function(e) {
+      $(".btn-floating-permissions").on("click", function (e) {
         // Eliminar cualquier onda anterior
-        $('.ripple').remove();
+        $(".ripple").remove();
 
         // Obtener posición del clic
         const posX = e.pageX - $(this).offset().left;
@@ -841,14 +987,14 @@
         // Crear elemento de onda
         const ripple = $('<span class="ripple"></span>').css({
           left: posX,
-          top: posY
+          top: posY,
         });
 
         // Agregar onda al botón
         $(this).append(ripple);
 
         // Eliminar onda después de la animación
-        setTimeout(function() {
+        setTimeout(function () {
           ripple.remove();
         }, 800);
       });
@@ -857,31 +1003,36 @@
       function adjustModalHeight() {
         if ($(window).width() < 768) {
           const viewportHeight = $(window).height();
-          const modalHeaderHeight = $('#permissionsModal .modal-header').outerHeight(true);
-          const modalFooterHeight = $('#permissionsModal .modal-footer').outerHeight(true);
-          const availableHeight = viewportHeight - modalHeaderHeight - modalFooterHeight - 20;
+          const modalHeaderHeight = $(
+            "#permissionsModal .modal-header"
+          ).outerHeight(true);
+          const modalFooterHeight = $(
+            "#permissionsModal .modal-footer"
+          ).outerHeight(true);
+          const availableHeight =
+            viewportHeight - modalHeaderHeight - modalFooterHeight - 20;
 
-          $('#permissionsModal .modal-body').css({
-            'max-height': availableHeight + 'px',
-            'overflow-y': 'auto'
+          $("#permissionsModal .modal-body").css({
+            "max-height": availableHeight + "px",
+            "overflow-y": "auto",
           });
         } else {
-          $('#permissionsModal .modal-body').css({
-            'max-height': '',
-            'overflow-y': ''
+          $("#permissionsModal .modal-body").css({
+            "max-height": "",
+            "overflow-y": "",
           });
         }
       }
 
       // Ejecutar al abrir el modal y al redimensionar
-      $('#permissionsModal').on('show.bs.modal', adjustModalHeight);
+      $("#permissionsModal").on("show.bs.modal", adjustModalHeight);
       $(window).resize(adjustModalHeight);
 
       // Manejar el cierre del modal en móviles
-      $('#permissionsModal').on('hidden.bs.modal', function() {
-        $('#permissionsModal .modal-body').css({
-          'max-height': '',
-          'overflow-y': ''
+      $("#permissionsModal").on("hidden.bs.modal", function () {
+        $("#permissionsModal .modal-body").css({
+          "max-height": "",
+          "overflow-y": "",
         });
       });
     });

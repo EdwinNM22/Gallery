@@ -45,10 +45,10 @@ public class ExpedienteController {
         Optional<usuario> optionalUsuario = usuarioService.findById(idUsuario);
 
         // Control de permisos
-         if (optionalUsuario.isEmpty() || optionalUsuario.get().getPermisos().stream()
-         .noneMatch(p -> "EXPEDIENTE_ACCESS".equals(p.getCodigo()))) {
-         return "redirect:/NoAccess/Access";
-         }
+        if (optionalUsuario.isEmpty() || optionalUsuario.get().getPermisos().stream()
+                .noneMatch(p -> "EXPEDIENTE_ACCESS".equals(p.getCodigo()))) {
+            return "redirect:/NoAccess/Access";
+        }
 
         usuario usuario = optionalUsuario.get();
 
@@ -138,15 +138,16 @@ public class ExpedienteController {
         Optional<usuario> optionalUsuario = usuarioService.findById(idUsuario);
 
         // Control de permisos
-        // if (optionalUsuario.isEmpty() || optionalUsuario.get().getPermisos().stream()
-        // .noneMatch(p -> "EXPEDIENTE_ACCESS".equals(p.getCodigo()))) {
-        // return "redirect:/NoAccess/Access";
-        // }
+        if (optionalUsuario.isEmpty() || optionalUsuario.get().getPermisos().stream()
+                .noneMatch(p -> "EXPEDIENTE_ACCESS".equals(p.getCodigo()))) {
+            return "redirect:/NoAccess/Access";
+        }
 
         usuario usuario = optionalUsuario.get();
 
         // Get future projects for this expediente
         List<Form> futureForms = formService.findByExpedienteIdAndFuturo(id, true);
+        List<Form> completeForms = formService.findByExpedienteIdAndFuturo(id, false);
 
         List<Map<String, String>> events = futureForms.stream()
                 .filter(f -> f.getFechaEvaluacion() != null)
@@ -158,7 +159,18 @@ public class ExpedienteController {
                 ))
                 .collect(Collectors.toList());
 
+        List<Map<String, String>> eventsComplete = completeForms.stream()
+                .filter(f -> f.getFechaEvaluacion() != null)
+                .map(f -> Map.of(
+                        "id", f.getId().toString(),
+                        "start", f.getFechaEvaluacion().toString(),
+                        "end", f.getFechaEvaluacion().toString(),
+                        "nombreCliente", f.getNombreCliente() // assuming getter exists
+                ))
+                .collect(Collectors.toList());
+
         model.addAttribute("events", events);
+        model.addAttribute("eventsComplete", eventsComplete);
 
         model.addAttribute("expedienteId", id);
         model.addAttribute("usuarios", usuarioService.findAll());
@@ -195,13 +207,13 @@ public class ExpedienteController {
         try {
             Integer idUsuario = (Integer) session.getAttribute("idusuario");
             Optional<usuario> optionalUsuario = usuarioService.findById(idUsuario);
-            // if (optionalUsuario.isEmpty()) return "redirect:/NoAccess/Access";
+            if (optionalUsuario.isEmpty())
+                return "redirect:/NoAccess/Access";
             usuario usuario = optionalUsuario.get();
 
-            // if (usuario.getPermisos().stream().noneMatch(p ->
-            // "EXPEDIENTE_ACCESS".equals(p.getCodigo()))) {
-            // return "redirect:/NoAccess/Access";
-            // }
+            if (usuario.getPermisos().stream().noneMatch(p -> "EXPEDIENTE_ACCESS".equals(p.getCodigo()))) {
+                return "redirect:/NoAccess/Access";
+            }
 
             List<Form> forms;
 
