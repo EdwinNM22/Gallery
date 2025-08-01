@@ -2,23 +2,26 @@
 <div th:fragment="calendarDayModal">
   <div id="dayEventsModal" class="modal fade" tabindex="-1" role="dialog">
     <div class="modal-dialog modal-dialog-centered" role="document">
-      <div class="modal-content bg-dark border border-primary">
-        <div class="modal-header bg-primary text-white">
+      <div class="modal-content calendar-modal">
+        <div class="modal-header calendar-modal-header">
           <h5 class="modal-title">
             Events for <span class="date-display"></span>
           </h5>
           <button
             type="button"
-            class="close text-white"
+            class="close"
             data-dismiss="modal"
             aria-label="Close"
           >
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
-        <div class="modal-body">
-          <div id="dayEventsList" class="mb-3"></div>
-          <button id="createNewEventBtn" class="btn btn-primary btn-block">
+        <div class="modal-body calendar-modal-body">
+          <div id="dayEventsList" class="calendar-events-list mb-3"></div>
+          <button
+            id="createNewEventBtn"
+            class="btn btn-primary btn-block calendar-new-event-btn"
+          >
             <i class="fas fa-plus mr-2"></i>Create New Event
           </button>
         </div>

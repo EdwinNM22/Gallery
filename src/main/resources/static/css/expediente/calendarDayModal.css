@@ -1,0 +1,208 @@
+/* Calendar Modal Styles */
+.calendar-modal {
+  background: rgba(15, 25, 35, 0.95);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  color: var(--light-text);
+}
+
+.calendar-modal-header {
+  background: linear-gradient(90deg, var(--primary-blue), var(--accent-blue));
+  border-bottom: 1px solid var(--accent-blue);
+  padding: 1rem 1.5rem;
+}
+
+.calendar-modal-header .modal-title {
+  color: var(--lighter-text);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.calendar-modal-header .close {
+  color: var(--lighter-text);
+  opacity: 0.8;
+  text-shadow: none;
+  transition: opacity 0.2s ease;
+}
+
+.calendar-modal-header .close:hover {
+  opacity: 1;
+}
+
+.calendar-modal-body {
+  padding: 1.5rem;
+}
+
+.calendar-events-list {
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: 8px;
+}
+
+.calendar-new-event-btn {
+  background: linear-gradient(45deg, var(--primary-blue), var(--accent-blue));
+  color: var(--lighter-text);
+  border: none;
+  padding: 0.75rem;
+  font-weight: 500;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.calendar-new-event-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(58, 123, 213, 0.3);
+}
+
+/* Scrollbar styling for events list */
+.calendar-events-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.calendar-events-list::-webkit-scrollbar-track {
+  background: rgba(15, 25, 35, 0.2);
+  border-radius: 3px;
+}
+
+.calendar-events-list::-webkit-scrollbar-thumb {
+  background: var(--primary-blue);
+  border-radius: 3px;
+}
+
+.calendar-events-list::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-blue);
+}
+
+/* Modern Event List Elements - Background Tint Style */
+.event-list-element {
+  background: rgba(15, 25, 35, 0.8);
+  border-radius: 8px;
+  padding: 1.25rem;
+  margin-bottom: 0.75rem;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(44, 90, 160, 0.15);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Status Background Tints */
+.event-list-element.in-progress {
+  background: linear-gradient(
+    to right,
+    rgba(58, 123, 213, 0.3) 0%,
+    rgba(15, 25, 35, 0.7) 60%,
+    rgba(15, 25, 35, 0.9) 100%
+  );
+}
+
+.event-list-element.complete {
+  background: linear-gradient(
+    to right,
+    rgba(99, 108, 116, 0.3) 0%,
+    rgba(15, 25, 35, 0.7) 60%,
+    rgba(15, 25, 35, 0.9) 100%
+  );
+}
+
+.event-list-element.cancelled {
+  background: linear-gradient(
+    to right,
+    rgba(249, 65, 68, 0.3) 0%,
+    rgba(15, 25, 35, 0.7) 60%,
+    rgba(15, 25, 35, 0.9) 100%
+  );
+}
+
+/* Hover Effects */
+.event-list-element:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  border-color: rgba(44, 90, 160, 0.3);
+}
+
+/* Content Styling */
+.event-title {
+  font-weight: 600;
+  color: var(--lighter-text);
+  font-size: 1.05rem;
+  margin: 0 0 0.5rem 0;
+}
+
+.event-description {
+  color: rgba(224, 224, 224, 0.65);
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+/* Modern Button */
+.view-event-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: none;
+  color: var(--light-text);
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+}
+
+.view-event-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--lighter-text);
+}
+
+.view-event-btn span {
+  color: white;
+  font-size: 10px;
+}
+
+/* Status Dot Indicator */
+
+.event-list-element.complete .event-status-dot {
+  background: #636c74;
+}
+
+.event-list-element.cancelled .event-status-dot {
+  background: #f94144;
+}
+
+.status-group-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 0.5rem 1rem;
+  margin: 1.5rem 0 0.75rem 0;
+  border-radius: 4px;
+  display: inline-block;
+}
+
+.status-group-label.in-progress {
+  background: rgba(58, 123, 213, 0.2);
+  color: #3a7bd5;
+  border-left: 3px solid #3a7bd5;
+}
+
+.status-group-label.complete {
+  background: rgba(99, 108, 116, 0.2);
+  color: #636c74;
+  border-left: 3px solid #636c74;
+}
+
+.status-group-label.cancelled {
+  background: rgba(249, 65, 68, 0.2);
+  color: #f94144;
+  border-left: 3px solid #f94144;
+}
+
+/* Adjust spacing between groups */
+.event-status-group {
+  margin-bottom: 1.5rem;
+}
+
+.event-status-group:first-child .status-group-label {
+  margin-top: 0;
+}

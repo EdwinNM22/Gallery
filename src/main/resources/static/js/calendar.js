@@ -1,9 +1,6 @@
 // --- Event Processing ---
 // Regular Event Processing
-function processEventData(
-  events,
-  cssClass = "daypilot-event-badge in-progress"
-) {
+function processEventData(events, cssClass = "event-list-element in-progress") {
   const results = []; // Will store our processed events
 
   // Process each event in the input array
@@ -32,45 +29,58 @@ function processEventData(
 }
 
 // Group Event Processing
-function processEventDataAsGroups(
-  events,
-  cssClass = "daypilot-event-badge in-progress"
-) {
+function processEventDataAsGroups(eventsInProgress = [], eventsComplete = []) {
   const results = [];
-  const eventsByDate = {}; // This will group events by date
+  const eventsByDate = {}; // This will group ALL events by date
+
+  // Combine both in-progress and complete events
+  const allEvents = [...eventsInProgress, ...eventsComplete];
 
   // Group events by their start date
-  events.forEach((ev) => {
+  allEvents.forEach((ev) => {
     const startDate = new Date(ev.start).toISOString().split("T")[0]; // Get YYYY-MM-DD
 
     if (!eventsByDate[startDate]) {
       eventsByDate[startDate] = {
         count: 0,
         firstEvent: ev, // Keep reference to first event for metadata
+        inProgressCount: 0,
+        completeCount: 0,
       };
     }
     eventsByDate[startDate].count++;
+
+    // Track status counts for potential styling
+    if (
+      ev.estado === "complete" ||
+      (ev.tags && ev.tags.estado === "complete")
+    ) {
+      eventsByDate[startDate].completeCount++;
+    } else {
+      eventsByDate[startDate].inProgressCount++;
+    }
   });
 
-  // Create a single event for each date with the count
+  // Create a single event for each date with the total count
   for (const [date, data] of Object.entries(eventsByDate)) {
+    // Determine which CSS class to use based on events present
+
     results.push({
       id: `group-${date}`, // Unique ID based on date
       start: data.firstEvent.start,
       end: data.firstEvent.end,
-      text: `${data.count}`, // Show just the count
+      text: `${data.count}`, // Show total count
       barVisible: false,
       backColor: "transparent",
       borderColor: "transparent",
       moveDisabled: true,
       resizeDisabled: true,
-      cssClass: `${cssClass} event-count-badge`, // Add special class for count badges
+      cssClass: `daypilot-event-badge`, // Combined class
       tags: {
-        originalEventId: data.firstEvent.id,
-        estado: cssClass.includes("complete") ? "complete" : "in-progress",
-        expedienteId: data.firstEvent.expedienteId,
         isGroup: true, // Mark this as a grouped event
-        eventCount: data.count, // Store the count
+        eventCount: data.count, // Store the total count
+        inProgressCount: data.inProgressCount,
+        completeCount: data.completeCount,
         date: date, // Store the date for filtering
       },
     });
@@ -127,23 +137,15 @@ export function initializeCalendar({
   // 3. Event Processing and Initialization
   // Save the original events for the modal
   calendar.originalEvents = [
-    ...processEventData(eventsInProgress, "daypilot-event-badge in-progress"),
-    ...processEventData(eventsComplete, "daypilot-event-badge completed"),
+    ...processEventData(eventsInProgress, "event-list-element in-progress"),
+    ...processEventData(eventsComplete, "event-list-element completed"),
   ];
 
   // Combine and process both in-progress and completed events
-  calendar.events.list = [
-    // Process in-progress events with appropriate CSS class
-    ...processEventDataAsGroups(
-      eventsInProgress,
-      "daypilot-event-badge in-progress"
-    ),
-    // Process completed events with different CSS class
-    ...processEventDataAsGroups(
-      eventsComplete,
-      "daypilot-event-badge completed"
-    ),
-  ];
+  calendar.events.list = processEventDataAsGroups(
+    eventsInProgress,
+    eventsComplete
+  );
 
   // Initialize the calendar with processed events
   calendar.init();
@@ -230,36 +232,71 @@ function showDayEvents(date, calendar, expedienteId) {
     return eventStart === dateStr;
   });
 
-  console.log(eventsForDate);
-
   // 4. Event List Rendering
   eventsList.innerHTML = "";
 
   if (eventsForDate.length === 0) {
     eventsList.innerHTML =
-      '<div class="text-center text-muted py-3">No events scheduled</div>';
+      '<div class="text-center text-muted py-4">No events scheduled</div>';
   } else {
+    // Group events by status
+    const groupedEvents = {
+      "in-progress": [],
+      complete: [],
+      cancelled: [],
+    };
+
     eventsForDate.forEach((event) => {
-      const eventElement = document.createElement("div");
-      eventElement.className = `event-item mb-2 p-2 rounded ${
-        event.tags?.estado || "in-progress"
-      }`;
-      eventElement.innerHTML = `
-        <div class="d-flex justify-content-between align-items-center">
-          <div>
-            <strong>${event.text}</strong>
-          </div>
-          <button class="btn btn-sm btn-outline-primary view-event-btn" 
-                  data-event-id="${event.id}"
-                  data-is-complete="${
-                    (event.tags?.estado || "in-progress") === "complete"
-                  }">
-            View
-          </button>
-        </div>
-      `;
-      eventsList.appendChild(eventElement);
+      const status = event.tags?.estado || "in-progress";
+      groupedEvents[status].push(event);
     });
+
+    // Render each group
+    for (const [status, events] of Object.entries(groupedEvents)) {
+      if (events.length > 0) {
+        const groupContainer = document.createElement("div");
+        groupContainer.className = `event-status-group ${status}-group`;
+
+        groupContainer.innerHTML = `
+        <div class="status-group-label ${status}">
+          ${status.replace("-", " ")} (${events.length})
+        </div>
+        <div class="events-container"></div>
+      `;
+
+        const eventsContainer =
+          groupContainer.querySelector(".events-container");
+
+        events.forEach((event) => {
+          const eventElement = document.createElement("div");
+          eventElement.className = `event-list-element ${status} mb-2`;
+
+          eventElement.innerHTML = `
+          <div class="d-flex justify-content-between align-items-start">
+            <div class="event-content">
+              <div class="d-flex align-items-center">
+                <h4 class="event-title">${event.text}</h4>
+              </div>
+              ${
+                event.tags?.descripcion
+                  ? `<p class="event-description mt-2">${event.tags.descripcion}</p>`
+                  : ""
+              }
+            </div>
+            <button class="btn view-event-btn" data-event-id="${
+              event.tags.originalEventId
+            }" data-event-estado="${event.tags.estado}">
+              <span>View</span>
+            </button>
+          </div>
+        `;
+
+          eventsContainer.appendChild(eventElement);
+        });
+
+        eventsList.appendChild(groupContainer);
+      }
+    }
   }
 
   // 5. Event Button Handlers
@@ -267,8 +304,12 @@ function showDayEvents(date, calendar, expedienteId) {
   document.querySelectorAll(".view-event-btn").forEach((btn) => {
     btn.addEventListener("click", (e) => {
       // Get event metadata from data attributes
+      if (!e.target.classList.contains("view-event-btn")) return;
+
       const eventId = e.target.getAttribute("data-event-id");
-      const isComplete = e.target.getAttribute("data-is-complete") === "true";
+
+      const isComplete =
+        e.target.getAttribute("data-event-estado") === "complete";
 
       // Determine appropriate redirect URL based on completion status
       const redirectUrl = isComplete
