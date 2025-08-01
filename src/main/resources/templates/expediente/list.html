@@ -511,26 +511,25 @@
             <span th:text="#{create-new-file}">Create a new file</span>
           </button>
         </div>
-
-        <div class="calendar-section">
-          <div class="calendar-container">
-            <div class="calendar-controls">
-              <button id="prev-month" class="btn-control">
-                <i class="fas fa-chevron-left"></i>
-                <span th:text="#{previous}">Previous</span>
-              </button>
-              <button id="today" class="btn-control active">
-                <i class="fas fa-calendar-day"></i>
-                <span th:text="#{today}">Today</span>
-              </button>
-              <button id="next-month" class="btn-control">
-                <span th:text="#{next}">Next</span>
-                <i class="fas fa-chevron-right"></i>
-              </button>
-            </div>
-            <div class="calendar-wrapper">
-              <div id="calendar"></div>
-            </div>
+      </div>
+      <div class="calendar-section">
+        <div class="calendar-container">
+          <div class="calendar-controls">
+            <button id="prev-month" class="btn-control">
+              <i class="fas fa-chevron-left"></i>
+              <span th:text="#{previous}">Previous</span>
+            </button>
+            <button id="today" class="btn-control active">
+              <i class="fas fa-calendar-day"></i>
+              <span th:text="#{today}">Today</span>
+            </button>
+            <button id="next-month" class="btn-control">
+              <span th:text="#{next}">Next</span>
+              <i class="fas fa-chevron-right"></i>
+            </button>
+          </div>
+          <div class="calendar-wrapper">
+            <div id="calendar"></div>
           </div>
         </div>
       </div>
@@ -593,7 +592,6 @@
     <!-- Disable Calendar Hover Effects -->
     <style>
       .calendar-section {
-        max-width: 1775px;
         margin-left: auto;
         margin-right: auto;
       }
@@ -627,5 +625,7 @@
         disableSelection: true,
       });
     </script>
+
+    <div th:replace="modals/calendarDayModal :: calendarDayModal"></div>
   </body>
 </html>

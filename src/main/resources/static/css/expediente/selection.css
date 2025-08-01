@@ -192,28 +192,30 @@ body {
 
 /* Estilos para el calendario responsive */
 .calendar-container {
+  display: flex;
+  flex-direction: column;
   background: rgba(15, 25, 35, 0.8);
   border: 1px solid var(--border-color);
   border-radius: 10px;
   padding: 1.5rem;
   display: flex;
   flex-direction: column;
-  height: 100%;
   overflow: auto;
+  min-height: 0; /* Allows container to shrink */
 }
 
 .calendar-wrapper {
+  flex: 1; /* Takes remaining space */
   overflow-x: auto;
-  overflow-y: hidden;
   -webkit-overflow-scrolling: touch;
   margin: 0 -1.5rem -1.5rem;
   padding: 0 1.5rem 1.5rem;
+
+  min-height: 0; /* Allows wrapper to shrink */
 }
 
 #calendar {
-  min-width: 800px;
   width: 100%;
-  height: 600px;
 }
 
 .calendar-controls {
@@ -291,11 +293,9 @@ body {
 .calendar_event_inner .event-title {
   font-weight: 500;
   color: var(--lighter-text);
-  margin-bottom: 0.3rem;
   font-size: 0.9rem;
-  white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis;
+  text-overflow: ellipsis !important;
 }
 
 /* Event time in cells */
@@ -309,8 +309,6 @@ body {
 .daypilot-event-badge {
   padding: 4px 8px !important;
   border-radius: 8px !important;
-  margin: 2px 1px !important;
-  min-height: 24px !important;
   line-height: 1.4 !important;
   font-size: 0.85rem !important;
   border: none !important;
@@ -326,13 +324,13 @@ body {
 }
 
 .daypilot-event-badge .daypilot-event-content {
-  height: 100% !important;
   display: flex !important;
+  height: 100% !important;
   align-items: center !important;
-  justify-content: center !important;
-  white-space: nowrap !important;
-  overflow: hidden !important;
+  white-space: normal !important;
   text-overflow: ellipsis !important;
+  justify-content: center !important;
+  overflow: hidden !important;
 }
 
 /* Colores para diferentes estados de eventos */
@@ -383,31 +381,62 @@ body {
 }
 
 @media (max-width: 768px) {
-  .hero-title {
-    font-size: 2rem;
+  .calendar-container {
+    padding: 10px !important; /* Kill container padding */
   }
 
-  .projects-buttons {
-    flex-direction: column;
+  /* Force compact week layout */
+  .calendar_cell_inner {
+    min-height: 60px !important; /* Reduced cell height */
+    padding: 2px !important;
   }
 
-  .album-card {
-    width: 100%;
+  /* Shorten weekday names (Mon/Tue/Wed/etc) */
+  .calendar_cell_header {
+    font-size: 10px !important;
+    text-transform: uppercase;
+    padding: 2px !important;
+  }
+  .calendar_header_inner {
+    font-size: 10px !important;
+    text-transform: uppercase;
+    padding: 2px !important;
+  }
+
+  /* Hide full date, show only day number */
+  .day-number {
+    font-size: 12px !important;
+    width: 18px !important;
+    height: 18px !important;
+    top: 1px !important;
+    right: 1px !important;
+  }
+
+  /* Compact event badges */
+  .daypilot-event-badge {
+    font-size: 10px !important;
+    padding: 2px 4px !important;
+    margin: 1px 0 !important;
+    border-radius: 4px !important;
+  }
+
+  /* Stack events vertically in cells */
+  .calendar_event_inner {
+    display: block !important;
+    margin-bottom: 1px !important;
+  }
+
+  /* Remove horizontal scroll */
+  .calendar-wrapper {
+    overflow-x: hidden !important;
+    padding: 0 !important;
+    margin: 0 !important;
   }
 
   #calendar {
-    min-width: 600px;
-    height: 450px;
-  }
-
-  .calendar-controls {
-    flex-wrap: wrap;
-    gap: 0.5rem;
-  }
-
-  .btn-control {
-    padding: 0.5rem 0.8rem;
-    font-size: 0.9rem;
+    min-width: 100% !important;
+    width: 100% !important;
+    aspect-ratio: 1 / 1; /* Square layout */
   }
 }
 
@@ -416,4 +445,61 @@ body {
     min-width: 550px;
     height: 400px;
   }
+}
+
+/* Modal Styles */
+#dayEventsModal .modal-content {
+  background: rgba(15, 25, 35, 0.95);
+  backdrop-filter: blur(5px);
+  border: 1px solid var(--accent-blue) !important;
+}
+
+.event-item {
+  background: rgba(255, 255, 255, 0.05);
+  border-left: 3px solid var(--primary-blue);
+  transition: all 0.2s ease;
+}
+
+.event-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.event-item.in-progress {
+  border-left-color: var(--accent-blue);
+}
+
+.event-item.completed {
+  border-left-color: var(--success-color);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  #dayEventsModal .modal-dialog {
+    margin: 0.5rem auto;
+    width: 95%;
+  }
+}
+
+/* Style for the event count badge */
+.event-count-badge {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: bold;
+  margin: 2px auto;
+}
+
+/* Different colors for complete/in-progress */
+.event-count-badge.in-progress {
+  background-color: #4caf50; /* Green for in-progress */
+  color: white;
+}
+
+.event-count-badge.completed {
+  background-color: #2196f3; /* Blue for completed */
+  color: white;
 }
