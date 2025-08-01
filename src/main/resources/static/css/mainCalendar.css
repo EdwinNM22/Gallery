@@ -1,0 +1,287 @@
+/* Estructura principal */
+.bg-fast-load {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1;
+    overflow: hidden;
+}
+
+.bg-fast-load img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.5;
+}
+
+/* Estilos para la vista de álbumes - Versión mejorada */
+:root {
+    --primary-blue: #2c5aa0;
+    --accent-blue: #3a7bd5;
+    --dark-bg: #0f1923;
+    --darker-bg: #0a121a;
+    --light-text: #e0e0e0;
+    --lighter-text: #ffffff;
+    --border-color: rgba(44, 90, 160, 0.3);
+    --success-color: #4cc9f0;
+    --danger-color: #ff4d4d;
+    --completed-color: #38b000;
+}
+
+body {
+    background-color: darkblue;
+    min-height: 100vh;
+}
+
+/* Estructura principal */
+.main-container {
+    padding: 2rem 1rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.project-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+.project-title {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--lighter-text);
+    margin-bottom: 0.5rem;
+    position: relative;
+}
+
+.project-title:after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary-blue), var(--accent-blue));
+    border-radius: 3px;
+}
+
+.project-description {
+    font-size: 1.1rem;
+    opacity: 0.9;
+    max-width: 700px;
+    margin: 0 auto;
+    color: var(--light-text);
+}
+
+/* Secciones */
+.section {
+    margin: 1.5rem 0;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: rgba(15, 25, 35, 0.8);
+    backdrop-filter: blur(5px);
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.section-header {
+    padding: 1rem 1.5rem;
+    background-color: var(--darker-bg);
+    color: var(--lighter-text);
+    font-weight: 600;
+    font-size: 1.1rem;
+    cursor: pointer;
+    user-select: none;
+    border-bottom: 1px solid var(--border-color);
+    transition: background-color 0.3s ease;
+}
+
+.section-header:hover {
+    background-color: rgba(44, 90, 160, 0.3);
+}
+
+.section-content {
+    padding: 1.5rem;
+    display: none;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+}
+
+.section-content.active {
+    display: flex;
+}
+
+/* Tarjetas de álbum */
+.album-card {
+    background: rgba(15, 25, 35, 0.7);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1.5rem;
+    width: 280px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Nuevo: estilos agregados */
+.album-card {
+    position: relative;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.project-actions {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    gap: 5px;
+}
+
+.action-btn {
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 50%;
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-edit {
+    color: #4361ee;
+}
+
+.btn-edit:hover {
+    background-color: rgba(67, 97, 238, 0.1);
+}
+
+.btn-delete {
+    color: #f94144;
+}
+
+.btn-delete:hover {
+    background-color: rgba(249, 65, 68, 0.1);
+}
+
+/* Fin estilos agregados */
+
+.album-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: var(--primary-blue);
+}
+
+.album-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(58, 123, 213, 0.3);
+    border-color: var(--accent-blue);
+}
+
+.album-card.completado::before {
+    background: var(--completed-color);
+}
+
+.album-card.anulado::before {
+    background: var(--danger-color);
+}
+
+.album-card-content {
+    color: var(--lighter-text);
+}
+
+.album-card h3 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.album-card p {
+    margin: 0 0 0.75rem 0;
+    font-size: 0.9rem;
+    color: var(--light-text);
+    opacity: 0.8;
+}
+
+/* Badges */
+.badge {
+    display: inline-block;
+    padding: 0.3rem 0.6rem;
+    border-radius: 50px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    /* adicional: */
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.badge-success {
+    background-color: #d1fae5;
+    color: #065f46;
+    /* alternativo, si prefieres: */
+    background-color: rgba(56, 176, 0, 0.2);
+    color: var(--completed-color);
+    border: 1px solid var(--completed-color);
+}
+
+.badge-danger {
+    background-color: #fee2e2;
+    color: #b91c1c;
+    /* alternativo, si prefieres: */
+    background-color: rgba(255, 77, 77, 0.2);
+    color: var(--danger-color);
+    border: 1px solid var(--danger-color);
+}
+
+/* Estado vacío */
+.empty-state {
+    width: 100%;
+    text-align: center;
+    padding: 2rem;
+    color: var(--light-text);
+    opacity: 0.7;
+}
+
+.empty-state i {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    color: var(--primary-blue);
+    opacity: 0.5;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .main-container {
+        padding: 1.5rem 0.5rem;
+    }
+
+    .project-title {
+        font-size: 1.8rem;
+    }
+
+    .section-content {
+        padding: 1rem;
+        justify-content: center;
+    }
+
+    .album-card {
+        width: 100%;
+        max-width: 350px;
+    }
+}
+

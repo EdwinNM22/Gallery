@@ -1,296 +1,151 @@
 <div th:fragment="panelPermisos">
-  <!-- Botón flotante mejorado -->
+  <!-- Botón flotante - Integrado con el theme principal -->
   <div class="floating-permissions-container" th:if="${userRole == 'EDGAR'}">
-    <button
-      type="button"
-      class="btn-floating-permissions"
-      data-toggle="modal"
-      data-target="#permissionsModal"
-      title="Gestionar Permisos"
-    >
+    <button type="button" class="btn-floating-permissions" data-toggle="modal" data-target="#permissionsModal" title="Gestionar Permisos">
       <i class="fas fa-user-shield"></i>
-      <span class="btn-floating-text" th:text="#{permissions-title}"
-        >Permissions</span
-      >
+      <span class="btn-floating-text">Permisos</span>
     </button>
   </div>
 
-  <div
-    class="modal fade"
-    id="permissionsModal"
-    tabindex="-1"
-    role="dialog"
-    aria-labelledby="permissionsModalLabel"
-    aria-hidden="true"
-  >
-    <div class="modal-dialog modal-xl" role="document">
+  <!-- Modal principal -->
+  <div class="modal fade" id="permissionsModal" tabindex="-1" role="dialog" aria-labelledby="permissionsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
       <div class="modal-content">
-        <div class="modal-header bg-gradient-primary text-white">
-          <h5 class="modal-title font-weight-bold" id="permissionsModalLabel">
-            <i class="fas fa-user-cog mr-2"></i
-            ><span th:text="#{permissions-management}"
-              >Permissions Management</span
-            >
+        <!-- Encabezado del modal -->
+        <div class="modal-header">
+          <h5 class="modal-title" id="permissionsModalLabel">
+            <i class="fas fa-user-cog mr-2"></i>Permit Management
           </h5>
-          <button
-            type="button"
-            class="close text-white"
-            data-dismiss="modal"
-            aria-label="Close"
-          >
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
 
-        <div class="modal-body p-2 p-md-4">
-          <!-- Panel de usuarios mejorado -->
-          <div class="row mb-3 mb-md-4">
-            <div class="col-12">
-              <div class="card shadow-sm">
-                <div class="card-header bg-primary text-white py-2 py-md-3">
-                  <h6 class="mb-0">
-                    <i class="fas fa-users mr-1 mr-md-2"></i
-                    ><span th:text="#{users-title}">Users</span>
-                  </h6>
+        <!-- Cuerpo del modal -->
+        <div class="modal-body">
+          <!-- Panel de usuarios -->
+          <div class="user-panel-section">
+            <div class="section-header">
+              <i class="fas fa-users mr-2"></i>Users
+            </div>
+
+            <div class="user-search-container">
+              <div class="search-input-group">
+                <i class="fas fa-search"></i>
+                <input type="text" id="userSearchInput" placeholder="Search by name...">
+              </div>
+            </div>
+
+            <!-- Input oculto para almacenar el ID del usuario seleccionado -->
+            <input type="hidden" id="selectedUserId" name="selectedUserId" />
+
+            <!-- Lista de usuarios -->
+            <div class="users-container" id="usersContainer">
+              <div th:each="user : ${usuarios}" class="user-card"
+                   th:attr="data-user-id=${user.id}">
+                <div class="user-avatar" th:text="${#strings.substring(user.nombre, 0, 1)}"></div>
+                <div class="user-info">
+                  <h6 class="user-name mb-0" th:text="${user.nombre}"></h6>
+                  <small class="user-email" th:text="${user.email}"></small>
                 </div>
-                <div class="card-body p-2 p-md-3">
-                  <div class="row">
-                    <div class="col-md-4 mb-2 mb-md-3">
-                      <div class="input-group">
-                        <div class="input-group-prepend">
-                          <span class="input-group-text bg-light"
-                            ><i class="fas fa-search"></i
-                          ></span>
-                        </div>
-                        <input
-                          type="text"
-                          class="form-control"
-                          id="userSearchInput"
-                          th:placeholder="#{search-by-name}"
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="row mt-2 mt-md-3">
-                    <div class="col-12">
-                      <!-- Hidden input to store selected user ID -->
-                      <input
-                        type="hidden"
-                        id="selectedUserId"
-                        name="selectedUserId"
-                      />
-
-                      <div class="users-container" id="usersContainer">
-                        <div
-                          th:each="user : ${usuarios}"
-                          class="user-card"
-                          th:attr="data-user-id=${user.id}"
-                        >
-                          <div
-                            class="user-avatar"
-                            th:text="${#strings.substring(user.nombre, 0, 1) }"
-                          ></div>
-                          <div class="user-info">
-                            <h6
-                              class="user-name mb-0"
-                              th:text="${user.nombre}"
-                            ></h6>
-                            <small
-                              class="user-email text-muted"
-                              th:text="${user.email}"
-                            ></small>
-                          </div>
-                          <div class="user-select">
-                            <i class="fas fa-check-circle"></i>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                <div class="user-select">
+                  <i class="fas fa-check-circle"></i>
                 </div>
               </div>
             </div>
           </div>
 
-          <div class="row mb-3 mb-md-4" hidden>
-            <div class="col-12 col-md-10 col-lg-8 mx-auto">
-              <div class="input-group">
-                <div class="input-group-prepend">
-                  <span class="input-group-text bg-light"
-                    ><i class="fas fa-user"></i
-                  ></span>
-                </div>
-                <select class="form-control select2-style" id="userSelect">
-                  <option value="" th:text="#{select-user-placeholder}">
-                    -- Select a user --
-                  </option>
-                  <option
-                    th:each="user : ${usuarios}"
-                    th:value="${user.id}"
-                    th:text="${user.nombre +   ' (' + user.email + ')'}"
-                  ></option>
-                </select>
-              </div>
+          <!-- Pestañas de permisos -->
+          <div class="permissions-tabs-section">
+            <div class="horizontal-scroll-container">
+              <ul class="nav nav-pills" id="permisosTabs" role="tablist">
+                <li class="nav-item" th:each="vista : ${permisosAgrupados.keySet()}">
+                  <a class="nav-link" th:classappend="${#strings.equals(vista, 'AGENDA')} ? 'active' : ''"
+                     th:id="${'tab-' + vista}" data-toggle="pill"
+                     th:href="${'#pane-' + vista}" role="tab">
+                    <i class="fas fa-folder-open mr-2"></i><span th:text="${vista}"></span>
+                  </a>
+                </li>
+              </ul>
             </div>
-          </div>
 
-          <div class="row">
-            <div class="col-12">
-              <div class="horizontal-scroll-container mb-3 mb-md-4">
-                <ul
-                  class="nav nav-pills justify-content-start justify-content-md-center flex-nowrap flex-md-wrap"
-                  id="permisosTabs"
-                  role="tablist"
-                >
-                  <li
-                    class="nav-item mx-1 mb-2"
-                    th:each="vista : ${permisosAgrupados.keySet()}"
-                  >
-                    <a
-                      class="nav-link shadow-sm"
-                      th:classappend="${#strings.equals(vista, 'AGENDA')} ? 'active' : ''"
-                      th:id="${'tab-' + vista}"
-                      data-toggle="pill"
-                      th:href="${'#pane-' + vista}"
-                      role="tab"
-                    >
-                      <i class="fas fa-folder-open mr-1 mr-md-2"></i
-                      ><span th:text="${vista}"></span>
-                    </a>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
-
-          <div class="row mb-3">
-            <div class="col-12 text-center">
-              <div
-                class="d-flex flex-column flex-md-row justify-content-center"
-              >
-                <button
-                  id="selectAllPermsBtn"
-                  class="btn btn-info btn-rounded shadow-sm px-3 px-md-4 py-1 py-md-2 mb-2 mb-md-0 mr-md-2"
-                >
-                  <i class="fas fa-check-circle mr-1 mr-md-2"></i
-                  ><span th:text="#{add-all}">Select All</span>
-                </button>
-                <button
-                  id="deselectAllPermsBtn"
-                  class="btn btn-warning btn-rounded shadow-sm px-3 px-md-4 py-1 py-md-2 mb-2 mb-md-0 mr-md-2"
-                >
-                  <i class="fas fa-times-circle mr-1 mr-md-2"></i
-                  ><span th:text="#{remove-all}">Deselect All</span>
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <div class="tab-content" id="permisosTabContent">
-            <div
-              th:each="vista : ${permisosAgrupados.keySet()}"
-              th:id="${'pane-' + vista}"
-              class="tab-pane fade"
-              th:classappend="${#strings.equals(vista, 'AGENDA')} ? 'show active' : ''"
-              role="tabpanel"
-            >
-              <div class="row">
-                <div class="col-12 col-md-6 mb-3 mb-md-4">
-                  <div class="card shadow-sm h-100">
-                    <div class="card-header bg-primary text-white py-2 py-md-3">
-                      <h6 class="mb-0">
-                        <i class="fas fa-door-open mr-1 mr-md-2"></i
-                        ><span th:text="#{access-title}">Access</span>
-                      </h6>
-                    </div>
-                    <div class="card-body p-2 p-md-3">
-                      <div
-                        th:each="permiso : ${permisosAgrupados.get(vista)}"
-                        th:if="${#strings.equals(permiso.tipoPermiso, 'ACCESS')}"
-                      >
-                        <div class="custom-control custom-switch mb-2 mb-md-3">
-                          <input
-                            type="checkbox"
-                            class="custom-control-input permisoCheckbox"
-                            th:id="'perm_' + ${permiso.id}"
-                            th:value="${permiso.id}"
-                          />
-                          <label
-                            class="custom-control-label d-block"
-                            th:for="'perm_' + ${permiso.id}"
-                            th:text="${permiso.nombre}"
-                          ></label>
-                          <small
-                            class="text-muted ml-4 d-block"
-                            th:text="${permiso.descripcion}"
-                          ></small>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="col-12 col-md-6 mb-3 mb-md-0">
-                  <div class="card shadow-sm h-100">
-                    <div class="card-header bg-success text-white py-2 py-md-3">
-                      <h6 class="mb-0">
-                        <i class="fas fa-tasks mr-1 mr-md-2"></i
-                        ><span th:text="#{actions-title}">Actions</span>
-                      </h6>
-                    </div>
-                    <div class="card-body p-2 p-md-3">
-                      <div
-                        th:each="permiso : ${permisosAgrupados.get(vista)}"
-                        th:if="${!#strings.equals(permiso.tipoPermiso, 'ACCESS')}"
-                      >
-                        <div class="custom-control custom-switch mb-2 mb-md-3">
-                          <input
-                            type="checkbox"
-                            class="custom-control-input permisoCheckbox"
-                            th:id="'perm_' + ${permiso.id}"
-                            th:value="${permiso.id}"
-                          />
-                          <label
-                            class="custom-control-label d-block"
-                            th:for="'perm_' + ${permiso.id}"
-                            th:text="${permiso.nombre}"
-                          ></label>
-                          <small
-                            class="text-muted ml-4 d-block"
-                            th:text="${permiso.descripcion}"
-                          ></small>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Solo botón de guardar abajo -->
-          <div class="row mt-3">
-            <div class="col-12 text-center">
-              <button
-                id="savePermChangesBtn"
-                class="btn btn-primary btn-rounded shadow-sm px-4 px-md-5 py-1 py-md-2"
-              >
-                <i class="fas fa-save mr-1 mr-md-2"></i
-                ><span th:text="#{save-changes}">Save Changes</span>
+            <!-- Controles de selección masiva -->
+            <div class="bulk-actions">
+              <button id="selectAllPermsBtn" class="btn-action">
+                <i class="fas fa-check-circle mr-2"></i>Add all
               </button>
+              <button id="deselectAllPermsBtn" class="btn-action">
+                <i class="fas fa-times-circle mr-2"></i>Remove all
+              </button>
+            </div>
+
+            <!-- Contenido de las pestañas -->
+            <div class="tab-content" id="permisosTabContent">
+              <div th:each="vista : ${permisosAgrupados.keySet()}"
+                   th:id="${'pane-' + vista}" class="tab-pane fade"
+                   th:classappend="${#strings.equals(vista, 'AGENDA')} ? 'show active' : ''" role="tabpanel">
+
+                <div class="permissions-grid">
+                  <!-- Columna de Accesos -->
+                  <div class="permissions-column">
+                    <div class="column-header">
+                      <i class="fas fa-door-open mr-2"></i>Access
+                    </div>
+                    <div class="permissions-list">
+                      <div th:each="permiso : ${permisosAgrupados.get(vista)}"
+                           th:if="${#strings.equals(permiso.tipoPermiso, 'ACCESS')}">
+                        <div class="permission-item">
+                          <label class="switch">
+                            <input type="checkbox" class="permisoCheckbox"
+                                   th:id="'perm_' + ${permiso.id}"
+                                   th:value="${permiso.id}">
+                            <span class="slider"></span>
+                          </label>
+                          <div class="permission-info">
+                            <span class="permission-name" th:text="${permiso.nombre}"></span>
+                            <small class="permission-desc" th:text="${permiso.descripcion}"></small>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Columna de Acciones -->
+                  <div class="permissions-column">
+                    <div class="column-header">
+                      <i class="fas fa-tasks mr-2"></i>Actions
+                    </div>
+                    <div class="permissions-list">
+                      <div th:each="permiso : ${permisosAgrupados.get(vista)}"
+                           th:if="${!#strings.equals(permiso.tipoPermiso, 'ACCESS')}">
+                        <div class="permission-item">
+                          <label class="switch">
+                            <input type="checkbox" class="permisoCheckbox"
+                                   th:id="'perm_' + ${permiso.id}"
+                                   th:value="${permiso.id}">
+                            <span class="slider"></span>
+                          </label>
+                          <div class="permission-info">
+                            <span class="permission-name" th:text="${permiso.nombre}"></span>
+                            <small class="permission-desc" th:text="${permiso.descripcion}"></small>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
-        <div class="modal-footer bg-light py-2 py-md-3">
-          <button
-            type="button"
-            class="btn btn-outline-secondary btn-rounded px-3 px-md-4 py-1 py-md-2"
-            data-dismiss="modal"
-          >
-            <i class="fas fa-times mr-1 mr-md-2"></i
-            ><span th:text="#{close}">Close</span>
+        <!-- Pie del modal -->
+        <div class="modal-footer">
+          <button type="button" class="btn-secondary" data-dismiss="modal">
+            <i class="fas fa-times mr-2"></i>Close
+          </button>
+          <button id="savePermChangesBtn" class="btn-primary">
+            <i class="fas fa-save mr-2"></i>Save Changes
           </button>
         </div>
       </div>
@@ -298,161 +153,448 @@
   </div>
 
   <style>
-    /* Variables CSS para colores */
+    /* Variables CSS consistentes con el theme principal */
     :root {
-      --primary-blue: #2c5aa0;
-      --secondary-blue: #4895ef;
-      --dark-blue: #3a0ca3;
+      --modal-bg: rgba(15, 25, 35, 0.95);
+      --modal-border: 1px solid rgba(44, 90, 160, 0.5);
+      --modal-header-bg: rgba(44, 90, 160, 0.7);
+      --modal-header-text: #ffffff;
+      --modal-section-bg: rgba(15, 25, 35, 0.8);
+      --modal-section-border: 1px solid rgba(44, 90, 160, 0.3);
       --accent-blue: #3a7bd5;
-      --light-text: #f8f9fa;
+      --light-text: #e0e0e0;
       --lighter-text: #ffffff;
-      --dark-bg: #1a2a36;
-      --darker-bg: #0f1720;
-      --border-color: #2a3a46;
-      --warning-color: #f8961e;
-      --supervisor-color: #7209b7;
+      --hover-blue: rgba(58, 123, 213, 0.2);
+      --active-blue: rgba(58, 123, 213, 0.4);
+      --switch-red: #ff4444;
+      --switch-green: #4CAF50;
     }
 
-    /* Modal principal - Coherencia con el theme principal */
+    /* Switch Rojo/Verde */
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 50px;
+      height: 24px;
+      margin-right: 12px;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: var(--switch-red); /* Rojo cuando está desactivado */
+      transition: .4s;
+      border-radius: 24px;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 16px;
+      width: 16px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+
+    input:checked + .slider {
+      background-color: var(--switch-green); /* Verde cuando está activado */
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(26px);
+    }
+
+    /* Efecto de focus para accesibilidad */
+    input:focus + .slider {
+      box-shadow: 0 0 1px var(--switch-green);
+    }
+
+    /* Estilos del modal principal */
     #permissionsModal .modal-content {
-      background-color: rgba(26, 42, 54, 0.95) !important;
+      background-color: var(--modal-bg);
       backdrop-filter: blur(10px);
-      border-radius: 12px;
-      border: 1px solid var(--accent-blue);
+      border: var(--modal-border);
+      border-radius: 8px;
       color: var(--light-text);
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
     }
 
     #permissionsModal .modal-header {
-      background: linear-gradient(
-        135deg,
-        var(--secondary-blue) 0%,
-        var(--dark-blue) 100%
-      );
-      color: var(--lighter-text);
-      border-bottom: 1px solid var(--border-color);
-      padding: 1rem 1.5rem;
-      border-radius: 10px 10px 0 0;
+      background: var(--modal-header-bg);
+      color: var(--modal-header-text);
+      border-bottom: var(--modal-section-border);
+      padding: 1.2rem 1.5rem;
+      border-radius: 8px 8px 0 0;
     }
 
     #permissionsModal .modal-title {
       font-weight: 600;
-      font-size: 1.2rem;
+      font-size: 1.3rem;
       display: flex;
       align-items: center;
     }
 
     #permissionsModal .modal-title i {
-      margin-right: 8px;
-      font-size: 1.1rem;
+      color: var(--accent-blue);
     }
 
     #permissionsModal .modal-body {
-      background-color: var(--dark-bg) !important;
-      padding: 1rem;
-      border-bottom: 1px solid var(--border-color);
-      border-top: 1px solid var(--border-color);
+      padding: 1.5rem;
+      background-color: var(--modal-section-bg);
     }
 
     #permissionsModal .modal-footer {
-      background-color: var(--darker-bg) !important;
-      border-top: none;
-      padding: 1rem;
-      border-radius: 0 0 10px 10px;
+      border-top: var(--modal-section-border);
+      padding: 1rem 1.5rem;
+      background-color: var(--modal-bg);
+      border-radius: 0 0 8px 8px;
     }
 
-    /* Cards - Mejor contraste y hover effect */
-    #permissionsModal .card {
-      background-color: rgba(26, 42, 54, 0.8) !important;
-      border: 1px solid var(--border-color);
-      border-radius: 8px;
+    #permissionsModal .close {
       color: var(--light-text);
-      transition: all 0.3s ease;
-      backdrop-filter: blur(5px);
-      margin-bottom: 12px;
+      opacity: 0.8;
+      text-shadow: none;
     }
 
-    #permissionsModal .card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 8px 20px rgba(67, 97, 238, 0.3);
-      border-color: var(--accent-blue);
-    }
-
-    #permissionsModal .card-header {
-      background: linear-gradient(
-        90deg,
-        var(--darker-bg),
-        var(--dark-bg)
-      ) !important;
-      color: var(--lighter-text) !important;
-      font-weight: 500;
-      border-bottom: 1px solid var(--border-color);
-      padding: 0.7rem 1rem;
-      font-size: 0.9rem;
-    }
-
-    /* Botones - Coherencia con el theme */
-    #permissionsModal .btn-primary,
-    #savePermChangesBtn {
-      background: var(--primary-blue) !important;
-      border-color: var(--secondary-blue) !important;
-      color: var(--lighter-text) !important;
-      transition: all 0.3s ease;
-      padding: 0.5rem 1.2rem;
-      border-radius: 50px;
-      font-weight: 500;
-      font-size: 0.9rem;
-    }
-
-    #permissionsModal .btn-primary:hover,
-    #savePermChangesBtn:hover {
-      background: var(--secondary-blue) !important;
-      transform: translateY(-2px);
-      box-shadow: 0 5px 15px rgba(67, 97, 238, 0.4);
-    }
-
-    #permissionsModal .btn-secondary {
-      background: rgba(26, 42, 54, 0.7) !important;
-      border: 1px solid var(--border-color);
-      color: var(--light-text);
-      font-size: 0.9rem;
-    }
-
-    #permissionsModal .btn-secondary:hover {
-      background: rgba(108, 117, 125, 0.2) !important;
+    #permissionsModal .close:hover {
       color: var(--lighter-text);
-      border-color: var(--supervisor-color);
+      opacity: 1;
     }
 
-    #permissionsModal .btn-info {
-      background: rgba(26, 42, 54, 0.7) !important;
-      border: 1px solid var(--accent-blue);
+    /* Secciones del modal */
+    .user-panel-section, .permissions-tabs-section {
+      background-color: var(--modal-section-bg);
+      border: var(--modal-section-border);
+      border-radius: 6px;
+      margin-bottom: 1.5rem;
+      overflow: hidden;
+    }
+
+    .section-header {
+      background: linear-gradient(90deg, rgba(15, 25, 35, 0.9), rgba(44, 90, 160, 0.3));
+      color: var(--lighter-text);
+      padding: 0.8rem 1.2rem;
+      font-weight: 500;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+    }
+
+    .section-header i {
+      color: var(--accent-blue);
+    }
+
+    /* Búsqueda de usuarios */
+    .user-search-container {
+      padding: 1rem 1.2rem 0;
+    }
+
+    .search-input-group {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .search-input-group i {
+      position: absolute;
+      left: 12px;
       color: var(--accent-blue);
       font-size: 0.9rem;
     }
 
-    #permissionsModal .btn-info:hover {
-      background: var(--accent-blue) !important;
-      color: var(--lighter-text);
+    #userSearchInput {
+      width: 100%;
+      padding: 0.6rem 1rem 0.6rem 2.2rem;
+      background-color: rgba(15, 25, 35, 0.7);
+      border: 1px solid rgba(44, 90, 160, 0.4);
+      border-radius: 6px;
+      color: var(--light-text);
+      font-size: 0.9rem;
+      transition: all 0.3s ease;
     }
 
-    #permissionsModal .btn-warning {
-      background: rgba(26, 42, 54, 0.7) !important;
-      border: 1px solid var(--warning-color);
-      color: var(--warning-color);
+    #userSearchInput:focus {
+      outline: none;
+      border-color: var(--accent-blue);
+      box-shadow: 0 0 0 2px rgba(58, 123, 213, 0.2);
+    }
+
+    /* Lista de usuarios */
+    .users-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 12px;
+      max-height: 300px;
+      overflow-y: auto;
+      padding: 1.2rem;
+    }
+
+    .user-card {
+      display: flex;
+      align-items: center;
+      padding: 0.8rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      background-color: rgba(15, 25, 35, 0.7);
+      border: 1px solid rgba(44, 90, 160, 0.2);
+    }
+
+    .user-card:hover {
+      background-color: var(--hover-blue);
+      border-color: var(--accent-blue);
+      transform: translateY(-2px);
+    }
+
+    .user-card.selected {
+      background-color: var(--active-blue);
+      border-color: var(--accent-blue);
+      box-shadow: 0 4px 12px rgba(58, 123, 213, 0.3);
+    }
+
+    .user-card.selected::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 4px;
+      height: 100%;
+      background-color: var(--accent-blue);
+      border-radius: 0 6px 6px 0;
+    }
+
+    .user-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      margin-right: 12px;
+      background-color: var(--accent-blue);
+      color: var(--lighter-text);
+      font-size: 1rem;
+    }
+
+    .user-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .user-name {
+      font-weight: 500;
+      color: var(--lighter-text);
+      font-size: 0.95rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-bottom: 2px;
+    }
+
+    .user-email {
+      font-size: 0.8rem;
+      color: var(--accent-blue);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .user-select {
+      opacity: 0;
+      color: var(--accent-blue);
+      transition: opacity 0.2s ease;
+    }
+
+    .user-card.selected .user-select {
+      opacity: 1;
+    }
+
+    /* Pestañas de permisos */
+    .horizontal-scroll-container {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      padding: 0.8rem 1.2rem;
+    }
+
+    .nav-pills {
+      display: flex;
+      flex-wrap: nowrap;
+      gap: 8px;
+    }
+
+    .nav-pills .nav-link {
+      padding: 0.5rem 1rem;
+      border-radius: 50px;
+      color: var(--light-text);
+      font-size: 0.9rem;
+      font-weight: 500;
+      white-space: nowrap;
+      border: 1px solid rgba(44, 90, 160, 0.3);
+      transition: all 0.3s ease;
+    }
+
+    .nav-pills .nav-link:hover {
+      background-color: var(--hover-blue);
+      border-color: var(--accent-blue);
+    }
+
+    .nav-pills .nav-link.active {
+      background: linear-gradient(90deg, var(--modal-header-bg), var(--accent-blue));
+      color: var(--lighter-text);
+      border-color: transparent;
+      box-shadow: 0 4px 12px rgba(58, 123, 213, 0.4);
+    }
+
+    /* Acciones masivas */
+    .bulk-actions {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      padding: 0 1.2rem 1rem;
+    }
+
+    .btn-action {
+      padding: 0.6rem 1.2rem;
+      border-radius: 50px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      border: 1px solid rgba(44, 90, 160, 0.3);
+      background-color: rgba(15, 25, 35, 0.7);
+      color: var(--light-text);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-action:hover {
+      background-color: var(--hover-blue);
+      border-color: var(--accent-blue);
+    }
+
+    .btn-action i {
+      color: var(--accent-blue);
+    }
+
+    /* Grid de permisos */
+    .permissions-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      padding: 0 1.2rem 1.2rem;
+    }
+
+    .permissions-column {
+      background-color: rgba(15, 25, 35, 0.7);
+      border: 1px solid rgba(44, 90, 160, 0.2);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .column-header {
+      background: linear-gradient(90deg, rgba(15, 25, 35, 0.9), rgba(44, 90, 160, 0.3));
+      color: var(--lighter-text);
+      padding: 0.7rem 1rem;
+      font-weight: 500;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+    }
+
+    .column-header i {
+      color: var(--accent-blue);
       font-size: 0.9rem;
     }
 
-    #permissionsModal .btn-warning:hover {
-      background: var(--warning-color) !important;
-      color: var(--darker-bg);
+    .permissions-list {
+      padding: 0.8rem;
+      max-height: 300px;
+      overflow-y: auto;
     }
 
-    /* Botón flotante - Más integrado con el diseño */
+    .permission-item {
+      display: flex;
+      align-items: center;
+      padding: 0.8rem;
+      border-radius: 4px;
+      transition: background-color 0.2s ease;
+    }
+
+    .permission-item:hover {
+      background-color: rgba(44, 90, 160, 0.1);
+    }
+
+    .permission-info {
+      flex: 1;
+    }
+
+    .permission-name {
+      display: block;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--light-text);
+      margin-bottom: 2px;
+    }
+
+    .permission-desc {
+      display: block;
+      font-size: 0.8rem;
+      color: rgba(224, 224, 224, 0.7);
+    }
+
+    /* Botones principales */
+    .btn-primary, .btn-secondary {
+      padding: 0.7rem 1.5rem;
+      border-radius: 50px;
+      font-weight: 500;
+      font-size: 0.95rem;
+      display: inline-flex;
+      align-items: center;
+      transition: all 0.3s ease;
+      border: none;
+    }
+
+    .btn-primary {
+      background: linear-gradient(90deg, var(--modal-header-bg), var(--accent-blue));
+      color: var(--lighter-text);
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(90deg, var(--accent-blue), #4d8df0);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(58, 123, 213, 0.4);
+    }
+
+    .btn-secondary {
+      background-color: rgba(15, 25, 35, 0.7);
+      color: var(--light-text);
+      border: 1px solid rgba(44, 90, 160, 0.3);
+    }
+
+    .btn-secondary:hover {
+      background-color: var(--hover-blue);
+      border-color: var(--accent-blue);
+    }
+
+    /* Botón flotante */
     .floating-permissions-container {
       position: fixed;
-      bottom: 20px;
-      right: 20px;
+      bottom: 25px;
+      right: 25px;
       z-index: 1050;
     }
 
@@ -461,260 +603,70 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 50px;
-      height: 50px;
+      width: 56px;
+      height: 56px;
       border-radius: 50%;
-      background: linear-gradient(135deg, #4361ee 0%, #4895ef 100%) !important;
-      color: #ffffff !important;
-      box-shadow: 0 5px 20px rgba(67, 97, 238, 0.3);
+      background: linear-gradient(135deg, var(--modal-header-bg) 0%, var(--accent-blue) 100%);
+      color: var(--lighter-text);
+      box-shadow: 0 5px 20px rgba(44, 90, 160, 0.4);
       cursor: pointer;
       transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
       position: relative;
       overflow: hidden;
       font-size: 1.3rem;
-      border: none !important;
-      text-align: center;
-      text-decoration: none;
-      font-family: inherit;
-      opacity: 1 !important;
-      filter: none !important;
-      background-color: initial !important;
     }
 
     .btn-floating-permissions:hover {
       transform: translateY(-5px) scale(1.05);
-      box-shadow: 0 8px 25px rgba(67, 97, 238, 0.4);
+      box-shadow: 0 8px 25px rgba(44, 90, 160, 0.5);
     }
 
     .btn-floating-permissions:active {
       transform: translateY(2px);
     }
 
-    .btn-floating-permissions .btn-floating-text {
+    .btn-floating-text {
       position: absolute;
-      right: 60px;
+      right: 70px;
       white-space: nowrap;
-      background: #4361ee !important;
-      padding: 6px 12px;
-      border-radius: 30px;
-      color: #ffffff !important;
+      background: linear-gradient(90deg, var(--modal-header-bg), var(--accent-blue));
+      padding: 8px 16px;
+      border-radius: 50px;
+      color: var(--lighter-text);
       font-weight: 500;
       opacity: 0;
       pointer-events: none;
       transition: all 0.3s ease;
       box-shadow: 0 3px 15px rgba(0, 0, 0, 0.2);
-      font-size: 0.85rem;
+      font-size: 0.9rem;
     }
 
     .btn-floating-permissions:hover .btn-floating-text {
       opacity: 1;
-      right: 65px;
-    }
-
-    /* Lista de usuarios - Diseño más limpio */
-    #permissionsModal .users-container {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-      gap: 12px;
-      max-height: 300px;
-      overflow-y: auto;
-      padding: 8px;
-      margin: -8px;
-    }
-
-    #permissionsModal .user-card {
-      display: flex;
-      align-items: center;
-      padding: 10px 12px;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      background-color: rgba(26, 42, 54, 0.7);
-      border: 1px solid var(--border-color);
-      position: relative;
-      overflow: hidden;
-    }
-
-    #permissionsModal .user-card:hover {
-      background-color: rgba(67, 97, 238, 0.15);
-      border-color: var(--accent-blue);
-      transform: translateY(-3px);
-    }
-
-    #permissionsModal .user-card.selected {
-      background-color: rgba(67, 97, 238, 0.25);
-      border-color: var(--accent-blue);
-      box-shadow: 0 5px 15px rgba(67, 97, 238, 0.2);
-    }
-
-    #permissionsModal .user-card.selected::after {
-      content: "";
-      position: absolute;
-      top: 0;
-      right: 0;
-      width: 6px;
-      height: 100%;
-      background-color: var(--accent-blue);
-    }
-
-    #permissionsModal .user-avatar {
-      width: 38px;
-      height: 38px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: bold;
-      margin-right: 12px;
-      flex-shrink: 0;
-      background-color: var(--accent-blue);
-      color: var(--lighter-text);
-      font-size: 1rem;
-    }
-
-    #permissionsModal .user-info {
-      flex: 1;
-      min-width: 0;
-    }
-
-    #permissionsModal .user-name {
-      font-weight: 600;
-      color: var(--lighter-text);
-      font-size: 0.9rem;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      margin-bottom: 2px;
-    }
-
-    #permissionsModal .user-email {
-      font-size: 0.75rem;
-      color: var(--accent-blue);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    /* Pestañas - Mejor diseño */
-    #permissionsModal .nav-pills .nav-link {
-      color: var(--light-text);
-      padding: 0.4rem 0.8rem;
-      margin-right: 4px;
-      border-radius: 50px;
-      transition: all 0.3s ease;
-      border: 1px solid transparent;
-      font-size: 0.8rem;
-    }
-
-    #permissionsModal .nav-pills .nav-link:hover {
-      background-color: rgba(67, 97, 238, 0.2);
-      border-color: var(--border-color);
-    }
-
-    #permissionsModal .nav-pills .nav-link.active {
-      background: linear-gradient(
-        135deg,
-        var(--primary-blue) 0%,
-        var(--secondary-blue) 100%
-      ) !important;
-      color: var(--lighter-text) !important;
-      box-shadow: 0 4px 12px rgba(67, 97, 238, 0.4);
-      border: 1px solid var(--accent-blue);
-    }
-
-    /* Inputs y controles de formulario */
-    #permissionsModal .form-control {
-      background-color: rgba(26, 42, 54, 0.8) !important;
-      color: var(--light-text) !important;
-      border: 1px solid var(--border-color) !important;
-      padding: 0.6rem 0.9rem;
-      font-size: 0.9rem;
-      transition: all 0.3s ease;
-    }
-
-    #permissionsModal .form-control:focus {
-      background-color: rgba(26, 42, 54, 0.9) !important;
-      border-color: var(--accent-blue) !important;
-      box-shadow: 0 0 0 0.2rem rgba(72, 149, 239, 0.25) !important;
-    }
-
-    #permissionsModal .input-group-text {
-      background-color: rgba(26, 42, 54, 0.8) !important;
-      color: var(--light-text) !important;
-      border: 1px solid var(--border-color) !important;
-      font-size: 0.9rem;
-    }
-
-    /* Switches personalizados */
-    #permissionsModal .custom-switch {
-      padding-left: 2.5rem;
-    }
-
-    #permissionsModal .custom-control-input {
-      width: 2.2em;
-      height: 1.2em;
-      margin-left: -2.5rem;
-      background-color: rgba(26, 42, 54, 0.8);
-      border: 1px solid var(--border-color);
-    }
-
-    #permissionsModal .custom-control-input:checked {
-      background-color: var(--primary-blue);
-      border-color: var(--primary-blue);
-    }
-
-    #permissionsModal .custom-control-label {
-      color: var(--light-text);
-      font-size: 0.85rem;
-      line-height: 1.4;
-      padding-top: 2px;
-    }
-
-    #permissionsModal .custom-control-label::before {
-      height: 1.2em;
-      top: 0.15em;
-      background-color: rgba(26, 42, 54, 0.8);
-      border: 1px solid var(--border-color);
-    }
-
-    #permissionsModal .custom-control-label::after {
-      height: calc(1.2em - 4px);
-      width: calc(1.2em - 4px);
-      top: calc(0.15em + 2px);
+      right: 75px;
     }
 
     /* Scrollbar personalizada */
-    #permissionsModal ::-webkit-scrollbar {
+    ::-webkit-scrollbar {
       width: 6px;
       height: 6px;
     }
 
-    #permissionsModal ::-webkit-scrollbar-track {
-      background: rgba(26, 42, 54, 0.5);
+    ::-webkit-scrollbar-track {
+      background: rgba(15, 25, 35, 0.5);
       border-radius: 8px;
     }
 
-    #permissionsModal ::-webkit-scrollbar-thumb {
+    ::-webkit-scrollbar-thumb {
       background: var(--accent-blue);
       border-radius: 8px;
     }
 
-    #permissionsModal ::-webkit-scrollbar-thumb:hover {
-      background: var(--primary-blue);
+    ::-webkit-scrollbar-thumb:hover {
+      background: #4d8df0;
     }
 
-    /* Contenedor de pestañas con scroll horizontal */
-    .horizontal-scroll-container {
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-      padding-bottom: 8px;
-    }
-
-    .horizontal-scroll-container::-webkit-scrollbar {
-      height: 4px;
-    }
-
-    /* Efecto ripple para botones */
+    /* Efecto ripple */
     .ripple {
       position: absolute;
       border-radius: 50%;
@@ -732,62 +684,124 @@
     }
 
     /* Responsive adjustments */
+    @media (max-width: 1200px) {
+      .permissions-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .switch {
+        width: 45px;
+        height: 22px;
+      }
+
+      .slider:before {
+        height: 14px;
+        width: 14px;
+      }
+
+      input:checked + .slider:before {
+        transform: translateX(23px);
+      }
+    }
+
     @media (max-width: 992px) {
       #permissionsModal .modal-dialog {
         max-width: 95%;
         margin: 1rem auto;
       }
 
-      #permissionsModal .users-container {
+      .users-container {
         grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      }
+    }
+
+    @media (max-width: 768px) {
+      #permissionsModal .modal-header {
+        padding: 1rem;
+      }
+
+      #permissionsModal .modal-body {
+        padding: 1rem;
       }
 
       #permissionsModal .modal-title {
         font-size: 1.1rem;
       }
 
-      .btn-floating-permissions {
-        width: 46px;
-        height: 46px;
-        font-size: 1.2rem;
+      .section-header {
+        padding: 0.7rem 1rem;
+        font-size: 1rem;
       }
-    }
 
-    @media (max-width: 768px) {
-      #permissionsModal .users-container {
+      .users-container {
         grid-template-columns: 1fr;
-      }
-
-      #permissionsModal .modal-header {
-        padding: 0.8rem 1rem;
-      }
-
-      #permissionsModal .modal-body {
         padding: 0.8rem;
       }
 
-      #permissionsModal .card-header {
-        padding: 0.6rem 0.8rem;
+      .user-card {
+        padding: 0.7rem;
       }
 
-      #permissionsModal .user-card {
-        padding: 8px 10px;
-      }
-
-      #permissionsModal .user-avatar {
-        width: 34px;
-        height: 34px;
+      .user-avatar {
+        width: 32px;
+        height: 32px;
         font-size: 0.9rem;
-        margin-right: 10px;
       }
 
-      .btn-floating-permissions .btn-floating-text {
+      .user-name {
+        font-size: 0.9rem;
+      }
+
+      .user-email {
+        font-size: 0.75rem;
+      }
+
+      .btn-floating-permissions {
+        width: 50px;
+        height: 50px;
+        font-size: 1.2rem;
+      }
+
+      .btn-floating-text {
         display: none;
       }
 
-      #permissionsModal .nav-pills .nav-link {
+      .nav-pills .nav-link {
+        font-size: 0.8rem;
+        padding: 0.4rem 0.8rem;
+      }
+
+      .btn-action {
+        padding: 0.5rem 1rem;
+        font-size: 0.85rem;
+      }
+
+      .permission-name {
+        font-size: 0.85rem;
+      }
+
+      .permission-desc {
         font-size: 0.75rem;
-        padding: 0.3rem 0.6rem;
+      }
+
+      .btn-primary, .btn-secondary {
+        padding: 0.6rem 1.2rem;
+        font-size: 0.9rem;
+      }
+
+      .switch {
+        width: 40px;
+        height: 20px;
+        margin-right: 8px;
+      }
+
+      .slider:before {
+        height: 12px;
+        width: 12px;
+      }
+
+      input:checked + .slider:before {
+        transform: translateX(20px);
       }
     }
 
@@ -796,45 +810,21 @@
         margin: 0.5rem auto;
       }
 
-      #permissionsModal .modal-content {
-        border-radius: 8px;
+      .bulk-actions {
+        flex-direction: column;
+        gap: 8px;
       }
 
-      #permissionsModal .modal-header,
-      #permissionsModal .modal-footer {
-        padding: 0.7rem;
-      }
-
-      #permissionsModal .modal-title {
-        font-size: 1rem;
-      }
-
-      #permissionsModal .card-body {
-        padding: 0.8rem;
-      }
-
-      #permissionsModal .custom-control-label {
-        font-size: 0.8rem;
-      }
-
-      #permissionsModal .custom-control-label small {
-        margin-left: 0 !important;
-        display: block;
+      .btn-action {
+        justify-content: center;
       }
 
       .btn-floating-permissions {
-        width: 42px;
-        height: 42px;
+        width: 46px;
+        height: 46px;
         font-size: 1.1rem;
-        bottom: 15px;
-        right: 15px;
-      }
-
-      #savePermChangesBtn,
-      #selectAllPermsBtn,
-      #deselectAllPermsBtn {
-        padding: 0.4rem 0.8rem;
-        font-size: 0.8rem;
+        bottom: 20px;
+        right: 20px;
       }
     }
 
@@ -853,188 +843,158 @@
         border-radius: 0;
       }
 
-      #permissionsModal .user-name {
+      .user-name {
         font-size: 0.85rem;
       }
 
-      #permissionsModal .user-email {
+      .user-email {
         font-size: 0.7rem;
+      }
+
+      .switch {
+        width: 36px;
+        height: 18px;
+      }
+
+      .slider:before {
+        height: 10px;
+        width: 10px;
+      }
+
+      input:checked + .slider:before {
+        transform: translateX(18px);
       }
     }
   </style>
 
   <script>
-    const permissionTranslations = {
-      no_user_selected: "[[#{no-user-selected}]]",
-      permissions_updated: "[[#{permissions-updated}]]",
-      no_description: "[[#{no-description}]]",
-      error_updating_permissions: "[[#{error-updating-permissions}]]",
-      user_permissions_load_error: "[[#{user-permissions-load-error}]]",
-    };
-  </script>
-
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-  <script>
     $(document).ready(function () {
       // Manejar selección de usuario desde el panel
-      $(".user-card").click(function () {
-        const userId = $(this).data("user-id");
-        $(".user-card").removeClass("selected");
-        $(this).addClass("selected");
-        $("#selectedUserId").val(userId);
-        $("#userSelect").val(userId).trigger("change");
+      $('.user-card').click(function() {
+        const userId = $(this).data('user-id');
+        $('.user-card').removeClass('selected');
+        $(this).addClass('selected');
+        $('#selectedUserId').val(userId);
+
+        // Cargar permisos del usuario seleccionado
+        if (userId) {
+          fetch(`/permiso/users/${userId}/permissions`)
+                  .then(response => response.json())
+                  .then(permissions => {
+                    $('.permisoCheckbox').prop('checked', false);
+                    permissions.forEach(perm => {
+                      $(`.permisoCheckbox[value="${perm.id}"]`).prop('checked', true);
+                    });
+                  })
+                  .catch(error => {
+                    console.error('Error al cargar permisos:', error);
+                    alert('Error al cargar los permisos del usuario.');
+                  });
+        }
       });
 
       // Búsqueda de usuarios
-      $("#userSearchInput").on("input", function () {
+      $('#userSearchInput').on('input', function() {
         const searchTerm = $(this).val().toLowerCase();
-        $(".user-card").each(function () {
-          const userName = $(this).find(".user-name").text().toLowerCase();
-          const userEmail = $(this).find(".user-email").text().toLowerCase();
-          if (userName.includes(searchTerm) || userEmail.includes(searchTerm)) {
-            $(this).show();
-          } else {
-            $(this).hide();
-          }
+        $('.user-card').each(function() {
+          const userName = $(this).find('.user-name').text().toLowerCase();
+          const userEmail = $(this).find('.user-email').text().toLowerCase();
+          $(this).toggle(userName.includes(searchTerm) || userEmail.includes(searchTerm));
         });
       });
 
-      $("#userSelect").change(function () {
-        const userId = $(this).val();
-        $(".permisoCheckbox").prop("checked", false);
-        $(".user-card").removeClass("selected");
-
-        if (userId) {
-          // Resaltar usuario seleccionado en el panel
-          $(`.user-card[data-user-id="${userId}"]`).addClass("selected");
-          $("#selectedUserId").val(userId);
-
-          fetch(`/permiso/users/${userId}/permissions`)
-            .then((response) => response.json())
-            .then((permissions) => {
-              permissions.forEach((perm) => {
-                $(`.permisoCheckbox[value="${perm.id}"]`).prop("checked", true);
-              });
-            })
-            .catch((error) => {
-              console.error("Error al cargar permisos:", error);
-              alert(permissionTranslations.user_permissions_load_error, error);
-            });
-        }
-      });
-
-      $("#savePermChangesBtn").click(function () {
-        const userId = $("#selectedUserId").val();
+      // Guardar cambios de permisos
+      $('#savePermChangesBtn').click(function () {
+        const userId = $('#selectedUserId').val();
         if (!userId) {
-          alert(permissionTranslations.no_user_selected);
+          alert('Please select a user first.');
           return;
         }
 
-        const selectedPerms = $(".permisoCheckbox:checked")
-          .map(function () {
-            return $(this).val();
-          })
-          .get();
+        const selectedPerms = $('.permisoCheckbox:checked').map(function () {
+          return $(this).val();
+        }).get();
 
         fetch(`/permiso/users/${userId}/permissions/update`, {
-          method: "POST",
+          method: 'POST',
           headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json'
           },
-          body: JSON.stringify(selectedPerms),
+          body: JSON.stringify(selectedPerms)
         })
-          .then((response) => {
-            if (response.ok) {
-              alert(permissionTranslations.permissions_updated);
-            } else {
-              throw new Error(
-                permissionTranslations.error_updating_permissions
-              );
-            }
-          })
-          .catch((error) => {
-            console.error("Error:", error);
-            alert(
-              permissionTranslations.error_updating_permissions + error.message
-            );
-          });
+                .then(response => {
+                  if (response.ok) {
+                    alert('Permissions updated successfully.');
+                  } else {
+                    throw new Error('Error updating permissions.');
+                  }
+                })
+                .catch(error => {
+                  console.error('Error:', error);
+                  alert('Error updating permissions: ' + error.message);
+                });
       });
 
-      $("#selectAllPermsBtn").click(function () {
-        if (!$("#selectedUserId").val()) {
-          alert(permissionTranslations.no_user_selected);
+      // Selección masiva de permisos
+      $('#selectAllPermsBtn').click(function() {
+        if (!$('#selectedUserId').val()) {
+          alert('Please select a user first.');
           return;
         }
-        $(".permisoCheckbox").prop("checked", true);
+        $('.permisoCheckbox').prop('checked', true);
       });
 
-      $("#deselectAllPermsBtn").click(function () {
-        if (!$("#selectedUserId").val()) {
-          alert(permissionTranslations.no_user_selected);
+      $('#deselectAllPermsBtn').click(function() {
+        if (!$('#selectedUserId').val()) {
+          alert('Please select a user first.');
           return;
         }
-        $(".permisoCheckbox").prop("checked", false);
+        $('.permisoCheckbox').prop('checked', false);
       });
 
       // Efecto de onda para el botón flotante
-      $(".btn-floating-permissions").on("click", function (e) {
-        // Eliminar cualquier onda anterior
-        $(".ripple").remove();
+      $('.btn-floating-permissions').on('click', function(e) {
+        $('.ripple').remove();
 
-        // Obtener posición del clic
         const posX = e.pageX - $(this).offset().left;
         const posY = e.pageY - $(this).offset().top;
 
-        // Crear elemento de onda
         const ripple = $('<span class="ripple"></span>').css({
           left: posX,
-          top: posY,
+          top: posY
         });
 
-        // Agregar onda al botón
         $(this).append(ripple);
-
-        // Eliminar onda después de la animación
-        setTimeout(function () {
-          ripple.remove();
-        }, 800);
+        setTimeout(function() { ripple.remove(); }, 800);
       });
 
       // Ajustar altura del modal en móviles
       function adjustModalHeight() {
         if ($(window).width() < 768) {
           const viewportHeight = $(window).height();
-          const modalHeaderHeight = $(
-            "#permissionsModal .modal-header"
-          ).outerHeight(true);
-          const modalFooterHeight = $(
-            "#permissionsModal .modal-footer"
-          ).outerHeight(true);
-          const availableHeight =
-            viewportHeight - modalHeaderHeight - modalFooterHeight - 20;
+          const modalHeaderHeight = $('#permissionsModal .modal-header').outerHeight(true);
+          const modalFooterHeight = $('#permissionsModal .modal-footer').outerHeight(true);
+          const availableHeight = viewportHeight - modalHeaderHeight - modalFooterHeight - 20;
 
-          $("#permissionsModal .modal-body").css({
-            "max-height": availableHeight + "px",
-            "overflow-y": "auto",
+          $('#permissionsModal .modal-body').css({
+            'max-height': availableHeight + 'px',
+            'overflow-y': 'auto'
           });
         } else {
-          $("#permissionsModal .modal-body").css({
-            "max-height": "",
-            "overflow-y": "",
+          $('#permissionsModal .modal-body').css({
+            'max-height': '',
+            'overflow-y': ''
           });
         }
       }
 
-      // Ejecutar al abrir el modal y al redimensionar
-      $("#permissionsModal").on("show.bs.modal", adjustModalHeight);
+      $('#permissionsModal').on('show.bs.modal', adjustModalHeight);
       $(window).resize(adjustModalHeight);
 
-      // Manejar el cierre del modal en móviles
-      $("#permissionsModal").on("hidden.bs.modal", function () {
-        $("#permissionsModal .modal-body").css({
-          "max-height": "",
-          "overflow-y": "",
+      $('#permissionsModal').on('hidden.bs.modal', function() {
+        $('#permissionsModal .modal-body').css({
+          'max-height': '',
+          'overflow-y': ''
         });
       });
     });

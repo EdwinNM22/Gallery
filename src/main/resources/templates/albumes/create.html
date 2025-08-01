@@ -1261,6 +1261,381 @@
                 margin: 5px 0;
             }
         }
+
+        /* Estilos responsivos para el calendario */
+        .fc .fc-view-harness {
+            min-height: 400px;
+        }
+
+        .fc .fc-daygrid-day-frame {
+            min-height: 80px; /* Altura mínima de las celdas */
+            display: flex;
+            flex-direction: column;
+        }
+
+        .fc .fc-daygrid-day-top {
+            flex-direction: column;
+            align-items: flex-start;
+            padding: 2px 4px;
+        }
+
+        .fc .fc-daygrid-day-number {
+            font-size: 0.9rem;
+            padding: 2px;
+        }
+
+        .fc .fc-daygrid-day-events {
+            flex-grow: 1;
+            margin: 2px 0;
+            min-height: 0;
+        }
+
+        .fc .fc-event {
+            margin: 1px 0;
+            padding: 2px 4px;
+            font-size: 0.8rem;
+            border-radius: 3px;
+        }
+
+        .fc .fc-daygrid-event-harness {
+            margin-bottom: 2px;
+        }
+
+        /* Ajustes para pantallas pequeñas */
+        @media (max-width: 768px) {
+            .fc .fc-toolbar {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .fc .fc-toolbar-title {
+                font-size: 1.2rem;
+                margin: 5px 0;
+            }
+
+            .fc .fc-button {
+                padding: 0.3rem 0.6rem;
+                font-size: 0.8rem;
+                margin: 2px;
+            }
+
+            .fc .fc-daygrid-day-frame {
+                min-height: 60px;
+            }
+
+            .fc .fc-daygrid-day-number {
+                font-size: 0.7rem;
+            }
+
+            .fc .fc-event {
+                font-size: 0.7rem;
+                padding: 1px 2px;
+            }
+        }
+
+
+        .fc .fc-toolbar-title {
+            font-size: clamp(1rem, 2vw, 1.5rem);
+        }
+
+        /* Elimina márgenes/paddings en móvil */
+        @media (max-width: 767px) {
+            .container {
+                width: 100% !important;
+                max-width: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+
+            .main-content-container,
+            .calendar-container,
+            .calendar-scroll-wrapper {
+                width: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+        }
+
+        /* En tu archivo CSS */
+        .container {
+            width: 100%;
+            max-width: 100%;
+            padding: 0 15px;
+            margin: 0 auto;
+        }
+
+        @media (min-width: 992px) { /* Solo para desktop */
+            .container {
+                max-width: 95%; /* O el porcentaje que prefieras */
+            }
+        }
+
+
+        /* Estilos para la vista semanal (weekTable) */
+        .fc-week-table-view {
+            width: 100% !important;
+            overflow-x: visible !important;
+        }
+
+        .fc-week-table {
+            width: 100% !important;
+            min-width: auto !important;
+            table-layout: fixed !important;
+        }
+
+        .fc-week-table th,
+        .fc-week-table td {
+            width: 14.28% !important; /* 100% / 7 días */
+            max-width: 14.28% !important;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .project-name-cell {
+            width: 200px !important;
+            min-width: 200px !important;
+            max-width: 200px !important;
+        }
+
+        /* Ajustes para pantallas más pequeñas */
+        @media (max-width: 1200px) {
+            .fc-week-table th,
+            .fc-week-table td {
+                padding: 8px 4px !important;
+                font-size: 0.8rem !important;
+            }
+
+            .project-name-cell {
+                width: 150px !important;
+                min-width: 150px !important;
+                max-width: 150px !important;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .fc-week-table th,
+            .fc-week-table td {
+                padding: 6px 2px !important;
+            }
+
+            .day-indicator {
+                width: 24px !important;
+                height: 24px !important;
+                font-size: 0.7rem !important;
+            }
+
+            .project-name-cell {
+                width: 120px !important;
+                min-width: 120px !important;
+                max-width: 120px !important;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .fc-week-table {
+                min-width: 600px !important; /* Mínimo para que sea legible */
+            }
+
+            .fc-week-table-view {
+                overflow-x: auto !important; /* Permitir scroll solo en móvil */
+            }
+        }
+        .calendar-container {
+            width: 100%;
+            overflow: visible;
+        }
+
+        .calendar-scroll-wrapper {
+            width: 100%;
+            overflow: visible;
+        }
+
+        #calendar {
+
+            min-width: auto !important;
+        }
+
+        /* Añade estos estilos al final de tu sección CSS */
+
+        /* Estilos responsivos para la vista semanal */
+        @media (max-width: 1200px) {
+            .fc-week-table th,
+            .fc-week-table td {
+                padding: 6px 3px !important;
+                font-size: 0.75rem !important;
+            }
+
+            .project-name-cell {
+                width: 120px !important;
+                min-width: 120px !important;
+                max-width: 120px !important;
+                font-size: 0.8rem !important;
+                padding-left: 8px !important;
+            }
+
+            .day-indicator {
+                width: 22px !important;
+                height: 22px !important;
+                font-size: 0.65rem !important;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .fc-week-table th,
+            .fc-week-table td {
+                padding: 4px 2px !important;
+                font-size: 0.7rem !important;
+            }
+
+            .project-name-cell {
+                width: 100px !important;
+                min-width: 100px !important;
+                max-width: 100px !important;
+                font-size: 0.75rem !important;
+            }
+
+            .day-indicator {
+                width: 20px !important;
+                height: 20px !important;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .fc-week-table {
+                min-width: 100% !important;
+            }
+
+            .fc-week-table th,
+            .fc-week-table td {
+                padding: 3px 1px !important;
+                font-size: 0.65rem !important;
+            }
+
+            .project-name-cell {
+                width: 80px !important;
+                min-width: 80px !important;
+                max-width: 80px !important;
+                font-size: 0.7rem !important;
+                padding-left: 5px !important;
+            }
+
+            .day-indicator {
+                width: 18px !important;
+                height: 18px !important;
+                font-size: 0.6rem !important;
+            }
+
+            .fc-week-table-view {
+                overflow-x: auto !important;
+                -webkit-overflow-scrolling: touch;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .fc-week-table th,
+            .fc-week-table td {
+                padding: 2px 0 !important;
+            }
+
+            .project-name-cell {
+                width: 70px !important;
+                min-width: 70px !important;
+                max-width: 70px !important;
+                font-size: 0.65rem !important;
+            }
+
+            .day-indicator {
+                width: 30px !important;
+                height: 30px !important;
+            }
+        }
+
+        /* Estilos corregidos para el calendario - manteniendo líneas divisorias pero con el color correcto */
+
+        /* Contenedor principal - eliminar bordes blancos externos */
+        .fc .fc-scrollgrid {
+            border: 1px solid var(--border-color) !important; /* Mantener borde exterior con color del tema */
+        }
+
+        /* Cabeceras de días (Lunes, Martes, etc.) */
+        .fc .fc-col-header-cell {
+            border: 1px solid var(--border-color) !important;
+            background-color: var(--darker-bg) !important;
+            color: white !important;
+        }
+
+        /* Celdas de días */
+        .fc .fc-daygrid-day {
+            border: 1px solid var(--border-color) !important;
+            background-color: rgba(15, 25, 35, 0.7) !important;
+        }
+
+        /* Eliminar bordes internos duplicados */
+        .fc .fc-daygrid-day-frame {
+            border: none !important;
+        }
+
+        /* Eliminar bordes blancos entre celdas */
+        .fc .fc-scrollgrid-section-body td,
+        .fc .fc-scrollgrid-section-footer td {
+            border-left: 1px solid var(--border-color) !important;
+            border-right: 1px solid var(--border-color) !important;
+            border-bottom: 1px solid var(--border-color) !important;
+            border-top: none !important;
+        }
+
+        /* Ajustar el borde superior de la primera fila */
+        .fc .fc-scrollgrid-section-body tr:first-child td {
+            border-top: 1px solid var(--border-color) !important;
+        }
+
+        /* Asegurar que el fondo del calendario coincida con tu tema */
+        .fc .fc-view-harness {
+            background-color: rgba(15, 25, 35, 0.8);
+        }
+
+        /* Estilo para el día actual */
+        .fc .fc-daygrid-day.fc-day-today {
+            background-color: rgba(58, 123, 213, 0.2) !important;
+        }
+
+        /* Eliminar cualquier espacio adicional no deseado */
+        .fc .fc-scrollgrid-liquid {
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+        /* Ajustar el contenedor principal del calendario */
+        #calendar {
+            background-color: rgba(15, 25, 35, 0.8);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        /* Efecto hover para celdas del calendario */
+        .fc .fc-daygrid-day:hover {
+            background-color: rgba(44, 90, 160, 0.3) !important; /* Color azul suave */
+            transition: background-color 0.3s ease; /* Transición suave */
+            cursor: pointer; /* Cambia el cursor a pointer */
+        }
+
+        /* Efecto hover para el encabezado de columnas (días de la semana) */
+        .fc .fc-col-header-cell:hover {
+            background-color: rgba(44, 90, 160, 0.2) !important;
+        }
+
+        /* Efecto hover para eventos dentro de las celdas */
+        .fc .fc-event:hover {
+            opacity: 1 !important;
+            box-shadow: 0 0 10px rgba(74, 144, 226, 0.5) !important;
+            transform: translateY(-1px);
+            transition: all 0.2s ease;
+        }
+
+        /* Efecto hover para el día actual */
+        .fc .fc-daygrid-day.fc-day-today:hover {
+            background-color: rgba(58, 123, 213, 0.3) !important;
+        }
     </style>
 </head>
 <body>
@@ -1334,7 +1709,7 @@
         <div th:replace="permiso/permissions-panel :: panelPermisos"></div>
 
         <!-- Calendar Section (hidden by default) -->
-        <div class="calendar-container" id="calendarSection">
+        <div class="calendar-container" id="calendarSection" >
             <div class="calendar-scroll-wrapper">
                 <div id="calendar"></div>
             </div>
@@ -1481,7 +1856,7 @@
         </div>
     </div>
 </div>
-</div>
+
 
 
 <!-- Project creation modal -->
@@ -2312,17 +2687,19 @@
                         const start = calendar.view.activeStart;
                         const daysOfWeek = [];
 
+                        // Obtener los 7 días de la semana visible
                         for (let i = 0; i < 7; i++) {
                             const date = new Date(start);
                             date.setDate(start.getDate() + i);
                             daysOfWeek.push({
-                                // Format date labels based on current locale
-                                label: date.toLocaleDateString(translations.currentLocale, { weekday: 'short', day: 'numeric' }),
+                                label: date.toLocaleDateString(translations.currentLocale, { weekday: 'short' }),
+
                                 dateStr: date.toISOString().split('T')[0],
                                 dateObj: new Date(date)
                             });
                         }
 
+                        // Filtrar eventos para la semana visible
                         const viewStart = new Date(calendar.view.activeStart);
                         viewStart.setHours(0, 0, 0, 0);
 
@@ -2345,17 +2722,18 @@
                             return (startDate <= viewEnd && endDate >= viewStart);
                         });
 
+                        // Crear la tabla
                         const table = document.createElement('table');
                         table.className = 'fc-week-table';
 
+                        // Encabezado de la tabla
                         const thead = document.createElement('thead');
                         const headerRow = document.createElement('tr');
 
-                        // Encabezado de proyecto - using translation
+                        // Columna de nombre de proyecto
                         const projectHeader = document.createElement('th');
+                        projectHeader.className = 'project-name-header';
                         projectHeader.textContent = translations.projectsHeader;
-                        projectHeader.style.textAlign = 'left';
-                        projectHeader.style.paddingLeft = '16px';
                         headerRow.appendChild(projectHeader);
 
                         // Encabezados de días
@@ -2368,8 +2746,10 @@
                         thead.appendChild(headerRow);
                         table.appendChild(thead);
 
+                        // Cuerpo de la tabla
                         const tbody = document.createElement('tbody');
 
+                        // Mostrar al menos 5 filas vacías o tantas como proyectos haya
                         const emptyRowsToShow = 5;
                         const rowsToCreate = Math.max(emptyRowsToShow, proyectosSemana.length);
 
@@ -2377,6 +2757,7 @@
                             const tr = document.createElement('tr');
                             const proyecto = proyectosSemana[i];
 
+                            // Configurar evento de clic si hay proyecto
                             if (proyecto) {
                                 tr.addEventListener('click', function(e) {
                                     if (e.target.tagName !== 'TD' && e.target.tagName !== 'DIV' && e.target.tagName !== 'SPAN') {
@@ -2392,6 +2773,7 @@
                             tdProject.className = 'project-name-cell';
 
                             if (proyecto) {
+                                // Establecer clase según estado
                                 let statusClass = '';
                                 switch(proyecto.extendedProps.status) {
                                     case 'completado':
@@ -2404,7 +2786,6 @@
                                         statusClass = 'in-progress';
                                 }
                                 tdProject.classList.add(statusClass);
-
                                 tdProject.textContent = proyecto.title;
                             }
 
@@ -2429,6 +2810,7 @@
                                     const currentDay = new Date(dia.dateObj);
                                     currentDay.setHours(0, 0, 0, 0);
 
+                                    // Verificar si el evento ocurre en este día
                                     if (currentDay >= eventStart && currentDay <= eventEnd) {
                                         let statusClass = '';
                                         switch(proyecto.extendedProps.status) {
@@ -2443,6 +2825,7 @@
                                         }
                                         td.classList.add(statusClass);
 
+                                        // Crear indicador visual
                                         const indicator = document.createElement('div');
                                         indicator.className = `day-indicator ${statusClass}`;
 

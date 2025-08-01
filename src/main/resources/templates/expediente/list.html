@@ -592,17 +592,14 @@
 
     <!-- Disable Calendar Hover Effects -->
     <style>
-      .calendar-section {
-        margin-left: 100px;
-        margin-right: 100px;
-      }
-
-      .calendar_cell_inner:hover {
-        background: none !important;
-        box-shadow: none !important;
-        cursor: default !important;
+      @media (min-width: 768px) {
+        .calendar-section {
+          margin-left: 100px;
+          margin-right: 100px;
+        }
       }
     </style>
+
 
     <script th:inline="javascript">
       /*<![CDATA[*/
