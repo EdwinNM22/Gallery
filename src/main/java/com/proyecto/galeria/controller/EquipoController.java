@@ -1,11 +1,10 @@
 package com.proyecto.galeria.controller;
 
-import com.proyecto.galeria.model.Equipo;
-import com.proyecto.galeria.model.album;
-import com.proyecto.galeria.model.usuario;
+import com.proyecto.galeria.model.*;
 import com.proyecto.galeria.repository.EquipoRepository;
+import com.proyecto.galeria.service.AdvertenciaTipoService;
 import com.proyecto.galeria.service.IUsuarioService;
-import com.proyecto.galeria.service.Impl.UsuarioServiceImpl;
+import com.proyecto.galeria.service.UsuarioAdvertenciaService;
 import com.proyecto.galeria.service.albumService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,11 +14,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
 import javax.servlet.http.HttpSession;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Controller
@@ -28,19 +25,20 @@ public class EquipoController {
 
     private final Logger LOGGER = LoggerFactory.getLogger(EquipoController.class);
 
-    @Autowired
-    private EquipoRepository equipoRepository;
-    @Autowired
-    private IUsuarioService usuarioService;
-    @Autowired
-    private albumService albumService;
+    private final EquipoRepository equipoRepository;
+    private final IUsuarioService usuarioService;
+    private final albumService albumService;
 
     @Autowired
-    private UsuarioServiceImpl usuarioServiceImpl;
+    private UsuarioAdvertenciaService usuarioAdvertenciaService;
+
+    @Autowired
+    private AdvertenciaTipoService advertenciaTipoService;
+
 
     @Autowired
     public EquipoController(albumService albumService,
-                            UsuarioServiceImpl usuarioService,
+                            IUsuarioService usuarioService,
                             EquipoRepository equipoRepository) {
         this.albumService = albumService;
         this.usuarioService = usuarioService;
@@ -49,20 +47,16 @@ public class EquipoController {
 
     @GetMapping("/asignacion")
     public String mostrarAsignacionEquipos(Model model, HttpSession session) {
-        // Verificar permisos
         Integer userId = (Integer) session.getAttribute("idusuario");
-        if (userId == null) {
-            return "redirect:/login";
-        }
+        if (userId == null) return "redirect:/login";
 
         Optional<usuario> optionalUsuario = usuarioService.findById(userId);
         if (optionalUsuario.isEmpty() ||
                 !(optionalUsuario.get().getTipo_usuario().equals("EDGAR") ||
-                        optionalUsuario.get().getTipo_usuario().equals("ADMIN"))) {
+                  optionalUsuario.get().getTipo_usuario().equals("ADMIN"))) {
             return "redirect:/equipo?error=No+autorizado";
         }
 
-        // Obtener datos
         List<usuario> empleados = usuarioService.findAll().stream()
                 .filter(u -> !u.getTipo_usuario().equals("ADMIN"))
                 .collect(Collectors.toList());
@@ -90,44 +84,62 @@ public class EquipoController {
             @RequestParam List<Integer> miembrosIds,
             HttpSession session) {
 
-        try {
-            if (session.getAttribute("idusuario") == null) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No autenticado");
-            }
-
-            Optional<album> proyectoOpt = albumService.get(proyectoId);
-            if (proyectoOpt.isEmpty()) {
-                return ResponseEntity.badRequest().body("Proyecto no encontrado");
-            }
-
-            List<usuario> miembros = miembrosIds.stream()
-                    .map(usuarioService::findById)
-                    .filter(Optional::isPresent)
-                    .map(Optional::get)
-                    .collect(Collectors.toList());
-
-            if (miembros.isEmpty()) {
-                return ResponseEntity.badRequest().body("Se requiere al menos un miembro");
-            }
-
-            Equipo equipo = new Equipo();
-            equipo.setNombre(nombre);
-            equipo.setDescripcion(descripcion);
-            equipo.setProyecto(proyectoOpt.get());
-            equipo.setMiembros(miembros);
-
-            equipoRepository.save(equipo);
-
-            return ResponseEntity.ok(Map.of(
-                    "success", true,
-                    "message", "Equipo creado exitosamente",
-                    "equipoId", equipo.getId()
-            ));
-        } catch (Exception e) {
-            LOGGER.error("Error al guardar equipo", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("error", "Error al guardar: " + e.getMessage()));
+        if (session.getAttribute("idusuario") == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No autenticado");
         }
+
+        Optional<album> proyectoOpt = albumService.get(proyectoId);
+        if (proyectoOpt.isEmpty()) {
+            return ResponseEntity.badRequest().body("Proyecto no encontrado");
+        }
+
+        List<EquipoUsuario> miembros = miembrosIds.stream()
+        .map(usuarioService::findById)
+        .filter(Optional::isPresent)
+        .map(Optional::get)
+        .map(usuario -> {
+            EquipoUsuario eu = new EquipoUsuario();
+            eu.setUsuario(usuario);
+            eu.setEstado("pendiente");
+        
+            // Create warning
+            AdvertenciaTipo advertencia = advertenciaTipoService.findByName("equipo_confirmar")
+                .stream()
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Advertencia tipo 'equipo_confirmar' no encontrada"));
+        
+            UsuarioAdvertencia ua = new UsuarioAdvertencia();
+            ua.setUsuario(usuario);
+            ua.setAdvertenciaTipo(advertencia);
+            usuarioAdvertenciaService.save(ua); // Persist it
+        
+            // Link the warning to equipo_usuario
+            eu.setUsuarioAdvertencia(ua);
+        
+            return eu;
+        })
+        
+        .collect(Collectors.toList());
+    
+        if (miembros.isEmpty()) {
+            return ResponseEntity.badRequest().body("Se requiere al menos un miembro");
+        }
+
+        Equipo equipo = new Equipo();
+        equipo.setNombre(nombre);
+        equipo.setDescripcion(descripcion);
+        equipo.setProyecto(proyectoOpt.get());
+
+        miembros.forEach(eu -> eu.setEquipo(equipo)); // link back
+        equipo.setMiembros(miembros);
+
+        equipoRepository.save(equipo);
+
+        return ResponseEntity.ok(Map.of(
+                "success", true,
+                "message", "Equipo creado exitosamente",
+                "equipoId", equipo.getId()
+        ));
     }
 
     @PostMapping("/editar")
@@ -140,83 +152,85 @@ public class EquipoController {
             @RequestParam List<Integer> miembrosIds,
             HttpSession session) {
 
-        try {
-            // Validación de sesión
-            if (session.getAttribute("idusuario") == null) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No autenticado");
-            }
-
-            // Validar que el equipo existe
-            Optional<Equipo> equipoOpt = equipoRepository.findById(equipoId);
-            if (equipoOpt.isEmpty()) {
-                return ResponseEntity.badRequest().body("Equipo no encontrado");
-            }
-
-            // Validar proyecto
-            Optional<album> proyectoOpt = albumService.get(proyectoId);
-            if (proyectoOpt.isEmpty()) {
-                return ResponseEntity.badRequest().body("Proyecto no encontrado");
-            }
-
-            // Validar miembros
-            List<usuario> miembros = miembrosIds.stream()
-                    .map(usuarioService::findById)
-                    .filter(Optional::isPresent)
-                    .map(Optional::get)
-                    .collect(Collectors.toList());
-
-            if (miembros.isEmpty()) {
-                return ResponseEntity.badRequest().body("Se requiere al menos un miembro");
-            }
-
-            // Actualizar equipo
-            Equipo equipo = equipoOpt.get();
-            equipo.setNombre(nombre);
-            equipo.setDescripcion(descripcion);
-            equipo.setProyecto(proyectoOpt.get());
-            equipo.setMiembros(miembros);
-
-            equipoRepository.save(equipo);
-
-            return ResponseEntity.ok(Map.of(
-                    "success", true,
-                    "message", "Equipo actualizado exitosamente",
-                    "equipoId", equipo.getId()
-            ));
-        } catch (Exception e) {
-            LOGGER.error("Error al actualizar equipo", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("error", "Error al actualizar: " + e.getMessage()));
+        if (session.getAttribute("idusuario") == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No autenticado");
         }
+
+        Optional<Equipo> equipoOpt = equipoRepository.findById(equipoId);
+        if (equipoOpt.isEmpty()) {
+            return ResponseEntity.badRequest().body("Equipo no encontrado");
+        }
+
+        Optional<album> proyectoOpt = albumService.get(proyectoId);
+        if (proyectoOpt.isEmpty()) {
+            return ResponseEntity.badRequest().body("Proyecto no encontrado");
+        }
+
+        List<EquipoUsuario> nuevosMiembros = miembrosIds.stream()
+                .map(usuarioService::findById)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .map(usuario -> {
+                    EquipoUsuario eu = new EquipoUsuario();
+                    eu.setUsuario(usuario);
+                    eu.setEstado("activo");
+                    return eu;
+                }).collect(Collectors.toList());
+
+        if (nuevosMiembros.isEmpty()) {
+            return ResponseEntity.badRequest().body("Se requiere al menos un miembro");
+        }
+
+        Equipo equipo = equipoOpt.get();
+        equipo.setNombre(nombre);
+        equipo.setDescripcion(descripcion);
+        equipo.setProyecto(proyectoOpt.get());
+
+        nuevosMiembros.forEach(eu -> eu.setEquipo(equipo));
+        equipo.setMiembros(nuevosMiembros);
+
+        equipoRepository.save(equipo);
+
+        return ResponseEntity.ok(Map.of(
+                "success", true,
+                "message", "Equipo actualizado exitosamente",
+                "equipoId", equipo.getId()
+        ));
     }
 
     @PostMapping("/eliminar/{id}")
     @ResponseBody
     public ResponseEntity<?> eliminarEquipo(@PathVariable Integer id, HttpSession session) {
-        try {
-            // Validación de sesión
-            if (session.getAttribute("idusuario") == null) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No autenticado");
-            }
-
-            // Verificar que el equipo existe
-            if (!equipoRepository.existsById(id)) {
-                return ResponseEntity.badRequest().body("Equipo no encontrado");
-            }
-
-            // Eliminar el equipo
-            equipoRepository.deleteById(id);
-
-            return ResponseEntity.ok(Map.of(
-                    "success", true,
-                    "message", "Equipo eliminado exitosamente"
-            ));
-        } catch (Exception e) {
-            LOGGER.error("Error al eliminar equipo", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("error", "Error al eliminar: " + e.getMessage()));
+        if (session.getAttribute("idusuario") == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No autenticado");
         }
-    }
+    
+        Optional<Equipo> equipoOpt = equipoRepository.findById(id);
+        if (equipoOpt.isEmpty()) {
+            return ResponseEntity.badRequest().body("Equipo no encontrado");
+        }
+    
+        Equipo equipo = equipoOpt.get();
+    
+        // Eliminar manualmente las advertencias asociadas
+        equipo.getMiembros().forEach(eu -> {
+            UsuarioAdvertencia ua = eu.getUsuarioAdvertencia();
+            if (ua != null) {
+                try {
+                    usuarioAdvertenciaService.delete(ua.getId());
+                } catch (Exception e) {
+                    LOGGER.warn("No se pudo eliminar la advertencia del usuario con ID: {}", eu.getUsuario().getId(), e);
+                }
+            }
+        });
+    
+        equipoRepository.delete(equipo);
+    
+        return ResponseEntity.ok(Map.of(
+                "success", true,
+                "message", "Equipo eliminados exitosamente"
+        ));
+    }    
 
     @GetMapping("/detalles/{id}")
     @ResponseBody
@@ -233,7 +247,7 @@ public class EquipoController {
         response.put("descripcion", equipo.getDescripcion());
         response.put("proyectoId", equipo.getProyecto().getId());
         response.put("miembrosIds", equipo.getMiembros().stream()
-                .map(usuario::getId)
+                .map(eu -> eu.getUsuario().getId())
                 .collect(Collectors.toList()));
 
         return ResponseEntity.ok(response);
@@ -252,22 +266,27 @@ public class EquipoController {
                     equipoMap.put("id", equipo.getId());
                     equipoMap.put("nombre", equipo.getNombre());
                     equipoMap.put("descripcion", equipo.getDescripcion());
-                    equipoMap.put("miembros", equipo.getMiembros().stream()
-                            .map(m -> Map.of(
-                                    "id", m.getId(),
-                                    "nombre", m.getNombre(),
-                                    "email", m.getEmail(),
-                                    "rol", m.getTipo_usuario()
-                            ))
-                            .collect(Collectors.toList()));
+
+                    List<Map<String, Object>> miembros = equipo.getMiembros().stream()
+                            .map(eu -> {
+                                usuario m = eu.getUsuario();
+                                Map<String, Object> miembroMap = new HashMap<>();
+                                miembroMap.put("id", m.getId());
+                                miembroMap.put("nombre", m.getNombre());
+                                miembroMap.put("email", m.getEmail());
+                                miembroMap.put("rol", m.getTipo_usuario());
+                                miembroMap.put("estado", eu.getEstado());
+                                return miembroMap;
+                            })
+                            .collect(Collectors.toList());
+
+                    equipoMap.put("miembros", miembros);
                     return equipoMap;
                 })
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(response);
     }
-
-    // lista de trabajadores para el calendario
 
     @GetMapping("/empleados/json")
     @ResponseBody
@@ -289,4 +308,99 @@ public class EquipoController {
 
         return ResponseEntity.ok(response);
     }
+
+    @PostMapping("/confirmar-miembro")
+    @ResponseBody
+    public ResponseEntity<?> confirmarMiembro(
+            @RequestParam Integer equipoId,
+            @RequestParam Integer usuarioId,
+            HttpSession session) {
+
+        // Verificar sesión
+        if (session.getAttribute("idusuario") == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No autenticado");
+        }
+
+        Optional<Equipo> equipoOpt = equipoRepository.findById(equipoId);
+        if (equipoOpt.isEmpty()) {
+            return ResponseEntity.badRequest().body("Equipo no encontrado");
+        }
+
+        Equipo equipo = equipoOpt.get();
+
+        // Buscar el EquipoUsuario correspondiente
+        Optional<EquipoUsuario> euOpt = equipo.getMiembros().stream()
+                .filter(eu -> eu.getUsuario().getId().equals(usuarioId))
+                .findFirst();
+
+        if (euOpt.isEmpty()) {
+            return ResponseEntity.badRequest().body("Miembro no encontrado en el equipo");
+        }
+
+        EquipoUsuario eu = euOpt.get();
+        eu.setEstado("confirmado");
+
+        // Eliminar advertencia si existe
+        UsuarioAdvertencia advertencia = eu.getUsuarioAdvertencia();
+        if (advertencia != null) {
+            usuarioAdvertenciaService.delete(advertencia.getId());
+            eu.setUsuarioAdvertencia(null); // prevenir referencias inválidas
+        }
+
+        // Persistir cambios
+        equipoRepository.save(equipo);
+
+        return ResponseEntity.ok(Map.of(
+                "success", true,
+                "message", "Miembro confirmado exitosamente"
+        ));
+    }
+
+    @PostMapping("/rechazar-miembro")
+    @ResponseBody
+    public ResponseEntity<?> rechazarMiembro(
+            @RequestParam Integer equipoId,
+            @RequestParam Integer usuarioId,
+            HttpSession session) {
+
+        // Verificar sesión
+        if (session.getAttribute("idusuario") == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No autenticado");
+        }
+
+        Optional<Equipo> equipoOpt = equipoRepository.findById(equipoId);
+        if (equipoOpt.isEmpty()) {
+            return ResponseEntity.badRequest().body("Equipo no encontrado");
+        }
+
+        Equipo equipo = equipoOpt.get();
+
+        // Buscar el EquipoUsuario correspondiente
+        Optional<EquipoUsuario> euOpt = equipo.getMiembros().stream()
+                .filter(eu -> eu.getUsuario().getId().equals(usuarioId))
+                .findFirst();
+
+        if (euOpt.isEmpty()) {
+            return ResponseEntity.badRequest().body("Miembro no encontrado en el equipo");
+        }
+
+        EquipoUsuario eu = euOpt.get();
+
+        // Eliminar advertencia si existe
+        UsuarioAdvertencia advertencia = eu.getUsuarioAdvertencia();
+        if (advertencia != null) {
+            usuarioAdvertenciaService.delete(advertencia.getId());
+        }
+
+        // Quitar de la lista de miembros
+        equipo.getMiembros().remove(eu);
+
+        equipoRepository.save(equipo);
+
+        return ResponseEntity.ok(Map.of(
+                "success", true,
+                "message", "Miembro rechazado y eliminado del equipo"
+        ));
+    }
+
 }

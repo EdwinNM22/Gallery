@@ -46,4 +46,9 @@ public class EquipoServiceImpl implements EquipoService {
     public boolean existsById(Integer id) {
         return equipoRepository.existsById(id);
     }
+
+    @Override
+    public Optional<Equipo> findByUsuarioAdvertenciaId(Integer id) {
+        return equipoRepository.findByUsuarioAdvertenciaId(id);
+    }
 }

@@ -1,11 +1,6 @@
 package com.proyecto.galeria.model;
 
-
-
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -167,4 +162,7 @@ public class usuario {
     public void setForms(List<Form> forms) {
         this.forms = forms;
     }
+
+    @OneToMany(mappedBy = "usuario")
+    private List<UsuarioAdvertencia> advertencias;
 }

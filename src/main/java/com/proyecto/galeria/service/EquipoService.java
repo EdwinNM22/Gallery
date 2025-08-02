@@ -12,4 +12,6 @@ public interface EquipoService {
     Optional<Equipo> findById(Integer id);
     void delete(Integer id);
     boolean existsById(Integer id);
+
+    Optional<Equipo> findByUsuarioAdvertenciaId(Integer id);
 }

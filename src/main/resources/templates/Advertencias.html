@@ -1,0 +1,119 @@
+<div th:fragment="equipo_confirmar(equipo)">
+  <!-- Add equipo ID to modal IDs to make them unique -->
+  <div class="modal fade show" th:id="'equipoConfirmarModal-' + ${equipo.get('id')}" 
+       tabindex="-1" role="dialog" aria-modal="true" style="display: block; pointer-events: auto;">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Confirmación de participación en equipo</h5>
+        </div>
+        <div class="modal-body">
+          ¿Está seguro que desea confirmar su participación en el equipo:
+          <strong th:text="${equipo.get('name')}">Nombre del equipo</strong>?
+        </div>
+        <div class="modal-footer">
+          <!-- Add equipo ID to button IDs -->
+          <button type="button" class="btn btn-danger" th:id="'btnRechazarEquipo-' + ${equipo.get('id')}">Rechazar</button>
+          <button type="button" class="btn btn-primary" th:id="'btnConfirmarEquipo-' + ${equipo.get('id')}">Confirmar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add equipo ID to backdrop ID -->
+  <div class="modal-backdrop fade show" th:id="'equipoConfirmarBackdrop-' + ${equipo.get('id')}"></div>
+  
+  <script th:inline="javascript">
+    document.addEventListener('DOMContentLoaded', function() {
+      // Use unique IDs with equipo ID
+      const modal = document.getElementById('equipoConfirmarModal-' + [[${equipo.get('id')}]]);
+      const backdrop = document.getElementById('equipoConfirmarBackdrop-' + [[${equipo.get('id')}]]);
+      const btnRechazar = document.getElementById('btnRechazarEquipo-' + [[${equipo.get('id')}]]);
+      const btnConfirmar = document.getElementById('btnConfirmarEquipo-' + [[${equipo.get('id')}]]);
+      
+      // Rest of your JavaScript remains the same...
+      const usuarioId = [[${currentUsuarioId}]];
+      const equipoId = [[${equipo.get('id')}]];
+
+      // Prevent closing with ESC or clicking outside
+      if (modal) {
+        modal.addEventListener('keydown', function(e) {
+          if (e.key === "Escape") e.preventDefault();
+        });
+      }
+      
+      if (backdrop) {
+        backdrop.addEventListener('mousedown', function(e) {
+          e.preventDefault();
+        });
+      }
+
+      function closeModal() {
+        if (modal) modal.style.display = 'none';
+        if (backdrop) backdrop.style.display = 'none';
+      }
+
+      function handleResponse(response) {
+        if (response.success) {
+          alert(response.message);
+          closeModal();
+          window.location.reload(); // Refresh to update UI
+        } else {
+          alert('Error: ' + response.message);
+        }
+      }
+
+      // Confirm button handler
+      if (btnConfirmar) {
+        btnConfirmar.addEventListener('click', function() {
+          fetch('/equipo/confirmar-miembro', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+              'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: `equipoId=${equipoId}&usuarioId=${usuarioId}`
+          })
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('Network response was not ok');
+            }
+            return response.json();
+          })
+          .then(handleResponse)
+          .catch(error => {
+            console.error('Error:', error);
+            alert('Ocurrió un error al confirmar');
+          });
+        });
+      }
+
+      // Reject button handler
+      if (btnRechazar) {
+        btnRechazar.addEventListener('click', function() {
+          if (confirm('¿Está seguro que desea rechazar esta invitación al equipo?')) {
+            fetch('/equipo/rechazar-miembro', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-Requested-With': 'XMLHttpRequest'
+              },
+              body: `equipoId=${equipoId}&usuarioId=${usuarioId}`
+            })
+            .then(response => {
+              if (!response.ok) {
+                throw new Error('Network response was not ok');
+              }
+              return response.json();
+            })
+            .then(handleResponse)
+            .catch(error => {
+              console.error('Error:', error);
+              alert('Ocurrió un error al rechazar');
+            });
+          }
+        });
+      }
+    });
+  </script>
+</div>

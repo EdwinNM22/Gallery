@@ -14,10 +14,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -69,7 +67,9 @@ public class ExpedienteController {
                         "start", f.getFechaEvaluacion().toString(),
                         "end", f.getFechaEvaluacion().toString(),
                         "nombreCliente", f.getNombreCliente(),
-                        "expedienteId", f.getExpediente().getId().toString()))
+                        "expedienteId", f.getExpediente().getId().toString(),
+                        "usuarioNombre", f.getUsuario() != null ? f.getUsuario().getNombre() : ""
+                ))
                 .collect(Collectors.toList());
 
         List<Map<String, String>> eventsComplete = completeForms.stream()
@@ -79,7 +79,9 @@ public class ExpedienteController {
                         "start", f.getFechaEvaluacion().toString(),
                         "end", f.getFechaEvaluacion().toString(),
                         "nombreCliente", f.getNombreCliente(),
-                        "expedienteId", f.getExpediente().getId().toString()))
+                        "expedienteId", f.getExpediente().getId().toString(),
+                        "usuarioNombre", f.getUsuario() != null ? f.getUsuario().getNombre() : ""
+                ))
                 .collect(Collectors.toList());
 
         model.addAttribute("events", events);

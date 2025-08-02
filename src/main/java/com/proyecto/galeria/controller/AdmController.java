@@ -1,10 +1,14 @@
 package com.proyecto.galeria.controller;
 
+import com.proyecto.galeria.model.Equipo;
 import com.proyecto.galeria.model.Permiso;
+import com.proyecto.galeria.model.UsuarioAdvertencia;
 import com.proyecto.galeria.model.album;
 import com.proyecto.galeria.model.usuario;
+import com.proyecto.galeria.service.EquipoService;
 import com.proyecto.galeria.service.IUsuarioService;
 import com.proyecto.galeria.service.PermisoService;
+import com.proyecto.galeria.service.UsuarioAdvertenciaService;
 import com.proyecto.galeria.service.albumService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -14,7 +18,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpSession;
+
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -26,6 +33,10 @@ public class AdmController {
     private albumService albumService;
     @Autowired private IUsuarioService usuarioService;
     @Autowired private PermisoService permisoService;
+
+    @Autowired private UsuarioAdvertenciaService usuarioAdvertenciaService;
+
+    @Autowired private EquipoService equipoService;
 
     @GetMapping("")
     public String home(Model model, HttpSession session) {
@@ -70,8 +81,23 @@ public class AdmController {
             model.addAttribute("EXPEDIENTE_ACCESS", false);
         });
 
-        System.out.println(LocaleContextHolder.getLocale());
+        // --- Enviar las advertencias de equipo del usuario ---
+        List<UsuarioAdvertencia> advertencias = usuarioAdvertenciaService.findByUsuarioId(idUsuario);
 
+        List<Map<String, String>> advertenciaEquipos = advertencias.stream()
+        .filter(ua -> equipoService.findByUsuarioAdvertenciaId(ua.getId()).isPresent())
+        .map(ua -> {
+            Equipo equipo = equipoService.findByUsuarioAdvertenciaId(ua.getId()).get();
+            return Map.of(
+                "id", equipo.getId().toString(),
+                "name", equipo.getNombre()
+            );
+        })
+        .collect(Collectors.toList());
+
+        model.addAttribute("advertenciaEquipos", advertenciaEquipos);
+        model.addAttribute("currentUsuarioId", idUsuario);
+        
         return "adm/home";
     }
 }

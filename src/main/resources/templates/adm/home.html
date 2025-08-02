@@ -400,8 +400,11 @@
   </div>
 </nav>
 
-
 <div th:replace="permiso/permissions-panel :: panelPermisos"></div>
+
+<th:block th:each="equipo : ${advertenciaEquipos}">
+  <div th:insert="Advertencias :: equipo_confirmar(${equipo})"></div>
+</th:block>
 
 <div class="main-container">
   <div class="container">

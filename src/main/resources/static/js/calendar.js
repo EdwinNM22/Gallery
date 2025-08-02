@@ -21,6 +21,7 @@ function processEventData(events, cssClass = "event-list-element in-progress") {
         originalEventId: ev.id,
         estado: cssClass.includes("complete") ? "complete" : "in-progress",
         expedienteId: ev.expedienteId,
+        usuarioNombre: ev.usuarioNombre,
       },
     });
   });
@@ -276,18 +277,8 @@ function showDayEvents(date, calendar, expedienteId) {
             <div class="event-content">
               <div class="d-flex align-items-center">
                 <h4 class="event-title">${event.text}</h4>
-              </div>
-              ${
-                event.tags?.descripcion
-                  ? `<p class="event-description mt-2">${event.tags.descripcion}</p>`
-                  : ""
-              }
-            </div>
-            <button class="btn view-event-btn" data-event-id="${
-              event.tags.originalEventId
-            }" data-event-estado="${event.tags.estado}">
-              <span>View</span>
-            </button>
+              </div> <p class="event-description mt-2">Made by: ${event.tags.usuarioNombre}</p> </div>
+            <button class="btn view-event-btn" data-event-id="${event.tags.originalEventId}" data-event-estado="${event.tags.estado}"> View </button>
           </div>
         `;
 
