@@ -9,6 +9,9 @@ public class ResourceWebConfiguration implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/imagenes/**")
-                .addResourceLocations("file:///C:/imagenes/");
+                .addResourceLocations("file:///C:/imagenes/"); // usado por PlanosController
+
+        registry.addResourceHandler("/images/**")
+                .addResourceLocations("file:/opt/Gallery/images/"); // usado por Uploadfoto
     }
 }
