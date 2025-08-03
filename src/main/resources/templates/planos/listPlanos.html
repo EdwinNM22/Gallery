@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <title>Lista de Planos</title>
+    <style>
+        .plano-container {
+            margin-bottom: 40px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            max-width: 700px;
+        }
+        canvas {
+            border: 1px solid black;
+            display: block;
+            max-width: 100%;
+            height: auto;
+            margin-bottom: 10px;
+        }
+        .comentario {
+            font-style: italic;
+            margin-bottom: 10px;
+        }
+        .mediciones-list {
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+<h1>Lista de Planos</h1>
+
+<div th:each="plano : ${planos}" class="plano-container">
+    <h3 th:text="${plano.nombreImagen}"></h3>
+    <p class="comentario" th:text="${plano.comentario}"></p>
+
+    <canvas th:attr="id=${'canvas-'+plano.id}"></canvas>
+
+    <div class="mediciones-list">
+        <h4>Mediciones</h4>
+        <ul>
+            <li th:each="m : ${plano.mediciones}"
+                th:text="${m.etiqueta1} + ' - ' + ${m.etiqueta2} + ': ' + ${#numbers.formatDecimal(m.distanciaMetros, 1, 2)} + ' metros'">
+            </li>
+        </ul>
+    </div>
+</div>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+
+    const MAX_WIDTH = 800;
+    const MAX_HEIGHT = 600;
+
+    const planos = JSON.parse(/*[[${planosJson}]]*/ '[]');
+
+    planos.forEach(plano => {
+        const canvas = document.getElementById('canvas-' + plano.id);
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        const img = new Image();
+        img.src = plano.url;
+
+        img.onload = () => {
+            // Calcular escala para ajustar la imagen si es muy grande
+            const scaleWidth = MAX_WIDTH / img.width;
+            const scaleHeight = MAX_HEIGHT / img.height;
+            const imgScale = Math.min(scaleWidth, scaleHeight, 1);
+
+            canvas.width = img.width * imgScale;
+            canvas.height = img.height * imgScale;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+            const fixedRadius = 4;
+            const fixedLineWidth = 3;
+
+            plano.mediciones.forEach((m, i) => {
+                // Dibujar puntos
+                ctx.beginPath();
+                ctx.arc(m.punto1X * imgScale, m.punto1Y * imgScale, fixedRadius, 0, 2 * Math.PI);
+                ctx.fillStyle = m.colorHex || '#FF0000';
+                ctx.fill();
+
+                ctx.beginPath();
+                ctx.arc(m.punto2X * imgScale, m.punto2Y * imgScale, fixedRadius, 0, 2 * Math.PI);
+                ctx.fillStyle = m.colorHex || '#FF0000';
+                ctx.fill();
+
+                // Dibujar línea punteada
+                ctx.beginPath();
+                ctx.setLineDash([5, 4]);
+                ctx.strokeStyle = m.colorHex || '#FF0000';
+                ctx.lineWidth = fixedLineWidth;
+                ctx.moveTo(m.punto1X * imgScale, m.punto1Y * imgScale);
+                ctx.lineTo(m.punto2X * imgScale, m.punto2Y * imgScale);
+                ctx.stroke();
+                ctx.setLineDash([]);
+
+                // Dibujar etiquetas con offset y alternando posición
+                ctx.font = "bold 14px Arial";
+                ctx.fillStyle = m.colorHex || '#FF0000';
+                ctx.textBaseline = "middle";
+
+                function drawLabel(text, x, y, position) {
+                    const offset = 10;
+                    ctx.textAlign = (position === "left") ? "right" : "left";
+                    const offsetX = (position === "left") ? -offset : offset;
+                    ctx.fillText(text, x + offsetX, y);
+                }
+
+                drawLabel(m.etiqueta1, m.punto1X * imgScale, m.punto1Y * imgScale, i % 2 === 0 ? "left" : "right");
+                drawLabel(m.etiqueta2, m.punto2X * imgScale, m.punto2Y * imgScale, i % 2 === 0 ? "right" : "left");
+
+                // Dibujar distancia con offset perpendicular
+                const dx = m.punto2X - m.punto1X;
+                const dy = m.punto2Y - m.punto1Y;
+                const length = Math.sqrt(dx*dx + dy*dy);
+                const midX = (m.punto1X + m.punto2X) / 2 * imgScale;
+                const midY = (m.punto1Y + m.punto2Y) / 2 * imgScale;
+                const offsetDist = 20;
+                const offsetX = -dy / length * offsetDist;
+                const offsetY = dx / length * offsetDist;
+
+                ctx.fillText(m.distanciaMetros.toFixed(2) + " m", midX + offsetX, midY + offsetY);
+            });
+        };
+    });
+
+    /*]]>*/
+</script>
+
+</body>
+</html>

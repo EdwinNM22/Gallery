@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <title>Photo Measure App - Múltiples imágenes</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+    <style>
+        body {
+            font-family: monospace;
+            margin: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        #instructions {
+            border: 1px solid #aaa;
+            padding: 12px 15px;
+            border-radius: 6px;
+            background: #f0f0f0;
+            max-width: 900px;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+        #instructions i.fa-trash {
+            color: #c00;
+            margin: 0 3px;
+        }
+        #controls {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        #imagesContainer {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 40px;
+            width: 100%;
+        }
+        .image-panel {
+            display: flex;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 10px;
+            background: #f9f9f9;
+            max-width: 900px;
+            box-shadow: 0 2px 8px rgb(0 0 0 / 0.1);
+        }
+        .canvas-container {
+            position: relative;
+        }
+        canvas {
+            border: 1px solid #000;
+            cursor: crosshair;
+        }
+        .sidebar {
+            margin-left: 20px;
+            max-width: 300px;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+        }
+        #logDiv {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 6px 12px;
+            max-height: 400px;
+            overflow-y: auto;
+            margin-top: 6px;
+        }
+        .measurement-entry {
+            display: flex;
+            align-items: center;
+            font-weight: bold;
+            background: rgba(255, 255, 255, 0.75);
+            padding: 2px 6px;
+            border-radius: 4px;
+            white-space: nowrap;
+        }
+        .delete-btn {
+            background: none;
+            border: none;
+            color: #c00;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+        .delete-btn:focus {
+            outline: none;
+        }
+        .measurement-text {
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .controls-inline {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .delete-image-btn {
+            margin-top: 10px;
+            background: #c00;
+            color: white;
+            border: none;
+            padding: 6px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .delete-image-btn:hover {
+            background: #a00;
+        }
+    </style>
+</head>
+<body>
+<div id="instructions">
+    <h2>Panel de instrucciones</h2>
+    <p>Haz clic en el botón <strong>"Agregar foto"</strong> para añadir una imagen.</p>
+    <p>Elige el color para los puntos de medición.</p>
+    <p>Haz clic en el botón <i class="fa-solid fa-trash"></i> para eliminar una medición.</p>
+    <p><strong>NOTA:</strong> Las medidas <em>A1</em> y <em>B1</em> no se pueden eliminar. Usa <strong>"Reiniciar"</strong> para borrar todo.</p>
+</div>
+<div id="controls">
+    <input type="file" id="imageLoader" accept="image/*" multiple />
+</div>
+<button id="saveAllBtn" style="padding: 10px 20px; font-weight: bold; background: green; color: white; border: none; border-radius: 6px; cursor: pointer; max-width: 200px;">
+    Guardar
+</button>
+
+<button onclick="location.href='/planos/list'"
+        style="padding: 10px 20px; font-weight: bold; background: #007bff; color: white; border: none; border-radius: 6px; cursor: pointer; max-width: 200px; margin-top: 10px;">
+    Ir a Planos/List
+</button>
+
+<div id="imagesContainer"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" defer></script>
+<script>
+    const imageLoader = document.getElementById("imageLoader");
+    const imagesContainer = document.getElementById("imagesContainer");
+    const saveAllBtn = document.getElementById("saveAllBtn");
+
+    // Array para guardar planos (con url devuelta del backend)
+    let planos = [];
+
+    imageLoader.addEventListener("change", async (e) => {
+        const files = e.target.files;
+        for (const file of files) {
+            // Subir la imagen y obtener URL
+            const url = await uploadImage(file);
+            createImagePanel(file.name, url);
+        }
+        imageLoader.value = "";
+    });
+
+    async function uploadImage(file) {
+        const formData = new FormData();
+        formData.append("file", file);
+        const response = await fetch("/planos/uploadImage", {
+            method: "POST",
+            body: formData
+        });
+        if (!response.ok) {
+            alert("Error subiendo imagen");
+            throw new Error("Error uploading");
+        }
+        return response.text(); // URL devuelta
+    }
+
+    function createImagePanel(nombreImagen, url) {
+        const panelDiv = document.createElement("div");
+        panelDiv.className = "image-panel";
+
+        const canvasContainer = document.createElement("div");
+        canvasContainer.className = "canvas-container";
+
+        const canvas = document.createElement("canvas");
+        canvasContainer.appendChild(canvas);
+
+        const sidebar = document.createElement("div");
+        sidebar.className = "sidebar";
+
+        // -- NUEVO: input para nombre de imagen editable --
+        const nombreInputLabel = document.createElement("label");
+        nombreInputLabel.textContent = "Nombre de la imagen:";
+        nombreInputLabel.style.fontWeight = "bold";
+        nombreInputLabel.style.marginBottom = "6px";
+
+        const nombreInput = document.createElement("input");
+        nombreInput.type = "text";
+        nombreInput.value = "";
+        nombreInput.style.width = "100%";
+        nombreInput.style.marginBottom = "10px";
+
+        sidebar.appendChild(nombreInputLabel);
+        sidebar.appendChild(nombreInput);
+        // ----------------------------------------------
+
+        const controlsDiv = document.createElement("div");
+        controlsDiv.className = "controls-inline";
+
+        const colorInput = document.createElement("input");
+        colorInput.type = "color";
+        colorInput.value = "#000000";
+        colorInput.title = "Color del texto y línea";
+
+        const confirmColorBtn = document.createElement("button");
+        confirmColorBtn.textContent = "OK";
+
+        const resetBtn = document.createElement("button");
+        resetBtn.textContent = "Reiniciar";
+
+        controlsDiv.appendChild(colorInput);
+        controlsDiv.appendChild(confirmColorBtn);
+        controlsDiv.appendChild(resetBtn);
+
+        sidebar.appendChild(controlsDiv);
+
+        const title = document.createElement("strong");
+        title.textContent = "Mediciones:";
+        sidebar.appendChild(title);
+
+        const logDiv = document.createElement("div");
+        logDiv.className = "logDiv";
+        sidebar.appendChild(logDiv);
+
+        const comentarioInput = document.createElement("textarea");
+        comentarioInput.placeholder = "Comentario (opcional)";
+        comentarioInput.style.marginTop = "10px";
+        comentarioInput.style.width = "100%";
+        comentarioInput.rows = 3;
+        sidebar.appendChild(comentarioInput);
+
+        const deleteImageBtn = document.createElement("button");
+        deleteImageBtn.textContent = "Eliminar imagen";
+        deleteImageBtn.className = "delete-image-btn";
+        sidebar.appendChild(deleteImageBtn);
+
+        panelDiv.appendChild(canvasContainer);
+        panelDiv.appendChild(sidebar);
+        imagesContainer.appendChild(panelDiv);
+
+        const planoObj = {
+            nombreImagen,
+            url,
+            comentario: "",
+            escala: 1.0,
+            mediciones: []
+        };
+        planos.push(planoObj);
+
+        // Sincronizar input con objeto
+        nombreInput.addEventListener("input", () => {
+            planoObj.nombreImagen = nombreInput.value.trim() || nombreImagen;
+        });
+
+        const hasMeasurements = setupPhotoMeasurePanel(canvas, logDiv, colorInput, confirmColorBtn, resetBtn, url, planoObj, comentarioInput);
+
+        deleteImageBtn.addEventListener("click", () => {
+            if (hasMeasurements()) {
+                if (!confirm("Esta imagen tiene medidas. ¿Seguro que quieres eliminarla?")) return;
+            }
+            imagesContainer.removeChild(panelDiv);
+            planos = planos.filter(p => p !== planoObj);
+        });
+    }
+
+
+    function setupPhotoMeasurePanel(canvas, logDiv, colorInput, confirmColorBtn, resetBtn, imgSrc, planoObj, comentarioInput) {
+        const ctx = canvas.getContext("2d");
+        let image = new Image();
+        image.src = imgSrc;
+
+        let points = [];
+        let labels = [];
+        let styles = [];
+        let scale = 1.0;
+        let currentColor = colorInput.value;
+
+        const MAX_WIDTH = 800;
+        const MAX_HEIGHT = 600;
+        let imgScale = 1;
+
+        image.onload = () => {
+            const scaleWidth = MAX_WIDTH / image.width;
+            const scaleHeight = MAX_HEIGHT / image.height;
+            imgScale = Math.min(scaleWidth, scaleHeight, 1);
+            canvas.width = image.width * imgScale;
+            canvas.height = image.height * imgScale;
+            drawAll();
+        };
+
+        confirmColorBtn.addEventListener("click", () => {
+            currentColor = colorInput.value;
+        });
+
+        comentarioInput.addEventListener("input", () => {
+            planoObj.comentario = comentarioInput.value;
+        });
+
+        canvas.addEventListener("click", (e) => {
+            if (!image.src) return;
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            const realX = x / imgScale;
+            const realY = y / imgScale;
+
+            const existingIndex = points.findIndex(p => Math.abs(p.x - realX) < 7 && Math.abs(p.y - realY) < 7);
+            if (existingIndex !== -1) {
+                points.push(points[existingIndex]);
+                labels.push(labels[existingIndex]);
+                styles.push(styles[existingIndex]);
+            } else {
+                points.push({ x: realX, y: realY });
+                labels.push(generateLabel(labels.length));
+                styles.push({ color: currentColor });
+            }
+
+            if (points.length === 2) {
+                const input = prompt("¿Cuántos metros hay entre los 2 puntos?");
+                const realDistance = parseFloat(input);
+                if (!isNaN(realDistance)) {
+                    scale = realDistance / getDistance(points[0], points[1]);
+                    planoObj.escala = scale;
+                    alert("Escala: " + scale.toFixed(4) + " m/pixel");
+                } else {
+                    alert("Entrada inválida");
+                    reset();
+                    return;
+                }
+            }
+
+            drawAll();
+            updateLog();
+        });
+
+        resetBtn.addEventListener("click", reset);
+
+        function getDistance(p1, p2) {
+            const dx = p1.x - p2.x;
+            const dy = p1.y - p2.y;
+            return Math.sqrt(dx * dx + dy * dy);
+        }
+
+        function drawLabel(text, x, y, color, position = "left") {
+            ctx.font = "bold 14px Arial";
+            ctx.fillStyle = color;
+            ctx.textBaseline = "middle";
+            const offset = 10;
+            ctx.textAlign = position === "left" ? "right" : "left";
+            const offsetX = position === "left" ? -offset : offset;
+            ctx.fillText(text, x * imgScale + offsetX, y * imgScale);
+        }
+
+        function drawAll() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+
+            const fixedRadius = 4;
+            const fixedLineWidth = 3;
+
+            for (let i = 0; i < points.length; i++) {
+                const p = points[i];
+                const color = styles[i].color;
+                ctx.beginPath();
+                ctx.arc(p.x * imgScale, p.y * imgScale, fixedRadius, 0, 2 * Math.PI);
+                ctx.fillStyle = color;
+                ctx.fill();
+                drawLabel(labels[i], p.x, p.y, color, i % 2 === 0 ? "left" : "right");
+            }
+
+            for (let i = 0; i < points.length - 1; i += 2) {
+                const p1 = points[i];
+                const p2 = points[i + 1];
+                const color = styles[i].color;
+
+                ctx.beginPath();
+                ctx.setLineDash([5, 4]);
+                ctx.strokeStyle = color;
+                ctx.lineWidth = fixedLineWidth;
+                ctx.moveTo(p1.x * imgScale, p1.y * imgScale);
+                ctx.lineTo(p2.x * imgScale, p2.y * imgScale);
+                ctx.stroke();
+
+                const pixelDist = getDistance(p1, p2);
+                const realDist = (pixelDist * scale).toFixed(2);
+
+                const angle = Math.atan2(p2.y - p1.y, p2.x - p1.x);
+                const midX = (p1.x + p2.x) / 2;
+                const midY = (p1.y + p2.y) / 2;
+                const offset = 20;
+                const offsetX = -Math.sin(angle) * offset;
+                const offsetY = Math.cos(angle) * offset;
+
+                drawLabel(realDist + " m", midX + offsetX, midY + offsetY, color, "left");
+            }
+        }
+
+        function updateLog() {
+            logDiv.innerHTML = "";
+            let total = 0;
+            for (let i = 0; i < points.length - 1; i += 2) {
+                const label1 = labels[i] || "X";
+                const label2 = labels[i + 1] || "X";
+                const dist = getDistance(points[i], points[i + 1]) * scale;
+                total += dist;
+                const color = styles[i].color;
+
+                const entryDiv = document.createElement("div");
+                entryDiv.classList.add("measurement-entry");
+
+                if (i >= 2) {
+                    const delBtn = document.createElement("button");
+                    delBtn.classList.add("delete-btn");
+                    delBtn.title = `Eliminar ${label1} - ${label2}`;
+                    delBtn.innerHTML = '<i class="fa-solid fa-trash"></i>';
+                    delBtn.style.color = color;
+                    delBtn.onclick = () => {
+                        points.splice(i, 2);
+                        labels.splice(i, 2);
+                        styles.splice(i, 2);
+                        for (let j = 2; j < labels.length; j++) {
+                            labels[j] = generateLabel(j);
+                        }
+                        drawAll();
+                        updateLog();
+                    };
+                    entryDiv.appendChild(delBtn);
+                } else {
+                    const spacer = document.createElement("span");
+                    spacer.style.display = "inline-block";
+                    spacer.style.width = "24px";
+                    entryDiv.appendChild(spacer);
+                }
+
+                const textSpan = document.createElement("span");
+                textSpan.classList.add("measurement-text");
+                textSpan.style.color = color;
+                textSpan.textContent = `${label1} - ${label2}: ${dist.toFixed(2)} metros`;
+                entryDiv.appendChild(textSpan);
+                logDiv.appendChild(entryDiv);
+            }
+
+            if (points.length >= 2) {
+                const totalDiv = document.createElement("div");
+                totalDiv.style.marginTop = "10px";
+                totalDiv.style.fontWeight = "bold";
+                totalDiv.style.background = "rgba(255, 255, 255, 0.75)";
+                totalDiv.style.padding = "4px 6px";
+                totalDiv.style.borderRadius = "4px";
+                totalDiv.textContent = `Total: ${total.toFixed(2)} metros`;
+                logDiv.appendChild(totalDiv);
+            }
+        }
+
+        function generateLabel(index) {
+            const letter = String.fromCharCode(65 + (index % 26));
+            const number = Math.floor(index / 26) + 1;
+            return `${letter}${number}`;
+        }
+
+        function reset() {
+            points = [];
+            labels = [];
+            styles = [];
+            scale = 1.0;
+            planoObj.escala = 1.0;
+            logDiv.innerHTML = "<strong>Mediciones:</strong>";
+            if (image.src) {
+                drawAll();
+            } else {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+            }
+        }
+
+        function hasMeasurements() {
+            return points.length > 0;
+        }
+
+        // Actualiza el arreglo mediciones dentro del objeto planoObj para enviar después
+        function updateMediciones() {
+            planoObj.mediciones = [];
+            for (let i = 0; i < points.length - 1; i += 2) {
+                planoObj.mediciones.push({
+                    etiqueta1: labels[i],
+                    punto1X: points[i].x,
+                    punto1Y: points[i].y,
+                    etiqueta2: labels[i+1],
+                    punto2X: points[i+1].x,
+                    punto2Y: points[i+1].y,
+                    distanciaMetros: getDistance(points[i], points[i+1]) * scale,
+                    colorHex: styles[i].color
+                });
+            }
+        }
+
+        // Llamamos updateMediciones cada vez que cambian las mediciones
+        const originalDrawAll = drawAll;
+        drawAll = function () {
+            originalDrawAll();
+            updateMediciones();
+        };
+
+        return hasMeasurements;
+    }
+
+    saveAllBtn.addEventListener("click", async () => {
+        if (planos.length === 0) {
+            alert("No hay planos para guardar");
+            return;
+        }
+        try {
+            const res = await fetch("/planos/save", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(planos)
+            });
+            if (!res.ok) throw new Error("Error guardando datos");
+            alert("Planos guardados exitosamente");
+            // Opcional: recargar o limpiar UI
+            window.location.reload();
+        } catch (e) {
+            alert(e.message);
+        }
+    });
+</script>
+</body>
+</html>

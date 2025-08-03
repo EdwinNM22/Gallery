@@ -2,6 +2,7 @@ package com.proyecto.galeria.model;
 
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -24,13 +25,15 @@ public class Expediente {
     private String descripcion;
 
     @ManyToOne
-    @JsonBackReference
+    @JsonBackReference(value = "usuario-expediente")
     @JoinColumn(name = "usuario_id")
     private usuario usuario;
 
 
+
+    // En Expediente (padre)
     @OneToMany(mappedBy = "expediente")
-    @JsonBackReference
+    @JsonManagedReference(value = "expediente-forms")
     private List<Form> forms;
 
 }

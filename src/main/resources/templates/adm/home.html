@@ -426,6 +426,11 @@
         <span th:text="#{new-project}">New Project</span>
       </a>
 
+      <a th:href="@{/planos}" class="btn-mega animated delay-1" th:if="${AGENDA_ACCESS}">
+        <i class="fas fa-plus-circle btn-icon"></i>
+        <span >PLANOS</span>
+      </a>
+
       <a th:href="@{/home}" class="btn-mega animated delay-1" th:if="${PROYECTOS_ACCESS}">
         <i class="fas fa-folder-open btn-icon"></i>
         <span th:text="#{ongoing-projects}">Ongoing Projects</span>

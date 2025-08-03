@@ -46,8 +46,9 @@ public class usuario {
 
 
     @OneToMany(mappedBy = "usuario")
-    @JsonManagedReference
+    @JsonManagedReference(value = "usuario-expediente")
     private List<Expediente> expedientes;
+
 
     @OneToMany(mappedBy = "usuario")
     private List<Form> forms;

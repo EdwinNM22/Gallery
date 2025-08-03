@@ -1,5 +1,6 @@
 package com.proyecto.galeria.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -147,7 +148,7 @@ public class Form {
     private usuario usuario;
 
     @ManyToOne
-    @JsonManagedReference
+    @JsonBackReference(value = "expediente-forms")
     @JoinColumn(name = "expediente_id")
     private Expediente expediente;
 }
