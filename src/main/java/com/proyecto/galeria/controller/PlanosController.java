@@ -2,9 +2,12 @@ package com.proyecto.galeria.controller;
 
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.proyecto.galeria.model.Plano;
+import com.proyecto.galeria.model.ProyectoPlano;
 import com.proyecto.galeria.model.usuario;
+import com.proyecto.galeria.repository.ProyectoPlanoRepository;
 import com.proyecto.galeria.service.IUsuarioService;
 import com.proyecto.galeria.service.PlanoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,10 +25,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.security.Principal;
 import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.Map;
+
+import org.apache.commons.imaging.ImageFormats;
+import org.apache.commons.imaging.Imaging;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 
 @Controller
 @RequestMapping("/planos")
@@ -37,11 +43,32 @@ public class PlanosController {
     @Autowired
     private IUsuarioService usuarioService;
 
-    @GetMapping("")
-    public String planos() {
-        return "planos/planos";
+
+    @Autowired
+    private ProyectoPlanoRepository proyectoPlanoRepository;
+
+
+    @GetMapping("/proyectos/{id}")
+    public String verPlanosPorProyecto(@PathVariable Long id, Model model) throws JsonProcessingException {
+        List<Plano> planos = planoService.findByProyectoPlano(id);
+        model.addAttribute("planos", planos);
+
+        ObjectMapper mapper = new ObjectMapper();
+        String planosJson = mapper.writeValueAsString(planos);
+        model.addAttribute("planosJson", planosJson);
+
+        model.addAttribute("proyectoId", id);
+
+        return "planos/viewPlanos";
     }
 
+
+    // Endpoint para crear planos
+    @GetMapping("")
+    public String planos(@RequestParam(value = "proyectoId", required = false) Long proyectoId, Model model) {
+        model.addAttribute("proyectoId", proyectoId);
+        return "planos/planos"; // tu vista para crear plano
+    }
 
 
     @PostMapping("/uploadImage")
@@ -55,48 +82,57 @@ public class PlanosController {
             File dir = new File(uploadDir);
             if (!dir.exists()) dir.mkdirs();
 
-            String filename = System.currentTimeMillis() + "_" + file.getOriginalFilename();
-            Path filePath = Paths.get(uploadDir, filename);
-            Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+            String originalFilename = file.getOriginalFilename();
+            String extension = originalFilename.substring(originalFilename.lastIndexOf('.') + 1).toLowerCase();
+            String filenameBase = System.currentTimeMillis() + "_";
+            File outputFile;
+            String finalFilename;
 
-            String url = "/imagenes/" + filename;
+            if ("heic".equals(extension) || "heif".equals(extension)) {
+                BufferedImage bufferedImage = Imaging.getBufferedImage(file.getInputStream());
+                finalFilename = filenameBase + originalFilename.replaceAll("\\.(heic|heif)$", ".jpg");
+                outputFile = new File(uploadDir + finalFilename);
+                ImageIO.write(bufferedImage, "jpg", outputFile);
+            } else {
+                finalFilename = filenameBase + originalFilename;
+                outputFile = new File(uploadDir + finalFilename);
+                file.transferTo(outputFile);
+            }
+
+            String url = "/imagenes/" + finalFilename;
             return ResponseEntity.ok(url);
-        } catch (IOException e) {
+
+        } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error guardando archivo");
         }
     }
 
     @PostMapping("/save")
-    public String guardarPlanos(@RequestBody List<Plano> planos, HttpSession session) {
+    public String guardarPlanos(@RequestParam Long proyectoId,
+                                @RequestBody List<Plano> planos,
+                                HttpSession session) {
         Integer userId = (Integer) session.getAttribute("idusuario");
         usuario usuario = usuarioService.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
+        ProyectoPlano proyecto = proyectoPlanoRepository.findById(proyectoId)
+                .orElseThrow(() -> new RuntimeException("ProyectoPlano no encontrado"));
+
         planos.forEach(plano -> {
             plano.setUsuario(usuario);
+            plano.setProyectoPlano(proyecto);
             if (plano.getMediciones() != null) {
                 plano.getMediciones().forEach(m -> m.setPlano(plano));
             }
             planoService.guardarPlanoConMediciones(plano);
         });
-        return "redirect:/planos";
-    }
-    @GetMapping("/list")
-    public String listarPlanos(Model model, HttpSession session) throws JsonProcessingException {
-        Integer userId = (Integer) session.getAttribute("idusuario");
-        if (userId == null) {
-            return "redirect:/login";
-        }
-        usuario usuario = usuarioService.findById(userId)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-        List<Plano> planos = planoService.findByUsuario(usuario);
-        model.addAttribute("planos", planos);
 
-        ObjectMapper mapper = new ObjectMapper();
-        // Para evitar ciclos en la serialización, puedes configurar o crear DTOs, pero ya que no quieres DTOs:
-        String planosJson = mapper.writeValueAsString(planos);
-        model.addAttribute("planosJson", planosJson);
-
-        return "planos/listPlanos";
+        return "redirect:/planos/proyectos/" + proyectoId;
     }
+
+
+
+
+
 }

@@ -24,4 +24,9 @@ public class PlanoServiceImpl implements PlanoService {
     public List<Plano> findByUsuario(usuario usuario) {
         return planoRepository.findByUsuario(usuario);
     }
+
+    @Override
+    public List<Plano> findByProyectoPlano(Long proyectoId) {
+        return planoRepository.findByProyectoPlanoId(proyectoId);
+    }
 }

@@ -31,6 +31,6 @@ public class Medicion {
 
     @ManyToOne
     @JoinColumn(name = "plano_id")
-    @JsonBackReference
+    @JsonBackReference(value = "plano-medicion")
     private Plano plano;
 }

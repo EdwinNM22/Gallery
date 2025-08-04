@@ -31,13 +31,21 @@ public class Plano {
     private String comentario;
 
     private Double escala;
+    @Column(name = "total_metros")
+    private Double totalMetros;
+
 
     @ManyToOne
     @JoinColumn(name = "usuario_id", nullable = false)
-    @JsonBackReference
+    @JsonBackReference(value = "usuario-plano")
     private usuario usuario;
 
     @OneToMany(mappedBy = "plano", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
+    @JsonManagedReference(value = "plano-medicion")
     private List<Medicion> mediciones = new ArrayList<>();
+
+    @ManyToOne
+    @JoinColumn(name = "proyecto_plano_id")
+    @JsonBackReference(value = "proyectoPlano-plano")
+    private ProyectoPlano proyectoPlano;
 }

@@ -8,4 +8,6 @@ import java.util.List;
 public interface PlanoService {
     Plano guardarPlanoConMediciones(Plano plano);
     List<Plano> findByUsuario(usuario usuario);
+    List<Plano> findByProyectoPlano(Long proyectoId);
+
 }

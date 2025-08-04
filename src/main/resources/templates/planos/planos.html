@@ -1,138 +1,499 @@
 <!DOCTYPE html>
-<html lang="es">
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
 <head>
     <meta charset="UTF-8" />
-    <title>Photo Measure App - Múltiples imágenes</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Crear Mediciones</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+    <!-- Google Fonts - Montserrat -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
     <style>
+        :root {
+            --primary-blue: #2c5aa0;
+            --accent-blue: #3a7bd5;
+            --dark-bg: #0f1923;
+            --darker-bg: #0a121a;
+            --light-text: #e0e0e0;
+            --lighter-text: #ffffff;
+            --border-color: rgba(44, 90, 160, 0.3);
+            --card-bg: rgba(15, 25, 35, 0.85);
+            --success-color: #4cc9f0;
+            --danger-color: #ff4d4d;
+            --warning-color: #ffa300;
+            --info-color: #4361ee;
+        }
+
         body {
-            font-family: monospace;
-            margin: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
+            font-family: "Montserrat", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--light-text);
+            background-color: rgba(0, 0, 0, 0.94);
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-attachment: fixed;
+            min-height: 100vh;
+            padding: 2rem;
         }
-        #instructions {
-            border: 1px solid #aaa;
-            padding: 12px 15px;
-            border-radius: 6px;
-            background: #f0f0f0;
+
+        .bg-fast-load {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .bg-fast-load img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.5;
+        }
+
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Header styles */
+        .modern-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .modern-header h1 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: var(--lighter-text);
+            margin-bottom: 1.5rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        .modern-header h1:after {
+            content: "";
+            position: absolute;
+            bottom: -14px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary-blue), var(--accent-blue));
+            border-radius: 3px;
+        }
+
+        /* Instruction panel */
+        .instruction-panel {
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border-color);
+            backdrop-filter: blur(8px);
             max-width: 900px;
-            font-size: 14px;
-            line-height: 1.4;
+            margin-left: auto;
+            margin-right: auto;
         }
-        #instructions i.fa-trash {
-            color: #c00;
+
+        .instruction-panel h2 {
+            color: var(--lighter-text);
+            margin-bottom: 1rem;
+            font-size: 1.4rem;
+        }
+
+        .instruction-panel p {
+            margin-bottom: 0.8rem;
+            line-height: 1.6;
+        }
+
+        .instruction-panel i.fa-trash {
+            color: var(--danger-color);
             margin: 0 3px;
         }
-        #controls {
-            width: 100%;
-            margin-bottom: 20px;
-        }
-        #imagesContainer {
+
+        /* Controls */
+        .controls-container {
             display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
             flex-wrap: wrap;
-            gap: 40px;
+        }
+
+        .btn-mega {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem 1.8rem;
+            font-size: 0.95rem;
+            font-weight: 500;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            overflow: hidden;
+            z-index: 1;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            background: var(--card-bg);
+            backdrop-filter: blur(8px);
+            border: 1px solid var(--border-color);
+            color: var(--light-text);
+            text-align: center;
+        }
+
+        .btn-mega.btn-success::before {
+            background: linear-gradient(45deg, var(--success-color), #2a9d8f);
+        }
+
+        .btn-mega.btn-primary::before {
+            background: linear-gradient(45deg, var(--primary-blue), var(--accent-blue));
+        }
+
+        .btn-mega::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, var(--primary-blue), var(--accent-blue));
+            z-index: -1;
+            transition: opacity 0.3s ease;
+            opacity: 0;
+        }
+
+        .btn-mega:hover::before {
+            opacity: 1;
+        }
+
+        .btn-mega:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(58, 123, 213, 0.2);
+            color: var(--lighter-text);
+            border-color: transparent;
+        }
+
+        .btn-icon {
+            margin-right: 8px;
+            font-size: 1rem;
+        }
+
+        /* Image panels */
+        .images-container {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
             width: 100%;
         }
+
         .image-panel {
-            display: flex;
-            border: 1px solid #ccc;
+            background: var(--card-bg);
             border-radius: 8px;
-            padding: 10px;
-            background: #f9f9f9;
-            max-width: 900px;
-            box-shadow: 0 2px 8px rgb(0 0 0 / 0.1);
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            backdrop-filter: blur(5px);
+            border: 1px solid var(--border-color);
         }
+
+        .image-panel::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary-blue), var(--accent-blue));
+        }
+
+        .panel-content {
+            display: flex;
+            flex-direction: row;
+            padding: 1.5rem;
+            gap: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .panel-content {
+                flex-direction: column;
+            }
+        }
+
+        /* Canvas container */
         .canvas-container {
+            flex: 1;
+            min-width: 0;
             position: relative;
+            overflow: auto;
         }
+
         canvas {
-            border: 1px solid #000;
+            display: block;
+            background-color: var(--darker-bg);
             cursor: crosshair;
         }
+
+        /* Sidebar */
         .sidebar {
-            margin-left: 20px;
-            max-width: 300px;
-            flex-shrink: 0;
+            flex: 1;
+            min-width: 0;
+            max-width: 350px;
             display: flex;
             flex-direction: column;
         }
-        #logDiv {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-            gap: 6px 12px;
-            max-height: 400px;
-            overflow-y: auto;
-            margin-top: 6px;
+
+        .image-name-input {
+            margin-bottom: 1.5rem;
         }
-        .measurement-entry {
+
+        .image-name-input label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--lighter-text);
+        }
+
+        .image-name-input input {
+            width: 100%;
+            padding: 0.5rem;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+            background: rgba(10, 18, 26, 0.6);
+            color: var(--light-text);
+        }
+
+        /* Measurement controls */
+        .measurement-controls {
             display: flex;
             align-items: center;
-            font-weight: bold;
-            background: rgba(255, 255, 255, 0.75);
-            padding: 2px 6px;
-            border-radius: 4px;
-            white-space: nowrap;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
         }
+
+        .color-picker {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .color-picker label {
+            font-weight: 600;
+        }
+
+        .control-buttons {
+            display: flex;
+            gap: 0.8rem;
+        }
+
+        .control-btn {
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .confirm-btn {
+            background: var(--success-color);
+            color: white;
+        }
+
+        .reset-btn {
+            background: var(--warning-color);
+            color: white;
+        }
+
+        /* Measurements list */
+        .measurements-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--lighter-text);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .measurements-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 0.8rem;
+            max-height: 300px;
+            overflow-y: auto;
+            padding-right: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .measurements-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .measurements-list::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 3px;
+        }
+
+        .measurements-list::-webkit-scrollbar-thumb {
+            background: var(--accent-blue);
+            border-radius: 3px;
+        }
+
+        .measurement-entry {
+            background: rgba(44, 90, 160, 0.1);
+            border-left: 3px solid var(--accent-blue);
+            padding: 0.8rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+        }
+
         .delete-btn {
             background: none;
             border: none;
-            color: #c00;
+            color: var(--danger-color);
             cursor: pointer;
-            font-size: 16px;
-            margin-right: 10px;
+            font-size: 1rem;
+            margin-right: 0.5rem;
+            transition: transform 0.2s ease;
         }
-        .delete-btn:focus {
-            outline: none;
+
+        .delete-btn:hover {
+            transform: scale(1.1);
         }
+
         .measurement-text {
             flex: 1;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            font-weight: 500;
         }
-        .controls-inline {
+
+        .total-measurement {
+            background: rgba(67, 97, 238, 0.2);
+            padding: 0.8rem;
+            border-radius: 4px;
+            font-weight: 600;
+            margin-top: 0.5rem;
+        }
+
+        /* Comment area */
+        .comment-area {
+            margin-top: auto;
+        }
+
+        .comment-area label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--lighter-text);
+        }
+
+        .comment-area textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+            background: rgba(10, 18, 26, 0.6);
+            color: var(--light-text);
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        /* Delete image button */
+        .delete-image-btn {
+            margin-top: 1.5rem;
+            padding: 0.8rem;
+            border-radius: 4px;
+            border: none;
+            background: var(--danger-color);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
             display: flex;
             align-items: center;
-            gap: 10px;
-            margin-bottom: 10px;
+            justify-content: center;
+            gap: 0.5rem;
         }
-        .delete-image-btn {
-            margin-top: 10px;
-            background: #c00;
-            color: white;
-            border: none;
-            padding: 6px;
-            cursor: pointer;
-            border-radius: 4px;
-            font-weight: bold;
-        }
+
         .delete-image-btn:hover {
-            background: #a00;
+            background: #d63031;
         }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+
+            .modern-header h1 {
+                font-size: 2rem;
+            }
+
+            .panel-content {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                max-width: 100%;
+            }
+
+            .measurements-list {
+                grid-template-columns: 1fr;
+            }
+        }
+
+
+
     </style>
 </head>
-<body>
-<div id="instructions">
-    <h2>Panel de instrucciones</h2>
-    <p>Haz clic en el botón <strong>"Agregar foto"</strong> para añadir una imagen.</p>
-    <p>Elige el color para los puntos de medición.</p>
-    <p>Haz clic en el botón <i class="fa-solid fa-trash"></i> para eliminar una medición.</p>
-    <p><strong>NOTA:</strong> Las medidas <em>A1</em> y <em>B1</em> no se pueden eliminar. Usa <strong>"Reiniciar"</strong> para borrar todo.</p>
+<body data-proyecto-id="${proyectoId}">
+<div class="bg-fast-load">
+    <img src="/img/upscalemedia-transformed.webp" alt="Background" />
 </div>
-<div id="controls">
-    <input type="file" id="imageLoader" accept="image/*" multiple />
+
+<div class="main-container">
+    <header class="modern-header">
+        <h1><i class="fas fa-ruler-combined"></i> Crear Mediciones</h1>
+    </header>
+
+    <div class="instruction-panel">
+        <h2><i class="fas fa-info-circle"></i> Instrucciones</h2>
+        <p>Haz clic en el botón <strong>"Agregar foto"</strong> para añadir una imagen.</p>
+        <p>Elige el color para los puntos de medición.</p>
+        <p>Haz clic en el botón <i class="fa-solid fa-trash"></i> para eliminar una medición.</p>
+        <p><strong>NOTA:</strong> Las medidas <em>A1</em> y <em>B1</em> no se pueden eliminar. Usa <strong>"Reiniciar"</strong> para borrar todo.</p>
+    </div>
+
+    <div class="controls-container">
+        <input type="file" id="imageLoader" accept="image/*" multiple style="display: none;" />
+        <label for="imageLoader" class="btn-mega btn-primary">
+            <i class="fas fa-plus btn-icon"></i> Agregar foto
+        </label>
+
+        <button id="saveAllBtn" class="btn-mega btn-success">
+            <i class="fas fa-save btn-icon"></i> Guardar todo
+        </button>
+
+        <a href="/planos/view" class="btn-mega">
+            <i class="fas fa-list btn-icon"></i> Ver planos
+        </a>
+    </div>
+
+    <div id="imagesContainer" class="images-container"></div>
 </div>
-<button id="saveAllBtn" style="padding: 10px 20px; font-weight: bold; background: green; color: white; border: none; border-radius: 6px; cursor: pointer; max-width: 200px;">
-    Guardar
-</button>
-
-<button onclick="location.href='/planos/list'"
-        style="padding: 10px 20px; font-weight: bold; background: #007bff; color: white; border: none; border-radius: 6px; cursor: pointer; max-width: 200px; margin-top: 10px;">
-    Ir a Planos/List
-</button>
-
-<div id="imagesContainer"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" defer></script>
 <script>
@@ -140,15 +501,13 @@
     const imagesContainer = document.getElementById("imagesContainer");
     const saveAllBtn = document.getElementById("saveAllBtn");
 
-    // Array para guardar planos (con url devuelta del backend)
     let planos = [];
 
     imageLoader.addEventListener("change", async (e) => {
         const files = e.target.files;
         for (const file of files) {
-            // Subir la imagen y obtener URL
-            const url = await uploadImage(file);
-            createImagePanel(file.name, url);
+            const url = URL.createObjectURL(file);
+            createImagePanel(file.name, url, file);
         }
         imageLoader.value = "";
     });
@@ -164,40 +523,60 @@
             alert("Error subiendo imagen");
             throw new Error("Error uploading");
         }
-        return response.text(); // URL devuelta
+        return response.text();
     }
 
-    function createImagePanel(nombreImagen, url) {
+    function createImagePanel(nombreImagen, url, file) {
         const panelDiv = document.createElement("div");
         panelDiv.className = "image-panel";
+
+        const panelContent = document.createElement("div");
+        panelContent.className = "panel-content";
 
         const canvasContainer = document.createElement("div");
         canvasContainer.className = "canvas-container";
 
         const canvas = document.createElement("canvas");
+
+        const maxWidth = window.innerWidth * 0.95;
+        const maxHeight = window.innerHeight * 0.8;
+
+        canvas.style.maxWidth = maxWidth + "px";
+        canvas.style.maxHeight = maxHeight + "px";
+        canvas.style.width = "auto";
+        canvas.style.height = "auto";
+
+        canvasContainer.style.overflow = "hidden";
+        canvasContainer.style.maxWidth = maxWidth + "px";
+        canvasContainer.style.maxHeight = maxHeight + "px";
+
         canvasContainer.appendChild(canvas);
 
         const sidebar = document.createElement("div");
         sidebar.className = "sidebar";
 
-        // -- NUEVO: input para nombre de imagen editable --
-        const nombreInputLabel = document.createElement("label");
-        nombreInputLabel.textContent = "Nombre de la imagen:";
-        nombreInputLabel.style.fontWeight = "bold";
-        nombreInputLabel.style.marginBottom = "6px";
+        const nameContainer = document.createElement("div");
+        nameContainer.className = "image-name-input";
 
-        const nombreInput = document.createElement("input");
-        nombreInput.type = "text";
-        nombreInput.value = "";
-        nombreInput.style.width = "100%";
-        nombreInput.style.marginBottom = "10px";
+        const nameLabel = document.createElement("label");
+        nameLabel.textContent = "Nombre de la imagen:";
 
-        sidebar.appendChild(nombreInputLabel);
-        sidebar.appendChild(nombreInput);
-        // ----------------------------------------------
+        const nameInput = document.createElement("input");
+        nameInput.type = "text";
+        nameInput.value = "";
+
+        nameContainer.appendChild(nameLabel);
+        nameContainer.appendChild(nameInput);
+        sidebar.appendChild(nameContainer);
 
         const controlsDiv = document.createElement("div");
-        controlsDiv.className = "controls-inline";
+        controlsDiv.className = "measurement-controls";
+
+        const colorDiv = document.createElement("div");
+        colorDiv.className = "color-picker";
+
+        const colorLabel = document.createElement("label");
+        colorLabel.textContent = "Color:";
 
         const colorInput = document.createElement("input");
         colorInput.type = "color";
@@ -205,56 +584,72 @@
         colorInput.title = "Color del texto y línea";
 
         const confirmColorBtn = document.createElement("button");
-        confirmColorBtn.textContent = "OK";
+        confirmColorBtn.className = "control-btn confirm-btn";
+        confirmColorBtn.textContent = "Aplicar";
 
         const resetBtn = document.createElement("button");
+        resetBtn.className = "control-btn reset-btn";
         resetBtn.textContent = "Reiniciar";
 
-        controlsDiv.appendChild(colorInput);
-        controlsDiv.appendChild(confirmColorBtn);
-        controlsDiv.appendChild(resetBtn);
+        colorDiv.appendChild(colorLabel);
+        colorDiv.appendChild(colorInput);
 
+        const buttonsDiv = document.createElement("div");
+        buttonsDiv.className = "control-buttons";
+        buttonsDiv.appendChild(confirmColorBtn);
+        buttonsDiv.appendChild(resetBtn);
+
+        controlsDiv.appendChild(colorDiv);
+        controlsDiv.appendChild(buttonsDiv);
         sidebar.appendChild(controlsDiv);
 
-        const title = document.createElement("strong");
-        title.textContent = "Mediciones:";
-        sidebar.appendChild(title);
+        const measurementsTitle = document.createElement("div");
+        measurementsTitle.className = "measurements-title";
+        measurementsTitle.innerHTML = '<i class="fas fa-ruler-horizontal"></i> Mediciones';
+        sidebar.appendChild(measurementsTitle);
 
         const logDiv = document.createElement("div");
-        logDiv.className = "logDiv";
+        logDiv.className = "measurements-list";
         sidebar.appendChild(logDiv);
 
-        const comentarioInput = document.createElement("textarea");
-        comentarioInput.placeholder = "Comentario (opcional)";
-        comentarioInput.style.marginTop = "10px";
-        comentarioInput.style.width = "100%";
-        comentarioInput.rows = 3;
-        sidebar.appendChild(comentarioInput);
+        const commentDiv = document.createElement("div");
+        commentDiv.className = "comment-area";
+
+        const commentLabel = document.createElement("label");
+        commentLabel.textContent = "Comentarios:";
+
+        const commentInput = document.createElement("textarea");
+        commentInput.placeholder = "Escribe aquí cualquier comentario adicional...";
+
+        commentDiv.appendChild(commentLabel);
+        commentDiv.appendChild(commentInput);
+        sidebar.appendChild(commentDiv);
 
         const deleteImageBtn = document.createElement("button");
-        deleteImageBtn.textContent = "Eliminar imagen";
         deleteImageBtn.className = "delete-image-btn";
+        deleteImageBtn.innerHTML = '<i class="fas fa-trash"></i> Eliminar imagen';
         sidebar.appendChild(deleteImageBtn);
 
-        panelDiv.appendChild(canvasContainer);
-        panelDiv.appendChild(sidebar);
+        panelContent.appendChild(canvasContainer);
+        panelContent.appendChild(sidebar);
+        panelDiv.appendChild(panelContent);
         imagesContainer.appendChild(panelDiv);
 
         const planoObj = {
             nombreImagen,
             url,
+            file,
             comentario: "",
             escala: 1.0,
             mediciones: []
         };
         planos.push(planoObj);
 
-        // Sincronizar input con objeto
-        nombreInput.addEventListener("input", () => {
-            planoObj.nombreImagen = nombreInput.value.trim() || nombreImagen;
+        nameInput.addEventListener("input", () => {
+            planoObj.nombreImagen = nameInput.value.trim() || nombreImagen;
         });
 
-        const hasMeasurements = setupPhotoMeasurePanel(canvas, logDiv, colorInput, confirmColorBtn, resetBtn, url, planoObj, comentarioInput);
+        const hasMeasurements = setupPhotoMeasurePanel(canvas, logDiv, colorInput, confirmColorBtn, resetBtn, url, planoObj, commentInput, maxWidth, maxHeight);
 
         deleteImageBtn.addEventListener("click", () => {
             if (hasMeasurements()) {
@@ -265,8 +660,7 @@
         });
     }
 
-
-    function setupPhotoMeasurePanel(canvas, logDiv, colorInput, confirmColorBtn, resetBtn, imgSrc, planoObj, comentarioInput) {
+    function setupPhotoMeasurePanel(canvas, logDiv, colorInput, confirmColorBtn, resetBtn, imgSrc, planoObj, comentarioInput, maxWidth, maxHeight) {
         const ctx = canvas.getContext("2d");
         let image = new Image();
         image.src = imgSrc;
@@ -277,14 +671,13 @@
         let scale = 1.0;
         let currentColor = colorInput.value;
 
-        const MAX_WIDTH = 800;
-        const MAX_HEIGHT = 600;
         let imgScale = 1;
 
         image.onload = () => {
-            const scaleWidth = MAX_WIDTH / image.width;
-            const scaleHeight = MAX_HEIGHT / image.height;
+            const scaleWidth = maxWidth / image.width;
+            const scaleHeight = maxHeight / image.height;
             imgScale = Math.min(scaleWidth, scaleHeight, 1);
+
             canvas.width = image.width * imgScale;
             canvas.height = image.height * imgScale;
             drawAll();
@@ -300,19 +693,18 @@
 
         canvas.addEventListener("click", (e) => {
             if (!image.src) return;
-            const rect = canvas.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-            const realX = x / imgScale;
-            const realY = y / imgScale;
 
-            const existingIndex = points.findIndex(p => Math.abs(p.x - realX) < 7 && Math.abs(p.y - realY) < 7);
+            const rect = canvas.getBoundingClientRect();
+            const xUnscaled = (e.clientX - rect.left) / imgScale;
+            const yUnscaled = (e.clientY - rect.top) / imgScale;
+
+            const existingIndex = points.findIndex(p => Math.abs(p.x - xUnscaled) < 7 && Math.abs(p.y - yUnscaled) < 7);
             if (existingIndex !== -1) {
                 points.push(points[existingIndex]);
                 labels.push(labels[existingIndex]);
                 styles.push(styles[existingIndex]);
             } else {
-                points.push({ x: realX, y: realY });
+                points.push({ x: xUnscaled, y: yUnscaled });
                 labels.push(generateLabel(labels.length));
                 styles.push({ color: currentColor });
             }
@@ -344,12 +736,13 @@
         }
 
         function drawLabel(text, x, y, color, position = "left") {
-            ctx.font = "bold 14px Arial";
+            ctx.font = "bold 14px Montserrat";
             ctx.fillStyle = color;
             ctx.textBaseline = "middle";
             const offset = 10;
             ctx.textAlign = position === "left" ? "right" : "left";
             const offsetX = position === "left" ? -offset : offset;
+
             ctx.fillText(text, x * imgScale + offsetX, y * imgScale);
         }
 
@@ -357,16 +750,18 @@
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
 
-            const fixedRadius = 4;
+            const fixedRadius = 6;
             const fixedLineWidth = 3;
 
             for (let i = 0; i < points.length; i++) {
                 const p = points[i];
                 const color = styles[i].color;
+
                 ctx.beginPath();
                 ctx.arc(p.x * imgScale, p.y * imgScale, fixedRadius, 0, 2 * Math.PI);
                 ctx.fillStyle = color;
                 ctx.fill();
+
                 drawLabel(labels[i], p.x, p.y, color, i % 2 === 0 ? "left" : "right");
             }
 
@@ -437,20 +832,18 @@
                 const textSpan = document.createElement("span");
                 textSpan.classList.add("measurement-text");
                 textSpan.style.color = color;
-                textSpan.textContent = `${label1} - ${label2}: ${dist.toFixed(2)} metros`;
+                textSpan.textContent = `${label1} - ${label2}: ${dist.toFixed(2)} m`;
                 entryDiv.appendChild(textSpan);
                 logDiv.appendChild(entryDiv);
             }
 
             if (points.length >= 2) {
                 const totalDiv = document.createElement("div");
-                totalDiv.style.marginTop = "10px";
-                totalDiv.style.fontWeight = "bold";
-                totalDiv.style.background = "rgba(255, 255, 255, 0.75)";
-                totalDiv.style.padding = "4px 6px";
-                totalDiv.style.borderRadius = "4px";
+                totalDiv.className = "total-measurement";
                 totalDiv.textContent = `Total: ${total.toFixed(2)} metros`;
                 logDiv.appendChild(totalDiv);
+
+                planoObj.totalMetros = parseFloat(total.toFixed(2));
             }
         }
 
@@ -466,7 +859,7 @@
             styles = [];
             scale = 1.0;
             planoObj.escala = 1.0;
-            logDiv.innerHTML = "<strong>Mediciones:</strong>";
+            logDiv.innerHTML = "";
             if (image.src) {
                 drawAll();
             } else {
@@ -478,24 +871,26 @@
             return points.length > 0;
         }
 
-        // Actualiza el arreglo mediciones dentro del objeto planoObj para enviar después
         function updateMediciones() {
             planoObj.mediciones = [];
+            let total = 0;
             for (let i = 0; i < points.length - 1; i += 2) {
+                const dist = getDistance(points[i], points[i + 1]) * scale;
+                total += dist;
                 planoObj.mediciones.push({
                     etiqueta1: labels[i],
                     punto1X: points[i].x,
                     punto1Y: points[i].y,
-                    etiqueta2: labels[i+1],
-                    punto2X: points[i+1].x,
-                    punto2Y: points[i+1].y,
-                    distanciaMetros: getDistance(points[i], points[i+1]) * scale,
+                    etiqueta2: labels[i + 1],
+                    punto2X: points[i + 1].x,
+                    punto2Y: points[i + 1].y,
+                    distanciaMetros: dist,
                     colorHex: styles[i].color
                 });
             }
+            planoObj.totalMetros = parseFloat(total.toFixed(2));
         }
 
-        // Llamamos updateMediciones cada vez que cambian las mediciones
         const originalDrawAll = drawAll;
         drawAll = function () {
             originalDrawAll();
@@ -506,24 +901,35 @@
     }
 
     saveAllBtn.addEventListener("click", async () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const proyectoId = urlParams.get('proyectoId');
+        if (!proyectoId) {
+            alert("No se encontró proyectoId en la URL");
+            return;
+        }
         if (planos.length === 0) {
             alert("No hay planos para guardar");
             return;
         }
         try {
-            const res = await fetch("/planos/save", {
+            for (const plano of planos) {
+                if (!plano.url.startsWith("http")) {
+                    plano.url = await uploadImage(plano.file);
+                }
+            }
+            const res = await fetch(`/planos/save?proyectoId=${proyectoId}`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(planos)
             });
             if (!res.ok) throw new Error("Error guardando datos");
             alert("Planos guardados exitosamente");
-            // Opcional: recargar o limpiar UI
             window.location.reload();
         } catch (e) {
             alert(e.message);
         }
     });
 </script>
+
 </body>
 </html>

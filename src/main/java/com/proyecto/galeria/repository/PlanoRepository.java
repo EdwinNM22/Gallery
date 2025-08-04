@@ -10,4 +10,6 @@ import java.util.List;
 @Repository
 public interface PlanoRepository extends JpaRepository<Plano, Long> {
     List<Plano> findByUsuario(usuario usuario);
+    List<Plano> findByProyectoPlanoId(Long proyectoId);
+
 }

@@ -3,6 +3,7 @@ package com.proyecto.galeria.model;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -53,6 +54,10 @@ public class usuario {
     @OneToMany(mappedBy = "usuario")
     private List<Form> forms;
 
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference(value = "usuario-proyectoPlano")
+    private List<ProyectoPlano> proyectos = new ArrayList<>();
+
 
 
     public usuario() {}
@@ -65,23 +70,6 @@ public class usuario {
         this.password = password;
         this.username = username;
         this.passwordSinEncriptar = passwordSinEncriptar;
-    }
-
-
-    public String getPasswordSinEncriptar() {
-        return passwordSinEncriptar;
-    }
-
-    public void setPasswordSinEncriptar(String passwordSinEncriptar) {
-        this.passwordSinEncriptar = passwordSinEncriptar;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
     }
 
     public Integer getId() {
@@ -124,6 +112,22 @@ public class usuario {
         this.password = password;
     }
 
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPasswordSinEncriptar() {
+        return passwordSinEncriptar;
+    }
+
+    public void setPasswordSinEncriptar(String passwordSinEncriptar) {
+        this.passwordSinEncriptar = passwordSinEncriptar;
+    }
+
     public List<foto> getFotos() {
         return fotos;
     }
@@ -162,6 +166,22 @@ public class usuario {
 
     public void setForms(List<Form> forms) {
         this.forms = forms;
+    }
+
+    public List<ProyectoPlano> getProyectos() {
+        return proyectos;
+    }
+
+    public void setProyectos(List<ProyectoPlano> proyectos) {
+        this.proyectos = proyectos;
+    }
+
+    public List<UsuarioAdvertencia> getAdvertencias() {
+        return advertencias;
+    }
+
+    public void setAdvertencias(List<UsuarioAdvertencia> advertencias) {
+        this.advertencias = advertencias;
     }
 
     @OneToMany(mappedBy = "usuario")
