@@ -432,7 +432,7 @@
       <a th:href="@{/proyectosPlano}" class="btn-mega animated delay-1" th:if="${AGENDA_ACCESS}">
         <i class="fas fa-drafting-compass btn-icon"></i>
 
-        <span >Estimación</span>
+        <span th:text="#{estimation}">Estimación</span>
       </a>
 
       <a th:href="@{/home}" class="btn-mega animated delay-1" th:if="${PROYECTOS_ACCESS}">

@@ -277,9 +277,17 @@ function showDayEvents(date, calendar, expedienteId) {
           <div class="d-flex justify-content-between align-items-start">
             <div class="event-content">
               <div class="d-flex align-items-center">
-                <h4 class="event-title">${event.text}</h4>
-              </div> <p class="event-description mt-2">${window.translations.createdBy}: ${event.tags.usuarioNombre}</p> </div>
-            <button class="btn view-event-btn" data-event-id="${event.tags.originalEventId}" data-event-estado="${event.tags.estado}"> ${window.translations.view} </button>
+                <h4 class="event-title">${event.text || ''}</h4>
+              </div>
+              ${event.tags && event.tags.usuarioNombre 
+                ? `<p class="event-description mt-2">${window.translations?.createdBy || 'Created by'}: ${event.tags.usuarioNombre}</p>`
+                : ''}
+            </div>
+            <button class="btn view-event-btn" 
+                    data-event-id="${event.tags?.originalEventId || ''}" 
+                    data-event-estado="${event.tags?.estado || ''}">
+              ${window.translations?.view || 'View'}
+            </button>
           </div>
         `;
 

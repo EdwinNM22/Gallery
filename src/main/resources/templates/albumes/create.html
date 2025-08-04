@@ -1636,6 +1636,106 @@
         .fc .fc-daygrid-day.fc-day-today:hover {
             background-color: rgba(58, 123, 213, 0.3) !important;
         }
+
+        /* Members Section Styles */
+        .members-section {
+            margin-bottom: 1.5rem;
+            border-radius: 6px;
+            overflow: hidden;
+            background-color: rgba(15, 25, 35, 0.5);
+            border: 1px solid var(--border-color);
+        }
+
+        .members-section-label {
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+        }
+
+        .members-section-label span {
+            position: relative;
+            padding-left: 1.5rem;
+        }
+
+        .members-section-label span::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        /* Confirmed Members */
+        .confirmed-label {
+            background-color: rgba(56, 176, 0, 0.1);
+            border-bottom: 1px solid rgba(56, 176, 0, 0.3);
+            color: var(--completed-color);
+        }
+
+        .confirmed-label span::before {
+            background-color: var(--completed-color);
+        }
+
+        /* Pending Members */
+        .pending-label {
+            background-color: rgba(44, 90, 160, 0.1);
+            border-bottom: 1px solid rgba(44, 90, 160, 0.3);
+            color: var(--primary-blue);
+        }
+
+        .pending-label span::before {
+            background-color: var(--primary-blue);
+        }
+
+        /* Rejected Members */
+        .rejected-label {
+            background-color: rgba(255, 77, 77, 0.1);
+            border-bottom: 1px solid rgba(255, 77, 77, 0.3);
+            color: var(--danger-color);
+        }
+
+        .rejected-label span::before {
+            background-color: var(--danger-color);
+        }
+
+        /* Members List inside sections */
+        .members-section .members-list {
+            padding: 0.75rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+
+        /* Member Item adjustments */
+        .members-section .member-item {
+            background-color: rgba(15, 25, 35, 0.7);
+            border: 1px solid var(--border-color);
+            transition: all 0.2s ease;
+        }
+
+        .members-section .member-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .members-section .members-list {
+                gap: 0.5rem;
+            }
+            
+            .members-section-label {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.75rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -2206,12 +2306,12 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header bg-danger text-white">
-                <h5 class="modal-title" id="confirmDeleteModalLabel">Confirm Deletion</h5>
+                <h5 class="modal-title"><i class="fas fa-exclamation-triangle me-2"></i> <span th:text="#{confirm-delete-project}">Confirm Deletion</span></h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <p>Are you sure you want to delete this team? This action cannot be undone.</p>
-                <p class="fw-bold">All team assignments will be permanently removed.</p>
+                <p th:text="#{delete-project-confirmation}">Are you sure you want to delete this project? This action cannot be undone.</p>
+                <p class="fw-bold" th:text="#{delete-associated-content}">All associated subprojects and photos will also be deleted.</p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -3529,41 +3629,97 @@
 
                     teams.forEach(team => {
                         html += `
-                    <div class="team-card mb-3" data-team-id="${team.id}">
-                        <div class="team-card-header">
-                            <h5>${team.nombre}</h5>
-                            <div class="team-actions">
-                                <button class="btn btn-sm btn-outline-primary edit-team-btn" data-team-id="${team.id}">
-                                    <i class="fas fa-edit me-1"></i> ${translations.edit}
-                                </button>
-                                <button class="btn btn-sm btn-outline-danger delete-team-btn" data-team-id="${team.id}">
-                                    <i class="fas fa-trash-alt me-1"></i> ${translations.delete}
-                                </button>
-                            </div>
-                        </div>
-                        <div class="team-card-body">
-                            <p class="team-description">${team.descripcion || translations.no_description}</p>
-                            <div class="team-members">
-                                <h6>${translations.team_members} (${team.miembros.length})</h6>
-                                <div class="members-list">
-                                    ${team.miembros.map(member => `
-                                        <div class="member-item">
-                                            <div class="member-avatar">
-                                                ${member.nombre.charAt(0)}${member.apellido ? member.apellido.charAt(0) : ''}
-                                            </div>
-                                            <div class="member-info">
-                                                <div class="member-name ${duplicateMembers[member.id] ? 'duplicate-member' : ''}">
-                                                    ${member.nombre} ${member.apellido || ''}
-                                                </div>
-                                                <div class="member-role">${member.rol} - ${member.estado}</div>
-                                            </div>
-                                        </div>
-                                    `).join('')}
+                        <div class="team-card mb-3" data-team-id="${team.id}">
+                            <div class="team-card-header">
+                                <h5>${team.nombre}</h5>
+                                <div class="team-actions">
+                                    <button class="btn btn-sm btn-outline-primary edit-team-btn" data-team-id="${team.id}">
+                                        <i class="fas fa-edit me-1"></i> ${translations.edit}
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-danger delete-team-btn" data-team-id="${team.id}">
+                                        <i class="fas fa-trash-alt me-1"></i> ${translations.delete}
+                                    </button>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                `;
+                            <div class="team-card-body">
+                                <p class="team-description">${team.descripcion || translations.no_description}</p>
+                                <div class="team-members">
+                                    <h6>${translations.team_members} (${team.miembros.length})</h6>
+                                    
+                                    <!-- Confirmed Members Section -->
+                                    ${team.miembros.filter(m => m.estado === 'confirmado').length > 0 ? `
+                                    <div class="members-section confirmed-members">
+                                        <div class="members-section-label confirmed-label">
+                                            <span>${translations.statusConfirmed || 'Confirmed'}</span>
+                                        </div>
+                                        <div class="members-list">
+                                            ${team.miembros.filter(m => m.estado === 'confirmado').map(member => `
+                                            <div class="member-item">
+                                                <div class="member-avatar">
+                                                    ${member.nombre.charAt(0)}${member.apellido ? member.apellido.charAt(0) : ''}
+                                                </div>
+                                                <div class="member-info">
+                                                    <div class="member-name ${duplicateMembers[member.id] ? 'duplicate-member' : ''}">
+                                                        ${member.nombre} ${member.apellido || ''}
+                                                    </div>
+                                                    <div class="member-role">${member.rol}</div>
+                                                </div>
+                                            </div>
+                                            `).join('')}
+                                        </div>
+                                    </div>
+                                    ` : ''}
+                                    
+                                    <!-- Pending Members Section -->
+                                    ${team.miembros.filter(m => m.estado === 'pendiente').length > 0 ? `
+                                    <div class="members-section pending-members">
+                                        <div class="members-section-label pending-label">
+                                            <span>${translations.statusPending || 'Pending'}</span>
+                                        </div>
+                                        <div class="members-list">
+                                            ${team.miembros.filter(m => m.estado === 'pendiente').map(member => `
+                                            <div class="member-item">
+                                                <div class="member-avatar">
+                                                    ${member.nombre.charAt(0)}${member.apellido ? member.apellido.charAt(0) : ''}
+                                                </div>
+                                                <div class="member-info">
+                                                    <div class="member-name ${duplicateMembers[member.id] ? 'duplicate-member' : ''}">
+                                                        ${member.nombre} ${member.apellido || ''}
+                                                    </div>
+                                                    <div class="member-role">${member.rol}</div>
+                                                </div>
+                                            </div>
+                                            `).join('')}
+                                        </div>
+                                    </div>
+                                    ` : ''}
+                                    
+                                    <!-- Rejected Members Section -->
+                                    ${team.miembros.filter(m => m.estado === 'rechazado').length > 0 ? `
+                                    <div class="members-section rejected-members">
+                                        <div class="members-section-label rejected-label">
+                                            <span>${translations.statusCancelled || 'Rejected'}</span>
+                                        </div>
+                                        <div class="members-list">
+                                            ${team.miembros.filter(m => m.estado === 'rechazado').map(member => `
+                                            <div class="member-item">
+                                                <div class="member-avatar">
+                                                    ${member.nombre.charAt(0)}${member.apellido ? member.apellido.charAt(0) : ''}
+                                                </div>
+                                                <div class="member-info">
+                                                    <div class="member-name ${duplicateMembers[member.id] ? 'duplicate-member' : ''}">
+                                                        ${member.nombre} ${member.apellido || ''}
+                                                    </div>
+                                                    <div class="member-role">${member.rol}</div>
+                                                </div>
+                                            </div>
+                                            `).join('')}
+                                        </div>
+                                    </div>
+                                    ` : ''}
+                                </div>
+                            </div>
+                        </div>                `;
                     });
 
                     teamsListContainer.innerHTML = html;

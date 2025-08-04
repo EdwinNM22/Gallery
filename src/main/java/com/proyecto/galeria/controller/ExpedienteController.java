@@ -178,6 +178,7 @@ public class ExpedienteController {
         List<Form> futureForms = formService.findByExpedienteIdAndFuturo(id, true);
         List<Form> completeForms = formService.findByExpedienteIdAndFuturo(id, false);
 
+        
         List<Map<String, String>> events = futureForms.stream()
                 .filter(f -> f.getFechaEvaluacion() != null)
                 .map(f -> Map.of(

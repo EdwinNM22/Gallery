@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Lista de Planos</title>
+    <title th:text="#{plans-list}">Lista de Planos</title>
 
     <!-- Bootstrap core CSS -->
     <link
@@ -560,13 +560,13 @@
         <header class="modern-header animated">
             <h1>
                 <i class="fas fa-ruler-combined"></i>
-                Lista de Planos
+                <span th:text="#{plan-list}">Lista de Planos</span>
             </h1>
 
             <div class="button-group">
                 <a th:href="@{'/planos?proyectoId=' + ${proyectoId}}" class="btn-mega btn-success">
                     <i class="fas fa-plus btn-icon"></i>
-                    Crear Nuevo Plano
+                    <span th:text="#{create-new-plan}">Crear Nuevo Plano</span>
                 </a>
             </div>
         </header>
@@ -576,7 +576,7 @@
                 <div class="plano-card-header">
                     <h3><i class="fas fa-drafting-compass"></i> <span th:text="${plano.nombreImagen}"></span></h3>
                     <button class="btn-mega btn-sm btn-primary btn-expand" th:data-plano-id="${plano.id}">
-                        <i class="fas fa-expand btn-icon"></i> Expandir
+                        <i class="fas fa-expand btn-icon"></i> <span th:text="#{expand}">Expandir</span>
                     </button>
                 </div>
 
@@ -584,7 +584,7 @@
 
                 <p class="plano-total-metros">
                     <i class="fas fa-ruler-vertical"></i>
-                    Total: <span th:text="${#numbers.formatDecimal(plano.totalMetros, 1, 2)} + ' m'"></span>
+                    <span th:text="#{total}">Total</span>: <span th:text="${#numbers.formatDecimal(plano.totalMetros, 1, 2)} + ' m'"></span>
                 </p>
 
                 <div class="plano-content">
@@ -595,14 +595,14 @@
                     <div class="mediciones-container">
                         <div class="mediciones-header">
                             <h4 class="mediciones-title">
-                                <i class="fas fa-ruler-horizontal"></i> Mediciones
+                                <i class="fas fa-ruler-horizontal"></i> <span th:text="#{measurements}">Mediciones</span>
                                 <span class="badge bg-primary rounded-pill" th:text="${plano.mediciones.size()}"></span>
                             </h4>
                         </div>
                         <div class="mediciones-list">
                             <div th:each="m : ${plano.mediciones}" class="medicion-item">
                                 <strong th:text="${m.etiqueta1} + ' - ' + ${m.etiqueta2}"></strong>
-                                <span th:text="${#numbers.formatDecimal(m.distanciaMetros, 1, 2)} + ' metros'"></span>
+                                <span th:text="${#numbers.formatDecimal(m.distanciaMetros, 1, 2)} + ' m'"></span>
                             </div>
                         </div>
                     </div>
@@ -612,11 +612,11 @@
 
         <div class="empty-state" th:if="${planos.empty}">
             <i class="fas fa-drafting-compass"></i>
-            <h3>No hay planos creados</h3>
-            <p>Crea tu primer plano para comenzar a realizar mediciones</p>
+            <h3 th:text="#{no-plans-created}">No hay planos creados</h3>
+            <p th:text="#{start-by-creating-plan}">Crea tu primer plano para comenzar a realizar mediciones</p>
             <a th:href="@{'/planos?proyectoId=' + ${proyectoId}}" class="btn-mega btn-success">
                 <i class="fas fa-plus btn-icon"></i>
-                Crear Plano
+                <span th:text="#{create-new-plan}">Crear Plano</span>
             </a>
         </div>
     </div>

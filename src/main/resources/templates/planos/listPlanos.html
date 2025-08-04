@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+idi<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="es">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Proyectos Plano</title>
+    <title th:text="#{estimation}">Proyectos Plano</title>
 
     <!-- Bootstrap core CSS -->
 
@@ -353,7 +353,7 @@
         <header class="modern-header animated">
             <h1>
                 <i class="fas fa-project-diagram"></i>
-                Estimaciónes
+                <span th:text="#{estimation}">Estimaciónes</span>
             </h1>
 
             <div class="button-group">
@@ -364,7 +364,7 @@
                         data-bs-target="#crearProyectoPlanoModal"
                 >
                     <i class="fas fa-plus btn-icon"></i>
-                    Crear una nueva estimación
+                    <span th:text="#{create-new-estimation}">Crear una nueva estimación</span>
                 </button>
             </div>
         </header>
@@ -380,18 +380,19 @@
                 </div>
                 <div class="expediente-card-footer">
                     <a th:href="@{'/planos/proyectos/' + ${proyecto.id}}" class="btn-mega btn-sm btn-primary">
-                        <i class="fas fa-eye btn-icon"></i> Ver
+                        <i class="fas fa-eye btn-icon"></i> <span th:text="#{view}">Ver</span>
                     </a>
 
                     <form th:action="@{'/proyectosPlano/editar/' + ${proyecto.id}}" method="get" style="display:inline;">
                         <button type="submit" class="btn-mega btn-sm btn-warning">
-                            <i class="fas fa-edit btn-icon"></i> Editar
+                            <i class="fas fa-edit btn-icon"></i> <span th:text="#{edit}">Editar</span>
                         </button>
                     </form>
 
-                    <form th:action="@{'/proyectosPlano/eliminar/' + ${proyecto.id}}" method="post" style="display:inline;" onsubmit="return confirm('¿Eliminar proyecto?');">
+                    <form th:action="@{'/proyectosPlano/eliminar/' + ${proyecto.id}}" method="post" style="display:inline;" 
+                    th:attr="onsubmit='return confirm(\'' + #{confirm-measurement-deletion} + '\');'">                        
                         <button type="submit" class="btn-mega btn-sm btn-danger">
-                            <i class="fas fa-trash btn-icon"></i> Eliminar
+                            <i class="fas fa-trash btn-icon"></i> <span th:text="#{delete}">Eliminar</span>
                         </button>
                     </form>
                 </div>
@@ -404,8 +405,8 @@
                 th:if="${proyectos.empty}"
         >
             <i class="fas fa-folder-open"></i>
-            <h3>No hay proyectos</h3>
-            <p>Crea un nuevo proyecto para comenzar a trabajar</p>
+            <h3 th:text="#{no-projects-created}">No hay proyectos</h3>
+            <p th:text="#{start-by-creating}">Crea un nuevo proyecto para comenzar a trabajar</p>
             <button
                     type="button"
                     class="btn-mega btn-success"
@@ -413,7 +414,7 @@
                     data-bs-target="#crearProyectoPlanoModal"
             >
                 <i class="fas fa-plus btn-icon"></i>
-                Crear estimación
+                <span th:text="#{create-new-estimation}">Crear estimación</span>
             </button>
         </div>
     </div>
@@ -430,12 +431,12 @@
     <div class="modal-dialog">
         <form th:action="@{/proyectosPlano/crear}" method="post" class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="crearProyectoPlanoLabel">Crear estimación</h5>
+                <h5 class="modal-title" id="crearProyectoPlanoLabel" th:text="#{create-new-estimation}">Crear estimación</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
             </div>
             <div class="modal-body">
                 <div class="mb-3">
-                    <label for="nombreCrear" class="form-label">Nombre</label>
+                    <label for="nombreCrear" class="form-label" th:text="#{name}">Nombre</label>
                     <input
                             type="text"
                             class="form-control"
@@ -446,7 +447,7 @@
                     />
                 </div>
                 <div class="mb-3">
-                    <label for="descripcionCrear" class="form-label">Descripción</label>
+                    <label for="descripcionCrear" class="form-label" th:text="#{description}">Descripción</label>
                     <textarea
                             class="form-control"
                             id="descripcionCrear"
@@ -457,8 +458,8 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="submit" class="btn btn-success">Crear</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" th:text="#{cancel}">Cancelar</button>
+                <button type="submit" class="btn btn-success" th:text="#{create}">Crear</button>
             </div>
         </form>
     </div>
@@ -477,12 +478,12 @@
         <form th:action="@{/proyectosPlano/editar}" method="post" class="modal-content" th:object="${proyectoEdit}">
             <input type="hidden" th:field="*{id}" />
             <div class="modal-header">
-                <h5 class="modal-title" id="editarProyectoPlanoLabel">Editar Proyecto Plano</h5>
+                <h5 class="modal-title" id="editarProyectoPlanoLabel" th:text="#{edit-project}">Editar Proyecto Plano</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
             </div>
             <div class="modal-body">
                 <div class="mb-3">
-                    <label for="nombreEditar" class="form-label">Nombre</label>
+                    <label for="nombreEditar" class="form-label" th:text="#{name}">Nombre</label>
                     <input
                             type="text"
                             class="form-control"
@@ -492,7 +493,7 @@
                     />
                 </div>
                 <div class="mb-3">
-                    <label for="descripcionEditar" class="form-label">Descripción</label>
+                    <label for="descripcionEditar" class="form-label" th:text="#{description}">Descripción</label>
                     <textarea
                             class="form-control"
                             id="descripcionEditar"
@@ -502,8 +503,8 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="submit" class="btn btn-warning">Guardar</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" th:text="#{cancel}">Cancelar</button>
+                <button type="submit" class="btn btn-warning" th:text="#{save}">Guardar</button>
             </div>
         </form>
     </div>

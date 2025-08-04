@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Crear Mediciones</title>
+    <title th:text="#{create-measurements}">Crear Mediciones</title>
 
     <!-- Bootstrap core CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
@@ -466,30 +466,26 @@
 
 <div class="main-container">
     <header class="modern-header">
-        <h1><i class="fas fa-ruler-combined"></i> Crear Mediciones</h1>
+        <h1><i class="fas fa-ruler-combined"></i> <span th:text="#{create-measurements}">Crear Mediciones</span></h1>
     </header>
 
     <div class="instruction-panel">
-        <h2><i class="fas fa-info-circle"></i> Instrucciones</h2>
-        <p>Haz clic en el botón <strong>"Agregar foto"</strong> para añadir una imagen.</p>
-        <p>Elige el color para los puntos de medición.</p>
-        <p>Haz clic en el botón <i class="fa-solid fa-trash"></i> para eliminar una medición.</p>
-        <p><strong>NOTA:</strong> Las medidas <em>A1</em> y <em>B1</em> no se pueden eliminar. Usa <strong>"Reiniciar"</strong> para borrar todo.</p>
+        <h2><i class="fas fa-info-circle"></i> <span th:text="#{instructions}">Instrucciones</span></h2>
+        <p th:utext="#{click-button-to-add-image}">Haz clic en el botón "Agregar foto" para añadir una imagen.</p>
+        <p th:text="#{choose-color-for-measurements}">Elige el color para los puntos de medición.</p>
+        <p th:utext="#{click-button-to-delete-measurement}">Haz clic en el botón <i class="fa-solid fa-trash"></i> para eliminar una medición</p>
+        <p th:utext="#{note-measurements-cant-be-deleted}"><strong>NOTA:</strong> Las medidas <em>A1</em> y <em>B1</em> no se pueden eliminar. Usa <strong>"Reiniciar"</strong> para borrar todo.</p>
     </div>
 
     <div class="controls-container">
         <input type="file" id="imageLoader" accept="image/*" multiple style="display: none;" />
         <label for="imageLoader" class="btn-mega btn-primary">
-            <i class="fas fa-plus btn-icon"></i> Agregar foto
+            <i class="fas fa-plus btn-icon"></i> <span th:text="#{add-image}">Agregar foto</span>
         </label>
 
         <button id="saveAllBtn" class="btn-mega btn-success">
-            <i class="fas fa-save btn-icon"></i> Guardar todo
+            <i class="fas fa-save btn-icon"></i> <span th:text="#{save-all}">Guardar todo</span>
         </button>
-
-        <a href="/planos/view" class="btn-mega">
-            <i class="fas fa-list btn-icon"></i> Ver planos
-        </a>
     </div>
 
     <div id="imagesContainer" class="images-container"></div>
@@ -497,6 +493,24 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" defer></script>
 <script>
+    const translations = {
+        'imageName': '[[#{image-name}]]',
+        'color': '[[#{color}]]',
+        'measurements': '[[#{measurements}]]',
+        'comments': '[[#{comments}]]',
+        'writeAComment': '[[#{write-a-comment}]]',
+        'apply': '[[#{apply}]]',
+        'restart': '[[#{restart}]]',
+        'deleteImage': '[[#{delete-image}]]',
+        'metersDistance': '[[#{meters-distance}]]',
+        'scale': '[[#{scale}]]',
+        'pixel': '[[#{pixel}]]',
+        'total': '[[#{total}]]',
+        'invalidInput': '[[#{invalid-input}]]',
+        'planSavedSuccessfully': '[[#{plan-saved-successfully}]]',
+        'measuredImageDeletionConfirmation': '[[#{measured-image-deletion-confirmation}]]',
+    }
+
     const imageLoader = document.getElementById("imageLoader");
     const imagesContainer = document.getElementById("imagesContainer");
     const saveAllBtn = document.getElementById("saveAllBtn");
@@ -559,7 +573,7 @@
         nameContainer.className = "image-name-input";
 
         const nameLabel = document.createElement("label");
-        nameLabel.textContent = "Nombre de la imagen:";
+        nameLabel.textContent = translations.imageName;
 
         const nameInput = document.createElement("input");
         nameInput.type = "text";
@@ -576,7 +590,7 @@
         colorDiv.className = "color-picker";
 
         const colorLabel = document.createElement("label");
-        colorLabel.textContent = "Color:";
+        colorLabel.textContent = translations.color;
 
         const colorInput = document.createElement("input");
         colorInput.type = "color";
@@ -585,11 +599,11 @@
 
         const confirmColorBtn = document.createElement("button");
         confirmColorBtn.className = "control-btn confirm-btn";
-        confirmColorBtn.textContent = "Aplicar";
+        confirmColorBtn.textContent = translations.apply;
 
         const resetBtn = document.createElement("button");
         resetBtn.className = "control-btn reset-btn";
-        resetBtn.textContent = "Reiniciar";
+        resetBtn.textContent = translations.restart;
 
         colorDiv.appendChild(colorLabel);
         colorDiv.appendChild(colorInput);
@@ -605,7 +619,7 @@
 
         const measurementsTitle = document.createElement("div");
         measurementsTitle.className = "measurements-title";
-        measurementsTitle.innerHTML = '<i class="fas fa-ruler-horizontal"></i> Mediciones';
+        measurementsTitle.innerHTML = '<i class="fas fa-ruler-horizontal"></i> '+translations.measurements;
         sidebar.appendChild(measurementsTitle);
 
         const logDiv = document.createElement("div");
@@ -616,10 +630,10 @@
         commentDiv.className = "comment-area";
 
         const commentLabel = document.createElement("label");
-        commentLabel.textContent = "Comentarios:";
+        commentLabel.textContent = translations.comments;
 
         const commentInput = document.createElement("textarea");
-        commentInput.placeholder = "Escribe aquí cualquier comentario adicional...";
+        commentInput.placeholder = translations.writeAComment;
 
         commentDiv.appendChild(commentLabel);
         commentDiv.appendChild(commentInput);
@@ -627,7 +641,7 @@
 
         const deleteImageBtn = document.createElement("button");
         deleteImageBtn.className = "delete-image-btn";
-        deleteImageBtn.innerHTML = '<i class="fas fa-trash"></i> Eliminar imagen';
+        deleteImageBtn.innerHTML = '<i class="fas fa-trash"></i> '+translations.deleteImage;
         sidebar.appendChild(deleteImageBtn);
 
         panelContent.appendChild(canvasContainer);
@@ -653,7 +667,7 @@
 
         deleteImageBtn.addEventListener("click", () => {
             if (hasMeasurements()) {
-                if (!confirm("Esta imagen tiene medidas. ¿Seguro que quieres eliminarla?")) return;
+                if (!confirm(translations.measuredImageDeletionConfirmation)) return;
             }
             imagesContainer.removeChild(panelDiv);
             planos = planos.filter(p => p !== planoObj);
@@ -710,14 +724,14 @@
             }
 
             if (points.length === 2) {
-                const input = prompt("¿Cuántos metros hay entre los 2 puntos?");
+                const input = prompt(translations.metersDistance);
                 const realDistance = parseFloat(input);
                 if (!isNaN(realDistance)) {
                     scale = realDistance / getDistance(points[0], points[1]);
                     planoObj.escala = scale;
-                    alert("Escala: " + scale.toFixed(4) + " m/pixel");
+                    alert(translations.scale+": " + scale.toFixed(4) + " m/" + translations.pixel);
                 } else {
-                    alert("Entrada inválida");
+                    alert(translations.invalidInput);
                     reset();
                     return;
                 }
@@ -923,7 +937,7 @@
                 body: JSON.stringify(planos)
             });
             if (!res.ok) throw new Error("Error guardando datos");
-            alert("Planos guardados exitosamente");
+            alert(translations.planSavedSuccessfully);
             window.location.reload();
         } catch (e) {
             alert(e.message);
