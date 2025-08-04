@@ -366,26 +366,12 @@
                   <label class="form-label" th:text="#{building-type}"
                     >Type de Bâtiment</label
                   >
-                  <select class="form-select readonly-field" disabled>
-                    <option
-                      th:selected="${form.tipoEdificio == 'Résidentiel'}"
-                      th:text="#{residential}"
-                    >
-                      Résidentiel
-                    </option>
-                    <option
-                      th:selected="${form.tipoEdificio == 'Commercial'}"
-                      th:text="#{commercial}"
-                    >
-                      Commercial
-                    </option>
-                    <option
-                      th:selected="${form.tipoEdificio == 'Industriel'}"
-                      th:text="#{industrial}"
-                    >
-                      Industriel
-                    </option>
-                  </select>
+                  <input
+                    type="text"
+                    class="form-control readonly-field"
+                    th:value="#{${form.tipoEdificio == 'Résidentiel' ? 'residential' : (form.tipoEdificio == 'Commercial' ? 'commercial' : (form.tipoEdificio == 'Industriel' ? 'industrial' : 'not-provided'))}}"
+                    disabled
+                  />
                 </div>
               </div>
             </div>
@@ -511,38 +497,16 @@
                   <label class="form-label" th:text="#{system-type}"
                     >Type de système</label
                   >
-                  <select class="form-select readonly-field" disabled>
-                    <option
-                      th:selected="${form.tipoSistema == 'Résidentiel'}"
-                      th:text="#{residential-vrc-furnace}"
-                    >
-                      Résidentiel (VRC, fournaise)
-                    </option>
-                    <option
-                      th:selected="${form.tipoSistema == 'Salle de bain'}"
-                      th:text="#{bathroom}"
-                    >
-                      Salle de bain
-                    </option>
-                    <option
-                      th:selected="${form.tipoSistema == 'Cuisine'}"
-                      th:text="#{kitchen}"
-                    >
-                      Cuisine
-                    </option>
-                    <option
-                      th:selected="${form.tipoSistema == 'Hotte commerciale'}"
-                      th:text="#{commercial-hood}"
-                    >
-                      Hotte commerciale
-                    </option>
-                    <option
-                      th:selected="${form.tipoSistema == 'Industriel'}"
-                      th:text="#{industrial}"
-                    >
-                      Industriel
-                    </option>
-                  </select>
+                  <input
+                    type="text"
+                    class="form-control readonly-field"
+                    th:value="#{${form.tipoSistema == 'Résidentiel' ? 'residential-vrc-furnace' :
+                                (form.tipoSistema == 'Salle de bain' ? 'bathroom' :
+                                (form.tipoSistema == 'Cuisine' ? 'kitchen' :
+                                (form.tipoSistema == 'Hotte commerciale' ? 'commercial-hood' :
+                                (form.tipoSistema == 'Industriel' ? 'industrial' : 'not-provided'))))}}"
+                    disabled
+                  />
                 </div>
               </div>
               <div class="col-md-6">
@@ -550,26 +514,15 @@
                   <label class="form-label" th:text="#{accessibility}"
                     >Accessibilité</label
                   >
-                  <select class="form-select readonly-field" disabled>
-                    <option
-                      th:selected="${form.accesibilidad == 'Facile'}"
-                      th:text="#{easy}"
-                    >
-                      Facile
-                    </option>
-                    <option
-                      th:selected="${form.accesibilidad == 'Moyenne'}"
-                      th:text="#{medium}"
-                    >
-                      Moyenne
-                    </option>
-                    <option
-                      th:selected="${form.accesibilidad == 'Difficile'}"
-                      th:text="#{difficult}"
-                    >
-                      Difficile
-                    </option>
-                  </select>
+                  <input
+                    type="text"
+                    class="form-control readonly-field"
+                    th:value="#{${form.accesibilidad == 'Facile' ? 'easy' :
+                                (form.accesibilidad == 'Moyenne' ? 'medium' :
+                                (form.accesibilidad == 'Difficile' ? 'difficult' : 'not-provided'))}}"
+                    disabled
+                  />
+                
                 </div>
               </div>
             </div>
@@ -639,32 +592,16 @@
                   <label class="form-label" th:text="#{materials}"
                     >Type de matériau</label
                   >
-                  <select class="form-select readonly-field" disabled>
-                    <option
-                      th:selected="${form.tipoMaterial == 'Galvanisé'}"
-                      th:text="#{galvanized}"
-                    >
-                      Galvanisé
-                    </option>
-                    <option
-                      th:selected="${form.tipoMaterial == 'Aluminium'}"
-                      th:text="#{aluminum}"
-                    >
-                      Aluminium
-                    </option>
-                    <option
-                      th:selected="${form.tipoMaterial == 'Plastique'}"
-                      th:text="#{plastic}"
-                    >
-                      Plastique
-                    </option>
-                    <option
-                      th:selected="${form.tipoMaterial == 'Flexible'}"
-                      th:text="#{flexible}"
-                    >
-                      Flexible
-                    </option>
-                  </select>
+                  <input
+                    type="text"
+                    class="form-control readonly-field"
+                    th:value="#{${form.tipoMaterial == 'Galvanisé' ? 'galvanized' :
+                                (form.tipoMaterial == 'Aluminium' ? 'aluminum' :
+                                (form.tipoMaterial == 'Plastique' ? 'plastic' :
+                                (form.tipoMaterial == 'Flexible' ? 'flexible' : 'not-provided')))}}"
+                    disabled
+                  />
+
                 </div>
               </div>
             </div>
@@ -907,26 +844,15 @@
                   <label class="form-label" th:text="#{grilles-vents}"
                     >Grilles / Bouches</label
                   >
-                  <select class="form-select readonly-field" disabled>
-                    <option
-                      th:selected="${form.estadoRejillas == 'Propres'}"
-                      th:text="#{clean}"
-                    >
-                      Propres
-                    </option>
-                    <option
-                      th:selected="${form.estadoRejillas == 'Encrassées'}"
-                      th:text="#{fouled}"
-                    >
-                      Encrassées
-                    </option>
-                    <option
-                      th:selected="${form.estadoRejillas == 'Endommagées'}"
-                      th:text="#{damaged}"
-                    >
-                      Endommagées
-                    </option>
-                  </select>
+                  <input
+                    type="text"
+                    class="form-control readonly-field"
+                    th:value="#{${form.estadoRejillas == 'Propres' ? 'clean' :
+                                (form.estadoRejillas == 'Encrassées' ? 'fouled' :
+                                (form.estadoRejillas == 'Endommagées' ? 'damaged' : 'not-provided'))}}"
+                    disabled
+                  />
+
                 </div>
               </div>
               <div class="col-md-4">
@@ -934,26 +860,15 @@
                   <label class="form-label" th:text="#{motor-fan}"
                     >Estado del Motor</label
                   >
-                  <select class="form-select readonly-field" disabled>
-                    <option
-                      th:selected="${form.estadoMotor == 'Fonctionnel'}"
-                      th:text="#{functional}"
-                    >
-                      Fonctionnel
-                    </option>
-                    <option
-                      th:selected="${form.estadoMotor == 'Bruit anormal'}"
-                      th:text="#{abnormal-noise}"
-                    >
-                      Bruit anormal
-                    </option>
-                    <option
-                      th:selected="${form.estadoMotor == 'Sale'}"
-                      th:text="#{dirty}"
-                    >
-                      Sale
-                    </option>
-                  </select>
+                  <input
+                    type="text"
+                    class="form-control readonly-field"
+                    th:value="#{${form.estadoMotor == 'Fonctionnel' ? 'functional' :
+                                (form.estadoMotor == 'Bruit anormal' ? 'abnormal-noise' :
+                                (form.estadoMotor == 'Sale' ? 'dirty' : 'not-provided'))}}"
+                    disabled
+                  />
+                
                 </div>
               </div>
               <div class="col-md-4">
@@ -961,26 +876,15 @@
                   <label class="form-label" th:text="#{filters}"
                     >Estado de Filtros</label
                   >
-                  <select class="form-select readonly-field" disabled>
-                    <option
-                      th:selected="${form.estadoFiltros == 'Présents'}"
-                      th:text="#{present}"
-                    >
-                      Présents
-                    </option>
-                    <option
-                      th:selected="${form.estadoFiltros == 'À remplacer'}"
-                      th:text="#{to-replace}"
-                    >
-                      À remplacer
-                    </option>
-                    <option
-                      th:selected="${form.estadoFiltros == 'Manquants'}"
-                      th:text="#{missing}"
-                    >
-                      Manquants
-                    </option>
-                  </select>
+                  <input
+                    type="text"
+                    class="form-control readonly-field"
+                    th:value="#{${form.estadoFiltros == 'Présents' ? 'present' :
+                                (form.estadoFiltros == 'À remplacer' ? 'to-replace' :
+                                (form.estadoFiltros == 'Manquants' ? 'missing' : 'not-provided'))}}"
+                    disabled
+                  />
+                
                 </div>
               </div>
             </div>
@@ -1055,32 +959,16 @@
                   <label class="form-label" th:text="#{working-height}"
                     >Hauteur de travail</label
                   >
-                  <select class="form-select readonly-field" disabled>
-                    <option
-                      th:selected="${form.alturaTrabajo == 'Sol'}"
-                      th:text="#{ground}"
-                    >
-                      Sol
-                    </option>
-                    <option
-                      th:selected="${form.alturaTrabajo == 'Escabeau'}"
-                      th:text="#{stepladder}"
-                    >
-                      Escabeau
-                    </option>
-                    <option
-                      th:selected="${form.alturaTrabajo == 'Échelle'}"
-                      th:text="#{ladder}"
-                    >
-                      Échelle
-                    </option>
-                    <option
-                      th:selected="${form.alturaTrabajo == 'Nacelle'}"
-                      th:text="#{lift}"
-                    >
-                      Nacelle
-                    </option>
-                  </select>
+                  <input
+                    type="text"
+                    class="form-control readonly-field"
+                    th:value="#{${form.alturaTrabajo == 'Sol' ? 'ground' :
+                                (form.alturaTrabajo == 'Escabeau' ? 'stepladder' :
+                                (form.alturaTrabajo == 'Échelle' ? 'ladder' :
+                                (form.alturaTrabajo == 'Nacelle' ? 'lift' : 'not-provided')))}}"
+                    disabled
+                  />
+
                 </div>
               </div>
             </div>

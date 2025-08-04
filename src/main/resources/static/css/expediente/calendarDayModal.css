@@ -35,6 +35,10 @@
   padding: 1.5rem;
 }
 
+.modal-footer{
+  border: 0;
+}
+
 .calendar-events-list {
   max-height: 400px;
   overflow-y: auto;

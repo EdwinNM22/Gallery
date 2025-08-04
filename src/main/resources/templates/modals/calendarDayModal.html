@@ -5,7 +5,8 @@
       <div class="modal-content calendar-modal">
         <div class="modal-header calendar-modal-header">
           <h5 class="modal-title">
-            Events for <span class="date-display"></span>
+            <span th:text="#{events-for}">Événements pour</span>
+            <span class="date-display ml-1"></span>
           </h5>
           <button
             type="button"
@@ -22,7 +23,7 @@
             id="createNewEventBtn"
             class="btn btn-primary btn-block calendar-new-event-btn"
           >
-            <i class="fas fa-plus mr-2"></i>Create New Event
+            <i class="fas fa-plus mr-2"></i><span th:text="#{create-new-event}">Create New Event</span>
           </button>
         </div>
       </div>

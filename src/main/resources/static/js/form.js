@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const fileUploadArea = document.getElementById("fileUploadArea");
   const fileInput = document.getElementById("fileInput");
   const filePreview = document.getElementById("filePreview");
-  let currentFiles = []; // Track all selected files
+  window.currentFiles = [];
 
   // Handle click on upload area
   fileUploadArea.addEventListener("click", function () {
@@ -36,73 +36,78 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 
-  // Function to add new files to existing selection
-  function addFiles(newFiles) {
-    // Add new files to our tracking array
-    for (let i = 0; i < newFiles.length; i++) {
-      if (!newFiles[i].type.match("image.*")) continue;
-      currentFiles.push(newFiles[i]);
-    }
 
-    // Update the file input with all files
-    updateFileInput();
+  window.refreshPreview = function() {
+    filePreview.innerHTML = "";
+    if (window.currentFiles.length === 0) return;
 
-    // Refresh the preview
-    refreshPreview();
-  }
-
-  // Function to update the actual file input element
-  function updateFileInput() {
-    const dt = new DataTransfer();
-    currentFiles.forEach((file) => dt.items.add(file));
-    fileInput.files = dt.files;
-  }
-
-  // Function to refresh the entire preview
-  function refreshPreview() {
-    filePreview.innerHTML = ""; // Clear previous previews
-
-    currentFiles.forEach((file, index) => {
+    window.currentFiles.forEach((item) => {
       const reader = new FileReader();
-
-      reader.onload = function (e) {
+      reader.onload = function(e) {
         const previewContainer = document.createElement("div");
         previewContainer.className = "file-preview-container";
-        previewContainer.dataset.index = index;
+        previewContainer.dataset.fileId = item.id; // Use unique ID instead of index
 
         previewContainer.innerHTML = `
           <div class="file-preview-item">
-              <img src="${e.target.result}" alt="Preview" />
-              <button class="file-preview-item-remove" data-index="${index}">
-                  <i class="fas fa-times"></i>
-              </button>
+            <img src="${e.target.result}" alt="Preview" />
+            <button class="file-preview-item-remove" data-file-id="${item.id}">
+              <i class="fas fa-times"></i>
+            </button>
           </div>
           <div class="file-description-input">
-              <textarea name="photoDescriptions" 
-                       placeholder="Add description..." 
-                       class="form-control"
-                       rows="3"></textarea>
+            <textarea name="photoDescriptions" 
+                     placeholder="Add description..." 
+                     class="form-control photo-description"
+                     rows="3">${item.description || ''}</textarea>
           </div>
         `;
 
         filePreview.appendChild(previewContainer);
 
-        // Add remove button functionality
-        previewContainer
-          .querySelector(".file-preview-item-remove")
-          .addEventListener("click", function () {
-            removeFile(index);
+        // Update description when changed
+        previewContainer.querySelector('.photo-description')
+          .addEventListener('input', function() {
+            const fileItem = window.currentFiles.find(f => f.id === item.id);
+            if (fileItem) fileItem.description = this.value;
+          });
+
+        // Handle remove button
+        previewContainer.querySelector(".file-preview-item-remove")
+          .addEventListener("click", function() {
+            removeFile(item.id); // Remove by ID instead of index
           });
       };
-
-      reader.readAsDataURL(file);
+      reader.readAsDataURL(item.file);
     });
+  };
+
+  function updateFileInput() {
+    const dt = new DataTransfer();
+    window.currentFiles.forEach(item => dt.items.add(item.file));
+    fileInput.files = dt.files;
   }
 
-  // Function to remove a file
-  function removeFile(index) {
-    currentFiles.splice(index, 1); // Remove from our array
-    updateFileInput(); // Update the file input
-    refreshPreview(); // Refresh the display
+  function addFiles(newFiles) {
+    for (let i = 0; i < newFiles.length; i++) {
+      if (!newFiles[i].type.match("image.*")) continue;
+      window.currentFiles.push({
+        id: Date.now() + Math.random().toString(36).substr(2, 9), // Unique ID
+        file: newFiles[i],
+        description: ""
+      });
+    }
+    updateFileInput();
+    window.refreshPreview();
+  }
+
+  function removeFile(fileId) {
+    // Find index of file to remove
+    const index = window.currentFiles.findIndex(item => item.id === fileId);
+    if (index !== -1) {
+      window.currentFiles.splice(index, 1);
+      updateFileInput();
+      window.refreshPreview();
+    }
   }
 });

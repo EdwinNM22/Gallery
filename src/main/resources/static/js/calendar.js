@@ -107,6 +107,7 @@ export function initializeCalendar({
   eventsComplete = [],
   disableSelection = false,
 }) {
+
   // 1. Mobile Detection - Check if viewport width is 768px or less
   const isMobile = window.matchMedia("(max-width: 768px)").matches;
 
@@ -260,7 +261,7 @@ function showDayEvents(date, calendar, expedienteId) {
 
         groupContainer.innerHTML = `
         <div class="status-group-label ${status}">
-          ${status.replace("-", " ")} (${events.length})
+          ${window.translations.status[status]} (${events.length})
         </div>
         <div class="events-container"></div>
       `;
@@ -277,8 +278,8 @@ function showDayEvents(date, calendar, expedienteId) {
             <div class="event-content">
               <div class="d-flex align-items-center">
                 <h4 class="event-title">${event.text}</h4>
-              </div> <p class="event-description mt-2">Made by: ${event.tags.usuarioNombre}</p> </div>
-            <button class="btn view-event-btn" data-event-id="${event.tags.originalEventId}" data-event-estado="${event.tags.estado}"> View </button>
+              </div> <p class="event-description mt-2">${window.translations.createdBy}: ${event.tags.usuarioNombre}</p> </div>
+            <button class="btn view-event-btn" data-event-id="${event.tags.originalEventId}" data-event-estado="${event.tags.estado}"> ${window.translations.view} </button>
           </div>
         `;
 

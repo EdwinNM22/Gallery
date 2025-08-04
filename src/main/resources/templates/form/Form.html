@@ -124,7 +124,7 @@
                     >Type de Bâtiment
                   </label>
                   <select class="form-select" name="tipoEdificio">
-                    <option value="" th:text="#{select}">
+                    <option value="" th:text="#{select}" data-placeholder="true" selected disabled>
                       Sélectionner...
                     </option>
                     <option value="Résidentiel" th:text="#{residential}">
@@ -259,7 +259,7 @@
                     >Type de système
                   </label>
                   <select class="form-select" name="tipoSistema">
-                    <option value="" th:text="#{select}">
+                    <option value="" th:text="#{select}" selected>
                       Sélectionner...
                     </option>
                     <option
@@ -293,7 +293,7 @@
                     >Accessibilité
                   </label>
                   <select class="form-select" name="accesibilidad">
-                    <option value="" th:text="#{select}">
+                    <option value="" th:text="#{select}" selected>
                       Sélectionner...
                     </option>
                     <option value="Facile" th:text="#{easy}">Facile</option>
@@ -356,7 +356,7 @@
                     >Matériaux</label
                   >
                   <select class="form-select" name="tipoMaterial">
-                    <option value="" th:text="#{select}">
+                    <option value="" th:text="#{select}" selected>
                       Sélectionner...
                     </option>
                     <option value="Galvanisé" th:text="#{galvanized}">
@@ -540,7 +540,7 @@
                     >Grilles / Bouches</label
                   >
                   <select class="form-select" name="estadoRejillas">
-                    <option value="" th:text="#{select}">
+                    <option value="" th:text="#{select}" selected>
                       Sélectionner...
                     </option>
                     <option value="Propres" th:text="#{clean}">Propres</option>
@@ -816,15 +816,66 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="/js/form.js"></script>
 
-    <script th:inline="javascript">
-      // JavaScript for maintenance history checkbox functionality
-      $(document).ready(function () {
-        /*<![CDATA[*/
-        if (/*[[${success}]]*/) {
-            alert(translations.formCreatedSuccess);
+    <script>
+    document.getElementById('mainForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const form = e.target;
+        const formData = new FormData(form);
+        
+        // Show loading state
+        const submitBtn = document.getElementById('submitBtn');
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+        
+        try {
+            const response = await fetch(form.action, {
+                method: 'POST',
+                body: formData
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                alert(translations.formCreatedSuccess);
+                
+                // Clear form while preserving ALL hidden fields automatically
+                const preserveFields = ['usuario.id', 'nombreEvaluador', 'fechaEvaluacion'];
+                const allFields = form.querySelectorAll('input:not([type="hidden"]), textarea, select');
+                
+                allFields.forEach(field => {
+                    if (preserveFields.includes(field.name)) return;
+
+                    if (field.type === 'checkbox' || field.type === 'radio') {
+                        field.checked = false;
+                    } else if (field.type === 'file') {
+                        field.value = '';
+                        document.getElementById('filePreview').innerHTML = '';
+                    } else if (field.tagName === 'SELECT') {
+                        field.selectedIndex = 0;
+                    } else {
+                        field.value = '';
+                    }
+                });
+
+                if (window.currentFiles) {
+                    window.currentFiles = [];
+                    window.refreshPreview();
+                }
+
+                document.getElementById('filePreview').innerHTML = '';
+                document.getElementById('fileInput').value = '';
+            } else {
+                alert('Error: ' + data.message);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('An error occurred during submission');
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> <span th:text="#{submit-form}">Submit Form</span>';
         }
-        /*]]>*/
-      });
+    });
     </script>
   </body>
 </html>

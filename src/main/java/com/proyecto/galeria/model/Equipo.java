@@ -28,4 +28,15 @@ public class Equipo {
 
     @OneToMany(mappedBy = "equipo", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<EquipoUsuario> miembros;
+
+    // Helper methods for safe collection modification
+    public void addMiembro(EquipoUsuario miembro) {
+        this.miembros.add(miembro);
+        miembro.setEquipo(this);
+    }
+
+    public void removeMiembro(EquipoUsuario miembro) {
+        this.miembros.remove(miembro);
+        miembro.setEquipo(null);
+    }
 }

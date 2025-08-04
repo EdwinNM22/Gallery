@@ -91,6 +91,7 @@
           method="post"
           class="form-container animated delay-1"
           id="mainForm"
+          enctype="multipart/form-data"
         >
           <input type="hidden" name="futuro" value="true" />
 
@@ -202,9 +203,7 @@
           <div class="text-center">
             <button type="submit" class="btn btn-submit btn-lg" id="submitBtn">
               <i class="fas fa-save"></i>
-              <span th:text="#{save-changes}"
-                >Enregistrer les modifications</span
-              >
+              <span th:text="#{save-changes}">Enregistrer les modifications</span>
             </button>
           </div>
         </form>
@@ -213,15 +212,44 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
-    <script th:inline="javascript">
-      // JavaScript for maintenance history checkbox functionality
-      $(document).ready(function () {
-        /*<![CDATA[*/
-        if (/*[[${success}]]*/) {
-            alert(translations.formUpdatedSuccess);
-        }
-        /*]]>*/
+      
+    <script>
+      document.getElementById('mainForm').addEventListener('submit', async function(e) {
+          e.preventDefault();
+          
+          const form = e.target;
+          const formData = new FormData(form);
+          
+          // Add futuro parameter if needed
+          formData.append('futuro', true);
+          
+          // Show loading state
+          const submitBtn = document.getElementById('submitBtn');
+          submitBtn.disabled = true;
+          submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+          
+          try {
+              const response = await fetch(form.action, {
+                  method: 'POST',
+                  body: formData,
+                  // Headers are automatically set by browser for FormData
+              });
+              
+              const data = await response.json();
+              
+              if (data.success) {
+                  alert(translations.formUpdatedSuccess);
+              } else {
+                  alert('Error: ' + data.message);
+              }
+          } catch (error) {
+              console.error('Error:', error);
+              alert('An error occurred during submission');
+          } finally {
+              // Reset button state
+              submitBtn.disabled = false;
+              submitBtn.innerHTML = '<i class="fas fa-save"></i> <span th:text="#{save-changes}">Save changes</span>';
+          }
       });
     </script>
   </body>

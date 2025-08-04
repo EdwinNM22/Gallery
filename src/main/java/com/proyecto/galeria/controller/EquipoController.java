@@ -97,28 +97,7 @@ public class EquipoController {
         .map(usuarioService::findById)
         .filter(Optional::isPresent)
         .map(Optional::get)
-        .map(usuario -> {
-            EquipoUsuario eu = new EquipoUsuario();
-            eu.setUsuario(usuario);
-            eu.setEstado("pendiente");
-        
-            // Create warning
-            AdvertenciaTipo advertencia = advertenciaTipoService.findByName("equipo_confirmar")
-                .stream()
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("Advertencia tipo 'equipo_confirmar' no encontrada"));
-        
-            UsuarioAdvertencia ua = new UsuarioAdvertencia();
-            ua.setUsuario(usuario);
-            ua.setAdvertenciaTipo(advertencia);
-            usuarioAdvertenciaService.save(ua); // Persist it
-        
-            // Link the warning to equipo_usuario
-            eu.setUsuarioAdvertencia(ua);
-        
-            return eu;
-        })
-        
+        .map(this::createTeamMemberWithWarning)
         .collect(Collectors.toList());
     
         if (miembros.isEmpty()) {
@@ -146,56 +125,67 @@ public class EquipoController {
     @ResponseBody
     public ResponseEntity<?> editarEquipo(
             @RequestParam Integer equipoId,
-            @RequestParam String nombre,
-            @RequestParam String descripcion,
-            @RequestParam Integer proyectoId,
-            @RequestParam List<Integer> miembrosIds,
+            @RequestParam(required = false) String nombre,
+            @RequestParam(required = false) String descripcion,
+            @RequestParam(required = false) List<Integer> miembrosIds,
             HttpSession session) {
+    
+        try {
+            // Verify session
+            if (session.getAttribute("idusuario") == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(Map.of("success", false, "message", "No autenticado"));
+            }
+    
+            Optional<Equipo> equipoOpt = equipoRepository.findById(equipoId);
+            if (equipoOpt.isEmpty()) {
+                return ResponseEntity.badRequest()
+                        .body(Map.of("success", false, "message", "Equipo no encontrado"));
+            }
+    
+            Equipo equipo = equipoOpt.get();
+    
+            // Update basic fields if provided
+            if (nombre != null) equipo.setNombre(nombre);
+            if (descripcion != null) equipo.setDescripcion(descripcion);
+    
+            // Handle miembros updates if provided
+            if (miembrosIds != null) {
+                Set<Integer> currentMemberIds = equipo.getMiembros().stream()
+                        .map(eu -> eu.getUsuario().getId())
+                        .collect(Collectors.toSet());
 
-        if (session.getAttribute("idusuario") == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No autenticado");
+                // Remove existing members not in new list
+                List<EquipoUsuario> toRemove = equipo.getMiembros().stream()
+                        .filter(eu -> !miembrosIds.contains(eu.getUsuario().getId()))
+                        .collect(Collectors.toList());
+                toRemove.forEach(miembro -> equipo.removeMiembro(miembro));
+
+                // Add new members with warnings
+                for (Integer userId : miembrosIds) {
+                    if (!currentMemberIds.contains(userId)) {
+                        usuarioService.findById(userId).ifPresent(usuario -> {
+                            EquipoUsuario nuevoMiembro = createTeamMemberWithWarning(usuario);
+                            nuevoMiembro.setEquipo(equipo);
+                            equipo.getMiembros().add(nuevoMiembro);
+                        });
+                    }
+                }
+            }
+            
+            equipoRepository.save(equipo);
+            return ResponseEntity.ok(Map.of(
+                    "success", true,
+                    "message", "Equipo actualizado exitosamente"
+            ));
+    
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError()
+                    .body(Map.of(
+                        "success", false,
+                        "message", "Error al actualizar equipo: " + e.getMessage()
+                    ));
         }
-
-        Optional<Equipo> equipoOpt = equipoRepository.findById(equipoId);
-        if (equipoOpt.isEmpty()) {
-            return ResponseEntity.badRequest().body("Equipo no encontrado");
-        }
-
-        Optional<album> proyectoOpt = albumService.get(proyectoId);
-        if (proyectoOpt.isEmpty()) {
-            return ResponseEntity.badRequest().body("Proyecto no encontrado");
-        }
-
-        List<EquipoUsuario> nuevosMiembros = miembrosIds.stream()
-                .map(usuarioService::findById)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .map(usuario -> {
-                    EquipoUsuario eu = new EquipoUsuario();
-                    eu.setUsuario(usuario);
-                    eu.setEstado("activo");
-                    return eu;
-                }).collect(Collectors.toList());
-
-        if (nuevosMiembros.isEmpty()) {
-            return ResponseEntity.badRequest().body("Se requiere al menos un miembro");
-        }
-
-        Equipo equipo = equipoOpt.get();
-        equipo.setNombre(nombre);
-        equipo.setDescripcion(descripcion);
-        equipo.setProyecto(proyectoOpt.get());
-
-        nuevosMiembros.forEach(eu -> eu.setEquipo(equipo));
-        equipo.setMiembros(nuevosMiembros);
-
-        equipoRepository.save(equipo);
-
-        return ResponseEntity.ok(Map.of(
-                "success", true,
-                "message", "Equipo actualizado exitosamente",
-                "equipoId", equipo.getId()
-        ));
     }
 
     @PostMapping("/eliminar/{id}")
@@ -352,7 +342,7 @@ public class EquipoController {
 
         return ResponseEntity.ok(Map.of(
                 "success", true,
-                "message", "Miembro confirmado exitosamente"
+                "message", "Succesfully confirmed participation"
         ));
     }
 
@@ -385,6 +375,7 @@ public class EquipoController {
         }
 
         EquipoUsuario eu = euOpt.get();
+        eu.setEstado("rechazado");
 
         // Eliminar advertencia si existe
         UsuarioAdvertencia advertencia = eu.getUsuarioAdvertencia();
@@ -392,15 +383,31 @@ public class EquipoController {
             usuarioAdvertenciaService.delete(advertencia.getId());
         }
 
-        // Quitar de la lista de miembros
-        equipo.getMiembros().remove(eu);
-
         equipoRepository.save(equipo);
 
         return ResponseEntity.ok(Map.of(
                 "success", true,
-                "message", "Miembro rechazado y eliminado del equipo"
+                "message", "Succesfully rejected member"
         ));
     }
 
+    private EquipoUsuario createTeamMemberWithWarning(usuario usuario) {
+        EquipoUsuario eu = new EquipoUsuario();
+        eu.setUsuario(usuario);
+        eu.setEstado("pendiente");
+        
+        // Create warning
+        AdvertenciaTipo advertencia = advertenciaTipoService.findByName("equipo_confirmar")
+            .stream()
+            .findFirst()
+            .orElseThrow(() -> new RuntimeException("Advertencia tipo 'equipo_confirmar' no encontrada"));
+        
+        UsuarioAdvertencia ua = new UsuarioAdvertencia();
+        ua.setUsuario(usuario);
+        ua.setAdvertenciaTipo(advertencia);
+        usuarioAdvertenciaService.save(ua);
+        
+        eu.setUsuarioAdvertencia(ua);
+        return eu;
+    }
 }

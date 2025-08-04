@@ -191,12 +191,16 @@ public class FormController {
     // }
 
     @PostMapping("/submit")
-    public String submitForm(@ModelAttribute Form form,
+    @ResponseBody
+    public ResponseEntity<?> submitForm(
+            @ModelAttribute Form form,
             @RequestParam(value = "expedienteId", required = false) Integer expedienteId,
             @RequestParam(value = "fotos", required = false) MultipartFile[] fotos,
             @RequestParam(value = "photoDescriptions", required = false) String[] descriptions,
             @RequestParam("futuro") boolean futuro,
-            HttpSession session, Model model) throws IOException {
+            HttpSession session) throws IOException {
+        
+        Map<String, Object> response = new HashMap<>();
         try {
             // --- Encontrar Usuario
             Integer idUsuario = (Integer) session.getAttribute("idusuario");
@@ -238,14 +242,20 @@ public class FormController {
                 }
             }
 
-        } catch (Exception e) {
-            model.addAttribute("error", "Error updating form: " + e.getMessage());
-            return "form/EditForm.html";
-        }
 
-        if (futuro)
-            return "redirect:/expediente/create-future-project?expedienteId=" + expedienteId + "&success";
-        return "redirect:/form/?expedienteId=" + expedienteId + "&success";
+            response.put("success", true);
+            response.put("message", "Form submitted successfully");
+            response.put("redirectUrl", futuro 
+                ? "/expediente/create-future-project?expedienteId=" + expedienteId
+                : "/form/?expedienteId=" + expedienteId);
+            
+            return ResponseEntity.ok(response);
+            
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("message", "Error submitting form: " + e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        }
     }
 
     @GetMapping("/{id}")
@@ -413,23 +423,24 @@ public class FormController {
 
     @Transactional
     @PostMapping("/{id}/edit")
-    public String updateForm(@PathVariable Integer id,
-            @ModelAttribute("form") Form form, // Make sure this matches your model attribute name
+    @ResponseBody
+    public ResponseEntity<?> updateForm(
+            @PathVariable Integer id,
+            @ModelAttribute("form") Form form, // Keep as @ModelAttribute for Thymeleaf compatibility
             @RequestParam(value = "fotos", required = false) MultipartFile[] newPhotos,
             @RequestParam(value = "photoDescriptions", required = false) String[] newPhotoDescriptions,
             @RequestParam(value = "existingPhotoIds", required = false) Integer[] existingPhotoIds,
             @RequestParam(value = "existingPhotoDescriptions", required = false) String[] existingPhotoDescriptions,
             @RequestParam(value = "fotosToDelete", required = false) String photosToDelete,
             @RequestParam("futuro") boolean futuro,
-            Model model,
-            RedirectAttributes redirectAttributes,
             HttpServletRequest request) throws IOException {
+        
+        Map<String, Object> response = new HashMap<>();
+        
         try {
-            ;
-
             // 1. Apply Form Changes
             formService.update(id, form);
-
+    
             // 2. Delete Selected Photos
             if (photosToDelete != null && !photosToDelete.isEmpty()) {
                 List<Integer> idsToDelete = Arrays.stream(photosToDelete.split(","))
@@ -437,9 +448,9 @@ public class FormController {
                         .filter(s -> !s.isEmpty())
                         .map(Integer::parseInt)
                         .collect(Collectors.toList());
-
+    
                 List<FotosForm> fotosToDeleteFromDisk = fotosFormService.findAllById(idsToDelete);
-
+    
                 for (FotosForm foto : fotosToDeleteFromDisk) {
                     String imagePath = "/opt/Gallery/form/" + foto.getImagen();
                     try {
@@ -450,11 +461,10 @@ public class FormController {
                         logger.error("Error deleting image file {} during edit: {}", imagePath, e.getMessage());
                     }
                 }
-
-                // Now delete from the database
+    
                 fotosFormService.deleteByIds(idsToDelete);
             }
-
+    
             // 3. Update existing photos' descriptions
             if (existingPhotoIds != null && existingPhotoDescriptions != null
                     && existingPhotoIds.length == existingPhotoDescriptions.length) {
@@ -467,8 +477,8 @@ public class FormController {
                     }
                 }
             }
-
-            // -- Add New Photos --
+    
+            // 4. Add New Photos
             if (newPhotos != null && newPhotos.length > 0) {
                 for (int i = 0; i < newPhotos.length; i++) {
                     if (!newPhotos[i].isEmpty()) {
@@ -484,15 +494,16 @@ public class FormController {
                     }
                 }
             }
-
+    
+            response.put("success", true);
+            response.put("message", "Form updated successfully");
+            return ResponseEntity.ok(response);
+            
         } catch (Exception e) {
-            model.addAttribute("error", "Error updating form: " + e.getMessage());
-            return "form/EditForm.html";
+            response.put("success", false);
+            response.put("message", "Error updating form: " + e.getMessage());
+            return ResponseEntity.badRequest().body(response);
         }
-
-        if (futuro)
-            return "redirect:/expediente/edit-future-project/" + id + "?success";
-        return "redirect:/form/" + id + "/edit?success";
     }
 
     @PostMapping("/{id}/delete")

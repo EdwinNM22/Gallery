@@ -148,8 +148,19 @@
         events: /*[[${events}]]*/ [],
         eventsComplete: /*[[${eventsComplete}]]*/ []
       };
+
+      window.translations = {
+        createdBy: /*[[#{created-by}]]*/,
+        view: /*[[#{view}]]*/,
+        status: {
+          'in-progress': /*[[#{status.in-progress}]]*/ 'In Progress',
+          'complete': /*[[#{status.complete}]]*/ 'Complete',
+          'cancelled': /*[[#{status.cancelled}]]*/ 'Cancelled'
+        }
+      };
       /*]]>*/
     </script>
+
 
     <script type="module">
       import { initializeCalendar } from "/js/calendar.js";

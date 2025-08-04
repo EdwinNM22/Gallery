@@ -11,16 +11,19 @@ import com.proyecto.galeria.service.PermisoService;
 import com.proyecto.galeria.service.UsuarioAdvertenciaService;
 import com.proyecto.galeria.service.albumService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpSession;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -37,6 +40,10 @@ public class AdmController {
     @Autowired private UsuarioAdvertenciaService usuarioAdvertenciaService;
 
     @Autowired private EquipoService equipoService;
+
+
+    @Autowired
+    private MessageSource messageSource;
 
     @GetMapping("")
     public String home(Model model, HttpSession session) {
@@ -99,6 +106,13 @@ public class AdmController {
         model.addAttribute("currentUsuarioId", idUsuario);
         
         return "adm/home";
+    }
+    
+    @GetMapping("/debug-i18n")
+    @ResponseBody
+    public String debugI18n(Locale locale) {
+        return "Current locale: " + locale + "<br>" +
+               "Test message: " + messageSource.getMessage("title", null, locale);
     }
 }
 
