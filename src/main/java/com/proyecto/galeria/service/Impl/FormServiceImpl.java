@@ -68,8 +68,8 @@ public class FormServiceImpl implements FormService {
     }
 
     @Override
-    public List<Form> findByUsuarioIdAndFuturo(Integer usuarioId) {
-        return formRepository.findByUsuarioIdAndFuturo(usuarioId);
+    public List<Form> findByUsuarioIdAndFuturo(Integer usuarioId, Boolean futuro) {
+        return formRepository.findByUsuarioIdAndFuturo(usuarioId, futuro);
     }
 
 }

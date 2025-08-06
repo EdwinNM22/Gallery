@@ -24,6 +24,5 @@ public interface FormService {
     List<Form> findByFuturo(Boolean futuro);
 
 
-
-    List<Form> findByUsuarioIdAndFuturo(Integer usuarioId);
+    List<Form> findByUsuarioIdAndFuturo(Integer usuarioId, Boolean futuro);
 }

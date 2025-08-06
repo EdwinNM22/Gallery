@@ -255,7 +255,7 @@ public class ExpedienteController {
                 return "redirect:/NoAccess/Access";
             }
 
-            List<Form> forms = formService.findByUsuarioIdAndFuturo(idUsuario);
+            List<Form> forms = formService.findByUsuarioId(idUsuario);
 
             model.addAttribute("forms", forms);
             model.addAttribute("permisos", permisoService.getAllPermisos());

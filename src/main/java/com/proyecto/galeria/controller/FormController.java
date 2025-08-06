@@ -86,7 +86,7 @@ public class FormController {
                 return "redirect:/NoAccess/Access";
             usuario usuario = optionalUsuario.get();
 
-            List<Form> forms = formService.findByUsuarioIdAndFuturo(idUsuario);
+            List<Form> forms = formService.findByUsuarioIdAndFuturo(idUsuario, false);
             model.addAttribute("forms", forms);
             model.addAttribute("permisos", permisoService.getAllPermisos());
             model.addAttribute("permisosAgrupados", permisoService.getPermisosAgrupadosPorVista());
@@ -101,12 +101,36 @@ public class FormController {
             model.addAttribute("EXPEDIENTE_FORM_EDIT", permisos.contains("EXPEDIENTE_FORM_EDIT"));
             model.addAttribute("EXPEDIENTE_FORM_DELETE", permisos.contains("EXPEDIENTE_FORM_DELETE"));
 
+            List<Form> futureForms = formService.findByUsuarioIdAndFuturo(idUsuario, true);
+            List<Form> completeForms = formService.findByUsuarioIdAndFuturo(idUsuario, false);
+
+            List<Map<String, String>> events = futureForms.stream()
+                    .filter(f -> f.getFechaEvaluacion() != null)
+                    .map(f -> Map.of(
+                            "id", f.getId().toString(),
+                            "start", f.getFechaEvaluacion().toString(),
+                            "end", f.getFechaEvaluacion().toString(),
+                            "nombreCliente", f.getNombreCliente()))
+                    .collect(Collectors.toList());
+
+            List<Map<String, String>> eventsComplete = completeForms.stream()
+                    .filter(f -> f.getFechaEvaluacion() != null)
+                    .map(f -> Map.of(
+                            "id", f.getId().toString(),
+                            "start", f.getFechaEvaluacion().toString(),
+                            "end", f.getFechaEvaluacion().toString(),
+                            "nombreCliente", f.getNombreCliente()))
+                    .collect(Collectors.toList());
+
+            model.addAttribute("events", events);
+            model.addAttribute("eventsComplete", eventsComplete);
+
+
         } catch (Exception e) {
             model.addAttribute("errorMessage", "Error loading forms: " + e.getMessage());
         }
         return "form/ManageForms.html";
     }
-
 
     @GetMapping
     public String showFormPage(

@@ -21,6 +21,9 @@
         imagesrcset="/img/upscalemedia-transformed.webp?width=600 600w, /img/upscalemedia-transformed.webp?width=1200 1200w, /img/upscalemedia-transformed.webp?width=1800 1800w"
         sizes="100vw">
 
+  <link href="/css/expediente/selection.css" rel="stylesheet" />
+  <link href="/css/expediente/calendarDayModal.css" rel="stylesheet" />
+
   <style>
     :root {
       --primary-blue: #2c5aa0;
@@ -523,9 +526,8 @@
 </div>
 
 <body>
-<div th:replace="permiso/permissions-panel :: panelPermisos"></div>
 
-<div class="container">
+  <div class="container">
   <div class="page-header">
     <h1 class="mb-2">
       <i class="fas fa-clipboard-list"></i> <span th:text="#{completed-projects}">Proyectos Completados</span>
@@ -549,8 +551,28 @@
     <a class="custom-btn btn-back-styled" th:href="@{/expediente/menu}">
       <i class="fas fa-arrow-left"></i> <span th:text="#{back-to-selection}">Back to Selection</span>
     </a>
+  </div>
 
-
+  <div class="calendar-section mb-4">
+    <div class="calendar-container">
+      <div class="calendar-controls">
+        <button id="prev-month" class="btn-control">
+          <i class="fas fa-chevron-left"></i>
+          <span th:text="#{previous}">Previous</span>
+        </button>
+        <button id="today" class="btn-control active">
+          <i class="fas fa-calendar-day"></i>
+          <span th:text="#{today}">Today</span>
+        </button>
+        <button id="next-month" class="btn-control">
+          <span th:text="#{next}">Next</span>
+          <i class="fas fa-chevron-right"></i>
+        </button>
+      </div>
+      <div class="calendar-wrapper">
+        <div id="calendar"></div>
+      </div>
+    </div>
   </div>
 
   <div class="card">
@@ -616,5 +638,43 @@
 <script th:src="@{/vendor/jquery/jquery.min.js}"></script>
 <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
 <script src="/js/manage-forms.js"></script>
-</body>
+
+<script src="/js/daypilot/daypilot-all.min.js"></script>
+
+  <script th:inline="javascript">
+    /*<![CDATA[*/
+    window.__calendarData = {
+      expedienteId: [[${expedienteId}]],
+      events: /*[[${events}]]*/ [],
+      eventsComplete: /*[[${eventsComplete}]]*/ []
+    };
+
+    window.translations = {
+      createdBy: /*[[#{created-by}]]*/,
+      view: /*[[#{view}]]*/,
+      status: {
+        'in-progress': /*[[#{status.in-progress}]]*/ 'In Progress',
+        'complete': /*[[#{status.complete}]]*/ 'Complete',
+        'cancelled': /*[[#{status.cancelled}]]*/ 'Cancelled'
+      }
+    };
+    /*]]>*/
+  </script>
+
+
+  <script type="module">
+    import { initializeCalendar } from "/js/calendar.js";
+
+    const { expedienteId, events, eventsComplete } = window.__calendarData;
+
+    initializeCalendar({
+      elementId: "calendar",
+      expedienteId,
+      eventsInProgress: events,
+      eventsComplete: eventsComplete,
+    });
+  </script>
+
+  <div th:replace="modals/calendarDayModal :: calendarDayModal"></div>
+  </body>
 </html>

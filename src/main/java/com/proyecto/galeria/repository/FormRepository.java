@@ -14,8 +14,6 @@ public interface FormRepository extends JpaRepository<Form, Integer> {
 
     List<Form> findByUsuario_Id(Integer usuarioId);
 
-
-
-    @Query("SELECT f FROM Form f WHERE f.usuario.id = :usuarioId AND f.futuro = true")
-    List<Form> findByUsuarioIdAndFuturo(@Param("usuarioId") Integer usuarioId);
+    @Query("SELECT f FROM Form f WHERE f.usuario.id = :usuarioId AND f.futuro = :futuro")
+    List<Form> findByUsuarioIdAndFuturo(@Param("usuarioId") Integer usuarioId, @Param("futuro") Boolean futuro);
 }
