@@ -115,11 +115,7 @@
                     name="nombreCliente"
                     required
                   />
-                  <input
-                    type="hidden"
-                    name="expedienteId"
-                    th:value="${expedienteId}"
-                  />
+                  <input  name="usuario.id" th:value="${usuario.id}" />
                 </div>
               </div>
             </div>
@@ -245,9 +241,9 @@
               if (data.success) {
                   alert(translations.formCreatedSuccess);
 
-                  const resettableFields = form.querySelectorAll(
-                    'input:not([type="hidden"]):not([name="usuario.id"]):not([name="nombreEvaluador"]):not([name="fechaEvaluacion"]):not([name="expediente.id"]), textarea, select'
-                  );
+                const resettableFields = form.querySelectorAll(
+                        'input:not([type="hidden"]):not([name="usuario.id"]):not([name="nombreEvaluador"]):not([name="fechaEvaluacion"]), textarea, select'
+                );
                   
                   resettableFields.forEach(field => {
                       if (field.type === 'checkbox' || field.type === 'radio') {

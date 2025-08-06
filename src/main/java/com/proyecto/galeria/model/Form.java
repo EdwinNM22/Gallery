@@ -147,8 +147,15 @@ public class Form {
     @JoinColumn(name = "usuario_id")
     private usuario usuario;
 
-    @ManyToOne
-    @JsonBackReference(value = "expediente-forms")
-    @JoinColumn(name = "expediente_id")
-    private Expediente expediente;
+
+
+    @Column(name = "conductos_visibles_valor")
+    private Double  conductosVisiblesValor;
+
+    @Column(name = "conductos_visibles_factor")
+    private Double  conductosVisiblesFactor;
+
+    @Column(name = "conductos_visibles_total")
+    private Double  conductosVisiblesTotal;
+
 }

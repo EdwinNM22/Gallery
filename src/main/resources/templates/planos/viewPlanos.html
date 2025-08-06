@@ -544,6 +544,17 @@
                 font-size: 1.2rem;
             }
         }
+
+        .plano-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .plano-actions {
+            display: flex;
+            gap: 10px;
+        }
     </style>
 </head>
 
@@ -564,7 +575,7 @@
             </h1>
 
             <div class="button-group">
-                <a th:href="@{'/planos?proyectoId=' + ${proyectoId}}" class="btn-mega btn-success">
+                <a th:href="@{'/planos?proyectoId=' + ${proyectoId}}" class="btn-mega btn-success" th:if="${PLANO_CREATE}">
                     <i class="fas fa-plus btn-icon"></i>
                     <span th:text="#{create-new-plan}">Crear Nuevo Plano</span>
                 </a>
@@ -575,9 +586,14 @@
             <div th:each="plano : ${planos}" class="plano-card animated">
                 <div class="plano-card-header">
                     <h3><i class="fas fa-drafting-compass"></i> <span th:text="${plano.nombreImagen}"></span></h3>
-                    <button class="btn-mega btn-sm btn-primary btn-expand" th:data-plano-id="${plano.id}">
-                        <i class="fas fa-expand btn-icon"></i> <span th:text="#{expand}">Expandir</span>
-                    </button>
+                    <div class="plano-actions">
+                        <button class="btn-mega btn-sm btn-primary btn-expand" th:data-plano-id="${plano.id}">
+                            <i class="fas fa-expand btn-icon"></i> <span th:text="#{expand}">Expandir</span>
+                        </button>
+                        <button class="btn-mega btn-sm btn-danger btn-eliminar" th:data-id="${plano.id}" th:if="${PLANO_DELETE}">
+                            <i class="fas fa-trash-alt btn-icon"></i> Eliminar
+                        </button>
+                    </div>
                 </div>
 
                 <p class="plano-comentario" th:text="${plano.comentario}"></p>
@@ -614,10 +630,6 @@
             <i class="fas fa-drafting-compass"></i>
             <h3 th:text="#{no-plans-created}">No hay planos creados</h3>
             <p th:text="#{start-by-creating-plan}">Crea tu primer plano para comenzar a realizar mediciones</p>
-            <a th:href="@{'/planos?proyectoId=' + ${proyectoId}}" class="btn-mega btn-success">
-                <i class="fas fa-plus btn-icon"></i>
-                <span th:text="#{create-new-plan}">Crear Plano</span>
-            </a>
         </div>
     </div>
 </div>
@@ -633,6 +645,23 @@
         </div>
     </div>
 </div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    $(document).on('click', '.btn-eliminar', function () {
+        if (!confirm('¿Eliminar este plano?')) return;
+
+        const btn = $(this);
+        const planoId = btn.data('id');
+
+        $.post(`/planos/eliminar/${planoId}`, function () {
+            btn.closest('.plano-card').remove();
+        }).fail(function () {
+            alert('Error al eliminar el plano');
+        });
+    });
+</script>
 
 <script th:inline="javascript">
     /*<![CDATA[*/
@@ -756,15 +785,20 @@
             tempCtx.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
             tempCtx.drawImage(img, 0, 0, tempCanvas.width, tempCanvas.height);
 
-            // Dibujar mediciones
+            // Calcular la escala basada en el tamaño original de la imagen
+            const scaleX = tempCanvas.width / img.width;
+            const scaleY = tempCanvas.height / img.height;
+
+            // Tamaños fijos para los elementos de medición (no escalados)
             const fixedRadius = 6;
             const fixedLineWidth = 4;
+            const fixedFontSize = 18;
+            const fixedOffset = 15;
+            const fixedOffsetDist = 30;
 
+            // Dibujar mediciones
             plano.mediciones.forEach((m, i) => {
-                const scaleX = tempCanvas.width / img.width;
-                const scaleY = tempCanvas.height / img.height;
-
-                // Dibujar puntos
+                // Dibujar puntos con tamaño fijo
                 tempCtx.beginPath();
                 tempCtx.arc(m.punto1X * scaleX, m.punto1Y * scaleY, fixedRadius, 0, 2 * Math.PI);
                 tempCtx.fillStyle = m.colorHex || '#FF0000';
@@ -775,7 +809,7 @@
                 tempCtx.fillStyle = m.colorHex || '#FF0000';
                 tempCtx.fill();
 
-                // Dibujar línea punteada
+                // Dibujar línea punteada con grosor fijo
                 tempCtx.beginPath();
                 tempCtx.setLineDash([5, 4]);
                 tempCtx.strokeStyle = m.colorHex || '#FF0000';
@@ -785,30 +819,28 @@
                 tempCtx.stroke();
                 tempCtx.setLineDash([]);
 
-                // Dibujar etiquetas
-                tempCtx.font = "bold 18px Montserrat";
+                // Dibujar etiquetas con tamaño de fuente fijo
+                tempCtx.font = `bold ${fixedFontSize}px Montserrat`;
                 tempCtx.fillStyle = m.colorHex || '#FF0000';
                 tempCtx.textBaseline = "middle";
 
                 function drawLabel(text, x, y, position) {
-                    const offset = 15;
                     tempCtx.textAlign = (position === "left") ? "right" : "left";
-                    const offsetX = (position === "left") ? -offset : offset;
+                    const offsetX = (position === "left") ? -fixedOffset : fixedOffset;
                     tempCtx.fillText(text, x + offsetX, y);
                 }
 
                 drawLabel(m.etiqueta1, m.punto1X * scaleX, m.punto1Y * scaleY, i % 2 === 0 ? "left" : "right");
                 drawLabel(m.etiqueta2, m.punto2X * scaleX, m.punto2Y * scaleY, i % 2 === 0 ? "right" : "left");
 
-                // Dibujar distancia
+                // Dibujar distancia con offset fijo
                 const dx = m.punto2X * scaleX - m.punto1X * scaleX;
                 const dy = m.punto2Y * scaleY - m.punto1Y * scaleY;
                 const length = Math.sqrt(dx*dx + dy*dy);
                 const midX = (m.punto1X * scaleX + m.punto2X * scaleX) / 2;
                 const midY = (m.punto1Y * scaleY + m.punto2Y * scaleY) / 2;
-                const offsetDist = 30;
-                const offsetX = -dy / length * offsetDist;
-                const offsetY = dx / length * offsetDist;
+                const offsetX = -dy / length * fixedOffsetDist;
+                const offsetY = dx / length * fixedOffsetDist;
 
                 tempCtx.fillText(m.distanciaMetros.toFixed(2) + " m", midX + offsetX, midY + offsetY);
             });
@@ -824,6 +856,8 @@
     function closeFullscreen() {
         document.getElementById('fullscreenModal').classList.remove('active');
     }
+
+
 
     // Función para navegar entre planos en pantalla completa
     function navigatePlano(direction) {

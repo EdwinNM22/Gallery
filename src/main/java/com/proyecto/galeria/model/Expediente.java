@@ -30,10 +30,4 @@ public class Expediente {
     private usuario usuario;
 
 
-
-    // En Expediente (padre)
-    @OneToMany(mappedBy = "expediente")
-    @JsonManagedReference(value = "expediente-forms")
-    private List<Form> forms;
-
 }

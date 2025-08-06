@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PlanoServiceImpl implements PlanoService {
@@ -28,5 +29,16 @@ public class PlanoServiceImpl implements PlanoService {
     @Override
     public List<Plano> findByProyectoPlano(Long proyectoId) {
         return planoRepository.findByProyectoPlanoId(proyectoId);
+    }
+
+    @Override
+    public Optional<Plano> findById(Long id) {
+        return planoRepository.findById(id);
+    }
+
+
+    @Override
+    public void eliminar(Plano plano) {
+        planoRepository.delete(plano);
     }
 }

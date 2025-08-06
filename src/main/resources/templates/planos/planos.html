@@ -206,6 +206,7 @@
             flex-direction: column;
             backdrop-filter: blur(5px);
             border: 1px solid var(--border-color);
+            position: relative;
         }
 
         .image-panel::before {
@@ -223,6 +224,7 @@
             flex-direction: row;
             padding: 1.5rem;
             gap: 2rem;
+            height: 100%;
         }
 
         @media (max-width: 768px) {
@@ -231,27 +233,57 @@
             }
         }
 
-        /* Canvas container */
+        /* Canvas container - Mejorado para aprovechar mejor el espacio */
         .canvas-container {
             flex: 1;
             min-width: 0;
             position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: var(--darker-bg);
+            border-radius: 4px;
+            padding: 10px;
             overflow: auto;
+            max-height: 80vh;
+            height: 600px; /* Altura fija para mejor visualización */
+        }
+
+        .canvas-wrapper {
+            position: relative;
+            display: inline-block;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            border-radius: 4px;
+            overflow: hidden;
+            max-width: 100%;
+            max-height: 100%;
+            width: 100%;
+            height: 100%;
         }
 
         canvas {
             display: block;
-            background-color: var(--darker-bg);
             cursor: crosshair;
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            border-radius: 4px;
         }
 
         /* Sidebar */
         .sidebar {
-            flex: 1;
-            min-width: 0;
-            max-width: 350px;
+            flex: 0 0 350px;
+            min-width: 350px;
             display: flex;
             flex-direction: column;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                flex: 1;
+                min-width: 0;
+                max-width: 100%;
+            }
         }
 
         .image-name-input {
@@ -280,6 +312,7 @@
             align-items: center;
             gap: 1rem;
             margin-bottom: 1.5rem;
+            flex-wrap: wrap;
         }
 
         .color-picker {
@@ -432,6 +465,55 @@
             background: #d63031;
         }
 
+        /* Magnifier styles */
+        .magnifier {
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            border: 3px solid var(--accent-blue);
+            pointer-events: none;
+            z-index: 100;
+            display: none;
+            overflow: hidden;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .magnifier-canvas {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .magnifier-crosshair {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+        }
+
+        .magnifier-crosshair::before,
+        .magnifier-crosshair::after {
+            content: "";
+            position: absolute;
+            background-color: var(--danger-color);
+        }
+
+        .magnifier-crosshair::before {
+            width: 100%;
+            height: 2px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .magnifier-crosshair::after {
+            width: 2px;
+            height: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
         /* Responsive adjustments */
         @media (max-width: 768px) {
             body {
@@ -453,10 +535,12 @@
             .measurements-list {
                 grid-template-columns: 1fr;
             }
+
+            .canvas-container {
+                max-height: 60vh;
+                height: 400px;
+            }
         }
-
-
-
     </style>
 </head>
 <body data-proyecto-id="${proyectoId}">
@@ -509,6 +593,7 @@
         'invalidInput': '[[#{invalid-input}]]',
         'planSavedSuccessfully': '[[#{plan-saved-successfully}]]',
         'measuredImageDeletionConfirmation': '[[#{measured-image-deletion-confirmation}]]',
+        'unsupportedFormat': '[[#{unsupported-format}]]'
     }
 
     const imageLoader = document.getElementById("imageLoader");
@@ -520,16 +605,25 @@
     imageLoader.addEventListener("change", async (e) => {
         const files = e.target.files;
         for (const file of files) {
+            const format = file.type;
+            if (format === "image/heic" || format === "image/heif") {
+                const formatoDetectado = format === "image/heic" ? "HEIC" : "HEIF";
+                alert(translations.unsupportedFormat.replace("{0}", formatoDetectado));
+                continue;
+            }
+
             const url = URL.createObjectURL(file);
             createImagePanel(file.name, url, file);
         }
+
         imageLoader.value = "";
     });
 
     async function uploadImage(file) {
         const formData = new FormData();
         formData.append("file", file);
-        const response = await fetch("/planos/uploadImage", {
+        const baseUrl = window.location.origin;
+        const response = await fetch(`${baseUrl}/planos/uploadImage`, {
             method: "POST",
             body: formData
         });
@@ -550,21 +644,24 @@
         const canvasContainer = document.createElement("div");
         canvasContainer.className = "canvas-container";
 
+        const canvasWrapper = document.createElement("div");
+        canvasWrapper.className = "canvas-wrapper";
+
         const canvas = document.createElement("canvas");
+        canvasWrapper.appendChild(canvas);
+        canvasContainer.appendChild(canvasWrapper);
 
-        const maxWidth = window.innerWidth * 0.95;
-        const maxHeight = window.innerHeight * 0.8;
+        // Create magnifier element
+        const magnifier = document.createElement("div");
+        magnifier.className = "magnifier";
+        const magnifierCanvas = document.createElement("canvas");
+        magnifierCanvas.className = "magnifier-canvas";
+        const magnifierCrosshair = document.createElement("div");
+        magnifierCrosshair.className = "magnifier-crosshair";
 
-        canvas.style.maxWidth = maxWidth + "px";
-        canvas.style.maxHeight = maxHeight + "px";
-        canvas.style.width = "auto";
-        canvas.style.height = "auto";
-
-        canvasContainer.style.overflow = "hidden";
-        canvasContainer.style.maxWidth = maxWidth + "px";
-        canvasContainer.style.maxHeight = maxHeight + "px";
-
-        canvasContainer.appendChild(canvas);
+        magnifier.appendChild(magnifierCanvas);
+        magnifier.appendChild(magnifierCrosshair);
+        canvasWrapper.appendChild(magnifier);
 
         const sidebar = document.createElement("div");
         sidebar.className = "sidebar";
@@ -663,7 +760,7 @@
             planoObj.nombreImagen = nameInput.value.trim() || nombreImagen;
         });
 
-        const hasMeasurements = setupPhotoMeasurePanel(canvas, logDiv, colorInput, confirmColorBtn, resetBtn, url, planoObj, commentInput, maxWidth, maxHeight);
+        const hasMeasurements = setupPhotoMeasurePanel(canvas, logDiv, colorInput, confirmColorBtn, resetBtn, url, planoObj, commentInput, magnifier, magnifierCanvas);
 
         deleteImageBtn.addEventListener("click", () => {
             if (hasMeasurements()) {
@@ -674,8 +771,9 @@
         });
     }
 
-    function setupPhotoMeasurePanel(canvas, logDiv, colorInput, confirmColorBtn, resetBtn, imgSrc, planoObj, comentarioInput, maxWidth, maxHeight) {
+    function setupPhotoMeasurePanel(canvas, logDiv, colorInput, confirmColorBtn, resetBtn, imgSrc, planoObj, comentarioInput, magnifier, magnifierCanvas) {
         const ctx = canvas.getContext("2d");
+        const magnifierCtx = magnifierCanvas.getContext("2d");
         let image = new Image();
         image.src = imgSrc;
 
@@ -684,16 +782,38 @@
         let styles = [];
         let scale = 1.0;
         let currentColor = colorInput.value;
+        let isMouseDown = false;
+        let pendingPoint = null;
 
-        let imgScale = 1;
+        // Tamaños fijos para elementos de medición (independientes del tamaño de imagen)
+        const FIXED_POINT_RADIUS = 3;
+        const FIXED_LINE_WIDTH = 3;
+        const FIXED_FONT_SIZE = 14;
+        const FIXED_DASH_ARRAY = [8, 6];
+        const FIXED_TEXT_OFFSET = 12;
+        const FIXED_MID_TEXT_OFFSET = 25;
+
+        let displayScale = 1; // Factor de escala para mostrar la imagen
 
         image.onload = () => {
-            const scaleWidth = maxWidth / image.width;
-            const scaleHeight = maxHeight / image.height;
-            imgScale = Math.min(scaleWidth, scaleHeight, 1);
+            // Calcular el tamaño máximo disponible para el canvas
+            const container = canvas.parentElement.parentElement;
+            const containerWidth = container.clientWidth;
+            const containerHeight = container.clientHeight;
 
-            canvas.width = image.width * imgScale;
-            canvas.height = image.height * imgScale;
+            // Calcular la escala de visualización para que la imagen quepa sin cortarse
+            const scaleX = (containerWidth - 20) / image.width; // Restamos el padding
+            const scaleY = (containerHeight - 20) / image.height;
+            displayScale = Math.min(scaleX, scaleY); // Usamos el menor para que quepa completo
+
+            // Establecer el tamaño del canvas basado en la escala de visualización
+            canvas.width = image.width * displayScale;
+            canvas.height = image.height * displayScale;
+
+            // Configurar el canvas de la lupa
+            magnifierCanvas.width = 150;
+            magnifierCanvas.height = 150;
+
             drawAll();
         };
 
@@ -705,20 +825,53 @@
             planoObj.comentario = comentarioInput.value;
         });
 
-        canvas.addEventListener("click", (e) => {
+        canvas.addEventListener("mousedown", (e) => {
             if (!image.src) return;
+            isMouseDown = true;
 
             const rect = canvas.getBoundingClientRect();
-            const xUnscaled = (e.clientX - rect.left) / imgScale;
-            const yUnscaled = (e.clientY - rect.top) / imgScale;
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
 
-            const existingIndex = points.findIndex(p => Math.abs(p.x - xUnscaled) < 7 && Math.abs(p.y - yUnscaled) < 7);
+            // Mostrar la lupa
+            magnifier.style.display = "block";
+            updateMagnifier(x, y);
+        });
+
+        canvas.addEventListener("mousemove", (e) => {
+            if (!isMouseDown || !image.src) return;
+
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            // Actualizar posición de la lupa
+            updateMagnifierPosition(x, y);
+            updateMagnifier(x, y);
+        });
+
+        canvas.addEventListener("mouseup", (e) => {
+            if (!isMouseDown || !image.src) return;
+            isMouseDown = false;
+            magnifier.style.display = "none";
+
+            const rect = canvas.getBoundingClientRect();
+            // Convertir coordenadas del canvas a coordenadas de la imagen original
+            const xOriginal = (e.clientX - rect.left) / displayScale;
+            const yOriginal = (e.clientY - rect.top) / displayScale;
+
+            // Buscar si hay un punto existente cerca (en coordenadas originales)
+            const clickThreshold = 10 / displayScale;
+            const existingIndex = points.findIndex(p =>
+                Math.abs(p.x - xOriginal) < clickThreshold && Math.abs(p.y - yOriginal) < clickThreshold
+            );
+
             if (existingIndex !== -1) {
                 points.push(points[existingIndex]);
                 labels.push(labels[existingIndex]);
                 styles.push(styles[existingIndex]);
             } else {
-                points.push({ x: xUnscaled, y: yUnscaled });
+                points.push({ x: xOriginal, y: yOriginal });
                 labels.push(generateLabel(labels.length));
                 styles.push({ color: currentColor });
             }
@@ -741,7 +894,85 @@
             updateLog();
         });
 
-        resetBtn.addEventListener("click", reset);
+        canvas.addEventListener("mouseleave", () => {
+            if (isMouseDown) {
+                isMouseDown = false;
+                magnifier.style.display = "none";
+            }
+        });
+
+        function updateMagnifierPosition(x, y) {
+            const magnifierSize = 150;
+            const margin = 20;
+            const canvasRect = canvas.getBoundingClientRect();
+
+            // Determinar la posición óptima para la lupa (evitando bordes)
+            let left = x + margin;
+            let top = y - magnifierSize / 2;
+
+            // Ajustar si la lupa se sale por la derecha
+            if (left + magnifierSize > canvasRect.width) {
+                left = x - magnifierSize - margin;
+            }
+
+            // Ajustar si la lupa se sale por arriba
+            if (top < 0) {
+                top = y + margin;
+            }
+
+            // Ajustar si la lupa se sale por abajo
+            if (top + magnifierSize > canvasRect.height) {
+                top = y - magnifierSize - margin;
+            }
+
+            magnifier.style.left = left + "px";
+            magnifier.style.top = top + "px";
+        }
+
+        function updateMagnifier(x, y) {
+            const zoomLevel = 3; // Nivel de zoom
+            const magnifierSize = 150;
+            const magnifierRadius = magnifierSize / 2;
+
+            // Coordenadas en la imagen original
+            const imgX = x / displayScale;
+            const imgY = y / displayScale;
+
+            // Limpiar el canvas de la lupa
+            magnifierCtx.clearRect(0, 0, magnifierCanvas.width, magnifierCanvas.height);
+
+            // Dibujar la imagen ampliada
+            magnifierCtx.save();
+            magnifierCtx.beginPath();
+            magnifierCtx.arc(magnifierRadius, magnifierRadius, magnifierRadius, 0, Math.PI * 2);
+            magnifierCtx.closePath();
+            magnifierCtx.clip();
+
+            magnifierCtx.drawImage(
+                canvas,
+                x - magnifierRadius / zoomLevel,
+                y - magnifierRadius / zoomLevel,
+                magnifierSize / zoomLevel,
+                magnifierSize / zoomLevel,
+                0, 0,
+                magnifierSize,
+                magnifierSize
+            );
+
+            magnifierCtx.restore();
+
+            // Dibujar punto central
+            magnifierCtx.beginPath();
+            magnifierCtx.arc(magnifierRadius, magnifierRadius, 3, 0, Math.PI * 2);
+            magnifierCtx.fillStyle = "red";
+            magnifierCtx.fill();
+        }
+
+        resetBtn.addEventListener("click", () => {
+            isMouseDown = false;
+            magnifier.style.display = "none";
+            reset();
+        });
 
         function getDistance(p1, p2) {
             const dx = p1.x - p2.x;
@@ -750,59 +981,60 @@
         }
 
         function drawLabel(text, x, y, color, position = "left") {
-            ctx.font = "bold 14px Montserrat";
+            ctx.font = `bold ${FIXED_FONT_SIZE}px Montserrat`;
             ctx.fillStyle = color;
             ctx.textBaseline = "middle";
-            const offset = 10;
             ctx.textAlign = position === "left" ? "right" : "left";
-            const offsetX = position === "left" ? -offset : offset;
 
-            ctx.fillText(text, x * imgScale + offsetX, y * imgScale);
+            const offsetX = position === "left" ? -FIXED_TEXT_OFFSET : FIXED_TEXT_OFFSET;
+            // Convertir coordenadas originales a coordenadas de visualización
+            ctx.fillText(text, x * displayScale + offsetX, y * displayScale);
         }
 
         function drawAll() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Dibujar la imagen escalada
             ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
 
-            const fixedRadius = 6;
-            const fixedLineWidth = 3;
-
+            // Dibujar puntos con tamaño fijo
             for (let i = 0; i < points.length; i++) {
                 const p = points[i];
                 const color = styles[i].color;
 
                 ctx.beginPath();
-                ctx.arc(p.x * imgScale, p.y * imgScale, fixedRadius, 0, 2 * Math.PI);
+                ctx.arc(p.x * displayScale, p.y * displayScale, FIXED_POINT_RADIUS, 0, 2 * Math.PI);
                 ctx.fillStyle = color;
                 ctx.fill();
 
                 drawLabel(labels[i], p.x, p.y, color, i % 2 === 0 ? "left" : "right");
             }
 
+            // Dibujar líneas con grosor fijo
             for (let i = 0; i < points.length - 1; i += 2) {
                 const p1 = points[i];
                 const p2 = points[i + 1];
                 const color = styles[i].color;
 
                 ctx.beginPath();
-                ctx.setLineDash([5, 4]);
+                ctx.setLineDash(FIXED_DASH_ARRAY);
                 ctx.strokeStyle = color;
-                ctx.lineWidth = fixedLineWidth;
-                ctx.moveTo(p1.x * imgScale, p1.y * imgScale);
-                ctx.lineTo(p2.x * imgScale, p2.y * imgScale);
+                ctx.lineWidth = FIXED_LINE_WIDTH;
+                ctx.moveTo(p1.x * displayScale, p1.y * displayScale);
+                ctx.lineTo(p2.x * displayScale, p2.y * displayScale);
                 ctx.stroke();
 
+                // Calcular distancia en la imagen original
                 const pixelDist = getDistance(p1, p2);
                 const realDist = (pixelDist * scale).toFixed(2);
 
                 const angle = Math.atan2(p2.y - p1.y, p2.x - p1.x);
                 const midX = (p1.x + p2.x) / 2;
                 const midY = (p1.y + p2.y) / 2;
-                const offset = 20;
-                const offsetX = -Math.sin(angle) * offset;
-                const offsetY = Math.cos(angle) * offset;
+                const offsetX = -Math.sin(angle) * FIXED_MID_TEXT_OFFSET;
+                const offsetY = Math.cos(angle) * FIXED_MID_TEXT_OFFSET;
 
-                drawLabel(realDist + " m", midX + offsetX, midY + offsetY, color, "left");
+                drawLabel(realDist + " m", midX + offsetX / displayScale, midY + offsetY / displayScale, color, "left");
             }
         }
 
@@ -931,7 +1163,8 @@
                     plano.url = await uploadImage(plano.file);
                 }
             }
-            const res = await fetch(`/planos/save?proyectoId=${proyectoId}`, {
+            const baseUrl = window.location.origin;
+            const res = await fetch(`${baseUrl}/planos/save?proyectoId=${proyectoId}`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(planos)

@@ -78,6 +78,7 @@ public class AdmController {
             model.addAttribute("USUARIOS_ACCESS", permisos.contains("USUARIOS_ACCESS"));
             model.addAttribute("USUARIOS_CREATE", permisos.contains("USUARIOS_CREATE"));
             model.addAttribute("EXPEDIENTE_ACCESS", permisos.contains("EXPEDIENTE_ACCESS"));
+            model.addAttribute("ESTIMATION_ACCESS", permisos.contains("ESTIMATION_ACCESS"));
 
         }, () -> {
             model.addAttribute("AGENDA_ACCESS", false);
@@ -86,6 +87,7 @@ public class AdmController {
             model.addAttribute("USUARIOS_ACCESS", false);
             model.addAttribute("USUARIOS_CREATE", false);
             model.addAttribute("EXPEDIENTE_ACCESS", false);
+            model.addAttribute("ESTIMATION_ACCESS", false);
         });
 
         // --- Enviar las advertencias de equipo del usuario ---

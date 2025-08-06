@@ -402,13 +402,6 @@
     </div>
   </div>
 </nav>
-
-<div th:replace="permiso/permissions-panel :: panelPermisos"></div>
-
-<th:block th:each="equipo : ${advertenciaEquipos}">
-  <div th:insert="Advertencias :: equipo_confirmar(${equipo})"></div>
-</th:block>
-
 <div class="main-container">
   <div class="container">
     <div class="accent-line animated"></div>
@@ -424,54 +417,16 @@
     </div>
 
     <div class="action-buttons">
-      <a th:href="@{/albumes/create}" class="btn-mega animated delay-1" th:if="${AGENDA_ACCESS}">
+      <a th:href="@{'/form/manage/' + ${session.idusuario}}" class="btn-mega animated delay-1">
         <i class="fas fa-plus-circle btn-icon"></i>
-        <span th:text="#{new-project}">New Project</span>
+        <span>Evaluaciones</span>
       </a>
 
-      <a th:href="@{/proyectosPlano}" class="btn-mega animated delay-1" th:if="${ESTIMATION_ACCESS}">
+      <a th:href="@{/expediente/manage-future-projects/{usuarioId}(usuarioId=${usuario.id})}" class="btn-mega animated delay-1">
         <i class="fas fa-drafting-compass btn-icon"></i>
-
-        <span th:text="#{estimation}">Estimación</span>
+        <span>Agendar citas</span>
       </a>
 
-      <a th:href="@{/home}" class="btn-mega animated delay-1" th:if="${PROYECTOS_ACCESS}">
-        <i class="fas fa-folder-open btn-icon"></i>
-        <span th:text="#{ongoing-projects}">Ongoing Projects</span>
-      </a>
-      <a
-              th:href="@{admin/reports}"
-              class="btn-mega animated delay-1"
-              th:if="${REPORTES_ACCESS}"
-      >
-        <i class="fas fa-clipboard btn-icon"></i>
-        <span th:text="#{manage-reports}">Manage Reports</span>
-      </a>
-
-
-      <a th:href="@{/expediente/menu}"  th:if="${EXPEDIENTE_ACCESS}" class="btn-mega animated delay-1" >
-        <i class="fa-solid fa-wallet btn-icon"></i>
-        <span th:text="#{representatives}">Representatives</span>
-      </a>
-
-      <div class="split-button-container animated delay-2">
-        <a
-                th:href="@{usuario/vpsSecurity2024-}"
-                class="btn-mega"
-                th:if="${USUARIOS_CREATE}"
-        >
-          <i class="fas fa-user-plus btn-icon"></i>
-          <span th:text="#{new-user}">New User</span>
-        </a>
-        <a
-                th:href="@{/usuario/show}"
-                class="btn-mega"
-                th:if="${USUARIOS_ACCESS}"
-        >
-          <i class="fas fa-users-gear btn-icon"></i>
-          <span th:text="#{manage-users}">Manage Users</span>
-        </a>
-      </div>
     </div>
   </div>
 </div>

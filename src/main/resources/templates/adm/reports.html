@@ -33,6 +33,7 @@
       --card-bg: rgba(15, 25, 35, 0.85);
       --success-color: #4cc9f0;
       --danger-color: #ff4d4d;
+      --warning-color: #ffa300;
     }
 
     body {
@@ -140,13 +141,17 @@
       background-color: rgba(44, 90, 160, 0.1);
     }
 
-    /* Button styles */
+    .table-hover tbody tr:hover td {
+      color: var(--light-text);
+    }
+
+    /* IMPROVED BUTTON STYLES - Basado en el primer HTML */
     .btn-mega {
       position: relative;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      padding: 0.8rem 1.5rem;
+      padding: 1.3rem 2rem;
       font-size: 0.95rem;
       font-weight: 500;
       border-radius: 6px;
@@ -161,7 +166,24 @@
       backdrop-filter: blur(8px);
       border: 1px solid var(--border-color);
       color: var(--light-text);
-      text-align: center;
+      text-decoration: none;
+    }
+
+    .btn-mega::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(45deg, var(--primary-blue), var(--accent-blue));
+      z-index: -1;
+      transition: opacity 0.3s ease;
+      opacity: 0;
+    }
+
+    .btn-mega:hover::before {
+      opacity: 1;
     }
 
     .btn-mega:hover {
@@ -169,70 +191,63 @@
       box-shadow: 0 6px 12px rgba(58, 123, 213, 0.2);
       color: var(--lighter-text);
       border-color: transparent;
+      text-decoration: none;
     }
 
-    /* Botones de acción - Corregidos */
+    .btn-mega:active {
+      transform: translateY(0);
+    }
+
+    .btn-icon {
+      margin-right: 8px;
+      font-size: 1rem;
+    }
+
+    /* Small buttons for table actions */
+    .btn-mega.btn-sm {
+      padding: 0.75rem 1rem;
+      font-size: 0.8rem;
+      font-weight: 500;
+      min-width: 90px;
+      flex: 1;
+    }
+
+    /* Button variants */
+    .btn-mega.btn-primary::before {
+      background: linear-gradient(45deg, var(--primary-blue), var(--accent-blue));
+    }
+
+    .btn-mega.btn-success {
+      border: 1px solid rgba(76, 201, 240, 0.3);
+    }
+
+    .btn-mega.btn-success::before {
+      background: linear-gradient(45deg, var(--success-color), #2a9d8f);
+    }
+
+    .btn-mega.btn-warning {
+      border: 1px solid rgba(255, 158, 0, 0.3);
+    }
+
+    .btn-mega.btn-warning::before {
+      background: linear-gradient(45deg, var(--warning-color), #e76f51);
+    }
+
+    .btn-mega.btn-danger {
+      background: rgba(255, 77, 77, 0.1);
+      border-color: rgba(255, 77, 77, 0.3);
+    }
+
+    .btn-mega.btn-danger::before {
+      background: linear-gradient(45deg, var(--danger-color), #cc0000);
+    }
+
+    /* Button action group */
     .btn-action-group {
       display: flex;
       gap: 0.5rem;
       justify-content: flex-end;
       flex-wrap: nowrap;
-    }
-
-    .btn-sm {
-      padding: 0.03rem 0.5rem;
-      font-size: 0.85rem;
-      border-radius: 6px;
-      transition: all 0.3s ease;
-      display: inline-flex;
-      align-items: center;
-      border: 1px solid var(--border-color);
-      backdrop-filter: blur(5px);
-      min-width: 100px;
-      height: auto;
-    }
-
-    /* Elimina el efecto de texto negro */
-    .btn-sm:hover {
-      color: var(--lighter-text) !important;
-    }
-
-    .btn-primary {
-      background: rgba(44, 90, 160, 0.3);
-      color: var(--accent-blue);
-    }
-
-    .btn-primary:hover {
-      background: rgba(44, 90, 160, 0.5);
-      border-color: var(--accent-blue);
-    }
-
-    .btn-success {
-      background: rgba(76, 201, 240, 0.2);
-      color: var(--success-color);
-      border-color: rgba(76, 201, 240, 0.5);
-    }
-
-    .btn-success:hover {
-      background: rgba(76, 201, 240, 0.3);
-      border-color: var(--success-color);
-    }
-
-    .btn-danger {
-      background: rgba(255, 77, 77, 0.2);
-      color: var(--danger-color);
-      border-color: rgba(255, 77, 77, 0.5);
-    }
-
-    .btn-danger:hover {
-      background: rgba(255, 77, 77, 0.3);
-      border-color: var(--danger-color);
-    }
-
-    /* Asegura que los iconos sean visibles */
-    .btn-sm i {
-      margin-right: 5px;
-      color: inherit;
     }
 
     /* Badges */
@@ -339,6 +354,22 @@
         flex-direction: column;
         align-items: flex-start;
       }
+
+      .expedientes-grid {
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        padding: 0 1rem;
+      }
+
+      .expediente-card-footer {
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      .btn-mega.btn-sm {
+        min-width: auto;
+        width: 100%;
+        justify-content: center;
+      }
     }
 
     @media (max-width: 576px) {
@@ -417,41 +448,49 @@
         display: none;
       }
 
-      /* Hide text in buttons on mobile, show only icons */
-      .btn-sm span {
-        display: none;
-      }
-
-      .btn-sm i {
-        margin-right: 0 !important;
-      }
-
-      .btn-action-group {
-        justify-content: center;
-        width: 100%;
-      }
-    }
-    .table-hover tbody tr:hover td {
-      color: var(--light-text); /* o --lighter-text si prefieres más brillo */
-    }
-
-    @media (max-width: 576px) {
-      .btn-sm {
+      .btn-mega.btn-sm {
         width: 100%;
         justify-content: center;
-        padding: 0.75rem 1rem;    /* <--- aumenta altura del botón */
-        font-size: 1rem;          /* opcional: texto un poco más grande */
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
       }
 
       .btn-action-group {
         flex-direction: column;
         gap: 0.75rem;
         align-items: stretch;
+        width: 100%;
+      }
+
+      /* Hide text in buttons on mobile, show only icons */
+      .btn-mega.btn-sm span {
+        display: none;
+      }
+
+      .btn-mega.btn-sm i {
+        margin-right: 0 !important;
       }
     }
 
+    /* Animation */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
 
+    .animated {
+      animation: fadeIn 0.6s ease-out forwards;
+    }
 
+    .delay-1 {
+      animation-delay: 0.1s;
+    }
   </style>
 </head>
 
@@ -500,7 +539,7 @@
     </div>
 
     <!-- Action buttons -->
-    <div class="btn-container" th:if="${tienePermisoAvanzado}">
+    <div class="btn-container mb-4" th:if="${tienePermisoAvanzado}">
       <a class="btn-mega" th:href="@{/adm}">
         <i class="fas fa-arrow-left btn-icon"></i>
         <span th:text="#{back-to-menu}">Back to Menu</span>
@@ -540,27 +579,27 @@
               <td data-label="Actions" th:data-label="#{actions}">
                 <div class="btn-action-group">
                   <!-- Edit button -->
-                  <button class="btn btn-sm btn-primary" th:if="${REPORTES_EDIT}"
+                  <button class="btn-mega btn-sm btn-success" th:if="${REPORTES_EDIT}"
                           data-id="" th:data-id="${r.id}"
                           data-content="" th:data-content="${r.contenido}"
                           onclick="editBtnClick(this)" th:title="#{edit}">
-                    <i class="fas fa-pen"></i>
+                    <i class="fas fa-pen btn-icon"></i>
                     <span class="d-none d-md-inline" th:text="#{edit}">Edit</span>
                   </button>
 
                   <!-- PDF button -->
-                  <a class="btn btn-sm btn-success" th:if="${REPORTES_PDF}"
+                  <a class="btn-mega btn-sm btn-success" th:if="${REPORTES_PDF}"
                      th:href="@{/admin/reports/{id}/pdf(id=${r.id})}" th:title="#{download-pdf}">
-                    <i class="fas fa-download"></i>
+                    <i class="fas fa-download btn-icon"></i>
                     <span class="d-none d-md-inline" th:text="#{download-pdf}">PDF</span>
                   </a>
 
                   <!-- Delete button -->
-                  <button class="btn btn-sm btn-danger" th:if="${REPORTES_DELETE}"
+                  <button class="btn-mega btn-sm btn-danger" th:if="${REPORTES_DELETE}"
                           data-id="" th:data-id="${r.id}"
                           data-album-id="" th:data-album-id="${r.album.id}"
                           onclick="deleteReport(this)" th:title="#{delete}">
-                    <i class="fas fa-trash"></i>
+                    <i class="fas fa-trash btn-icon"></i>
                     <span class="d-none d-md-inline" th:text="#{delete}">Delete</span>
                   </button>
                 </div>
@@ -590,12 +629,12 @@
                     th:placeholder="#{write-report-content}">Write report content here...</textarea>
       </div>
       <div class="modal-footer">
-        <a id="modalDownloadBtn" class="btn btn-success me-auto" target="_blank" hidden="true">
-          <i class="fas fa-download me-1"></i>
+        <a id="modalDownloadBtn" class="btn-mega btn-success me-auto" target="_blank" hidden="true">
+          <i class="fas fa-download btn-icon"></i>
           <span th:text="#{download-pdf}">Download PDF</span>
         </a>
-        <button id="saveEditBtn" class="btn btn-primary">
-          <i class="fas fa-save me-1"></i>
+        <button id="saveEditBtn" class="btn-mega btn-primary">
+          <i class="fas fa-save btn-icon"></i>
           <span th:text="#{save-changes}">Save Changes</span>
         </button>
       </div>

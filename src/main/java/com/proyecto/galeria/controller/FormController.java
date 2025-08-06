@@ -55,33 +55,10 @@ public class FormController {
     @Autowired
     private PermisoService permisoService;
 
-    @Autowired
-    private ExpedienteService expedienteService;
 
-    @GetMapping
-    public String showFormPage(@RequestParam(required = false) Integer expedienteId,
-            @RequestParam(value = "success", required = false) String success,
-            HttpSession session, Model model) {
-        Integer idUsuario = (Integer) session.getAttribute("idusuario");
-        if (idUsuario != null) {
-            usuario user = usuarioService.findById(idUsuario).orElse(null);
-            if (user != null) {
-                model.addAttribute("nombreEvaluador", user.getNombre());
-            }
-        }
-
-        if (success != null) {
-            model.addAttribute("success", true);
-        }
-
-        model.addAttribute("expedienteId", expedienteId);
-        return "form/Form.html";
-    }
-
-    @GetMapping("/manage/{usuarioId}/{expedienteId}")
+    @GetMapping("/manage/{usuarioId}")
     public String showManageFormPageByUsuario(
             @PathVariable Integer usuarioId,
-            @PathVariable Integer expedienteId,
             Model model,
             HttpSession session) {
         try {
@@ -91,31 +68,12 @@ public class FormController {
                 return "redirect:/NoAccess/Access";
             usuario usuario = optionalUsuario.get();
 
-            if (usuario.getPermisos().stream().noneMatch(p -> "EXPEDIENTE_ACCESS".equals(p.getCodigo()))) {
-                return "redirect:/NoAccess/Access";
-            }
-
-            List<Form> forms;
-
-            // 🔥 Mostrar todos los formularios de ese expediente si es EDGAR o tiene
-            // permiso de ver todo
-            boolean puedeVerTodos = "EDGAR".equalsIgnoreCase(usuario.getTipo_usuario()) ||
-                    usuario.getPermisos().stream().anyMatch(p -> "EXPEDIENTE_VIEW_ALL".equals(p.getCodigo()));
-
-            if (puedeVerTodos) {
-                forms = formService.findByExpedienteIdAndFuturo(expedienteId, false);
-            } else {
-                forms = formService.findByUsuarioIdAndExpedienteIdAndFuturo(idUsuario, expedienteId, false);
-            }
-
+            List<Form> forms = formService.findByUsuarioIdAndFuturo(idUsuario);
             model.addAttribute("forms", forms);
-            model.addAttribute("expedienteId", expedienteId);
             model.addAttribute("permisos", permisoService.getAllPermisos());
             model.addAttribute("permisosAgrupados", permisoService.getPermisosAgrupadosPorVista());
 
-            usuario.getPermisos().size();
             Set<String> permisos = usuario.getPermisos().stream().map(p -> p.getCodigo()).collect(Collectors.toSet());
-
             model.addAttribute("EXPEDIENTE_ACCESS", permisos.contains("EXPEDIENTE_ACCESS"));
             model.addAttribute("EXPEDIENTE_CREATE", permisos.contains("EXPEDIENTE_CREATE"));
             model.addAttribute("EXPEDIENTE_EDIT", permisos.contains("EXPEDIENTE_EDIT"));
@@ -131,75 +89,35 @@ public class FormController {
         return "form/ManageForms.html";
     }
 
-    // @PostMapping("/submitT")
-    // public String submitForm(@ModelAttribute Form form,
-    // @RequestParam("fotos") MultipartFile[] files, // This captures the uploaded
-    // images
-    // @RequestParam(value = "fotos", required = false) MultipartFile[] fotos,
-    // @RequestParam Map<String, String> descripcionesMap,
-    // @RequestParam(value = "expedienteId", required = false) Integer expedienteId,
-    // HttpSession session,
-    // HttpServletRequest request,
-    // Model model) {
-    // try {
-    // Integer idUsuario = (Integer) session.getAttribute("idusuario");
-    // usuario usuario = usuarioService.findById(idUsuario)
-    // .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
-    // form.setUsuario(usuario);
 
-    // if (expedienteId != null) {
-    // Expediente expediente = new Expediente();
-    // expediente.setId(expedienteId);
-    // form.setExpediente(expediente);
-    // }
+    @GetMapping
+    public String showFormPage(
+            @RequestParam(value = "success", required = false) String success,
+            HttpSession session, Model model) {
+        Integer idUsuario = (Integer) session.getAttribute("idusuario");
+        if (idUsuario != null) {
+            usuario user = usuarioService.findById(idUsuario).orElse(null);
+            if (user != null) {
+                model.addAttribute("nombreEvaluador", user.getNombre());
+            }
+        }
 
-    // if (fotos == null)
-    // fotos = new MultipartFile[0];
-    // Form savedForm = formService.save(form);
+        if (success != null) {
+            model.addAttribute("success", true);
+        }
 
-    // if (fotos.length > 0) {
-    // for (int i = 0; i < fotos.length; i++) {
-    // MultipartFile foto = fotos[i];
-    // if (foto != null && !foto.isEmpty()) {
-    // String filename = uploadFormFoto.saveImage(foto);
-    // FotosForm fotosForm = new FotosForm();
-    // fotosForm.setForm(savedForm);
-    // fotosForm.setImagen(filename);
-    // String descKey = "descripciones[" + i + "]";
-    // String descripcion = descripcionesMap.getOrDefault(descKey, "");
-    // fotosForm.setDescripcion(descripcion);
-    // fotosFormService.save(fotosForm);
-    // }
-    // }
-    // }
-
-    // model.addAttribute("success", true);
-    // model.addAttribute("message", "Formulario enviado exitosamente con " +
-    // (fotos != null ? fotos.length : 0) + " foto(s)");
-
-    // String referer = request.getHeader("Referer");
-    // return "redirect:" + referer;
-    // } catch (Exception e) {
-    // System.err.println("Error submitting form: " + e.getMessage());
-    // e.printStackTrace();
-    // model.addAttribute("error", true);
-    // model.addAttribute("message", "Error al enviar el formulario: " +
-    // e.getMessage());
-    // }
-
-    // return "form/Form.html";
-    // }
+        return "form/Form.html";
+    }
 
     @PostMapping("/submit")
     @ResponseBody
     public ResponseEntity<?> submitForm(
             @ModelAttribute Form form,
-            @RequestParam(value = "expedienteId", required = false) Integer expedienteId,
             @RequestParam(value = "fotos", required = false) MultipartFile[] fotos,
             @RequestParam(value = "photoDescriptions", required = false) String[] descriptions,
             @RequestParam("futuro") boolean futuro,
             HttpSession session) throws IOException {
-        
+
         Map<String, Object> response = new HashMap<>();
         try {
             // --- Encontrar Usuario
@@ -207,21 +125,11 @@ public class FormController {
             usuario usuario = usuarioService.findById(idUsuario)
                     .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
 
-            // --- Encontrar Expediente ---
-            Expediente expediente = expedienteService.findById(expedienteId);
-
-            if (expediente == null) {
-                expediente = new Expediente();
-                expediente.setId(expedienteId);
-            }
-
             // --- Guardar Form ---
             form.setUsuario(usuario);
-            form.setExpediente(expediente);
             Form savedForm = formService.save(form);
 
             // --- Procesar Fotos ---
-
             if (fotos != null && fotos.length > 0) {
                 for (int i = 0; i < fotos.length; i++) {
                     MultipartFile foto = fotos[i];
@@ -231,7 +139,6 @@ public class FormController {
                         fotosForm.setForm(savedForm);
                         fotosForm.setImagen(filename);
 
-                        // Get description (safe handling for array bounds)
                         String description = (descriptions != null && i < descriptions.length)
                                 ? descriptions[i]
                                 : "";
@@ -242,21 +149,21 @@ public class FormController {
                 }
             }
 
-
             response.put("success", true);
             response.put("message", "Form submitted successfully");
-            response.put("redirectUrl", futuro 
-                ? "/expediente/create-future-project?expedienteId=" + expedienteId
-                : "/form/?expedienteId=" + expedienteId);
-            
+            response.put("redirectUrl", futuro
+                    ? "/expediente/create-future-project"
+                    : "/form/");
+
             return ResponseEntity.ok(response);
-            
+
         } catch (Exception e) {
             response.put("success", false);
             response.put("message", "Error submitting form: " + e.getMessage());
             return ResponseEntity.badRequest().body(response);
         }
     }
+
 
     @GetMapping("/{id}")
     public String getFormById(@PathVariable Integer id, Model model) {
@@ -279,10 +186,10 @@ public class FormController {
                     String base64Image = java.util.Base64.getEncoder().encodeToString(imageBytes);
                     Map<String, String> fotoData = new HashMap<>();
                     fotoData.put("imagenBase64", base64Image);
-                    fotoData.put("descripcion", foto.getDescripcion()); // Asegúrate que exista el campo
+                    fotoData.put("descripcion", foto.getDescripcion());
                     fotosConDescripcion.add(fotoData);
                 } catch (Exception ex) {
-                    // Manejo de error (puedes registrar el error si quieres)
+                    // Manejo de error (opcional)
                 }
             }
 
@@ -297,16 +204,14 @@ public class FormController {
     }
 
     @GetMapping("/{id}/pdf")
-    public ResponseEntity<byte[]> downloadFormPdf(@PathVariable Integer id, Locale currentLocale) { // Inject Locale
-                                                                                                    // here
+    public ResponseEntity<byte[]> downloadFormPdf(@PathVariable Integer id, Locale currentLocale) {
         try {
             Form form = formService.findById(id).orElse(null);
             if (form == null) {
                 return ResponseEntity.notFound().build();
             }
             List<FotosForm> fotos = fotosFormService.findByFormId(id);
-            // Prepare Base64 images for PDF
-            List<Map<String, String>> fotosBase64 = new java.util.ArrayList<>();
+            List<Map<String, String>> fotosBase64 = new ArrayList<>();
             for (FotosForm foto : fotos) {
                 String filename = foto.getImagen();
                 String imagePath = "/opt/Gallery/form/" + filename;
@@ -319,19 +224,15 @@ public class FormController {
                     fotosBase64.add(fotoMap);
                 } catch (Exception ex) {
                     System.err.println("Error loading image " + imagePath + ": " + ex.getMessage());
-                    // Skip image if error, or handle more robustly
                 }
             }
 
-            String formTitleKey = "evaluation-form-title-full"; // Or 'evaluation-form-title' if you prefer that one for
-                                                                // the PDF title
+            String formTitleKey = "evaluation-form-title-full";
             String localizedFormTitle = messageSource.getMessage(formTitleKey, null, currentLocale);
 
             String titleForPdf = localizedFormTitle + " – " + form.getNombreCliente();
 
-            // Pass the currentLocale to your PDF generation service
-            byte[] pdf = formPdfService.buildPdf(form, fotosBase64, titleForPdf, currentLocale); // <-- Pass
-                                                                                                 // currentLocale here
+            byte[] pdf = formPdfService.buildPdf(form, fotosBase64, titleForPdf, currentLocale);
 
             String fname = safeFileName(form.getNombreCliente()) + "_form_" + id + ".pdf";
             return ResponseEntity.ok()
@@ -378,11 +279,9 @@ public class FormController {
         }
     }
 
-    // Controller completo con edición de formulario + fotos descripción
-
     @GetMapping("/{id}/edit")
     public String editFormPage(@PathVariable Integer id, Model model,
-            @RequestParam(value = "success", required = false) String success) {
+                               @RequestParam(value = "success", required = false) String success) {
         try {
             Form form = formService.findById(id).orElse(null);
             if (form == null) {
@@ -426,7 +325,7 @@ public class FormController {
     @ResponseBody
     public ResponseEntity<?> updateForm(
             @PathVariable Integer id,
-            @ModelAttribute("form") Form form, // Keep as @ModelAttribute for Thymeleaf compatibility
+            @ModelAttribute("form") Form form,
             @RequestParam(value = "fotos", required = false) MultipartFile[] newPhotos,
             @RequestParam(value = "photoDescriptions", required = false) String[] newPhotoDescriptions,
             @RequestParam(value = "existingPhotoIds", required = false) Integer[] existingPhotoIds,
@@ -434,38 +333,35 @@ public class FormController {
             @RequestParam(value = "fotosToDelete", required = false) String photosToDelete,
             @RequestParam("futuro") boolean futuro,
             HttpServletRequest request) throws IOException {
-        
+
         Map<String, Object> response = new HashMap<>();
-        
+
         try {
-            // 1. Apply Form Changes
             formService.update(id, form);
-    
-            // 2. Delete Selected Photos
+
             if (photosToDelete != null && !photosToDelete.isEmpty()) {
                 List<Integer> idsToDelete = Arrays.stream(photosToDelete.split(","))
                         .map(String::trim)
                         .filter(s -> !s.isEmpty())
                         .map(Integer::parseInt)
                         .collect(Collectors.toList());
-    
+
                 List<FotosForm> fotosToDeleteFromDisk = fotosFormService.findAllById(idsToDelete);
-    
+
                 for (FotosForm foto : fotosToDeleteFromDisk) {
                     String imagePath = "/opt/Gallery/form/" + foto.getImagen();
                     try {
-                        logger.info("Attempting to delete image file during edit: {}", imagePath);
+                        logger.info("Deleting image file during edit: {}", imagePath);
                         boolean deleted = java.nio.file.Files.deleteIfExists(java.nio.file.Paths.get(imagePath));
                         logger.info("Image file deleted during edit: {}", deleted);
                     } catch (Exception e) {
                         logger.error("Error deleting image file {} during edit: {}", imagePath, e.getMessage());
                     }
                 }
-    
+
                 fotosFormService.deleteByIds(idsToDelete);
             }
-    
-            // 3. Update existing photos' descriptions
+
             if (existingPhotoIds != null && existingPhotoDescriptions != null
                     && existingPhotoIds.length == existingPhotoDescriptions.length) {
                 for (int i = 0; i < existingPhotoIds.length; i++) {
@@ -477,8 +373,7 @@ public class FormController {
                     }
                 }
             }
-    
-            // 4. Add New Photos
+
             if (newPhotos != null && newPhotos.length > 0) {
                 for (int i = 0; i < newPhotos.length; i++) {
                     if (!newPhotos[i].isEmpty()) {
@@ -494,11 +389,11 @@ public class FormController {
                     }
                 }
             }
-    
+
             response.put("success", true);
             response.put("message", "Form updated successfully");
             return ResponseEntity.ok(response);
-            
+
         } catch (Exception e) {
             response.put("success", false);
             response.put("message", "Error updating form: " + e.getMessage());
@@ -509,12 +404,11 @@ public class FormController {
     @PostMapping("/{id}/delete")
     @Transactional
     public String deleteForm(@PathVariable Integer id,
-            HttpServletRequest request,
-            RedirectAttributes redirectAttributes) {
+                             HttpServletRequest request,
+                             RedirectAttributes redirectAttributes) {
         logger.info("DELETE REQUEST - Attempting to delete form with ID: {}", id);
 
         try {
-            // Check if form exists
             boolean exists = formService.existsById(id);
             logger.info("Form exists check: {}", exists);
 
@@ -524,14 +418,12 @@ public class FormController {
                 return getRedirectUrl(request);
             }
 
-            // First, get associated photos
             List<FotosForm> fotos = fotosFormService.findByFormId(id);
             logger.info("Found {} photos associated with form ID {}", fotos.size(), id);
 
-            // Delete physical files
             for (FotosForm foto : fotos) {
                 String imagePath = "/opt/Gallery/form/" + foto.getImagen();
-                logger.info("Attempting to delete image file: {}", imagePath);
+                logger.info("Deleting image file: {}", imagePath);
                 try {
                     boolean deleted = java.nio.file.Files.deleteIfExists(java.nio.file.Paths.get(imagePath));
                     logger.info("Image file deleted: {}", deleted);
@@ -540,11 +432,8 @@ public class FormController {
                 }
             }
 
-            // Delete photos from database
-            logger.info("Deleting photos from database for form ID: {}", id);
             fotosFormService.deleteByFormId(id);
 
-            // Delete the form
             logger.info("Deleting form with ID: {}", id);
             formService.delete(id);
 

@@ -67,6 +67,7 @@
     .container {
       padding-top: 2rem;
       padding-bottom: 4rem;
+      max-width: 1200px;
     }
 
     /* Header styles */
@@ -101,22 +102,29 @@
     /* Card styles */
     .card {
       background: var(--card-bg);
-      border-radius: 8px;
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      border-radius: 12px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
       margin-bottom: 2rem;
       border: 1px solid var(--border-color);
-      backdrop-filter: blur(5px);
+      backdrop-filter: blur(8px);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.5);
     }
 
     .card-header {
-      background: linear-gradient(90deg, var(--darker-bg), var(--dark-bg));
+      background: linear-gradient(135deg, var(--darker-bg), var(--dark-bg));
       color: var(--lighter-text);
-      padding: 1rem 1.5rem;
+      padding: 1.2rem 1.5rem;
       border-bottom: 1px solid var(--border-color);
       font-weight: 600;
+      border-radius: 12px 12px 0 0;
     }
 
-    /* Table styles - MANTENIENDO EL ESTILO ORIGINAL PARA DESKTOP */
+    /* Table styles */
     .table {
       color: var(--light-text);
       margin-bottom: 0;
@@ -128,157 +136,200 @@
       color: var(--lighter-text);
       border-bottom: 1px solid var(--border-color);
       font-weight: 600;
-      padding: 0.75rem;
+      padding: 1rem 0.75rem;
       text-align: left;
+      font-size: 0.9rem;
     }
 
     .table td {
-      padding: 0.75rem;
+      padding: 1rem 0.75rem;
       border-top: 1px solid var(--border-color);
       background: rgba(15, 25, 35, 0.5);
       vertical-align: middle;
     }
 
     .table-hover tbody tr:hover {
-      background-color: rgba(44, 90, 160, 0.1);
+      background-color: rgba(44, 90, 160, 0.15);
+      transform: scale(1.01);
+      transition: all 0.2s ease;
     }
 
-    /* Button styles */
-    .btn-back {
-      position: relative;
+    .table-hover tbody tr:hover td {
+      color: var(--lighter-text);
+    }
+
+    /* BOTONES MEJORADOS SIN HERENCIA */
+    .custom-btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      padding: 0.8rem 1.5rem;
-      font-size: 0.95rem;
+      padding: 0.75rem 1.25rem;
+      font-size: 0.9rem;
       font-weight: 500;
-      border-radius: 6px;
+      font-family: 'Montserrat', sans-serif;
+      text-decoration: none;
       border: none;
+      border-radius: 8px;
       cursor: pointer;
-      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-      overflow: hidden;
-      z-index: 1;
-      letter-spacing: 0.5px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      background: var(--card-bg);
-      backdrop-filter: blur(8px);
-      border: 1px solid var(--border-color);
-      color: var(--light-text);
-      text-align: center;
-      margin-bottom: 0.5rem;
-    }
-
-    .btn-back:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 12px rgba(58, 123, 213, 0.2);
-      color: var(--lighter-text);
-      border-color: transparent;
-    }
-
-    /* Botones de acción - MANTENIENDO ESTILO ORIGINAL PARA DESKTOP */
-    .btn-action-group {
-      display: flex;
-      gap: 0.5rem;
-      justify-content: flex-end;
-      flex-wrap: nowrap;
-    }
-
-    .btn-sm {
-      padding: 0.3rem 0.6rem;
-      font-size: 0.85rem;
-      border-radius: 6px;
       transition: all 0.3s ease;
-      display: inline-flex;
-      align-items: center;
-      border: 1px solid var(--border-color);
-      backdrop-filter: blur(5px);
-      min-width: auto;
-      height: auto;
+      position: relative;
+      overflow: hidden;
+      letter-spacing: 0.3px;
+      box-shadow: 0 3px 12px rgba(0, 0, 0, 0.2);
     }
 
-    .btn-sm:hover {
-      color: var(--lighter-text) !important;
+    .custom-btn:hover {
+      transform: translateY(-1px);
+      text-decoration: none;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
     }
 
-    .btn-primary {
-      background: rgba(44, 90, 160, 0.3);
-      color: var(--accent-blue);
+    .custom-btn:active {
+      transform: translateY(0);
     }
 
-    .btn-primary:hover {
-      background: rgba(44, 90, 160, 0.5);
+    .custom-btn i {
+      margin-right: 0.5rem;
+      font-size: 0.95rem;
+    }
+
+    /* Botón back */
+    .btn-back-styled {
+      background: linear-gradient(135deg, rgba(44, 90, 160, 0.8), rgba(58, 123, 213, 0.6));
+      color: var(--lighter-text);
+      border: 1px solid rgba(44, 90, 160, 0.5);
+    }
+
+    .btn-back-styled:hover {
+      background: linear-gradient(135deg, rgba(44, 90, 160, 1), rgba(58, 123, 213, 0.8));
+      color: var(--lighter-text);
       border-color: var(--accent-blue);
     }
 
-    .btn-success {
-      background: rgba(76, 201, 240, 0.2);
-      color: var(--success-color);
-      border-color: rgba(76, 201, 240, 0.5);
+    /* Botones de acción pequeños */
+    .btn-action-styled {
+      padding: 0.5rem 0.8rem;
+      font-size: 0.85rem;
+      border-radius: 6px;
+      margin: 0 0.2rem;
+      min-width: 70px;
+      height: 36px;
+      font-weight: 500;
     }
 
-    .btn-success:hover {
-      background: rgba(76, 201, 240, 0.3);
+    .btn-primary-styled {
+      background: linear-gradient(135deg, rgba(44, 90, 160, 0.9), rgba(58, 123, 213, 0.7));
+      color: var(--lighter-text);
+      border: 1px solid rgba(44, 90, 160, 0.6);
+    }
+
+    .btn-primary-styled:hover {
+      background: linear-gradient(135deg, rgba(44, 90, 160, 1), rgba(58, 123, 213, 0.9));
+      color: var(--lighter-text);
+      border-color: var(--accent-blue);
+    }
+
+    .btn-success-styled {
+      background: linear-gradient(135deg, rgba(76, 201, 240, 0.9), rgba(76, 201, 240, 0.7));
+      color: var(--lighter-text);
+      border: 1px solid rgba(76, 201, 240, 0.6);
+    }
+
+    .btn-success-styled:hover {
+      background: linear-gradient(135deg, rgba(76, 201, 240, 1), rgba(76, 201, 240, 0.9));
+      color: var(--lighter-text);
       border-color: var(--success-color);
     }
 
-    .btn-warning {
-      background: rgba(255, 193, 7, 0.2);
-      color: var(--warning-color);
-      border-color: rgba(255, 193, 7, 0.5);
+    .btn-warning-styled {
+      background: linear-gradient(135deg, rgba(255, 193, 7, 0.9), rgba(255, 193, 7, 0.7));
+      color: var(--darker-bg);
+      border: 1px solid rgba(255, 193, 7, 0.6);
+      font-weight: 600;
     }
 
-    .btn-warning:hover {
-      background: rgba(255, 193, 7, 0.3);
+    .btn-warning-styled:hover {
+      background: linear-gradient(135deg, rgba(255, 193, 7, 1), rgba(255, 193, 7, 0.9));
+      color: var(--darker-bg);
       border-color: var(--warning-color);
     }
 
-    .btn-danger {
-      background: rgba(255, 77, 77, 0.2);
-      color: var(--danger-color);
-      border-color: rgba(255, 77, 77, 0.5);
+    .btn-danger-styled {
+      background: linear-gradient(135deg, rgba(255, 77, 77, 0.9), rgba(255, 77, 77, 0.7));
+      color: var(--lighter-text);
+      border: 1px solid rgba(255, 77, 77, 0.6);
     }
 
-    .btn-danger:hover {
-      background: rgba(255, 77, 77, 0.3);
+    .btn-danger-styled:hover {
+      background: linear-gradient(135deg, rgba(255, 77, 77, 1), rgba(255, 77, 77, 0.9));
+      color: var(--lighter-text);
       border-color: var(--danger-color);
-    }
-
-    .btn-sm i {
-      margin-right: 5px;
-      color: inherit;
     }
 
     /* Badges */
     .badge-count {
-      background-color: rgba(255, 255, 255, 0.1);
-      color: var(--light-text);
+      background: linear-gradient(135deg, rgba(44, 90, 160, 0.8), rgba(58, 123, 213, 0.6));
+      color: var(--lighter-text);
       font-weight: 600;
       padding: 0.5rem 0.8rem;
-      border-radius: 50px;
+      border-radius: 20px;
+      border: 1px solid rgba(44, 90, 160, 0.4);
     }
 
     /* Alerts */
     .alert {
-      border-radius: 8px;
+      border-radius: 10px;
       padding: 1rem;
       margin-bottom: 2rem;
       border: 1px solid transparent;
-      backdrop-filter: blur(5px);
+      backdrop-filter: blur(8px);
     }
 
     .alert-success {
-      background-color: rgba(76, 201, 240, 0.1);
+      background-color: rgba(76, 201, 240, 0.15);
       border-color: var(--success-color);
-      color: var(--light-text);
+      color: var(--lighter-text);
     }
 
     .alert-danger {
-      background-color: rgba(255, 77, 77, 0.1);
+      background-color: rgba(255, 77, 77, 0.15);
       border-color: var(--danger-color);
-      color: var(--light-text);
+      color: var(--lighter-text);
     }
 
-    /* SOLO CAMBIOS PARA MOBILE - el desktop queda exactamente igual */
+    /* Contenedor de botones */
+    .btn-container {
+      display: flex;
+      gap: 0.8rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-action-group {
+      display: flex;
+      gap: 0.3rem;
+      justify-content: flex-end;
+      flex-wrap: nowrap;
+      align-items: center;
+    }
+
+    /* RESPONSIVE MEJORADO */
+    @media (max-width: 992px) {
+      .container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+      }
+
+      .page-header h1 {
+        font-size: 2.2rem;
+      }
+
+      .table th,
+      .table td {
+        padding: 0.8rem 0.6rem;
+      }
+    }
+
     @media (max-width: 768px) {
       .page-header h1 {
         font-size: 2rem;
@@ -286,11 +337,36 @@
 
       .btn-container {
         flex-direction: column;
-        align-items: flex-start;
+        align-items: stretch;
       }
 
-      .btn-back {
+      .custom-btn {
         width: 100%;
+        justify-content: center;
+      }
+
+      .card-header {
+        padding: 1rem;
+        flex-direction: column;
+        text-align: center;
+        gap: 0.5rem;
+      }
+
+      .badge-count {
+        align-self: center;
+        margin-top: 0.5rem;
+      }
+
+      .btn-action-group {
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
+
+      .btn-action-styled {
+        min-width: 60px;
+        flex: 1;
+        max-width: 80px;
       }
     }
 
@@ -299,7 +375,15 @@
         font-size: 1.8rem;
       }
 
-      /* Mobile table styles */
+      .container {
+        padding-top: 1rem;
+      }
+
+      /* Tabla responsive como cards */
+      .table-responsive {
+        border-radius: 0 0 12px 12px;
+      }
+
       table {
         display: block;
         width: 100%;
@@ -312,24 +396,31 @@
       tbody {
         display: block;
         width: 100%;
+        padding: 0.5rem;
       }
 
       tr {
         display: block;
-        margin-bottom: 1rem;
+        margin-bottom: 1.2rem;
         border: 1px solid var(--border-color);
-        border-radius: 8px;
+        border-radius: 10px;
         padding: 1rem;
-        background: rgba(15, 25, 35, 0.7);
+        background: rgba(15, 25, 35, 0.8);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      }
+
+      tr:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
       }
 
       td {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 0.8rem;
+        padding: 0.7rem 0;
         border: none;
-        border-bottom: 1px solid var(--border-color);
+        border-bottom: 1px solid rgba(44, 90, 160, 0.2);
         background: transparent;
       }
 
@@ -340,47 +431,78 @@
       }
 
       td::before {
-        content: attr(data-label);
+        content: attr(data-label) ":";
         font-weight: 600;
         margin-right: 1rem;
-        color: var(--light-text);
+        color: var(--accent-blue);
         flex: 1;
+        font-size: 0.85rem;
       }
 
       td > *:not(::before) {
         flex: 2;
         text-align: right;
+        font-weight: 500;
       }
 
-      /* Actions column */
+      /* Actions column en móvil */
       td[data-label="Actions"] {
         display: flex;
         justify-content: center;
-        gap: 0.5rem;
+        gap: 0.4rem;
         padding-top: 1rem;
+        flex-wrap: wrap;
       }
 
       td[data-label="Actions"]::before {
         display: none;
       }
 
-      /* Hide text in buttons on mobile, show only icons */
-      .btn-sm span {
+      /* Ajustar botones en móvil */
+      .btn-action-styled {
+        padding: 0.6rem 0.8rem;
+        margin: 0.2rem;
+        min-width: 45px;
+        font-size: 0.8rem;
+      }
+
+      /* Ocultar texto en móvil, mostrar solo iconos */
+      .btn-action-styled .btn-text {
         display: none;
       }
 
-      .btn-sm i {
-        margin-right: 0 !important;
-      }
-
-      .btn-action-group {
-        justify-content: center;
-        width: 100%;
+      .btn-action-styled i {
+        margin-right: 0;
       }
     }
 
-    .table-hover tbody tr:hover td {
-      color: var(--light-text);
+    /* Efectos adicionales sutiles */
+    .custom-btn:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(44, 90, 160, 0.3);
+    }
+
+    .table tbody tr {
+      transition: all 0.2s ease;
+    }
+
+    /* Scroll suave para la tabla */
+    .table-responsive {
+      scrollbar-width: thin;
+      scrollbar-color: var(--primary-blue) transparent;
+    }
+
+    .table-responsive::-webkit-scrollbar {
+      height: 8px;
+    }
+
+    .table-responsive::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .table-responsive::-webkit-scrollbar-thumb {
+      background: var(--primary-blue);
+      border-radius: 4px;
     }
   </style>
 </head>
@@ -423,14 +545,12 @@
     </button>
   </div>
 
-  <div class="btn-container mb-3">
-    <a class="btn btn-back" th:href="@{'/expediente/selection/' + ${expedienteId}}">
+  <div class="btn-container">
+    <a class="custom-btn btn-back-styled" th:href="@{/expediente/menu}">
       <i class="fas fa-arrow-left"></i> <span th:text="#{back-to-selection}">Back to Selection</span>
     </a>
 
-    <a class="btn btn-back" th:href="@{'/form?expedienteId=' + ${expedienteId}}" th:if="${EXPEDIENTE_FORM_CREATE}">
-      <i class="fas fa-plus"></i> <span th:text="#{create-new}">Create new</span>
-    </a>
+
   </div>
 
   <div class="card">
@@ -457,31 +577,33 @@
             <td data-label="Building Type" th:text="${f.tipoEdificio}"></td>
             <td data-label="Evaluator" th:text="${f.nombreEvaluador}"></td>
             <td data-label="Actions">
-              <a class="btn btn-sm btn-primary" th:href="@{'/form/' + ${f.id}}" th:title="#{view}">
-                <i class="fas fa-eye"></i>
-                <span class="d-none d-md-inline" th:text="#{view}">View</span>
-              </a>
+              <div class="btn-action-group">
+                <a class="custom-btn btn-action-styled btn-primary-styled" th:href="@{'/form/' + ${f.id}}" th:title="#{view}">
+                  <i class="fas fa-eye"></i>
+                  <span class="btn-text" th:text="#{view}">View</span>
+                </a>
 
-              <a class="btn btn-sm btn-success ms-1" th:href="@{'/form/' + ${f.id} + '/pdf'}" th:title="#{download-pdf}"
-                 th:if="${EXPEDIENTE_FORM_PDF}">
-                <i class="fas fa-download"></i>
-                <span class="d-none d-md-inline" th:text="#{pdf}">PDF</span>
-              </a>
+                <a class="custom-btn btn-action-styled btn-success-styled" th:href="@{'/form/' + ${f.id} + '/pdf'}" th:title="#{download-pdf}"
+                   th:if="${EXPEDIENTE_FORM_PDF}">
+                  <i class="fas fa-download"></i>
+                  <span class="btn-text" th:text="#{pdf}">PDF</span>
+                </a>
 
-              <a class="btn btn-sm btn-warning ms-1" th:href="@{'/form/' + ${f.id} + '/edit'}" th:title="#{edit}"
-                 th:if="${EXPEDIENTE_FORM_EDIT}">
-                <i class="fas fa-pen"></i>
-                <span class="d-none d-md-inline" th:text="#{edit}">Edit</span>
-              </a>
+                <a class="custom-btn btn-action-styled btn-warning-styled" th:href="@{'/form/' + ${f.id} + '/edit'}" th:title="#{edit}"
+                   th:if="${EXPEDIENTE_FORM_EDIT}">
+                  <i class="fas fa-pen"></i>
+                  <span class="btn-text" th:text="#{edit}">Edit</span>
+                </a>
 
-              <form th:action="@{'/form/' + ${f.id} + '/delete'}" method="post" style="display: inline;"
-                    th:if="${EXPEDIENTE_FORM_DELETE}"
-                    th:attr="onsubmit=|return confirm(#{delete-confirmation-form});|">
-                <button type="submit" class="btn btn-sm btn-danger ms-1" th:title="#{delete}">
-                  <i class="fas fa-trash"></i>
-                  <span class="d-none d-md-inline" th:text="#{delete}">Delete</span>
-                </button>
-              </form>
+                <form th:action="@{'/form/' + ${f.id} + '/delete'}" method="post" style="display: inline;"
+                      th:if="${EXPEDIENTE_FORM_DELETE}"
+                      th:attr="onsubmit=|return confirm(#{delete-confirmation-form});|">
+                  <button type="submit" class="custom-btn btn-action-styled btn-danger-styled" th:title="#{delete}">
+                    <i class="fas fa-trash"></i>
+                    <span class="btn-text" th:text="#{delete}">Delete</span>
+                  </button>
+                </form>
+              </div>
             </td>
           </tr>
           </tbody>
