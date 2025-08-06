@@ -1753,7 +1753,8 @@
             decoding="async"
     >
 </div>
-
+<!--- NAVBAR--->
+<div th:replace="usuario/navbar-fragment :: navbar"></div>
 
 <!-- Success Notification -->
 <div id="successNotification" class="alert alert-success success-notification" role="alert" style="display: none;">
@@ -2359,8 +2360,6 @@
 
 </script>
 
-<!-- Footer -->
-<div th:replace="adm/template_admin.html :: footer"></div>
 
 <!-- Bootstrap core JavaScript -->
 <script th:src="@{/vendor/jquery/jquery.min.js}"></script>
