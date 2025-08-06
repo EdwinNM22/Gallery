@@ -5,6 +5,9 @@ import com.proyecto.galeria.model.Form;
 import com.proyecto.galeria.model.FotosForm;
 import com.proyecto.galeria.model.usuario;
 import com.proyecto.galeria.service.*;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.ResponseEntity;
@@ -12,11 +15,15 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.beans.PropertyEditorSupport;
 import java.io.IOException;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -55,6 +62,17 @@ public class FormController {
     @Autowired
     private PermisoService permisoService;
 
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
+        binder.registerCustomEditor(LocalTime.class, new PropertyEditorSupport() {
+            @Override
+            public void setAsText(String text) {
+                setValue(LocalTime.parse(text, timeFormatter));
+            }
+        });
+    }
 
     @GetMapping("/manage/{usuarioId}")
     public String showManageFormPageByUsuario(
@@ -337,7 +355,13 @@ public class FormController {
         Map<String, Object> response = new HashMap<>();
 
         try {
-            formService.update(id, form);
+            Optional<Form> optionalForm = formService.findById(id);
+            Form originalForm = optionalForm.orElseThrow(() -> new RuntimeException("Form no encontrado"));
+
+
+            BeanUtils.copyProperties(form, originalForm, getNullPropertyNames(form));
+
+            formService.update(id, originalForm);
 
             if (photosToDelete != null && !photosToDelete.isEmpty()) {
                 List<Integer> idsToDelete = Arrays.stream(photosToDelete.split(","))
@@ -379,7 +403,7 @@ public class FormController {
                     if (!newPhotos[i].isEmpty()) {
                         String filename = uploadFormFoto.saveImage(newPhotos[i]);
                         FotosForm newFoto = new FotosForm();
-                        newFoto.setForm(form);
+                        newFoto.setForm(originalForm);
                         newFoto.setImagen(filename);
                         newFoto.setDescripcion(
                                 (newPhotoDescriptions != null && i < newPhotoDescriptions.length)
@@ -400,6 +424,20 @@ public class FormController {
             return ResponseEntity.badRequest().body(response);
         }
     }
+
+    private String[] getNullPropertyNames(Object source) {
+        final BeanWrapper src = new BeanWrapperImpl(source);
+        java.beans.PropertyDescriptor[] pds = src.getPropertyDescriptors();
+
+        Set<String> emptyNames = new HashSet<>();
+        for (java.beans.PropertyDescriptor pd : pds) {
+            Object srcValue = src.getPropertyValue(pd.getName());
+            if (srcValue == null) emptyNames.add(pd.getName());
+        }
+        String[] result = new String[emptyNames.size()];
+        return emptyNames.toArray(result);
+    }
+
 
     @PostMapping("/{id}/delete")
     @Transactional

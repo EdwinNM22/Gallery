@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalTime;
 
 @Entity
 @Table(name = "form")
@@ -148,7 +149,7 @@ public class Form {
     private usuario usuario;
 
 
-
+ // NUEVOS
     @Column(name = "conductos_visibles_valor")
     private Double  conductosVisiblesValor;
 
@@ -157,5 +158,22 @@ public class Form {
 
     @Column(name = "conductos_visibles_total")
     private Double  conductosVisiblesTotal;
+
+
+    @Column(name = "nombre_proyecto")
+    private String nombreProyecto;
+
+    private String telefono;
+
+    private String email;
+
+    @Column(name = "fecha_visita")
+    private LocalDate fechaVisita;
+
+    @Column(name = "hora_visita")
+    private LocalTime horaVisita;
+
+    @Column(name = "hora_evaluacion")
+    private LocalTime horaEvaluacion;
 
 }

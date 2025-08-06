@@ -68,9 +68,9 @@
         </div>
 
         <div
-          th:if="${error}"
-          class="alert alert-danger animated delay-1"
-          role="alert"
+                th:if="${error}"
+                class="alert alert-danger animated delay-1"
+                role="alert"
         >
           <i class="fas fa-exclamation-circle"></i>
           <span th:text="${message}">Message d'erreur</span>
@@ -84,120 +84,147 @@
         </div>
 
         <form
-          th:action="@{/form/submit}"
-          method="post"
-          enctype="multipart/form-data"
-          class="form-container animated delay-1"
-          id="mainForm"
+                th:action="@{/form/submit}"
+                method="post"
+                enctype="multipart/form-data"
+                class="form-container animated delay-1"
+                id="mainForm"
         >
           <input type="hidden" name="redirectToSelection" value="true" />
-
           <input type="hidden" name="futuro" value="true" />
 
           <div class="form-section">
             <h3>
               <i class="fas fa-info-circle"></i>
-              <span th:text="#{general-information}"
-                >Informations Générales</span
-              >
+              <span th:text="#{general-information}">Informations Générales</span>
             </h3>
 
             <div class="row">
+              <!-- Cliente y Proyecto -->
               <div class="col-md-6">
                 <div class="form-group">
                   <label class="form-label"
-                    ><span th:text="#{client-name}">Nom du client</span>
+                  ><span th:text="#{client-name}">Nom du client</span>
                     <span class="required">*</span></label
                   >
-                  <input
-                    type="text"
-                    class="form-control"
-                    name="nombreCliente"
-                    required
-                  />
-                  <input  name="usuario.id" th:value="${usuario.id}" />
+                  <input type="text" class="form-control" name="nombreCliente" required />
+                  <input type="hidden" name="expedienteId" th:value="${expedienteId}" />
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label class="form-label">Nombre Proyecto</label>
+                  <input type="text" class="form-control" name="nombreProyecto" />
                 </div>
               </div>
             </div>
 
             <div class="row">
+              <!-- Evaluador -->
               <div class="col-md-6">
                 <div class="form-group">
                   <label class="form-label"
-                    ><span th:text="#{evaluation-date}"
-                      >Date de l'évaluation</span
-                    ><span class="required">*</span></label
+                  ><span th:text="#{evaluator-name}">Nom de l'évaluateur</span
+                  ><span class="required">*</span></label
                   >
                   <input
-                    type="date"
-                    class="form-control"
-                    name="fechaEvaluacion"
-                    th:value="${fechaEvaluacion}"
-                    required
+                          type="text"
+                          class="form-control"
+                          name="nombreEvaluador"
+                          th:value="${nombreEvaluador}"
+                          required
                   />
                 </div>
               </div>
+
+              <!-- Persona Contacto -->
               <div class="col-md-6">
+                <div class="form-group">
+                  <label class="form-label" th:text="#{on-site-contact-person}">
+                    Personne contact sur place
+                  </label>
+                  <input type="text" class="form-control" name="personaContacto" />
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <!-- Fecha y Hora Evaluación -->
+              <div class="col-md-3">
                 <div class="form-group">
                   <label class="form-label"
-                    ><span th:text="#{evaluator-name}">Nom de l'évaluateur</span
-                    ><span class="required">*</span></label
+                  ><span th:text="#{evaluation-date}">Date de l'évaluation</span
+                  ><span class="required">*</span></label
                   >
                   <input
-                    type="text"
-                    class="form-control"
-                    name="nombreEvaluador"
-                    th:value="${nombreEvaluador}"
-                    required
+                          type="date"
+                          class="form-control"
+                          name="fechaEvaluacion"
+                          th:value="${fechaEvaluacion}"
+                          required
                   />
+                </div>
+              </div>
+
+              <div class="col-md-3">
+                <div class="form-group">
+                  <label class="form-label">Hora Evaluación</label>
+                  <input type="time" class="form-control" name="horaEvaluacion" />
+                </div>
+              </div>
+
+              <!-- Fecha y Hora Visita -->
+              <div class="col-md-3">
+                <div class="form-group">
+                  <label class="form-label">Fecha Visita</label>
+                  <input type="date" class="form-control" name="fechaVisita" />
+                </div>
+              </div>
+
+              <div class="col-md-3">
+                <div class="form-group">
+                  <label class="form-label">Hora Visita</label>
+                  <input type="time" class="form-control" name="horaVisita" />
+                </div>
+              </div>
+            </div>
+
+            <div id="fechaUltimoMantenimientoRow" class="row" style="display: none">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label class="form-label" th:text="#{last-date}">Dernière date</label>
+                  <input type="date" class="form-control" name="fechaUltimoMantenimiento" value="" />
                 </div>
               </div>
             </div>
 
             <div class="row">
+              <!-- Teléfono y Email -->
               <div class="col-md-6">
                 <div class="form-group">
-                  <label class="form-label" th:text="#{on-site-contact-person}"
-                    >Personne contact sur place</label
-                  >
-                  <input
-                    type="text"
-                    class="form-control"
-                    name="personaContacto"
-                  />
+                  <label class="form-label">Teléfono</label>
+                  <input type="text" class="form-control" name="telefono" />
                 </div>
               </div>
-            </div>
-
-            <div
-              class="row"
-              id="fechaUltimoMantenimientoRow"
-              style="display: none"
-            >
               <div class="col-md-6">
                 <div class="form-group">
-                  <label class="form-label" th:text="#{last-date}"
-                    >Dernière date</label
-                  >
-                  <input
-                    type="date"
-                    class="form-control"
-                    name="fechaUltimoMantenimiento"
-                    value=""
-                  />
+                  <label class="form-label">Email</label>
+                  <input type="email" class="form-control" name="email" />
                 </div>
               </div>
             </div>
 
             <div class="row">
+              <!-- Dirección al final -->
               <div class="col-md-12">
                 <div class="form-group">
                   <label class="form-label" th:text="#{address}">Adresse</label>
                   <textarea
-                    class="form-control"
-                    name="direccion"
-                    rows="3"
-                    th:placeholder="#{enter-address-here}"
+                          class="form-control"
+                          name="direccion"
+                          rows="3"
+                          th:placeholder="#{enter-address-here}"
                   ></textarea>
                 </div>
               </div>
@@ -213,6 +240,7 @@
         </form>
       </div>
     </div>
+
 
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
