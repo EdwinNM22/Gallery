@@ -534,7 +534,7 @@
             position: fixed;
             top: 20px;
             right: 20px;
-            z-index: 1100;
+            z-index: 10;
             max-width: 350px;
             width: 100%;
         }
@@ -597,7 +597,7 @@
             top: 20px;
             right: 20px;
             width: 350px;
-            z-index: 9999;
+            z-index: 15;
             display: none;
             border-radius: 10px;
             overflow: hidden;
@@ -729,7 +729,7 @@
         /* Context Menu */
         .context-menu {
             position: absolute;
-            z-index: 1000;
+            z-index: 10;
             background-color: var(--darker-bg);
             border: 1px solid var(--border-color);
             border-radius: 8px;
@@ -1739,6 +1739,8 @@
     </style>
 </head>
 <body>
+<div th:replace="fragments/navbar :: navbar"></div>
+
 <!-- Imagen -->
 <div class="bg-fast-load">
     <img

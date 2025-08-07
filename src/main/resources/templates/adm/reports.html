@@ -493,8 +493,8 @@
     }
   </style>
 </head>
-
 <body>
+<div th:replace="fragments/navbar :: navbar"></div>
 
 <!-- Background Image -->
 <div class="bg-fast-load">
@@ -512,7 +512,6 @@
 </div>
 <div th:replace="permiso/permissions-panel :: panelPermisos"></div>
 
-<div th:replace="fragments/navbar :: navbar"></div>
 <!-- Main Content -->
 <div class="main-container">
   <div class="container">

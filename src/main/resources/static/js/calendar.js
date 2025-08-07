@@ -5,32 +5,11 @@ function processEventData(events, cssClass = "event-list-element in-progress") {
 
   // Process each event in the input array
   events.forEach((ev) => {
-    // Process start and end times to ensure they have time components
-    let startTime = new Date(ev.start);
-    let endTime = new Date(ev.end);
-    
-    // Check if the original times have specific hours/minutes or are date-only
-    const hasTimeInfo = (
-      startTime.getHours() !== 0 || 
-      startTime.getMinutes() !== 0 || 
-      startTime.getSeconds() !== 0
-    );
-    
-    // If no time info is present, add placeholder times (12:00 PM - 1:00 PM)
-    if (!hasTimeInfo) {
-      // Set start time to 12:00 PM (noon)
-      startTime.setHours(12, 0, 0, 0);
-      
-      // Set end time to 1:00 PM (1 hour duration)
-      endTime = new Date(startTime);
-      endTime.setHours(13, 0, 0, 0);
-    }
-
     // Add event to results
     results.push({
       id: ev.id, // Use original event ID
-      start: startTime.toISOString(), // Use processed start time
-      end: endTime.toISOString(), // Use processed end time
+      start: ev.start, // Use processed start time
+      end: ev.end, // Use processed end time
       text: ev.nombreCliente,
       barVisible: false,
       backColor: "transparent",
@@ -42,7 +21,6 @@ function processEventData(events, cssClass = "event-list-element in-progress") {
         originalEventId: ev.id,
         estado: cssClass.includes("complete") ? "complete" : "in-progress",
         usuarioNombre: ev.usuarioNombre,
-        hasPlaceholderTime: !hasTimeInfo, // Track if we added placeholder time
       },
     });
   });
@@ -429,7 +407,7 @@ function showDayEvents(date, calendar) {
           const endTime = new Date(event.end);
           const timeDisplay = event.tags.hasPlaceholderTime 
             ? `<small class="text-muted">(Time TBD)</small>`
-            : `<small class="text-muted">${startTime.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} - ${endTime.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</small>`;
+            : `<small class="text-muted">${startTime.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</small>`;
 
           eventElement.innerHTML = `
           <div class="d-flex justify-content-between align-items-start">

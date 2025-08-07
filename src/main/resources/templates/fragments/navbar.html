@@ -5,10 +5,6 @@
     <!-- Google Fonts - Montserrat -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-    <link href="https://flagcdn.com/w40/{código}.png" rel="stylesheet">
-
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
     <link href="/css/expediente/selection.css" rel="stylesheet" />
     <link href="/css/expediente/calendarDayModal.css" rel="stylesheet" />
 
@@ -23,13 +19,7 @@
             --border-color: rgba(44, 90, 160, 0.3);
         }
 
-        #navbar-fragment body {
-            background-color: initial;
-            margin: 0;
-            font-family: inherit;
-        }
-
-        #navbar-fragment .navbar-mega-style {
+        .navbar {
             background: rgba(15, 25, 35, 0.5);
             backdrop-filter: blur(8px);
             border-bottom: 1px solid rgba(44, 90, 160, 0.1);
@@ -38,52 +28,55 @@
             position: sticky;
             top: 0;
             width: 100%;
-            z-index: 1000;
-            transition: all 0.3s ease;
-            height: 60px; /* grosor fijo */
+            height: 60px;
             display: flex;
             align-items: center;
+            z-index: 1000;
+            margin-bottom: 50px;
         }
 
-        #navbar-fragment .container {
+        .navbar-container {
             display: flex;
             justify-content: space-between;
             align-items: center;
             width: 100%;
+            padding-left: 10%;
+            padding-right: 10%;
         }
 
-        #navbar-fragment .navbar-brand {
+        .navbar-brand {
             color: var(--lighter-text);
             font-weight: 600;
             font-size: 1.2rem;
-            margin-right: 1.5rem;
-            flex-shrink: 0;
+            text-decoration: none;
         }
 
-        #navbar-fragment .navbar-brand:hover {
+        .navbar-brand:hover {
             color: var(--accent-blue);
             transform: scale(1.05);
         }
 
-        #navbar-fragment .navbar-nav {
+        .nav-menu {
             display: flex;
             align-items: center;
+            gap: 1rem;
         }
 
-        #navbar-fragment .navbar-nav .nav-item {
-            margin-left: 1rem;
-        }
-
-        #navbar-fragment .nav-link {
+        .nav-link {
             color: var(--light-text);
             font-weight: 500;
             padding: 0.5rem 0.8rem;
             font-size: 0.9rem;
-            transition: all 0.3s ease;
+            text-decoration: none;
             position: relative;
+            transition: all 0.3s ease;
         }
 
-        #navbar-fragment .nav-link::after {
+        .nav-link:hover {
+            color: var(--accent-blue);
+        }
+
+        .nav-link::after {
             content: '';
             position: absolute;
             bottom: 0;
@@ -95,84 +88,128 @@
             transition: width 0.3s ease;
         }
 
-        #navbar-fragment .nav-link:hover::after {
+        .nav-link:hover::after {
             width: 80%;
         }
 
-        #navbar-fragment .nav-link:hover {
-            color: var(--accent-blue);
-            text-decoration: none;
+        .dropdown {
+            position: relative;
         }
 
-        #navbar-fragment .navbar-toggler {
-            border-color: var(--border-color);
-            padding: 0.25rem 0.5rem;
-        }
-
-        #navbar-fragment .navbar-toggler-icon {
-            background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3e%3cpath stroke='rgba%28224, 224, 224, 0.8%29' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
-        }
-
-        #navbar-fragment .dropdown-menu {
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 100%;
             background-color: var(--darker-bg);
             border: 1px solid var(--border-color);
             border-radius: 6px;
+            min-width: 160px;
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            z-index: 999;
         }
 
-        #navbar-fragment .dropdown-item {
+        .dropdown-menu a {
+            display: flex;
+            align-items: center;
             color: var(--light-text);
+            padding: 0.5rem 1rem;
             font-size: 0.9rem;
             font-weight: 500;
+            text-decoration: none;
         }
 
-        #navbar-fragment .dropdown-item:hover {
+        .dropdown-menu a:hover {
             background-color: var(--primary-blue);
             color: var(--lighter-text);
         }
+
+        .show {
+            display: block;
+        }
+
+        .toggler {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+        }
+
+        .toggler span {
+            height: 3px;
+            width: 25px;
+            background: var(--light-text);
+            margin: 4px 0;
+        }
+
+        @media (max-width: 768px) {
+            .nav-menu {
+                display: none;
+                flex-direction: column;
+                background: var(--dark-bg);
+                position: absolute;
+                top: 60px;
+                right: 0;
+                width: 100%;
+                padding: 1rem 2rem;
+            }
+
+            .nav-menu.active {
+                display: flex;
+            }
+
+            .toggler {
+                display: flex;
+            }
+        }
     </style>
 
-    <nav class="navbar navbar-expand-lg navbar-dark navbar-mega-style">
-        <div class="container">
-            <a class="navbar-brand" href="#">Biovac</a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
-                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-
-            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-                <ul class="navbar-nav">
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="languageDropdown" role="button"
-                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class="fas fa-globe mr-1"></i>
-                            <span th:text="#{language}">Language</span>
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="languageDropdown">
-                            <a class="dropdown-item" href="?lang=en">
-                                <img src="https://flagcdn.com/w40/us.png" width="20" class="mr-2" alt="English"> English
-                            </a>
-                            <a class="dropdown-item" href="?lang=es">
-                                <img src="https://flagcdn.com/w40/sv.png" width="20" class="mr-2" alt="Español"> Español
-                            </a>
-                            <a class="dropdown-item" href="?lang=fr">
-                                <img src="https://flagcdn.com/w40/fr.png" width="20" class="mr-2" alt="Français"> Français
-                            </a>
-                        </div>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/cerrar}">
-                            <i class="fa-solid fa-right-from-bracket mr-1"></i>
-                            <span th:text="#{log-out}">Log Out</span>
-                        </a>
-                    </li>
-                </ul>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="/adm" class="navbar-brand">Biovac</a>
+            <div class="toggler" id="navToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <div class="nav-menu" id="navMenu">
+                <div class="dropdown">
+                    <a href="#" class="nav-link dropdown-toggle" id="languageToggle">
+                        <i class="fas fa-globe me-1"></i>
+                        <span th:text="#{language}">Language</span>
+                    </a>
+                    <div class="dropdown-menu" id="languageMenu">
+                        <a href="?lang=en"><img src="https://flagcdn.com/w40/us.png" width="20" class="me-2" alt="English"> English</a>
+                        <a href="?lang=es"><img src="https://flagcdn.com/w40/sv.png" width="20" class="me-2" alt="Español"> Español</a>
+                        <a href="?lang=fr"><img src="https://flagcdn.com/w40/fr.png" width="20" class="me-2" alt="Français"> Français</a>
+                    </div>
+                </div>
+                <a href="#" class="nav-link" th:href="@{/cerrar}">
+                    <i class="fa-solid fa-right-from-bracket me-1"></i>
+                    <span th:text="#{log-out}">Log Out</span>
+                </a>
             </div>
         </div>
     </nav>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script>
+        // Toggle mobile menu
+        document.getElementById('navToggle').addEventListener('click', () => {
+            document.getElementById('navMenu').classList.toggle('active');
+        });
 
+        // Toggle language dropdown
+        document.getElementById('languageToggle').addEventListener('click', (e) => {
+            e.preventDefault();
+            document.getElementById('languageMenu').classList.toggle('show');
+        });
+
+        // Hide dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            const toggle = document.getElementById('languageToggle');
+            const menu = document.getElementById('languageMenu');
+            if (!toggle.contains(e.target) && !menu.contains(e.target)) {
+                menu.classList.remove('show');
+            }
+        });
+    </script>
 </div>

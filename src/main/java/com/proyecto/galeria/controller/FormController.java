@@ -22,6 +22,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.beans.PropertyEditorSupport;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -105,21 +106,33 @@ public class FormController {
             List<Form> completeForms = formService.findByUsuarioIdAndFuturo(idUsuario, false);
 
             List<Map<String, String>> events = futureForms.stream()
-                    .filter(f -> f.getFechaEvaluacion() != null)
-                    .map(f -> Map.of(
-                            "id", f.getId().toString(),
-                            "start", f.getFechaEvaluacion().toString(),
-                            "end", f.getFechaEvaluacion().toString(),
-                            "nombreCliente", f.getNombreCliente()))
+                    .filter(f -> f.getFechaEvaluacion() != null && f.getHoraEvaluacion() != null)
+                    .map(f -> {
+                        LocalDate fecha = f.getFechaEvaluacion();
+                        LocalTime hora = f.getHoraEvaluacion();
+                        String startDateTime = fecha.atTime(hora).toString(); // ISO_LOCAL_DATE_TIME
+                        return Map.of(
+                                "id", f.getId().toString(),
+                                "start", startDateTime,
+                                "end", startDateTime,
+                                "nombreCliente", f.getNombreProyecto()
+                        );
+                    })
                     .collect(Collectors.toList());
 
             List<Map<String, String>> eventsComplete = completeForms.stream()
-                    .filter(f -> f.getFechaEvaluacion() != null)
-                    .map(f -> Map.of(
-                            "id", f.getId().toString(),
-                            "start", f.getFechaEvaluacion().toString(),
-                            "end", f.getFechaEvaluacion().toString(),
-                            "nombreCliente", f.getNombreCliente()))
+                    .filter(f -> f.getFechaEvaluacion() != null && f.getHoraEvaluacion() != null)
+                    .map(f -> {
+                        LocalDate fecha = f.getFechaEvaluacion();
+                        LocalTime hora = f.getHoraEvaluacion();
+                        String startDateTime = fecha.atTime(hora).toString(); // ISO_LOCAL_DATE_TIME
+                        return Map.of(
+                                "id", f.getId().toString(),
+                                "start", startDateTime,
+                                "end", startDateTime,
+                                "nombreCliente", f.getNombreProyecto()
+                        );
+                    })
                     .collect(Collectors.toList());
 
             model.addAttribute("events", events);
