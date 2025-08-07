@@ -406,8 +406,8 @@ function showDayEvents(date, calendar) {
           const startTime = new Date(event.start);
           const endTime = new Date(event.end);
           const timeDisplay = event.tags.hasPlaceholderTime 
-            ? `<small class="text-muted">(Time TBD)</small>`
-            : `<small class="text-muted">${startTime.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</small>`;
+            ? `<small class="event-time-display">(No Time Specified)</small>`
+            : `<small class="event-time-display">${startTime.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</small>`;
 
           eventElement.innerHTML = `
           <div class="d-flex justify-content-between align-items-start">
@@ -416,9 +416,6 @@ function showDayEvents(date, calendar) {
                 <h4 class="event-title">${event.text || ''}</h4>
               </div>
               <div class="event-time-display">${timeDisplay}</div>
-              ${event.tags && event.tags.usuarioNombre 
-                ? `<p class="event-description mt-2">${window.translations?.createdBy || 'Created by'}: ${event.tags.usuarioNombre}</p>`
-                : ''}
             </div>
 
             <div class="action-container">

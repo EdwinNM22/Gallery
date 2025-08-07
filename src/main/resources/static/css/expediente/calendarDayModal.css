@@ -135,9 +135,10 @@
   margin: 0 0 0.5rem 0;
 }
 
-.event-description {
-  color: rgba(224, 224, 224, 0.65);
-  font-size: 0.875rem;
+.event-time-display {
+  color: rgba(255, 255, 255, 0.699);
+  font-size: 1rem;
+  font-weight: 600;
   line-height: 1.5;
 }
 
