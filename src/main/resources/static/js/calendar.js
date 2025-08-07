@@ -133,44 +133,6 @@ function processEventDataAsGroups(eventsInProgress = [], eventsComplete = []) {
  * @param {Object} calendar - The calendar instance to dispose
  * @param {string} elementId - The DOM element ID where the calendar was rendered
  */
- * Find the next or previous day that has events
- * @param {Array} events - Array of events to search through
- * @param {DayPilot.Date} currentDate - Current date to search from
- * @param {number} direction - 1 for next, -1 for previous
- * @returns {DayPilot.Date|null} - Date with events or null if none found
- */
-function findDayWithEvents(events, currentDate, direction = 1) {
-  if (!events || events.length === 0) return null;
-  
-  // Get all unique dates that have events
-  const eventDates = [...new Set(events.map(event => {
-    return new Date(event.start).toISOString().split('T')[0];
-  }))].sort();
-  
-  const currentDateStr = currentDate.toString("yyyy-MM-dd");
-  const currentIndex = eventDates.indexOf(currentDateStr);
-  
-  if (direction === 1) {
-    // Next day with events
-    const nextIndex = currentIndex + 1;
-    if (nextIndex < eventDates.length) {
-      return new DayPilot.Date(eventDates[nextIndex]);
-    }
-    // If no next day, return first day with events (circular)
-    return eventDates.length > 0 ? new DayPilot.Date(eventDates[0]) : null;
-  } else {
-    // Previous day with events
-    const prevIndex = currentIndex - 1;
-    if (prevIndex >= 0) {
-      return new DayPilot.Date(eventDates[prevIndex]);
-    }
-    // If no previous day, return last day with events (circular)
-    return eventDates.length > 0 ? new DayPilot.Date(eventDates[eventDates.length - 1]) : null;
-  }
-}
- * @param {Object} calendar - The calendar instance to dispose
- * @param {string} elementId - The DOM element ID where the calendar was rendered
- */
 function disposeCalendar(calendar, elementId) {
   if (!calendar) return;
   
@@ -284,32 +246,7 @@ export async function initializeCalendar({
   if (viewType === "Day") {
     // For Day view, show individual events (not grouped)
     calendar.events.list = calendar.originalEvents;
-    
-    // Debug: Log the current view date and event dates
     console.log(`Day view: Loading ${calendar.originalEvents.length} individual events`);
-    console.log(`Day view: Current startDate is ${calendar.startDate}`);
-    
-    // Debug: Check which events match the current day
-    const currentDateStr = calendar.startDate.toString("yyyy-MM-dd");
-    console.log(`Day view: Looking for events on ${currentDateStr}`);
-    
-    const matchingEvents = calendar.originalEvents.filter(event => {
-      const eventDateStr = new Date(event.start).toISOString().split('T')[0];
-      const matches = eventDateStr === currentDateStr;
-      console.log(`Event ${event.id}: ${eventDateStr} ${matches ? 'MATCHES' : 'does not match'} ${currentDateStr}`);
-      return matches;
-    });
-    
-    console.log(`Day view: Found ${matchingEvents.length} events for the current day`);
-    
-    // If no events for today, let's show events from the first available date
-    if (matchingEvents.length === 0 && calendar.originalEvents.length > 0) {
-      const firstEventDate = new Date(calendar.originalEvents[0].start);
-      const firstEventDateStr = firstEventDate.toISOString().split('T')[0];
-      calendar.startDate = new DayPilot.Date(firstEventDateStr);
-      console.log(`Day view: No events for today, switching to first event date: ${firstEventDateStr}`);
-    }
-    
   } else {
     // For Month view, use grouped events
     calendar.events.list = processEventDataAsGroups(
@@ -335,16 +272,9 @@ export async function initializeCalendar({
   if (prevBtn) {
     prevBtn.addEventListener("click", () => {
       if (viewType === "Day") {
-        // For Day view, try to navigate to previous day with events
-        const prevDayWithEvents = findDayWithEvents(calendar.originalEvents, calendar.startDate, -1);
-        if (prevDayWithEvents) {
-          calendar.startDate = prevDayWithEvents;
-          console.log(`Day view: Navigate to previous day with events - ${calendar.startDate}`);
-        } else {
-          // Fallback to regular day navigation
-          calendar.startDate = calendar.startDate.addDays(-1);
-          console.log(`Day view: Navigate to previous day (no events check) - ${calendar.startDate}`);
-        }
+        // Navigate by day for Day view
+        calendar.startDate = calendar.startDate.addDays(-1);
+        console.log(`Day view: Navigate to previous day - ${calendar.startDate}`);
       } else {
         // Navigate by month for Month view
         calendar.startDate = calendar.startDate.addMonths(-1);
@@ -355,32 +285,12 @@ export async function initializeCalendar({
     });
   }
 
-  // Today button handler (reset to current date/month or first event day)
+  // Today button handler (reset to current date/month)
   const todayBtn = document.getElementById("today");
   if (todayBtn) {
     todayBtn.addEventListener("click", () => {
-      if (viewType === "Day") {
-        const today = new DayPilot.Date();
-        // Check if today has events, otherwise go to first day with events
-        const todayStr = today.toString("yyyy-MM-dd");
-        const hasEventsToday = calendar.originalEvents.some(event => {
-          const eventDateStr = new Date(event.start).toISOString().split('T')[0];
-          return eventDateStr === todayStr;
-        });
-        
-        if (hasEventsToday || calendar.originalEvents.length === 0) {
-          calendar.startDate = today;
-          console.log(`Day view: Navigate to today - ${calendar.startDate}`);
-        } else {
-          // Go to first day with events
-          const firstEventDate = new Date(calendar.originalEvents[0].start);
-          calendar.startDate = new DayPilot.Date(firstEventDate.toISOString().split('T')[0]);
-          console.log(`Day view: Today has no events, navigate to first event day - ${calendar.startDate}`);
-        }
-      } else {
-        calendar.startDate = new DayPilot.Date(); // Set to current date
-        console.log(`Month view: Navigate to today - ${calendar.startDate}`);
-      }
+      calendar.startDate = new DayPilot.Date(); // Set to current date
+      console.log(`Navigate to today - ${calendar.startDate}`);
       calendar.update();
       if (isMobile) truncateDayHeaders();
     });
@@ -391,16 +301,9 @@ export async function initializeCalendar({
   if (nextBtn) {
     nextBtn.addEventListener("click", () => {
       if (viewType === "Day") {
-        // For Day view, try to navigate to next day with events
-        const nextDayWithEvents = findDayWithEvents(calendar.originalEvents, calendar.startDate, 1);
-        if (nextDayWithEvents) {
-          calendar.startDate = nextDayWithEvents;
-          console.log(`Day view: Navigate to next day with events - ${calendar.startDate}`);
-        } else {
-          // Fallback to regular day navigation
-          calendar.startDate = calendar.startDate.addDays(1);
-          console.log(`Day view: Navigate to next day (no events check) - ${calendar.startDate}`);
-        }
+        // Navigate by day for Day view
+        calendar.startDate = calendar.startDate.addDays(1);
+        console.log(`Day view: Navigate to next day - ${calendar.startDate}`);
       } else {
         // Navigate by month for Month view
         calendar.startDate = calendar.startDate.addMonths(1);
