@@ -578,12 +578,6 @@
             <td data-label="Evaluator" th:text="${f.nombreEvaluador}"></td>
             <td data-label="Actions">
               <div class="btn-action-group">
-                <a class="custom-btn btn-action-styled btn-primary-styled" th:href="@{'/form/' + ${f.id} + '/edit'}" th:title="#{finish-project}"
-                   th:if="${EXPEDIENTE_FORM_EDIT}">
-                  <i class="fa-solid fa-flag-checkered"></i>
-                  <span class="btn-text" th:text="#{finish-project}">Finish</span>
-                </a>
-
                 <a class="custom-btn btn-action-styled btn-primary-styled"
                    th:href="@{/expediente/view-future-project/{id}(id=${f.id})}"
                    th:title="#{view}">

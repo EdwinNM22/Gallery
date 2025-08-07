@@ -507,6 +507,12 @@
       background: var(--primary-blue);
       border-radius: 4px;
     }
+
+    .disabled:hover{
+      transform: none;
+      cursor: default;
+    }
+
   </style>
 </head>
 
@@ -568,6 +574,17 @@
           <span th:text="#{next}">Next</span>
           <i class="fas fa-chevron-right"></i>
         </button>
+
+        <div class="view-toggle">
+          <button class="btn-control" data-view="month">
+            <i class="fas fa-calendar-alt"></i>
+            <span>Month</span>
+          </button>
+          <button class="btn-control" data-view="day">
+            <i class="fas fa-calendar-day"></i>
+            <span>Day</span>
+          </button>
+        </div>
       </div>
       <div class="calendar-wrapper">
         <div id="calendar"></div>
@@ -600,21 +617,32 @@
             <td data-label="Evaluator" th:text="${f.nombreEvaluador}"></td>
             <td data-label="Actions">
               <div class="btn-action-group">
+                <a class="custom-btn btn-action-styled btn-primary-styled" th:href="@{'/form/' + ${f.id} + '/edit'}" th:title="#{finish-project}"
+                    th:if="${f.futuro}">
+                  <i class="fa-solid fa-flag-checkered"></i>
+                  <span class="btn-text" th:text="#{finish-project}">Finish</span>
+                </a>
+                <a class="custom-btn btn-action-styled btn-secondary disabled" th:title="#{finish-project}"
+                    th:if="${!f.futuro}" disabled>
+                  <i class="fa-solid fa-flag-checkered disabled"></i>
+                  <span class="btn-text" th:text="#{finished-project}">Finished</span>
+                </a>
+
                 <a class="custom-btn btn-action-styled btn-primary-styled" th:href="@{'/form/' + ${f.id}}" th:title="#{view}">
                   <i class="fas fa-eye"></i>
                   <span class="btn-text" th:text="#{view}">View</span>
+                </a>
+
+                <a class="custom-btn btn-action-styled btn-warning-styled" th:href="@{'/form/' + ${f.id} + '/edit'}" th:title="#{edit}"
+                    th:if="${EXPEDIENTE_FORM_EDIT}">
+                  <i class="fas fa-pen"></i>
+                  <span class="btn-text" th:text="#{edit}">Edit</span>
                 </a>
 
                 <a class="custom-btn btn-action-styled btn-success-styled" th:href="@{'/form/' + ${f.id} + '/pdf'}" th:title="#{download-pdf}"
                    th:if="${EXPEDIENTE_FORM_PDF}">
                   <i class="fas fa-download"></i>
                   <span class="btn-text" th:text="#{pdf}">PDF</span>
-                </a>
-
-                <a class="custom-btn btn-action-styled btn-warning-styled" th:href="@{'/form/' + ${f.id} + '/edit'}" th:title="#{edit}"
-                   th:if="${EXPEDIENTE_FORM_EDIT}">
-                  <i class="fas fa-pen"></i>
-                  <span class="btn-text" th:text="#{edit}">Edit</span>
                 </a>
 
                 <form th:action="@{'/form/' + ${f.id} + '/delete'}" method="post" style="display: inline;"
@@ -644,7 +672,6 @@
   <script th:inline="javascript">
     /*<![CDATA[*/
     window.__calendarData = {
-      expedienteId: [[${expedienteId}]],
       events: /*[[${events}]]*/ [],
       eventsComplete: /*[[${eventsComplete}]]*/ []
     };
@@ -662,17 +689,91 @@
   </script>
 
 
-  <script type="module">
-    import { initializeCalendar } from "/js/calendar.js";
-
-    const { expedienteId, events, eventsComplete } = window.__calendarData;
-
-    initializeCalendar({
-      elementId: "calendar",
-      expedienteId,
-      eventsInProgress: events,
-      eventsComplete: eventsComplete,
-    });
+<script type="module">
+  import { initializeCalendar, switchCalendarView } from "/js/calendar.js";
+  
+  // Get calendar data from window
+  const { events, eventsComplete } = window.__calendarData;
+  
+  // Configuration object for consistent calendar initialization
+  const calendarConfig = {
+    elementId: "calendar",
+    eventsInProgress: events,
+    eventsComplete: eventsComplete,
+    disableSelection: false
+  };
+  
+  // Initialize the calendar with Month view by default
+  window.currentCalendar = await initializeCalendar({
+    ...calendarConfig,
+    viewType: "Month"
+  });
+  
+  // Track current view type
+  let currentViewType = "Month";
+  
+  // Enhanced view switching with proper cleanup
+  document.body.addEventListener('click', async (e) => {
+    const viewBtn = e.target.closest('[data-view]');
+    if (viewBtn) {
+      const requestedView = viewBtn.dataset.view === 'day' ? 'Day' : 'Month';
+      
+      // Only switch if we're changing to a different view
+      if (requestedView === currentViewType) {
+        return; // No change needed
+      }
+      
+      console.log(`Switching from ${currentViewType} to ${requestedView} view`);
+      
+      // Add loading state to prevent multiple clicks
+      viewBtn.disabled = true;
+      viewBtn.style.opacity = '0.6';
+      
+      try {
+        // Switch the calendar view with proper cleanup
+        window.currentCalendar = await switchCalendarView(
+          requestedView, 
+          window.currentCalendar, 
+          calendarConfig
+        );
+        
+        // Update current view tracking
+        currentViewType = requestedView;
+        
+        // Update active button states
+        document.querySelectorAll('[data-view]').forEach(btn => {
+          btn.classList.remove('active');
+        });
+        viewBtn.classList.add('active');
+        
+        console.log(`Successfully switched to ${requestedView} view`);
+        
+      } catch (error) {
+        console.error('Error switching calendar view:', error);
+        
+        // Try to recover by reinitializing
+        try {
+          window.currentCalendar = await initializeCalendar({
+            ...calendarConfig,
+            viewType: requestedView
+          });
+          currentViewType = requestedView;
+        } catch (recoveryError) {
+          console.error('Failed to recover calendar:', recoveryError);
+        }
+      } finally {
+        // Remove loading state
+        viewBtn.disabled = false;
+        viewBtn.style.opacity = '1';
+      }
+    }
+  });
+  
+  // Set initial active state
+  const monthBtn = document.querySelector('[data-view="month"]');
+  if (monthBtn) {
+    monthBtn.classList.add('active');
+  }
   </script>
 
   <div th:replace="modals/calendarDayModal :: calendarDayModal"></div>

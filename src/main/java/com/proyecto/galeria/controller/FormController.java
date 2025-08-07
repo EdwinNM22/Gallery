@@ -86,7 +86,7 @@ public class FormController {
                 return "redirect:/NoAccess/Access";
             usuario usuario = optionalUsuario.get();
 
-            List<Form> forms = formService.findByUsuarioIdAndFuturo(idUsuario, false);
+            List<Form> forms = formService.findByUsuarioId(idUsuario);
             model.addAttribute("forms", forms);
             model.addAttribute("permisos", permisoService.getAllPermisos());
             model.addAttribute("permisosAgrupados", permisoService.getPermisosAgrupadosPorVista());
