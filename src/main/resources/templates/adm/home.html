@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" >
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
@@ -178,10 +178,11 @@
       flex-direction: column;
       align-items: center;
       gap: 1.2rem;
-      max-width: 600px;
+      max-width: 400px;
       margin: 0 auto;
       position: relative;
       z-index: 1;
+      width: 100%;
     }
 
     /* Estilo base de los botones (como tenías originalmente) */
@@ -195,7 +196,6 @@
       font-size: 0.95rem;
       font-weight: 500;
       border-radius: 6px;
-      border: none;
       cursor: pointer;
       transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
       overflow: hidden;
@@ -353,7 +353,8 @@
     .split-button-container {
       width: 100%;
       display: flex;
-      gap: 12px;
+      flex-direction: column;
+      gap: 1.2rem;
       position: relative;
       z-index: 1;
       opacity: 0;
@@ -370,7 +371,7 @@
 
     .split-button-container .btn-mega {
       flex: 1;
-      padding: 1.3rem 0.5rem;
+      padding: 1.3rem 2rem;
       opacity: 1;
       transform: none;
       animation: none;
@@ -842,7 +843,7 @@
   </div>
 </div>
 
-<div th:include="adm/template_admin.html::footer"></div>
+
 
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

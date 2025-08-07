@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -171,9 +172,12 @@ public class Form {
     private LocalDate fechaVisita;
 
     @Column(name = "hora_visita")
+    @DateTimeFormat(pattern = "HH:mm")
     private LocalTime horaVisita;
 
     @Column(name = "hora_evaluacion")
+    @DateTimeFormat(pattern = "HH:mm")
     private LocalTime horaEvaluacion;
+
 
 }

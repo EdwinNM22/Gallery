@@ -81,41 +81,16 @@
           <span th:text="#{back-to-home}">Back to Home</span>
         </a>
 
-        <form
-          th:action="@{/form/submit}"
-          method="post"
-          enctype="multipart/form-data"
-          class="form-container animated delay-1"
-          id="mainForm"
-        >
+        <form th:action="@{/form/submit}" method="post" enctype="multipart/form-data" class="form-container animated delay-1" id="mainForm">
           <input type="hidden" name="futuro" value="false" />
-
           <div class="form-section">
-            <h3>
-              <i class="fas fa-info-circle"></i>
-              <span th:text="#{general-information}"
-                >Informations Générales</span
-              >
-            </h3>
-
+            <h3><i class="fas fa-info-circle"></i><span th:text="#{general-information}">Informations Générales</span></h3>
             <div class="row">
               <div class="col-md-6">
                 <div class="form-group">
                   <label class="form-label"
                     ><span th:text="#{client-name}">Nom du client</span>
-                    <span class="required">*</span></label
-                  >
-                  <input
-                    type="text"
-                    class="form-control"
-                    name="nombreCliente"
-                    required
-                  />
-                  <input
-                    type="hidden"
-                    name="expedienteId"
-                    th:value="${expedienteId}"
-                  />
+                    <span class="required">*</span></label><input type="text" class="form-control" name="nombreCliente" required/><input type="hidden" name="expedienteId" th:value="${expedienteId}"/>
                 </div>
               </div>
               <div class="col-md-6">

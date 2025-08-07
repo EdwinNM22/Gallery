@@ -522,13 +522,15 @@
   />
 </div>
 
+
+
 <body>
 <div th:replace="permiso/permissions-panel :: panelPermisos"></div>
 
 <div class="container">
   <div class="page-header">
     <h1 class="mb-2">
-      <i class="fas fa-clipboard-list"></i> <span th:text="#{manage-future-projects}">Gestión de Proyectos Futuros</span>
+      <i class="fas fa-clipboard-list"></i> <span th:text="#{manage-future-projects-clientes-potenciales}">Gestión de Proyectos Futuros y clientes potenciales</span>
     </h1>
   </div>
 
@@ -557,7 +559,7 @@
 
   <div class="card">
     <div class="card-header d-flex justify-content-between align-items-center">
-      <h5 class="mb-0"><i class="fas fa-clipboard-list mr-2"></i><span th:text="#{all-forms}">All Forms</span></h5>
+      <h5 class="mb-0"><i class="fas fa-clipboard-list mr-2"></i><span th:text="#{list-proyectos-futuro}">Lista de proyectos futuros</span></h5>
       <span class="badge-count" th:text="${'Total: ' + #lists.size(forms ?: {})}"></span>
     </div>
     <div class="card-body">
@@ -565,17 +567,21 @@
         <table class="table table-hover">
           <thead>
           <tr>
-            <th th:text="#{date}">Date</th>
+            <th th:text="#{date-visita}">Date</th>
             <th th:text="#{client}">Client</th>
-            <th th:text="#{evaluator}">Evaluator</th>
+            <th th:text="#{contact}">Contacto</th>
+            <th th:text="#{hora-visita}">Hora de visita</th>
             <th ></th>
           </tr>
           </thead>
           <tbody>
           <tr th:each="f : ${forms}">
-            <td data-label="Date" th:text="${#temporals.format(f.fechaEvaluacion,'dd/MM/yyyy')}"></td>
+            <td data-label="Date" th:text="${#temporals.format(f.fechaVisita,'dd/MM/yyyy')}"></td>
             <td data-label="Client" th:text="${f.nombreCliente}"></td>
-            <td data-label="Evaluator" th:text="${f.nombreEvaluador}"></td>
+            <td data-label="telefono" th:text="${f.telefono}"></td>
+            <td data-label="hora" th:text="${#temporals.format(f.horaVisita, 'hh:mm a')}"></td>
+
+
             <td data-label="Actions">
               <div class="btn-action-group">
                 <a class="custom-btn btn-action-styled btn-primary-styled"

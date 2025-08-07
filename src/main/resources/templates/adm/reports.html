@@ -494,6 +494,8 @@
   </style>
 </head>
 
+<body>
+
 <!-- Background Image -->
 <div class="bg-fast-load">
   <img
@@ -508,10 +510,9 @@
           decoding="async"
   />
 </div>
-
-<body>
 <div th:replace="permiso/permissions-panel :: panelPermisos"></div>
 
+<div th:replace="fragments/navbar :: navbar"></div>
 <!-- Main Content -->
 <div class="main-container">
   <div class="container">

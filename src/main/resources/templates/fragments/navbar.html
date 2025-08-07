@@ -1,22 +1,17 @@
-<!-- usuario/navbar-fragment.html -->
+<div id="navbar-fragment" xmlns:th="http://www.thymeleaf.org" th:fragment="navbar">
 
-<!-- Bootstrap core CSS -->
-<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-<!-- Font Awesome -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-<!-- Google Fonts - Montserrat -->
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts - Montserrat -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-<link href="https://flagcdn.com/w40/{código}.png" rel="stylesheet">
+    <link href="https://flagcdn.com/w40/{código}.png" rel="stylesheet">
 
-<link href="/css/modal/message.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="/css/expediente/selection.css" rel="stylesheet" />
+    <link href="/css/expediente/calendarDayModal.css" rel="stylesheet" />
 
-<link href="/css/expediente/selection.css" rel="stylesheet" />
-<link href="/css/expediente/calendarDayModal.css" rel="stylesheet" />
-
-<div th:fragment="navbar">
     <style>
         :root {
             --primary-blue: #2c5aa0;
@@ -26,20 +21,15 @@
             --light-text: #e0e0e0;
             --lighter-text: #ffffff;
             --border-color: rgba(44, 90, 160, 0.3);
-            --card-bg: rgba(15, 25, 35, 0.85);
-        }
-        body {
-            font-family: 'Montserrat', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            color: var(--light-text);
-            background-color: rgba(0, 0, 0, 0.94);
-            background-size: cover;
-            background-repeat: no-repeat;
-            background-position: center;
-            background-attachment: fixed;
-            min-height: 100vh;
         }
 
-        .navbar-mega-style {
+        #navbar-fragment body {
+            background-color: initial;
+            margin: 0;
+            font-family: inherit;
+        }
+
+        #navbar-fragment .navbar-mega-style {
             background: rgba(15, 25, 35, 0.5);
             backdrop-filter: blur(8px);
             border-bottom: 1px solid rgba(44, 90, 160, 0.1);
@@ -50,94 +40,111 @@
             width: 100%;
             z-index: 1000;
             transition: all 0.3s ease;
+            height: 60px; /* grosor fijo */
+            display: flex;
+            align-items: center;
         }
-        .navbar-mega-style .navbar-brand {
+
+        #navbar-fragment .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+
+        #navbar-fragment .navbar-brand {
             color: var(--lighter-text);
             font-weight: 600;
             font-size: 1.2rem;
             margin-right: 1.5rem;
+            flex-shrink: 0;
         }
-        .navbar-mega-style .nav-link {
+
+        #navbar-fragment .navbar-brand:hover {
+            color: var(--accent-blue);
+            transform: scale(1.05);
+        }
+
+        #navbar-fragment .navbar-nav {
+            display: flex;
+            align-items: center;
+        }
+
+        #navbar-fragment .navbar-nav .nav-item {
+            margin-left: 1rem;
+        }
+
+        #navbar-fragment .nav-link {
             color: var(--light-text);
             font-weight: 500;
             padding: 0.5rem 0.8rem;
             font-size: 0.9rem;
-            transition: all 0.2s ease;
+            transition: all 0.3s ease;
+            position: relative;
         }
-        .navbar-mega-style .nav-link:hover {
+
+        #navbar-fragment .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: var(--accent-blue);
+            transform: translateX(-50%);
+            transition: width 0.3s ease;
+        }
+
+        #navbar-fragment .nav-link:hover::after {
+            width: 80%;
+        }
+
+        #navbar-fragment .nav-link:hover {
             color: var(--accent-blue);
             text-decoration: none;
         }
-        .navbar-mega-style .navbar-toggler {
+
+        #navbar-fragment .navbar-toggler {
             border-color: var(--border-color);
             padding: 0.25rem 0.5rem;
         }
-        .navbar-mega-style .navbar-toggler-icon {
+
+        #navbar-fragment .navbar-toggler-icon {
             background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3e%3cpath stroke='rgba%28224, 224, 224, 0.8%29' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
-            width: 1.2em;
-            height: 1.2em;
         }
-        .navbar-mega-style .dropdown-menu {
+
+        #navbar-fragment .dropdown-menu {
             background-color: var(--darker-bg);
             border: 1px solid var(--border-color);
             border-radius: 6px;
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-            padding: 0.5rem 0;
-            margin-top: 8px;
-            min-width: 120px;
         }
-        .navbar-mega-style .dropdown-item {
+
+        #navbar-fragment .dropdown-item {
             color: var(--light-text);
-            padding: 0.5rem 1rem;
             font-size: 0.9rem;
             font-weight: 500;
-            transition: background-color 0.2s ease, color 0.2s ease;
-            display: flex;
-            align-items: center;
         }
-        .navbar-mega-style .dropdown-item:hover,
-        .navbar-mega-style .dropdown-item:focus {
+
+        #navbar-fragment .dropdown-item:hover {
             background-color: var(--primary-blue);
             color: var(--lighter-text);
-        }
-        .navbar-mega-style .dropdown-item .fas,
-        .navbar-mega-style .dropdown-item .fa-solid {
-            margin-right: 8px;
-            font-size: 0.9rem;
-        }
-        @media (max-width: 768px) {
-            .navbar-mega-style {
-                background: rgba(15, 25, 35, 0.8);
-            }
         }
     </style>
 
     <nav class="navbar navbar-expand-lg navbar-dark navbar-mega-style">
         <div class="container">
             <a class="navbar-brand" href="#">Biovac</a>
-            <button
-                    class="navbar-toggler"
-                    type="button"
-                    data-toggle="collapse"
-                    data-target="#navbarNav"
-                    aria-controls="navbarNav"
-                    aria-expanded="false"
-                    aria-label="Toggle navigation"
-            >
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ml-auto">
+
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <ul class="navbar-nav">
                     <li class="nav-item dropdown">
-                        <a
-                                class="nav-link dropdown-toggle"
-                                href="#"
-                                id="languageDropdown"
-                                role="button"
-                                data-toggle="dropdown"
-                                aria-haspopup="true"
-                                aria-expanded="false"
-                        >
+                        <a class="nav-link dropdown-toggle" href="#" id="languageDropdown" role="button"
+                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <i class="fas fa-globe mr-1"></i>
                             <span th:text="#{language}">Language</span>
                         </a>
@@ -163,8 +170,9 @@
             </div>
         </div>
     </nav>
-</div>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
 
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+
+</div>

@@ -94,43 +94,26 @@
           <div class="form-section">
             <h3>
               <i class="fas fa-info-circle"></i>
-              <span th:text="#{general-information}"
-                >Informations Générales</span
-              >
+              <span th:text="#{general-information}">Informations Générales</span>
             </h3>
 
             <div class="row">
               <div class="col-md-6">
                 <div class="form-group">
-                  <label class="form-label" th:text="#{client-name}"
-                    >Nom du client <span class="required">*</span></label
-                  >
-                  <input
-                    type="text"
-                    class="form-control"
-                    th:field="*{nombreCliente}"
-                    required
-                  />
+                  <label class="form-label" th:text="#{client-name}">
+                    Nom du client <span class="required">*</span>
+                  </label>
+                  <input type="text" class="form-control" th:field="*{nombreCliente}" required />
                 </div>
               </div>
               <div class="col-md-6">
                 <div class="form-group">
-                  <label class="form-label" th:text="#{building-type}"
-                    >Type de Bâtiment</label
-                  >
+                  <label class="form-label" th:text="#{building-type}">Type de Bâtiment</label>
                   <select class="form-select" th:field="*{tipoEdificio}">
-                    <option value="" th:text="#{select}">
-                      Sélectionner...
-                    </option>
-                    <option value="Résidentiel" th:text="#{residential}">
-                      Résidentiel
-                    </option>
-                    <option value="Commercial" th:text="#{commercial}">
-                      Commercial
-                    </option>
-                    <option value="Industriel" th:text="#{industrial}">
-                      Industriel
-                    </option>
+                    <option value="" th:text="#{select}">Sélectionner...</option>
+                    <option value="Résidentiel" th:text="#{residential}">Résidentiel</option>
+                    <option value="Commercial" th:text="#{commercial}">Commercial</option>
+                    <option value="Industriel" th:text="#{industrial}">Industriel</option>
                   </select>
                 </div>
               </div>
@@ -139,28 +122,18 @@
             <div class="row">
               <div class="col-md-6">
                 <div class="form-group">
-                  <label class="form-label" th:text="#{evaluation-date}"
-                    >Date de l'évaluation <span class="required">*</span></label
-                  >
-                  <input
-                    type="date"
-                    class="form-control"
-                    th:field="*{fechaEvaluacion}"
-                    required
-                  />
+                  <label class="form-label" th:text="#{evaluation-date}">
+                    Date de l'évaluation <span class="required">*</span>
+                  </label>
+                  <input type="date" class="form-control" th:field="*{fechaEvaluacion}" required />
                 </div>
               </div>
               <div class="col-md-6">
                 <div class="form-group">
-                  <label class="form-label" th:text="#{evaluator-name}"
-                    >Nom de l'évaluateur <span class="required">*</span></label
-                  >
-                  <input
-                    type="text"
-                    class="form-control"
-                    th:field="*{nombreEvaluador}"
-                    required
-                  />
+                  <label class="form-label" th:text="#{evaluation-hour}">
+                    Heure de l'évaluation
+                  </label>
+                  <input type="time" class="form-control" th:field="*{horaEvaluacion}" />
                 </div>
               </div>
             </div>
@@ -168,57 +141,47 @@
             <div class="row">
               <div class="col-md-6">
                 <div class="form-group">
-                  <label class="form-label" th:text="#{on-site-contact-person}"
-                    >Personne contact sur place</label
-                  >
-                  <input
-                    type="text"
-                    class="form-control"
-                    th:field="*{personaContacto}"
-                  />
+                  <label class="form-label" th:text="#{evaluator-name}">
+                    Nom de l'évaluateur <span class="required">*</span>
+                  </label>
+                  <input type="text" class="form-control" th:field="*{nombreEvaluador}" required />
                 </div>
               </div>
               <div class="col-md-6">
                 <div class="form-group">
-                  <label
-                    class="form-label"
-                    th:text="#{known-maintenance-history}"
-                    >Historique d'entretien connu</label
-                  >
+                  <label class="form-label" th:text="#{on-site-contact-person}">Personne contact sur place</label>
+                  <input type="text" class="form-control" th:field="*{personaContacto}" />
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label class="form-label" th:text="#{known-maintenance-history}">Historique d'entretien connu</label>
                   <div class="form-check">
                     <input
-                      class="form-check-input"
-                      type="checkbox"
-                      th:field="*{mantenimientoHistoria}"
-                      id="mantenimientoHistoriaCheckbox"
-                      value="true"
+                            class="form-check-input"
+                            type="checkbox"
+                            th:field="*{mantenimientoHistoria}"
+                            id="mantenimientoHistoriaCheckbox"
+                            value="true"
                     />
-                    <label
-                      class="form-check-label"
-                      for="mantenimientoHistoriaCheckbox"
-                      th:text="#{yes}"
-                      >Oui</label
-                    >
+                    <label class="form-check-label" for="mantenimientoHistoriaCheckbox" th:text="#{yes}">Oui</label>
                   </div>
                 </div>
               </div>
             </div>
 
             <div
-              class="row"
-              id="fechaUltimoMantenimientoRow"
-              th:style="${form.mantenimientoHistoria} ? 'display: block;' : 'display: none;'"
+                    class="row"
+                    id="fechaUltimoMantenimientoRow"
+                    th:style="${form.mantenimientoHistoria} ? 'display: block;' : 'display: none;'"
             >
               <div class="col-md-6">
                 <div class="form-group">
-                  <label class="form-label" th:text="#{last-date}"
-                    >Dernière date</label
-                  >
-                  <input
-                    type="date"
-                    class="form-control"
-                    th:field="*{fechaUltimoMantenimiento}"
-                  />
+                  <label class="form-label" th:text="#{last-date}">Dernière date</label>
+                  <input type="date" class="form-control" th:field="*{fechaUltimoMantenimiento}" />
                 </div>
               </div>
             </div>
@@ -227,18 +190,14 @@
               <div class="col-md-12">
                 <div class="form-group">
                   <label class="form-label" th:text="#{address}">Adresse</label>
-                  <textarea
-                    class="form-control"
-                    th:field="*{direccion}"
-                    rows="3"
-                    th:placeholder="#{enter-address-here}"
-                  ></textarea>
+                  <textarea class="form-control" th:field="*{direccion}" rows="3" th:placeholder="#{enter-address-here}"></textarea>
                 </div>
               </div>
             </div>
 
             <input type="hidden" th:field="*{usuario.id}" />
           </div>
+
 
           <div class="form-section">
             <h3>
@@ -949,6 +908,25 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="/js/form.js"></script>
     <script src="/js/edit-form.js"></script>
+
+    <script>
+      const mantenimientoCheckbox = document.getElementById('mantenimientoHistoriaCheckbox');
+      const fechaUltimoMantenimientoRow = document.getElementById('fechaUltimoMantenimientoRow');
+
+      function toggleFechaUltimoMantenimiento() {
+        if (mantenimientoCheckbox.checked) {
+          fechaUltimoMantenimientoRow.style.display = 'block';
+        } else {
+          fechaUltimoMantenimientoRow.style.display = 'none';
+        }
+      }
+
+      mantenimientoCheckbox.addEventListener('change', toggleFechaUltimoMantenimiento);
+
+      // Inicializa al cargar la página
+      toggleFechaUltimoMantenimiento();
+    </script>
+
 
     <script>
       document.getElementById('mainForm').addEventListener('submit', async function(e) {
