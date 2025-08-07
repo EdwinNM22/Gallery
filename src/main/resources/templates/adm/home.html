@@ -39,7 +39,6 @@
       --darker-bg: #0a121a;
       --light-text: #e0e0e0;
       --lighter-text: #ffffff;
-      --border-color: rgba(44, 90, 160, 0.3);
       --card-bg: rgba(15, 25, 35, 0.85);
     }
 
@@ -102,16 +101,6 @@
       margin-bottom: 4rem;
       position: relative;
       z-index: 1;
-    }
-
-    .logo-container img {
-      height: 60px;
-      filter: brightness(0) invert(1);
-      transition: transform 0.3s ease;
-    }
-
-    .logo-container img:hover {
-      transform: scale(1.05);
     }
 
     .hero-title {
@@ -377,228 +366,13 @@
       animation: none;
     }
 
-    .user-info i {
-      margin-right: 8px;
-      color: var(--accent-blue);
-      transition: color 0.3s ease;
-    }
-
-    .user-info:hover i {
-      color: #5a9bff;
-    }
-
     /* Accent line con animación sutil */
-    .accent-line {
-      padding: 30px;
-      position: relative;
-    }
-
-    .accent-line::before {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 0;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, var(--accent-blue), transparent);
-      transform: translate(-50%, -50%);
-      animation: accentExpand 1s ease-out 0.5s forwards;
-    }
-
-    @keyframes accentExpand {
-      to {
-        width: 200px;
-      }
-    }
-
-    /* Navbar con animaciones suaves */
-    .navbar-mega-style {
-      background: rgba(15, 25, 35, 0.5);
-      backdrop-filter: blur(8px);
-      border-bottom: 1px solid rgba(44, 90, 160, 0.1);
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-      padding: 0.5rem 1rem;
-      position: sticky;
-      top: 0;
-      width: 100%;
-      z-index: 1000;
-      transition: all 0.3s ease;
-      transform: translateY(-100%);
-      animation: navSlideDown 0.6s ease-out 0.2s forwards;
-    }
-
-    @keyframes navSlideDown {
-      to {
-        transform: translateY(0);
-      }
-    }
-
-    .navbar-mega-style .navbar-brand {
-      color: var(--lighter-text);
-      font-weight: 600;
-      font-size: 1.2rem;
-      margin-right: 1.5rem;
-      transition: all 0.3s ease;
-    }
-
-    .navbar-mega-style .navbar-brand:hover {
-      color: var(--accent-blue);
-      transform: scale(1.05);
-    }
-
-    .navbar-mega-style .nav-link {
-      color: var(--light-text);
-      font-weight: 500;
-      padding: 0.5rem 0.8rem;
-      font-size: 0.9rem;
-      transition: all 0.3s ease;
-      position: relative;
-    }
-
-    .navbar-mega-style .nav-link::after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 50%;
-      width: 0;
-      height: 2px;
-      background: var(--accent-blue);
-      transform: translateX(-50%);
-      transition: width 0.3s ease;
-    }
-
-    .navbar-mega-style .nav-link:hover::after {
-      width: 80%;
-    }
-
-    .navbar-mega-style .nav-link:hover {
-      color: var(--accent-blue);
-      text-decoration: none;
-    }
-
-    .navbar-mega-style .navbar-toggler {
-      border-color: var(--border-color);
-      padding: 0.25rem 0.5rem;
-      transition: transform 0.3s ease;
-    }
-
-    .navbar-mega-style .navbar-toggler:hover {
-      transform: scale(1.1);
-    }
-
-    .navbar-mega-style .navbar-toggler-icon {
-      background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3e%3cpath stroke='rgba%28224, 224, 224, 0.8%29' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
-      width: 1.2em;
-      height: 1.2em;
-      transition: transform 0.3s ease;
-    }
-
-    .navbar-mega-style .navbar-toggler:hover .navbar-toggler-icon {
-      transform: rotate(90deg);
-    }
-
-    /* Dropdown con transiciones suaves */
-    .navbar-mega-style .dropdown-menu {
-      background-color: var(--darker-bg);
-      border: 1px solid var(--border-color);
-      border-radius: 6px;
-      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-      padding: 0.5rem 0;
-      margin-top: 8px;
-      min-width: 120px;
-      opacity: 0;
-      transform: translateY(-10px) scale(0.95);
-      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-      pointer-events: none;
-    }
-
-    .navbar-mega-style .dropdown:hover .dropdown-menu,
-    .navbar-mega-style .dropdown-menu.show {
-      opacity: 1;
-      transform: translateY(0) scale(1);
-      pointer-events: auto;
-    }
-
-    .navbar-mega-style .dropdown-item {
-      color: var(--light-text);
-      padding: 0.5rem 1rem;
-      font-size: 0.9rem;
-      font-weight: 500;
-      transition: all 0.3s ease;
-      display: flex;
-      align-items: center;
-      position: relative;
-    }
-
-    .navbar-mega-style .dropdown-item::before {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 0;
-      width: 0;
-      height: 100%;
-      background: linear-gradient(90deg, var(--primary-blue), transparent);
-      transition: width 0.3s ease;
-    }
-
-    .navbar-mega-style .dropdown-item:hover::before {
-      width: 4px;
-    }
-
-    .navbar-mega-style .dropdown-item:hover,
-    .navbar-mega-style .dropdown-item:focus {
-      background-color: var(--primary-blue);
-      color: var(--lighter-text);
-      transform: translateX(2px);
-    }
-
-    .navbar-mega-style .dropdown-item .fas,
-    .navbar-mega-style .dropdown-item .fa-solid {
-      margin-right: 8px;
-      font-size: 0.9rem;
-      transition: transform 0.3s ease;
-    }
-
-    .navbar-mega-style .dropdown-item:hover .fas,
-    .navbar-mega-style .dropdown-item:hover .fa-solid {
-      transform: scale(1.1);
-    }
-
-    /* Micro-interacciones para mejores UX */
-    .btn-mega,
-    .navbar-mega-style .nav-link,
-    .navbar-mega-style .dropdown-item {
-      will-change: transform;
-    }
-
     /* Scroll suave */
     html {
       scroll-behavior: smooth;
     }
 
     /* Animaciones de entrada para elementos dinámicos */
-    .animated {
-      animation: fadeIn 0.6s ease-out forwards;
-    }
-
-    .delay-1 {
-      animation-delay: 0.2s;
-    }
-
-    .delay-2 {
-      animation-delay: 0.4s;
-    }
-
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
 
     /* Responsive optimizado */
     @media (max-width: 768px) {
@@ -618,10 +392,6 @@
       .split-button-container {
         flex-direction: column;
         gap: 1rem;
-      }
-
-      .navbar-mega-style {
-        background: rgba(15, 25, 35, 0.8);
       }
 
       /* Ajustar animaciones en móvil */
@@ -644,9 +414,7 @@
     }
 
     /* Estados de focus mejorados para accesibilidad */
-    .btn-mega:focus,
-    .navbar-mega-style .nav-link:focus,
-    .navbar-mega-style .dropdown-item:focus {
+    .btn-mega:focus {
       outline: 2px solid var(--accent-blue);
       outline-offset: 2px;
     }
@@ -668,58 +436,8 @@
   />
 </div>
 
-<nav class="navbar navbar-expand-lg navbar-dark navbar-mega-style">
-  <div class="container">
-    <a class="navbar-brand" href="#">Biovac</a>
-    <button
-            class="navbar-toggler"
-            type="button"
-            data-toggle="collapse"
-            data-target="#navbarNav"
-            aria-controls="navbarNav"
-            aria-expanded="false"
-            aria-label="Toggle navigation"
-    >
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav ml-auto">
-        <li class="nav-item dropdown">
-          <a
-                  class="nav-link dropdown-toggle"
-                  href="#"
-                  id="languageDropdown"
-                  role="button"
-                  data-toggle="dropdown"
-                  aria-haspopup="true"
-                  aria-expanded="false"
-          >
-            <i class="fas fa-globe mr-1"></i>
-            <span th:text="#{language}">Language</span>
-          </a>
-          <div class="dropdown-menu dropdown-menu-right" aria-labelledby="languageDropdown">
-            <a class="dropdown-item" href="?lang=en">
-              <img src="https://flagcdn.com/w40/us.png" width="20" class="mr-2" alt="English"> English
-            </a>
-            <a class="dropdown-item" href="?lang=es">
-              <img src="https://flagcdn.com/w40/sv.png" width="20" class="mr-2" alt="Español"> Español
-            </a>
-            <a class="dropdown-item" href="?lang=fr">
-              <img src="https://flagcdn.com/w40/fr.png" width="20" class="mr-2" alt="Français"> Français
-            </a>
-          </div>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" th:href="@{/cerrar}"
-          ><i class="fa-solid fa-right-from-bracket mr-1"></i>
-            <span th:text="#{log-out}">Log Out</span></a
-          >
-        </li>
-      </ul>
-    </div>
-  </div>
-</nav>
 
+<div th:replace="fragments/navbar :: navbar"></div>
 <div th:replace="permiso/permissions-panel :: panelPermisos"></div>
 
 <th:block th:each="equipo : ${advertenciaEquipos}">
@@ -728,8 +446,6 @@
 
 <div class="main-container">
   <div class="container">
-    <div class="accent-line"></div>
-
     <div class="hero-section">
       <h1 class="hero-title">
         Edgar<br />
