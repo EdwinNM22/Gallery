@@ -407,7 +407,7 @@ function showDayEvents(date, calendar) {
           const endTime = new Date(event.end);
           const timeDisplay = event.tags.hasPlaceholderTime 
             ? `<small class="event-time-display">(No Time Specified)</small>`
-            : `<small class="event-time-display">${startTime.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</small>`;
+            : `<small class="event-time-display"> ${window.translations?.evaluationTime} ${startTime.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</small>`;
 
           eventElement.innerHTML = `
           <div class="d-flex justify-content-between align-items-start">
