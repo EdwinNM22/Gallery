@@ -39,91 +39,31 @@ public class ExpedienteController {
 
     @GetMapping("/menu")
     public String menu(HttpSession session, Model model) {
-        Integer idUsuario = (Integer) session.getAttribute("idusuario");
-        Optional<usuario> optionalUsuario = usuarioService.findById(idUsuario);
-        if (optionalUsuario.isEmpty())
-            return "redirect:/NoAccess/Access";
+        try {
+            Integer idUsuario = (Integer) session.getAttribute("idusuario");
+            Optional<usuario> optionalUsuario = usuarioService.findById(idUsuario);
+            if (optionalUsuario.isEmpty())
+                return "redirect:/NoAccess/Access";
 
-        model.addAttribute("usuario", optionalUsuario.get());
+            usuario usuario = optionalUsuario.get();
+
+            model.addAttribute("permisos", permisoService.getAllPermisos());
+            model.addAttribute("permisosAgrupados", permisoService.getPermisosAgrupadosPorVista());
+            model.addAttribute("usuario", usuario);
+
+            Set<String> permisos = usuario.getPermisos().stream().map(p -> p.getCodigo()).collect(Collectors.toSet());
+
+            model.addAttribute("PROJECT_EVALUATION_ACCESS", permisos.contains("PROJECT_EVALUATION_ACCESS"));
+            model.addAttribute("PROJECT_SCHEDULING_ACCESS", permisos.contains("PROJECT_SCHEDULING_ACCESS"));
+
+
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", "Error loading menu: " + e.getMessage());
+        }
+
         return "expediente/representativesMenu";
     }
 
-//    @GetMapping("")
-//    public String expedienteTable(Model model, HttpSession session) {
-//        Integer idUsuario = (Integer) session.getAttribute("idusuario");
-//        Optional<usuario> optionalUsuario = usuarioService.findById(idUsuario);
-//
-//        // Control de permisos
-//        if (optionalUsuario.isEmpty() || optionalUsuario.get().getPermisos().stream()
-//                .noneMatch(p -> "EXPEDIENTE_ACCESS".equals(p.getCodigo()))) {
-//            return "redirect:/NoAccess/Access";
-//        }
-//
-//        usuario usuario = optionalUsuario.get();
-//
-//        // Obtener expedientes según tipo usuario (ej: "EDGAR" ve todos)
-//        List<Expediente> expedientes = ("EDGAR".equalsIgnoreCase(usuario.getTipo_usuario())
-//                || usuario.getPermisos().stream().anyMatch(p -> "EXPEDIENTE_VIEW_ALL".equals(p.getCodigo())))
-//                        ? expedienteService.findAll()
-//                        : expedienteService.findByUsuario(usuario);
-//
-//        // Get future projects for this expediente
-//        List<Form> futureForms = formService.findByFuturo(true);
-//        List<Form> completeForms = formService.findByFuturo(false);
-//
-//        List<Map<String, String>> events = futureForms.stream()
-//                .filter(f -> f.getFechaEvaluacion() != null)
-//                .map(f -> Map.of(
-//                        "id", f.getId().toString(),
-//                        "start", f.getFechaEvaluacion().toString(),
-//                        "end", f.getFechaEvaluacion().toString(),
-//                        "nombreCliente", f.getNombreCliente(),
-//                        "expedienteId", f.getExpediente().getId().toString(),
-//                        "usuarioNombre", f.getUsuario() != null ? f.getUsuario().getNombre() : ""
-//                ))
-//                .collect(Collectors.toList());
-//
-//        List<Map<String, String>> eventsComplete = completeForms.stream()
-//                .filter(f -> f.getFechaEvaluacion() != null)
-//                .map(f -> Map.of(
-//                        "id", f.getId().toString(),
-//                        "start", f.getFechaEvaluacion().toString(),
-//                        "end", f.getFechaEvaluacion().toString(),
-//                        "nombreCliente", f.getNombreCliente(),
-//                        "expedienteId", f.getExpediente().getId().toString(),
-//                        "usuarioNombre", f.getUsuario() != null ? f.getUsuario().getNombre() : ""
-//                ))
-//                .collect(Collectors.toList());
-//
-//        model.addAttribute("events", events);
-//        model.addAttribute("eventsComplete", eventsComplete);
-//
-//        model.addAttribute("expedientes", expedientes);
-//        model.addAttribute("expediente", new Expediente());
-//        model.addAttribute("usuarios", usuarioService.findAll());
-//        model.addAttribute("abrirModalEditar", false);
-//
-//        model.addAttribute("permisos", permisoService.getAllPermisos());
-//        model.addAttribute("permisosAgrupados", permisoService.getPermisosAgrupadosPorVista());
-//
-//        // Forzar carga permisos y agregarlos al modelo
-//        usuario.getPermisos().size();
-//
-//        Set<String> permisos = usuario.getPermisos().stream()
-//                .map(p -> p.getCodigo())
-//                .collect(Collectors.toSet());
-//
-//        model.addAttribute("EXPEDIENTE_ACCESS", permisos.contains("EXPEDIENTE_ACCESS"));
-//        model.addAttribute("EXPEDIENTE_CREATE", permisos.contains("EXPEDIENTE_CREATE"));
-//        model.addAttribute("EXPEDIENTE_EDIT", permisos.contains("EXPEDIENTE_EDIT"));
-//        model.addAttribute("EXPEDIENTE_DELETE", permisos.contains("EXPEDIENTE_DELETE"));
-//        model.addAttribute("EXPEDIENTE_FORM_CREATE", permisos.contains("EXPEDIENTE_FORM_CREATE"));
-//        model.addAttribute("EXPEDIENTE_FORM_PDF", permisos.contains("EXPEDIENTE_FORM_PDF"));
-//        model.addAttribute("EXPEDIENTE_FORM_EDIT", permisos.contains("EXPEDIENTE_FORM_EDIT"));
-//        model.addAttribute("EXPEDIENTE_FORM_DELETE", permisos.contains("EXPEDIENTE_FORM_DELETE"));
-//
-//        return "expediente/list";
-//    }
 
     // Guardar nuevo expediente
     @PostMapping("/guardar")
@@ -171,73 +111,6 @@ public class ExpedienteController {
         expedienteService.deleteById(id);
         return "redirect:/expediente";
     }
-
-//    @GetMapping("/selection/{id}")
-//    public String selection(@PathVariable("id") Integer id, Model model, HttpSession session) {
-//        Integer idUsuario = (Integer) session.getAttribute("idusuario");
-//        Optional<usuario> optionalUsuario = usuarioService.findById(idUsuario);
-//
-//        // Control de permisos
-//        if (optionalUsuario.isEmpty() || optionalUsuario.get().getPermisos().stream()
-//                .noneMatch(p -> "EXPEDIENTE_ACCESS".equals(p.getCodigo()))) {
-//            return "redirect:/NoAccess/Access";
-//        }
-//
-//        usuario usuario = optionalUsuario.get();
-//
-//        // Get future projects for this expediente
-//        List<Form> futureForms = formService.findByExpedienteIdAndFuturo(id, true);
-//        List<Form> completeForms = formService.findByExpedienteIdAndFuturo(id, false);
-//
-//
-//        List<Map<String, String>> events = futureForms.stream()
-//                .filter(f -> f.getFechaEvaluacion() != null)
-//                .map(f -> Map.of(
-//                        "id", f.getId().toString(),
-//                        "start", f.getFechaEvaluacion().toString(),
-//                        "end", f.getFechaEvaluacion().toString(),
-//                        "nombreCliente", f.getNombreCliente(),
-//                        "expedienteId", f.getExpediente().getId().toString()))
-//                .collect(Collectors.toList());
-//
-//        List<Map<String, String>> eventsComplete = completeForms.stream()
-//                .filter(f -> f.getFechaEvaluacion() != null)
-//                .map(f -> Map.of(
-//                        "id", f.getId().toString(),
-//                        "start", f.getFechaEvaluacion().toString(),
-//                        "end", f.getFechaEvaluacion().toString(),
-//                        "nombreCliente", f.getNombreCliente(),
-//                        "expedienteId", f.getExpediente().getId().toString()))
-//                .collect(Collectors.toList());
-//
-//        model.addAttribute("events", events);
-//        model.addAttribute("eventsComplete", eventsComplete);
-//
-//        model.addAttribute("expedienteId", id);
-//        model.addAttribute("usuarios", usuarioService.findAll());
-//        model.addAttribute("abrirModalEditar", false);
-//
-//        model.addAttribute("permisos", permisoService.getAllPermisos());
-//        model.addAttribute("permisosAgrupados", permisoService.getPermisosAgrupadosPorVista());
-//
-//        // Forzar carga permisos y agregarlos al modelo
-//        usuario.getPermisos().size();
-//
-//        Set<String> permisos = usuario.getPermisos().stream()
-//                .map(p -> p.getCodigo())
-//                .collect(Collectors.toSet());
-//
-//        model.addAttribute("EXPEDIENTE_ACCESS", permisos.contains("EXPEDIENTE_ACCESS"));
-//        model.addAttribute("EXPEDIENTE_CREATE", permisos.contains("EXPEDIENTE_CREATE"));
-//        model.addAttribute("EXPEDIENTE_EDIT", permisos.contains("EXPEDIENTE_EDIT"));
-//        model.addAttribute("EXPEDIENTE_DELETE", permisos.contains("EXPEDIENTE_DELETE"));
-//        model.addAttribute("EXPEDIENTE_FORM_CREATE", permisos.contains("EXPEDIENTE_FORM_CREATE"));
-//        model.addAttribute("EXPEDIENTE_FORM_PDF", permisos.contains("EXPEDIENTE_FORM_PDF"));
-//        model.addAttribute("EXPEDIENTE_FORM_EDIT", permisos.contains("EXPEDIENTE_FORM_EDIT"));
-//        model.addAttribute("EXPEDIENTE_FORM_DELETE", permisos.contains("EXPEDIENTE_FORM_DELETE"));
-//
-//        return "expediente/selection";
-//    }
 
     @GetMapping("/manage-future-projects/{usuarioId}")
     public String gestionarProyectosFuturos(
@@ -299,9 +172,6 @@ public class ExpedienteController {
 
         return "expediente/proyectosFuturos/crearProyectoFuturo";
     }
-
-
-
 
     @GetMapping("/view-future-project/{id}")
     public String verProyectoFuturo(@PathVariable Integer id, Model model) {
