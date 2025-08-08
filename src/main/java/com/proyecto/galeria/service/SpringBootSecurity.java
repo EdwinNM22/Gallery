@@ -27,7 +27,7 @@ public class SpringBootSecurity extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        String[] publicUrls = { "/css/**", "/js/**", "/equipo/**","/vpsSecurity2024-", "/", "/img/**" };
+        String[] publicUrls = { "/css/**", "/js/**", "/equipo/**","/registrar", "/", "/img/**" };
         String[] userUrls = { "/album/**", "/fotos/**", "/subAlbumes/**", "/home/**" };
         String[] admUrls = { "/adm/**", "/usuario/**", "/supervi/**","/expediente" };
 

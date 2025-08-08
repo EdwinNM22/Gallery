@@ -392,6 +392,7 @@
 <div class="particles" id="particles-js"></div>
 
 <div th:replace="fragments/navbar :: navbar"></div>
+<div th:replace="fragments/loader :: pantalla-carga"></div>
 <div th:replace="permiso/permissions-panel :: panelPermisos"></div>
 
 <th:block th:each="equipo : ${advertenciaEquipos}">
@@ -479,7 +480,7 @@
 
       <!-- New User Card -->
       <div class="action-card" th:if="${USUARIOS_CREATE}" style="--delay: 6;">
-        <a th:href="@{usuario/vpsSecurity2024-}" style="display: block; color: inherit; text-decoration: none;">
+        <a th:href="@{usuario/registrar}" style="display: block; color: inherit; text-decoration: none;">
           <div class="card-header">
             <div class="card-icon">
               <i class="fas fa-user-plus"></i> <!-- Se mantiene: icono correcto para nuevo usuario -->

@@ -389,7 +389,7 @@
 <div class="particles" id="particles-js"></div>
 
 <div th:replace="fragments/navbar :: navbar"></div>
-<div th:replace="permiso/permissions-panel :: panelPermisos"></div>
+<div th:replace="fragments/loader :: pantalla-carga"></div>
 
 <th:block th:each="equipo : ${advertenciaEquipos}">
   <div th:insert="Advertencias :: equipo_confirmar(${equipo})"></div>

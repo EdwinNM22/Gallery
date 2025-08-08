@@ -127,7 +127,7 @@ public class UsuarioController {
         return "redirect:/usuario/show";
     }
 
-    @GetMapping("/vpsSecurity2024-")
+    @GetMapping("/registrar")
     public String create(HttpSession session) {
 
         //Validar acceso a la vista

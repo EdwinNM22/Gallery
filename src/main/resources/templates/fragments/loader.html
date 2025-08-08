@@ -1,48 +1,63 @@
-<div id="loader" th:fragment="pantalla-carga" class="loading">
-    <div class="loader-spinner"></div>
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Loading Fragment</title>
+</head>
+<body>
+
+<!-- Loading screen fragment -->
+<div th:fragment="pantalla-carga">
+    <div id="loader" class="loading">
+        <div class="loader-spinner"></div>
+    </div>
+
+    <style th:inline="none">
+        #loader {
+            position: fixed;
+            z-index: 9999;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(12,22,32,1) !important;
+            display: flex !important;
+            align-items: center;
+            justify-content: center;
+            opacity: 1;
+            transition: opacity 0.5s ease;
+        }
+
+        #loader.loaded {
+            opacity: 0;
+            pointer-events: none; /* This prevents interactions while fading out */
+        }
+
+        .loader-spinner {
+            width: 80px;
+            height: 80px;
+            border: 10px solid #f3f3f3;
+            border-top: 10px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+
+    <script th:inline="javascript">
+        window.addEventListener('load', () => {
+            const loader = document.getElementById('loader');
+            loader.classList.add('loaded');
+            loader.addEventListener('transitionend', () => {
+                loader.remove(); // Actually remove the element from DOM
+            });
+        });
+    </script>
 </div>
 
-<style>
-    #loader {
-        position: fixed;
-        z-index: 9999;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(12,22,32,1) !important;
-        display: flex !important;
-        align-items: center;
-        justify-content: center;
-        opacity: 1;
-        transition: opacity 0.5s ease;
-    }
-
-    #loader.loaded {
-        opacity: 0;
-    }
-
-    .loader-spinner {
-        width: 80px;
-        height: 80px;
-        border: 10px solid #f3f3f3;
-        border-top: 10px solid #3498db;
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
-    }
-
-    @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-    }
-</style>
-
-<script>
-    window.addEventListener('load', () => {
-        const loader = document.getElementById('loader');
-        loader.classList.add('loaded');
-        loader.addEventListener('transitionend', () => {
-            loader.style.display = 'none';
-        });
-    });
-</script>
+</body>
+</html>
