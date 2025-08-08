@@ -10,13 +10,12 @@
         left: 0;
         width: 100%;
         height: 100%;
-        background: white;
-        display: flex;
+        background: rgba(12,22,32,1) !important;
+        display: flex !important;
         align-items: center;
         justify-content: center;
         opacity: 1;
         transition: opacity 0.5s ease;
-        pointer-events: none;
     }
 
     #loader.loaded {
@@ -36,16 +35,14 @@
         0% { transform: rotate(0deg); }
         100% { transform: rotate(360deg); }
     }
-    #loader {
-        display: flex !important;
-    }
 </style>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        // Ocultar después de 5 segundos
-        setTimeout(() => {
-            document.getElementById('loader').classList.add('loaded');
-        }, 5000);
+    window.addEventListener('load', () => {
+        const loader = document.getElementById('loader');
+        loader.classList.add('loaded');
+        loader.addEventListener('transitionend', () => {
+            loader.style.display = 'none';
+        });
     });
 </script>
