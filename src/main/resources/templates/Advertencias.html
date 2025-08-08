@@ -23,7 +23,7 @@
 
   <!-- Add equipo ID to backdrop ID -->
   <div class="modal-backdrop fade show" th:id="'equipoConfirmarBackdrop-' + ${equipo.get('id')}"></div>
-  
+
   <script th:inline="javascript">
 
     const translations = {
@@ -40,7 +40,7 @@
       const backdrop = document.getElementById('equipoConfirmarBackdrop-' + [[${equipo.get('id')}]]);
       const btnRechazar = document.getElementById('btnRechazarEquipo-' + [[${equipo.get('id')}]]);
       const btnConfirmar = document.getElementById('btnConfirmarEquipo-' + [[${equipo.get('id')}]]);
-      
+
       // Rest of your JavaScript remains the same...
       const usuarioId = [[${currentUsuarioId}]];
       const equipoId = [[${equipo.get('id')}]];
@@ -51,7 +51,7 @@
           if (e.key === "Escape") e.preventDefault();
         });
       }
-      
+
       if (backdrop) {
         backdrop.addEventListener('mousedown', function(e) {
           e.preventDefault();

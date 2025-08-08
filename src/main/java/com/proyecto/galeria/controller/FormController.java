@@ -89,7 +89,10 @@ public class FormController {
                 return "redirect:/NoAccess/Access";
             usuario usuario = optionalUsuario.get();
 
-            List<Form> forms = formService.findByUsuarioId(idUsuario);
+            List<Form> forms = formService.findAll();
+            List<Form> futureForms = formService.findByFuturo(true);
+            List<Form> completeForms = formService.findByFuturo(false);
+
             model.addAttribute("forms", forms);
             model.addAttribute("permisos", permisoService.getAllPermisos());
             model.addAttribute("permisosAgrupados", permisoService.getPermisosAgrupadosPorVista());
@@ -104,15 +107,12 @@ public class FormController {
             model.addAttribute("EXPEDIENTE_FORM_EDIT", permisos.contains("EXPEDIENTE_FORM_EDIT"));
             model.addAttribute("EXPEDIENTE_FORM_DELETE", permisos.contains("EXPEDIENTE_FORM_DELETE"));
 
-            List<Form> futureForms = formService.findByUsuarioIdAndFuturo(idUsuario, true);
-            List<Form> completeForms = formService.findByUsuarioIdAndFuturo(idUsuario, false);
-
             List<Map<String, String>> events = futureForms.stream()
                     .filter(f -> f.getFechaEvaluacion() != null && f.getHoraEvaluacion() != null)
                     .map(f -> {
                         LocalDate fecha = f.getFechaEvaluacion();
                         LocalTime hora = f.getHoraEvaluacion();
-                        String startDateTime = fecha.atTime(hora).toString(); // ISO_LOCAL_DATE_TIME
+                        String startDateTime = fecha.atTime(hora).toString();
                         return Map.of(
                                 "id", f.getId().toString(),
                                 "start", startDateTime,
@@ -127,7 +127,7 @@ public class FormController {
                     .map(f -> {
                         LocalDate fecha = f.getFechaEvaluacion();
                         LocalTime hora = f.getHoraEvaluacion();
-                        String startDateTime = fecha.atTime(hora).toString(); // ISO_LOCAL_DATE_TIME
+                        String startDateTime = fecha.atTime(hora).toString();
                         return Map.of(
                                 "id", f.getId().toString(),
                                 "start", startDateTime,
@@ -148,6 +148,7 @@ public class FormController {
         }
         return "form/ManageForms.html";
     }
+
 
     @GetMapping
     public String showFormPage(
@@ -541,9 +542,9 @@ public class FormController {
     public boolean checkHourAvailability(
             @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
             @RequestParam("hour") @DateTimeFormat(pattern = "HH:mm") LocalTime hour) {
-    
+
         List<LocalTime> horas = formService.findAllHoraEvaluacion(date);
-    
+
         for (LocalTime h : horas) {
             if (h != null && Math.abs(Duration.between(h, hour).toHours()) < 3) {
                 return false; // There is a project within 2 hours

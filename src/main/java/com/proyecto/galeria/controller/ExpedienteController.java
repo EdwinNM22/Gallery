@@ -128,13 +128,20 @@ public class ExpedienteController {
                 return "redirect:/NoAccess/Access";
             }
 
-            List<Form> forms = formService.findByUsuarioId(idUsuario);
+            Set<String> permisos = usuario.getPermisos().stream()
+                    .map(p -> p.getCodigo())
+                    .collect(Collectors.toSet());
+
+            List<Form> forms;
+            if (permisos.contains("VIEW_ALL_VISITAS")) {
+                forms = formService.findAll();
+            } else {
+                forms = formService.findByUsuarioId(idUsuario);
+            }
 
             model.addAttribute("forms", forms);
             model.addAttribute("permisos", permisoService.getAllPermisos());
             model.addAttribute("permisosAgrupados", permisoService.getPermisosAgrupadosPorVista());
-
-            Set<String> permisos = usuario.getPermisos().stream().map(p -> p.getCodigo()).collect(Collectors.toSet());
 
             model.addAttribute("EXPEDIENTE_ACCESS", permisos.contains("EXPEDIENTE_ACCESS"));
             model.addAttribute("EXPEDIENTE_CREATE", permisos.contains("EXPEDIENTE_CREATE"));
@@ -151,6 +158,7 @@ public class ExpedienteController {
 
         return "expediente/proyectosFuturos/gestionarProyectosFuturos";
     }
+
 
 
     @GetMapping("/create-future-project")
@@ -193,7 +201,7 @@ public class ExpedienteController {
 
     @GetMapping("/edit-future-project/{id}")
     public String editarProyectoFuturo(@PathVariable Integer id, Model model,
-            @RequestParam(value = "success", required = false) String success) {
+                                       @RequestParam(value = "success", required = false) String success) {
         try {
             Form form = formService.findById(id).orElse(null);
             if (form == null) {
