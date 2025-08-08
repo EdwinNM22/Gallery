@@ -114,8 +114,11 @@
 
               <div class="col-md-6">
                 <div class="form-group">
-                  <label class="form-label"><span th:text="#{project-name}">Nombre Proyecto</span></label>
-                  <input type="text" class="form-control" name="nombreProyecto" />
+                  <label class="form-label">
+                    <span th:text="#{project-name}">Nombre Proyecto</span>
+                    <span class="required">*</span>
+                  </label>
+                  <input type="text" class="form-control" name="nombreProyecto" required/>
                 </div>
               </div>
             </div>
@@ -153,10 +156,11 @@
               <!-- Fecha y Hora Evaluación -->
               <div class="col-md-3">
                 <div class="form-group">
-                  <label class="form-label"
-                  ><span th:text="#{evaluation-date}">Date de l'évaluation</span
-                  ><span class="required">*</span></label
-                  >
+                  <label class="form-label">
+                    <span th:text="#{evaluation-date}">Date de l'évaluation</span>
+                    <span class="required">*</span>
+                  </label>
+
                   <input
                           type="date"
                           class="form-control"
@@ -169,10 +173,13 @@
 
               <div class="col-md-3">
                 <div class="form-group">
-                  <label class="form-label"><span th:text="#{evaluation-time}">Hora Evaluación</span></label>
+                  <label class="form-label">
+                    <span th:text="#{evaluation-time}">Hora Evaluación</span>
+                    <span class="required">*</span>
+                  </label>
                   <div class="time-input-container">
                     <div class="time-input-row">
-                      <input type="time" class="form-control time-input" name="horaEvaluacion" />
+                      <input type="time" class="form-control time-input" name="horaEvaluacion" required/>
                       <button type="button" id="checkAvailabilityBtn" class="btn btn-availability">
                         Check Availability
                       </button>
@@ -185,15 +192,22 @@
               <!-- Fecha y Hora Visita -->
               <div class="col-md-3">
                 <div class="form-group">
-                  <label class="form-label"><span th:text="#{visit-date}">Fecha Visita</span></label>
-                  <input type="date" class="form-control" name="fechaVisita" />
+                  <label class="form-label">
+                    <span th:text="#{visit-date}">Fecha Visita</span>
+                    <span class="required">*</span>
+                </label>
+                  <input type="date" class="form-control" name="fechaVisita" required/>
                 </div>
               </div>
 
               <div class="col-md-3">
                 <div class="form-group">
-                  <label class="form-label"><span th:text="#{visit-time}">Hora Visita</span></label>
-                  <input type="time" class="form-control" name="horaVisita" />
+                  <label class="form-label">
+                    <span th:text="#{visit-time}">Hora Visita</span>
+                    <span class="required">*</span>
+                  </label>
+                  
+                  <input type="time" class="form-control" name="horaVisita" required/>
                 </div>
               </div>
             </div>
@@ -341,21 +355,7 @@
           
           if (data.success) {
             alert(translations.formCreatedSuccess);
-    
-            const resettableFields = form.querySelectorAll(
-              'input:not([type="hidden"]):not([name="usuario.id"]):not([name="nombreEvaluador"]):not([name="fechaEvaluacion"]), textarea, select'
-            );
-            
-            resettableFields.forEach(field => {
-              if (field.type === 'checkbox' || field.type === 'radio') {
-                field.checked = false;
-              } else if (field.type === 'file') {
-                field.value = '';
-              } else {
-                field.value = '';
-              }
-            });
-    
+            window.location.href = `/expediente/manage-future-projects/[[${usuario.id}]]`;
           } else {
             alert('Error: ' + data.message);
           }

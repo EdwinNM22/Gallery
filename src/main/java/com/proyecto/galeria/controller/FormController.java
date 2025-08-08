@@ -341,7 +341,8 @@ public class FormController {
 
     @GetMapping("/{id}/edit")
     public String editFormPage(@PathVariable Integer id, Model model,
-                               @RequestParam(value = "success", required = false) String success) {
+                               @RequestParam(value = "success", required = false) String success,
+                               HttpSession session) {
         try {
             Form form = formService.findById(id).orElse(null);
             if (form == null) {
@@ -369,6 +370,10 @@ public class FormController {
 
             model.addAttribute("form", form);
             model.addAttribute("fotos", fotosConDescripcion);
+
+            Integer idUsuario = (Integer) session.getAttribute("idusuario");
+            usuario user = usuarioService.findById(idUsuario).orElse(null);
+            model.addAttribute("usuario", user);
 
             if (success != null) {
                 model.addAttribute("success", true);

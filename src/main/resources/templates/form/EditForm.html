@@ -954,6 +954,8 @@
               
               if (data.success) {
                   alert(translations.formUpdatedSuccess);
+
+                  window.location.href = `/form/manage/[[${usuario.id}]]`;
               } else {
                   alert('Error: ' + data.message);
               }

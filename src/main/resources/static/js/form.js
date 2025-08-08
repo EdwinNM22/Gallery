@@ -4,6 +4,8 @@ document.addEventListener("DOMContentLoaded", function () {
   const filePreview = document.getElementById("filePreview");
   window.currentFiles = [];
 
+  if (fileUploadArea === null) return;
+
   // Handle click on upload area
   fileUploadArea.addEventListener("click", function () {
     fileInput.click();
