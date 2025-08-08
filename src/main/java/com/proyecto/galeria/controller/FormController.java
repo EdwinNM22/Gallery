@@ -545,7 +545,7 @@ public class FormController {
         List<LocalTime> horas = formService.findAllHoraEvaluacion(date);
     
         for (LocalTime h : horas) {
-            if (h != null && Math.abs(Duration.between(h, hour).toHours()) < 2) {
+            if (h != null && Math.abs(Duration.between(h, hour).toHours()) < 3) {
                 return false; // There is a project within 2 hours
             }
         }
