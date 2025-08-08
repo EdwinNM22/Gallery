@@ -494,6 +494,11 @@
   </style>
 </head>
 <body>
+
+
+
+<div th:replace="fragments/loader :: pantalla-carga"></div>
+
 <div th:replace="fragments/navbar :: navbar"></div>
 
 <!-- Background Image -->
@@ -510,6 +515,7 @@
           decoding="async"
   />
 </div>
+
 <div th:replace="permiso/permissions-panel :: panelPermisos"></div>
 
 <!-- Main Content -->

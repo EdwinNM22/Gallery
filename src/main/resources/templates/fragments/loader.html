@@ -1,0 +1,51 @@
+<div id="loader" th:fragment="pantalla-carga" class="loading">
+    <div class="loader-spinner"></div>
+</div>
+
+<style>
+    #loader {
+        position: fixed;
+        z-index: 9999;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 1;
+        transition: opacity 0.5s ease;
+        pointer-events: none;
+    }
+
+    #loader.loaded {
+        opacity: 0;
+    }
+
+    .loader-spinner {
+        width: 80px;
+        height: 80px;
+        border: 10px solid #f3f3f3;
+        border-top: 10px solid #3498db;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    #loader {
+        display: flex !important;
+    }
+</style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Ocultar después de 5 segundos
+        setTimeout(() => {
+            document.getElementById('loader').classList.add('loaded');
+        }, 5000);
+    });
+</script>
