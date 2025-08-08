@@ -31,43 +31,41 @@ function processEventData(events, cssClass = "event-list-element in-progress") {
 // Group Event Processing
 function processEventDataAsGroups(eventsInProgress = [], eventsComplete = []) {
   const results = [];
-  const eventsByDate = {}; // This will group ALL events by date
+  const eventsByDate = {};
 
-  // Combine both in-progress and complete events
   const allEvents = [...eventsInProgress, ...eventsComplete];
 
-  // Group events by their start date
+  // Helper function to get local date string (YYYY-MM-DD) in a timezone-safe way
+  const getLocalDateString = (dateString) => {
+    const date = new Date(dateString);
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+  };
+
   allEvents.forEach((ev) => {
-    const startDate = new Date(ev.start).toISOString().split("T")[0]; // Get YYYY-MM-DD
+    const startDate = getLocalDateString(ev.start); // Use local date string
 
     if (!eventsByDate[startDate]) {
       eventsByDate[startDate] = {
         count: 0,
-        firstEvent: ev, // Keep reference to first event for metadata
+        firstEvent: ev,
         inProgressCount: 0,
         completeCount: 0,
       };
     }
     eventsByDate[startDate].count++;
 
-    // Track status counts for potential styling
-    if (
-      ev.estado === "complete" ||
-      (ev.tags && ev.tags.estado === "complete")
-    ) {
+    if (ev.estado === "complete" || (ev.tags && ev.tags.estado === "complete")) {
       eventsByDate[startDate].completeCount++;
     } else {
       eventsByDate[startDate].inProgressCount++;
     }
   });
 
-  // Create a single event for each date with the total count
   for (const [date, data] of Object.entries(eventsByDate)) {
-    // For grouped events, we need to ensure proper time formatting
     let groupStartTime = new Date(data.firstEvent.start);
     let groupEndTime = new Date(data.firstEvent.end);
     
-    // Ensure group events have time components for Day view compatibility
+    // Reset time to local noon for date-only events
     const hasTimeInfo = (
       groupStartTime.getHours() !== 0 || 
       groupStartTime.getMinutes() !== 0 || 
@@ -75,30 +73,39 @@ function processEventDataAsGroups(eventsInProgress = [], eventsComplete = []) {
     );
     
     if (!hasTimeInfo) {
-      // Set group time to 12:00 PM - 1:00 PM for consistency
-      groupStartTime.setHours(12, 0, 0, 0);
-      groupEndTime = new Date(groupStartTime);
-      groupEndTime.setHours(13, 0, 0, 0);
+      // Set to local noon (not UTC)
+      groupStartTime = new Date(
+        groupStartTime.getFullYear(),
+        groupStartTime.getMonth(),
+        groupStartTime.getDate(),
+        12, 0, 0
+      );
+      groupEndTime = new Date(
+        groupStartTime.getFullYear(),
+        groupStartTime.getMonth(),
+        groupStartTime.getDate(),
+        13, 0, 0
+      );
     }
 
     results.push({
-      id: `group-${date}`, // Unique ID based on date
-      start: groupStartTime.toISOString(), // Use processed start time
-      end: groupEndTime.toISOString(), // Use processed end time
-      text: `${data.count}`, // Show total count
+      id: `group-${date}`,
+      start: groupStartTime, // Use Date object directly (DayPilot can handle it)
+      end: groupEndTime,
+      text: `${data.count}`,
       barVisible: false,
       backColor: "transparent",
       borderColor: "transparent",
       moveDisabled: true,
       resizeDisabled: true,
-      cssClass: `daypilot-event-badge`, // Combined class
+      cssClass: `daypilot-event-badge`,
       tags: {
-        isGroup: true, // Mark this as a grouped event
-        eventCount: data.count, // Store the total count
+        isGroup: true,
+        eventCount: data.count,
         inProgressCount: data.inProgressCount,
         completeCount: data.completeCount,
-        date: date, // Store the date for filtering
-        hasPlaceholderTime: !hasTimeInfo, // Track if we added placeholder time
+        date: date,
+        hasPlaceholderTime: !hasTimeInfo,
       },
     });
   }
