@@ -10,6 +10,7 @@ import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
@@ -22,6 +23,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.beans.PropertyEditorSupport;
 import java.io.IOException;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -138,6 +140,8 @@ public class FormController {
             model.addAttribute("events", events);
             model.addAttribute("eventsComplete", eventsComplete);
 
+            List<LocalTime> temp = formService.findAllHoraEvaluacion(LocalDate.parse("2025-05-01"));
+            System.out.println(temp);
 
         } catch (Exception e) {
             model.addAttribute("errorMessage", "Error loading forms: " + e.getMessage());
@@ -508,7 +512,6 @@ public class FormController {
             }
 
             fotosFormService.deleteByFormId(id);
-
             logger.info("Deleting form with ID: {}", id);
             formService.delete(id);
 
@@ -531,5 +534,21 @@ public class FormController {
         } else {
             return "redirect:/form/manage";
         }
+    }
+
+    @PostMapping("/check-hour-availability")
+    @ResponseBody
+    public boolean checkHourAvailability(
+            @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+            @RequestParam("hour") @DateTimeFormat(pattern = "HH:mm") LocalTime hour) {
+    
+        List<LocalTime> horas = formService.findAllHoraEvaluacion(date);
+    
+        for (LocalTime h : horas) {
+            if (h != null && Math.abs(Duration.between(h, hour).toHours()) < 2) {
+                return false; // There is a project within 2 hours
+            }
+        }
+        return true; // No project within 2 hours
     }
 }

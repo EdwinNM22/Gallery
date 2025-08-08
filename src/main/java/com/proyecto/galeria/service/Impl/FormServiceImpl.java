@@ -8,6 +8,8 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -70,6 +72,11 @@ public class FormServiceImpl implements FormService {
     @Override
     public List<Form> findByUsuarioIdAndFuturo(Integer usuarioId, Boolean futuro) {
         return formRepository.findByUsuarioIdAndFuturo(usuarioId, futuro);
+    }
+
+    @Override
+    public List<LocalTime> findAllHoraEvaluacion(LocalDate date) {
+        return formRepository.findAllHoraEvaluacionByFecha(date);
     }
 
 }

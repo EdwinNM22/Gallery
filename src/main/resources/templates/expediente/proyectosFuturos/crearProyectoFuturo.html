@@ -170,7 +170,13 @@
               <div class="col-md-3">
                 <div class="form-group">
                   <label class="form-label"><span th:text="#{evaluation-time}">Hora Evaluación</span></label>
-                  <input type="time" class="form-control" name="horaEvaluacion" />
+                  <div class="time-input-wrapper">
+                    <input type="time" class="form-control" name="horaEvaluacion" />
+                    <button type="button" id="checkAvailabilityBtn" class="btn btn-availability">
+                      Check Availability
+                    </button>
+                  </div>
+                  <div id="availabilityMessage" class="availability-message"></div>
                 </div>
               </div>
 
@@ -296,5 +302,70 @@
           }
       });
     </script>
+
+    
+<script>
+  document.getElementById('checkAvailabilityBtn').addEventListener('click', async function() {
+    const timeInput = document.querySelector('input[name="horaEvaluacion"]');
+    const dateInput = document.querySelector('input[name="fechaEvaluacion"]');
+    const messageDiv = document.getElementById('availabilityMessage');
+    
+    // Clear previous messages
+    messageDiv.style.display = 'none';
+    
+    // Validation
+    if (!dateInput.value) {
+      showMessage("Please select a date first", 'red');
+      return;
+    }
+    
+    if (!timeInput.value) {
+      showMessage("Please select a time first", 'red');
+      return;
+    }
+    
+    try {
+      // Format the time as HH:mm
+      const timeValue = timeInput.value.substring(0, 5); // Takes HH:mm part
+      
+      const response = await fetch('/form/check-hour-availability', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+          date: dateInput.value,
+          hour: timeValue
+        })
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const isAvailable = await response.json();
+      
+      if (isAvailable) {
+        showMessage("✓ This time slot is available", 'green');
+      } else {
+        showMessage("⚠ Another project exists within 2 hours of this time", 'orange');
+      }
+      
+    } catch (error) {
+      console.error('Error checking availability:', error);
+      showMessage("Error checking availability. Please try again.", 'red');
+    }
+    
+    function showMessage(text, color) {
+      const messageDiv = document.getElementById('availabilityMessage');
+      messageDiv.textContent = text;
+      messageDiv.style.color = color;
+      messageDiv.style.backgroundColor = color === 'green' ? 'rgba(40, 167, 69, 0.2)' : 
+                                      color === 'orange' ? 'rgba(255, 193, 7, 0.2)' : 
+                                      'rgba(220, 53, 69, 0.2)';
+      messageDiv.style.display = 'block';
+    }
+  });
+</script>
   </body>
 </html>

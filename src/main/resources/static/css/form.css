@@ -136,6 +136,14 @@ body {
   font-weight: 400;
 }
 
+.double{
+  display: flex;
+  flex-direction: row;
+}
+.double input{
+  width: 150px;
+}
+
 .form-check-input {
   background-color: rgba(15, 25, 35, 0.7);
   border: 1px solid var(--border-color);
@@ -361,5 +369,55 @@ body {
 
   .form-section h3 {
     font-size: 1.25rem;
+  }
+}
+
+/* Time input with availability button */
+.time-input-wrapper {
+  display: flex;
+  gap: 8px; /* Space between input and button */
+}
+
+.time-input-wrapper .form-control {
+  flex: 1; /* Let the input take remaining space */
+  min-width: 100px; /* Ensure input doesn't get too narrow */
+}
+
+.btn-availability {
+  background-color: var(--primary-blue);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  white-space: nowrap; /* Prevent text wrapping */
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-availability:hover {
+  background-color: var(--accent-blue);
+  transform: translateY(-1px);
+}
+
+.availability-message {
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  border-radius: 4px;
+  display: none;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .time-input-wrapper {
+    flex-direction: column; /* Stack on small screens */
+    gap: 8px;
+  }
+  
+  .btn-availability {
+    width: 100%;
   }
 }

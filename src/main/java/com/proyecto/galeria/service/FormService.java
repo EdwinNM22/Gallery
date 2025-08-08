@@ -2,6 +2,8 @@ package com.proyecto.galeria.service;
 
 import com.proyecto.galeria.model.Form;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,13 +18,13 @@ public interface FormService {
 
     void delete(Integer id);
 
-    // Add this method to the interface
     boolean existsById(Integer id);
 
     List<Form> findByUsuarioId(Integer usuarioId);
 
     List<Form> findByFuturo(Boolean futuro);
 
-
     List<Form> findByUsuarioIdAndFuturo(Integer usuarioId, Boolean futuro);
+
+    List<LocalTime> findAllHoraEvaluacion(LocalDate date);
 }

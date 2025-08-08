@@ -178,6 +178,4 @@ public class Form {
     @Column(name = "hora_evaluacion")
     @DateTimeFormat(pattern = "HH:mm")
     private LocalTime horaEvaluacion;
-
-
 }
