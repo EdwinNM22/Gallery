@@ -1,17 +1,15 @@
 // --- Event Processing ---
 // Regular Event Processing
 function processEventData(events, cssClass = "event-list-element in-progress") {
-  const results = [];
+  const results = []; // Will store our processed events
 
+  // Process each event in the input array
   events.forEach((ev) => {
-    // Ensure dates are properly interpreted
-    const start = new Date(ev.start);
-    const end = new Date(ev.end);
-    
+    // Add event to results
     results.push({
-      id: ev.id,
-      start: start, // Use Date object directly
-      end: end,
+      id: ev.id, // Use original event ID
+      start: ev.start, // Use processed start time
+      end: ev.end, // Use processed end time
       text: ev.nombreCliente,
       barVisible: false,
       backColor: "transparent",
@@ -33,88 +31,74 @@ function processEventData(events, cssClass = "event-list-element in-progress") {
 // Group Event Processing
 function processEventDataAsGroups(eventsInProgress = [], eventsComplete = []) {
   const results = [];
-  const eventsByDate = {};
+  const eventsByDate = {}; // This will group ALL events by date
 
+  // Combine both in-progress and complete events
   const allEvents = [...eventsInProgress, ...eventsComplete];
 
-  // Helper function to get UTC date string (YYYY-MM-DD)
-  const getUTCDateString = (dateString) => {
-    const date = new Date(dateString);
-    return `${date.getUTCFullYear()}-${String(date.getUTCMonth() + 1).padStart(2, '0')}-${String(date.getUTCDate()).padStart(2, '0')}`;
-  };
-
+  // Group events by their start date (using UTC-specific methods)
   allEvents.forEach((ev) => {
-    const startDate = getUTCDateString(ev.start); // Use UTC date string
+    // CRITICAL FIX: Use DayPilot.Date to handle dates consistently
+    // or use UTC methods on the native Date object.
+    const dateObj = new Date(ev.start);
+    // Use UTC methods to get the date components without local timezone effects
+    const year = dateObj.getUTCFullYear();
+    const month = String(dateObj.getUTCMonth() + 1).padStart(2, '0');
+    const day = String(dateObj.getUTCDate()).padStart(2, '0');
+    const startDate = `${year}-${month}-${day}`; // Get YYYY-MM-DD in UTC
 
     if (!eventsByDate[startDate]) {
       eventsByDate[startDate] = {
         count: 0,
-        firstEvent: ev,
+        firstEvent: ev, // Keep reference to first event for metadata
         inProgressCount: 0,
         completeCount: 0,
       };
     }
     eventsByDate[startDate].count++;
 
-    if (ev.estado === "complete" || (ev.tags && ev.tags.estado === "complete")) {
+    // Track status counts for potential styling
+    if (
+      ev.estado === "complete" ||
+      (ev.tags && ev.tags.estado === "complete")
+    ) {
       eventsByDate[startDate].completeCount++;
     } else {
       eventsByDate[startDate].inProgressCount++;
     }
   });
 
+  // Create a single event for each date with the total count
   for (const [date, data] of Object.entries(eventsByDate)) {
-    let groupStartTime = new Date(data.firstEvent.start);
-    let groupEndTime = new Date(data.firstEvent.end);
-    
-    // Check if the time component is meaningful
-    const hasTimeInfo = (
-      groupStartTime.getUTCHours() !== 0 || 
-      groupStartTime.getUTCMinutes() !== 0 || 
-      groupStartTime.getUTCSeconds() !== 0
-    );
-    
-    if (!hasTimeInfo) {
-      // Set to UTC noon (12:00:00)
-      groupStartTime = new Date(Date.UTC(
-        groupStartTime.getUTCFullYear(),
-        groupStartTime.getUTCMonth(),
-        groupStartTime.getUTCDate(),
-        12, 0, 0
-      ));
-      groupEndTime = new Date(Date.UTC(
-        groupStartTime.getUTCFullYear(),
-        groupStartTime.getUTCMonth(),
-        groupStartTime.getUTCDate(),
-        13, 0, 0
-      ));
-    }
+    // For grouped events, we need to ensure proper time formatting
+    // IMPORTANT: Now we use the UTC date string to create a new DayPilot.Date
+    // This will force it to be treated as midnight UTC on that day.
+    const groupStart = new DayPilot.Date(date);
+    const groupEnd = new DayPilot.Date(date).addDays(1); // End at midnight of the next day
 
     results.push({
-      id: `group-${date}`,
-      start: groupStartTime,
-      end: groupEndTime,
-      text: `${data.count}`,
+      id: `group-${date}`, // Unique ID based on date
+      start: groupStart.toString(),
+      end: groupEnd.toString(),
+      text: `${data.count}`, // Show total count
       barVisible: false,
       backColor: "transparent",
       borderColor: "transparent",
       moveDisabled: true,
       resizeDisabled: true,
-      cssClass: `daypilot-event-badge`,
+      cssClass: `daypilot-event-badge`, // Combined class
       tags: {
-        isGroup: true,
-        eventCount: data.count,
+        isGroup: true, // Mark this as a grouped event
+        eventCount: data.count, // Store the total count
         inProgressCount: data.inProgressCount,
         completeCount: data.completeCount,
-        date: date,
-        hasPlaceholderTime: !hasTimeInfo,
+        date: date, // Store the date for filtering
       },
     });
   }
 
   return results;
 }
-
 /**
  * Properly disposes of a DayPilot calendar instance with comprehensive cleanup
  * @param {Object} calendar - The calendar instance to dispose
@@ -346,9 +330,12 @@ export async function switchCalendarView(newViewType, currentCalendar, config) {
 
 function showDayEvents(date, calendar) {
   // 1. DOM Element References
-  const modalDateDisplay = document.querySelector("#dayEventsModal .date-display");
+  // Get modal components - date display, events list container, and create button
+  const modalDateDisplay = document.querySelector(
+    "#dayEventsModal .date-display"
+  );
   const eventsList = document.getElementById("dayEventsList");
-  const dayEventsModal = document.getElementById("dayEventsModal");
+  const dayEventsModal = document.getElementById("dayEventsModal"); // Added modal reference
 
   // Validate all required elements exist
   if (!modalDateDisplay || !eventsList || !dayEventsModal) {
@@ -357,20 +344,16 @@ function showDayEvents(date, calendar) {
   }
 
   // 2. Date Formatting and Display
-  // Convert the DayPilot.Date to a JavaScript Date
-  const jsDate = new Date(date.getTime());
-  // Get UTC date string for comparison
-  const dateStr = `${jsDate.getUTCFullYear()}-${String(jsDate.getUTCMonth() + 1).padStart(2, '0')}-${String(jsDate.getUTCDate()).padStart(2, '0')}`;
-  
-  // Display human-readable date in modal header (using local time)
+  // Convert date to standardized string format for comparison
+  const dateStr = date.toString("yyyy-MM-dd");
+  // Display human-readable date in modal header
   modalDateDisplay.textContent = date.toString("MMMM dd, yyyy");
 
   // 3. Event Filtering
   // Get ALL original events (not the grouped ones)
   const eventsForDate = calendar.originalEvents.filter((e) => {
-    const eventDate = new Date(e.start);
-    const eventDateStr = `${eventDate.getUTCFullYear()}-${String(eventDate.getUTCMonth() + 1).padStart(2, '0')}-${String(eventDate.getUTCDate()).padStart(2, '0')}`;
-    return eventDateStr === dateStr;
+    const eventStart = new Date(e.start).toISOString().split("T")[0];
+    return eventStart === dateStr;
   });
 
   // 4. Event List Rendering
@@ -405,7 +388,8 @@ function showDayEvents(date, calendar) {
         <div class="events-container"></div>
       `;
 
-        const eventsContainer = groupContainer.querySelector(".events-container");
+        const eventsContainer =
+          groupContainer.querySelector(".events-container");
 
         events.forEach((event) => {
           const eventElement = document.createElement("div");
@@ -462,22 +446,29 @@ function showDayEvents(date, calendar) {
   }
 
   // 5. Event Button Handlers
+  // Add click handlers to all "View" buttons
   document.querySelectorAll(".view-event-btn").forEach((btn) => {
     btn.addEventListener("click", (e) => {
+      // Get event metadata from data attributes
       if (!e.target.classList.contains("view-event-btn")) return;
 
       const eventId = e.target.getAttribute("data-event-id");
-      const isComplete = e.target.getAttribute("data-event-estado") === "complete";
 
+      const isComplete =
+        e.target.getAttribute("data-event-estado") === "complete";
+
+      // Determine appropriate redirect URL based on completion status
       const redirectUrl = isComplete
-        ? `/form/${eventId}`
-        : `/expediente/view-future-project/${eventId}`;
+        ? `/form/${eventId}` // Completed event URL
+        : `/expediente/view-future-project/${eventId}`; // In-progress event URL
 
+      // Navigate to event detail page
       window.location.href = redirectUrl;
     });
   });
 
   // 6. Modal Display
+  // Show the modal using Bootstrap's vanilla JS API
   const modal = new bootstrap.Modal(dayEventsModal);
   modal.show();
 }
