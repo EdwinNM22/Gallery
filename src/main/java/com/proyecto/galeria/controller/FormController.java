@@ -26,6 +26,8 @@ import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -107,12 +109,18 @@ public class FormController {
             model.addAttribute("EXPEDIENTE_FORM_EDIT", permisos.contains("EXPEDIENTE_FORM_EDIT"));
             model.addAttribute("EXPEDIENTE_FORM_DELETE", permisos.contains("EXPEDIENTE_FORM_DELETE"));
 
+            // Use a consistent timezone for all events, e.g., "America/New_York"
+            ZoneId utcZone = ZoneId.of("UTC");
+
             List<Map<String, String>> events = futureForms.stream()
                     .filter(f -> f.getFechaEvaluacion() != null && f.getHoraEvaluacion() != null)
                     .map(f -> {
                         LocalDate fecha = f.getFechaEvaluacion();
                         LocalTime hora = f.getHoraEvaluacion();
-                        String startDateTime = fecha.atTime(hora).toString();
+                        // CRITICAL FIX: Convert to ZonedDateTime with UTC timezone
+                        ZonedDateTime zonedDateTime = ZonedDateTime.of(fecha, hora, utcZone);
+                        // Then get the ISO 8601 string, which will end with a 'Z' for UTC
+                        String startDateTime = zonedDateTime.toInstant().toString();
                         return Map.of(
                                 "id", f.getId().toString(),
                                 "start", startDateTime,
@@ -127,7 +135,9 @@ public class FormController {
                     .map(f -> {
                         LocalDate fecha = f.getFechaEvaluacion();
                         LocalTime hora = f.getHoraEvaluacion();
-                        String startDateTime = fecha.atTime(hora).toString();
+                        // CRITICAL FIX: Convert to ZonedDateTime with UTC timezone
+                        ZonedDateTime zonedDateTime = ZonedDateTime.of(fecha, hora, utcZone);
+                        String startDateTime = zonedDateTime.toInstant().toString();
                         return Map.of(
                                 "id", f.getId().toString(),
                                 "start", startDateTime,
@@ -140,7 +150,7 @@ public class FormController {
             model.addAttribute("events", events);
             model.addAttribute("eventsComplete", eventsComplete);
 
-            List<LocalTime> temp = formService.findAllHoraEvaluacion(LocalDate.parse("2025-05-01"));
+        List<LocalTime> temp = formService.findAllHoraEvaluacion(LocalDate.parse("2025-05-01"));
             System.out.println(temp);
 
         } catch (Exception e) {
