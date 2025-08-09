@@ -128,6 +128,7 @@
       font-weight: 500;
       border-radius: 6px;
       border: none;
+      gap: 5px;
       cursor: pointer;
       transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
       overflow: hidden;
@@ -533,14 +534,14 @@
       <p class="hero-subtitle" th:text="#{select-assigned-project}">Select the assigned project to view details and manage tasks</p>
 
       <div class="action-buttons animated delay-1">
+        <a th:href="@{/adm}" class="btn-mega">
+          <i class="fas fa-arrow-left"></i>
+          <span th:text="#{back}">Back</span>
+        </a>
         <a th:if="${AGENDA_ACCESS && AGENDA_CREATE}"
            th:href="@{/albumes/create}" class="btn-mega">
           <i class="fas fa-plus-circle btn-icon"></i>
           <span th:text="#{create-project}">Create Project</span>
-        </a>
-        <a th:href="@{/adm}" class="btn-mega">
-          <i class="fas fa-bars btn-icon"></i>
-          <span th:text="#{menu}">Main Menu</span>
         </a>
       </div>
     </div>

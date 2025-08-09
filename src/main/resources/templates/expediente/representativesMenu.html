@@ -368,6 +368,65 @@
       outline-offset: 2px;
     }
 
+    /* BOTONES MEJORADOS SIN HERENCIA */
+    .custom-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 1.25rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    font-family: 'Montserrat', sans-serif;
+    text-decoration: none;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    letter-spacing: 0.3px;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .custom-btn:hover {
+    transform: translateY(-1px);
+    text-decoration: none;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .custom-btn:active {
+    transform: translateY(0);
+    }
+
+    .custom-btn i {
+    margin-right: 0.5rem;
+    font-size: 0.95rem;
+    }
+
+    /* Botón back */
+    .btn-back-styled {
+    background: linear-gradient(135deg, rgba(44, 90, 160, 0.8), rgba(58, 123, 213, 0.6));
+    color: var(--lighter-text);
+    border: 1px solid rgba(44, 90, 160, 0.5);
+    }
+
+    .btn-back-styled:hover {
+    background: linear-gradient(135deg, rgba(44, 90, 160, 1), rgba(58, 123, 213, 0.8));
+    color: var(--lighter-text);
+    border-color: var(--accent-blue);
+    }
+
+    @media (max-width: 768px){
+        .btn-container {
+            flex-direction: column;
+            align-items: stretch;
+            }
+
+        .custom-btn {
+            width: 100%;
+            justify-content: center;
+        }
+    }
   </style>
 </head>
 <body>
@@ -407,8 +466,14 @@
       </p>
     </div>
 
-    <div class="action-grid">
 
+    <div class="btn-container">
+      <a class="custom-btn btn-back-styled mb-4" th:href="@{/adm}">
+        <i class="fas fa-arrow-left"></i> <span th:text="#{back}">Back</span>
+      </a>
+    </div>
+
+    <div class="action-grid">
       <!-- New Project Card -->
       <div class="action-card" th:if="${PROJECT_EVALUATION_ACCESS}" >
         <a th:href="@{'/form/manage/' + ${session.idusuario}}" >
