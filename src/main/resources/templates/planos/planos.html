@@ -37,9 +37,14 @@
             background-position: center;
             background-attachment: fixed;
             min-height: 100vh;
-            padding: 2rem;
+            padding: 0; /* Remove body padding */
         }
 
+        .main-container {
+            padding: 2rem; /* Move padding to the container */
+            /* Keep all other container styles */
+        }
+        
         .bg-fast-load {
             position: fixed;
             top: 0;
@@ -124,7 +129,7 @@
         .controls-container {
             display: flex;
             justify-content: center;
-            gap: 1.5rem;
+            gap: 0.5rem;
             margin-bottom: 2rem;
             flex-wrap: wrap;
         }
@@ -516,10 +521,6 @@
 
         /* Responsive adjustments */
         @media (max-width: 768px) {
-            body {
-                padding: 1rem;
-            }
-
             .modern-header h1 {
                 font-size: 2rem;
             }
@@ -541,6 +542,54 @@
                 height: 400px;
             }
         }
+
+                /* BOTONES MEJORADOS SIN HERENCIA */
+                .custom-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.75rem 1.25rem;
+        font-size: 0.9rem;
+        font-weight: 500;
+        font-family: 'Montserrat', sans-serif;
+        text-decoration: none;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        letter-spacing: 0.3px;
+        box-shadow: 0 3px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .custom-btn:hover {
+        transform: translateY(-1px);
+        text-decoration: none;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .custom-btn:active {
+        transform: translateY(0);
+        }
+
+        .custom-btn i {
+        margin-right: 0.5rem;
+        font-size: 0.95rem;
+        }
+
+        /* Botón back */
+        .btn-back-styled {
+        background: linear-gradient(135deg, rgba(44, 90, 160, 0.8), rgba(58, 123, 213, 0.6));
+        color: var(--lighter-text);
+        border: 1px solid rgba(44, 90, 160, 0.5);
+        }
+
+        .btn-back-styled:hover {
+        background: linear-gradient(135deg, rgba(44, 90, 160, 1), rgba(58, 123, 213, 0.8));
+        color: var(--lighter-text);
+        border-color: var(--accent-blue);
+        }
     </style>
 </head>
 
@@ -549,6 +598,9 @@
 <div class="bg-fast-load">
     <img src="/img/upscalemedia-transformed.webp" alt="Background" />
 </div>
+
+<div th:replace="fragments/navbar :: navbar"></div>
+<div th:replace="fragments/loader :: pantalla-carga"></div>
 
 <div class="main-container">
     <header class="modern-header">
@@ -565,6 +617,11 @@
 
     <div class="controls-container">
         <input type="file" id="imageLoader" accept="image/*" multiple style="display: none;" />
+        
+        <a class="custom-btn btn-back-styled" th:href="@{'/planos/proyectos/' + ${proyectoId}}">
+            <i class="fas fa-arrow-left"></i> <span th:text="#{back}">Back</span>
+        </a>
+
         <label for="imageLoader" class="btn-mega btn-primary">
             <i class="fas fa-plus btn-icon"></i> <span th:text="#{add-image}">Agregar foto</span>
         </label>

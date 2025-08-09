@@ -1787,6 +1787,8 @@
     </style>
 </head>
 <body>
+
+<div th:replace="fragments/loader :: pantalla-carga"></div>
 <div th:replace="fragments/navbar :: navbar"></div>
 
 <!-- Imagen -->
@@ -1856,8 +1858,6 @@
 <!-- Main Content -->
 <div class="container">
     <div class="main-content-container">
-
-        <div th:replace="fragments/loader :: pantalla-carga"></div>
 
         <!-- Calendar Section (hidden by default) -->
         <div class="calendar-container" id="calendarSection" >
